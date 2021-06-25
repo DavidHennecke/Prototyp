@@ -126,10 +126,24 @@
             <Grid.ColumnDefinitions>
                 <ColumnDefinition Width="1*"/>
                 <ColumnDefinition Width="5*"/>
-                <ColumnDefinition Width="2*"/>
+                <ColumnDefinition Width="4*"/>
             </Grid.ColumnDefinitions>
             <Border BorderBrush="#FF212225" Grid.Column="0" Margin="5,5,2,5" BorderThickness="3" CornerRadius="2 2 0 0" DockPanel.Dock="Top">
-                <Grid x:Name="Workbench1" Background="#FF212225"></Grid>
+                <Grid x:Name="Workbench1" Background="#FF212225">
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="20"/>
+                        <RowDefinition Height="*"/>
+                    </Grid.RowDefinitions>
+                    <TreeView Name="TableOfContents" Grid.Row="1" >
+                        <TreeViewItem x:Name="TableOfContentsVector" Header="Vector" IsSelected="True" IsExpanded="True">
+                            
+                        </TreeViewItem>
+                        <TreeViewItem Header="Raster" IsExpanded="True">
+                            
+                        </TreeViewItem>
+                    </TreeView>
+
+                </Grid>
             </Border>
             <Border BorderBrush="#FF212225" Grid.Column="1" Margin="0,5,0,5" BorderThickness="3" CornerRadius="2 2 0 0" DockPanel.Dock="Top">
 
@@ -157,25 +171,55 @@
                                 </Setter>
                             </Style>
                         </TabControl.Resources>
-                        <TabItem Header="Node Editor" Foreground="White">
-                    <Grid Background="#FF595959"/>
-                    </TabItem>
-                    <TabItem Header="Map" Foreground="White">
-                        <Grid x:Name="MapGrid" Background="#FF212225">
-                            <controls:MapControl x:Name="map" ZoomInteractionMode="GestureAndControl" TiltInteractionMode="GestureAndControl" MapServiceToken="UwIjGArZvX7q4ca7JK2h~Qst4kuikP9fAc5Y3eGQ44A~AkLKQFzFuGbGHSM9zNxEof2-ceS8ElY8okoPviM9wQu2RQkHXQIyUzJ3LqKnEXNZ" />
-                        </Grid>
+                    <TabItem Header="Node Editor" Foreground="White">
+                        <Grid Background="#FF595959"/>
                     </TabItem>
                 </TabControl>
 
               
             </Border>
             <Border BorderBrush="#FF212225" Grid.Column="2" BorderThickness="3" Margin="2,5,5,5" CornerRadius="2 2 0 0" DockPanel.Dock="Top">
-                <Grid x:Name="Workbench3" Background="#FF212225"></Grid>
+                <TabControl Background="#FF212225" BorderBrush="#FF212225" >
+                    <TabControl.Resources>
+                        <Style TargetType="TabItem">
+                            <Setter Property="Template">
+                                <Setter.Value>
+                                    <ControlTemplate TargetType="{x:Type TabItem}">
+                                        <Border x:Name="tab" BorderThickness="0 0 0 4">
+                                            <Grid >
+                                                <ContentPresenter ContentSource="Header" HorizontalAlignment="left" VerticalAlignment="Center" Margin="5,2"/>
+                                            </Grid>
+                                        </Border>
+                                        <ControlTemplate.Triggers>
+                                            <Trigger Property="IsMouseOver" Value="True">
+                                                <Setter TargetName="tab" Property="BorderBrush" Value="#66CDAA" />
+                                            </Trigger>
+                                            <Trigger Property="IsSelected" Value="True">
+                                                <Setter TargetName="tab" Property="BorderBrush" Value="#66CDAA" />
+                                            </Trigger>
+                                        </ControlTemplate.Triggers>
+                                    </ControlTemplate>
+                                </Setter.Value>
+                            </Setter>
+                        </Style>
+                    </TabControl.Resources>
+                    <TabItem Header="Map" Foreground="White">
+                        <Grid x:Name="MapGrid" Background="#FF212225">
+                            <controls:MapControl x:Name="map" ZoomInteractionMode="GestureAndControl" TiltInteractionMode="GestureAndControl" MapServiceToken="UwIjGArZvX7q4ca7JK2h~Qst4kuikP9fAc5Y3eGQ44A~AkLKQFzFuGbGHSM9zNxEof2-ceS8ElY8okoPviM9wQu2RQkHXQIyUzJ3LqKnEXNZ" />
+                        </Grid>
+                    </TabItem>
+                    <TabItem Header="Table" Foreground="White">
+                        <Grid Background="#FF595959"/>
+                    </TabItem>
+                    <TabItem Header="Charts" Foreground="White">
+                        <Grid Background="#FF595959"/>
+                    </TabItem>
+                </TabControl>
             </Border>
             <GridSplitter Grid.Column="0" Width="2" VerticalAlignment="Stretch" Background="#35363A"/>
             <GridSplitter Grid.Column="2" Width="2" VerticalAlignment="Stretch" HorizontalAlignment="Left" Background="#35363A"/>
         </Grid>
-        <DockPanel Grid.Row="3" Background="#8CB8B1">
+        <DockPanel Grid.Row="3" Background="#35363A">
         </DockPanel>
     </Grid>
 </Window>
