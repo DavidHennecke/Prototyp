@@ -129,13 +129,13 @@
                 <ColumnDefinition Width="4*"/>
             </Grid.ColumnDefinitions>
             <Border BorderBrush="#FF212225" Grid.Column="0" Margin="5,5,2,5" BorderThickness="3" CornerRadius="2 2 0 0" DockPanel.Dock="Top">
-                <Grid x:Name="Workbench1" Background="#FF212225">
+                <Grid x:Name="Workbench1" Background="#FF212225" x:FieldModifier="public">
                     <Grid.RowDefinitions>
                         <RowDefinition Height="20"/>
                         <RowDefinition Height="*"/>
                     </Grid.RowDefinitions>
-                    <TreeView Name="TableOfContents" Grid.Row="1" >
-                        <TreeViewItem x:Name="TableOfContentsVector" Header="Vector" IsSelected="True" IsExpanded="True">
+                    <TreeView Name="TableOfContents" Grid.Row="1" x:FieldModifier="public">
+                        <TreeViewItem x:Name="TableOfContentsVector" x:FieldModifier="public"  Header="Vector" IsSelected="True" IsExpanded="True">
                             
                         </TreeViewItem>
                         <TreeViewItem Header="Raster" IsExpanded="True">
