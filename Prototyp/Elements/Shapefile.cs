@@ -42,10 +42,17 @@ namespace Prototyp.Elements
             string layerName = Layer.GetName();
             TreeViewItem newChild = new TreeViewItem();
             ContextMenu vectorContextMenu = new ContextMenu();
-           
-            newChild.Header = layerName;
-   
 
+            MenuItem ZoomToLayer = new MenuItem();
+            ZoomToLayer.Header = "Zoom to Layer";
+            MenuItem Remove = new MenuItem();
+            Remove.Header = "Remove";
+
+            vectorContextMenu.Items.Add(ZoomToLayer);
+            vectorContextMenu.Items.Add(Remove);
+
+            newChild.ContextMenu = vectorContextMenu;
+            newChild.Header = layerName;
             return newChild;
         }
 
