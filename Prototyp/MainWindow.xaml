@@ -136,11 +136,12 @@
                     </Grid.RowDefinitions>
                     <TreeView Name="TableOfContents" Grid.Row="1" x:FieldModifier="public">
                         <TreeViewItem x:Name="TableOfContentsVector" x:FieldModifier="public"  Header="Vector" IsSelected="True" IsExpanded="True">
+
+                        </TreeViewItem>
+                        <TreeViewItem x:Name="TableOfContentsRaster" Header="Raster" IsExpanded="True">
                             
                         </TreeViewItem>
-                        <TreeViewItem Header="Raster" IsExpanded="True">
-                            
-                        </TreeViewItem>
+
                     </TreeView>
 
                 </Grid>

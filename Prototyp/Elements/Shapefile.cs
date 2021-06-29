@@ -18,7 +18,7 @@ namespace Prototyp.Elements
         public string sFilename;
         private Layer Layer;
 
-        public TreeViewItem InitLayer(string sFilename)
+        public Layer InitLayer(string sFilename)
         {
             Gdal.SetConfigOption("GDAL_FILENAME_IS_UTF8", "NO");
             Gdal.SetConfigOption("SHAPE_ENCODING", "");
@@ -34,76 +34,94 @@ namespace Prototyp.Elements
             {
                 MessageBox.Show("Get the {0}th layer failed! n", "0");
             }
-            string layerName = Layer.GetName();
-            TreeViewItem newChild = new TreeViewItem();
-            newChild.Header = layerName;
-
-            return newChild;
-            
+            return Layer;
         }
 
-        public MapPolygon BuildElements()
+        public TreeViewItem AddTreeViewChild(Layer Layer)
+        {
+            string layerName = Layer.GetName();
+            TreeViewItem newChild = new TreeViewItem();
+            ContextMenu vectorContextMenu = new ContextMenu();
+           
+            newChild.Header = layerName;
+   
+
+            return newChild;
+        }
+
+        public List<BasicGeoposition> InitPointList (Feature feature)
         {
             List<BasicGeoposition> polygonPointList = new List<BasicGeoposition>();
+            Geometry geom = feature.GetGeometryRef();
+            Geometry transGeom = Transform(geom);
+            Geometry ring = transGeom.GetGeometryRef(0);
+            int count = ring.GetPointCount();
+            string test = "";
+            if (count > 0)
+            { 
+                for (int i = 0; i < count; i++)
+                {
+                    polygonPointList.Add(new BasicGeoposition() { Latitude = ring.GetX(i), Longitude = ring.GetY(i) });
+                }
+            } else
+            {
+                test += geom.GetGeometryCount();
+                MessageBox.Show(test);
+            }
+            //test += count;
+            return polygonPointList;
+        }
+
+        public MapPolygon BuildPolygon(List<BasicGeoposition> polygonPointList)
+        {
             MapPolygon polygon = new MapPolygon
             {
-                ZIndex = 1,
-                FillColor = Colors.Red,
-                StrokeColor = Colors.Blue,
-                StrokeThickness = 3,
-                StrokeDashed = false,
+                //Path = new Geopath(polygonPointList),
+                StrokeColor = Colors.Black,
+                StrokeThickness = 1,
+                StrokeDashed = true,
             };
-            Feature feature = null;
-            do
-            {
-                feature = Layer.GetNextFeature();
-                if (feature != null)
-                {
-                    Geometry geom = feature.GetGeometryRef();
-                    SpatialReference sourceRef = geom.GetSpatialReference();
-                    SpatialReference to_crs = new SpatialReference(null);
-                    to_crs.ImportFromEPSG(4326);
 
-                    if (sourceRef != to_crs)
-                    {
-                        CoordinateTransformation ct = new CoordinateTransformation(sourceRef, to_crs, new CoordinateTransformationOptions());
-
-                        if (geom.Transform(ct) != 0)
-                        {
-                            throw new NotSupportedException("projection failed");
-                        }
-
-                        geom.Transform(ct);
-                    }
-                    Geometry ring = geom.GetGeometryRef(0);
-                    int count = ring.GetPointCount();
-                    
-                    if (count > 0)
-                        for (int i = 0; i < count; i++)
-                        {
-                            polygonPointList.Add(new BasicGeoposition() { Latitude = ring.GetX(i), Longitude = ring.GetY(i) });
-                        }
-                    polygon.Path = new Geopath(polygonPointList);
-                }
-            } while (feature != null);
+            polygon.Path = new Geopath(polygonPointList);
             return polygon;
         }
 
-        //public void ZoomToExtent()
-        //{
-        //    Envelope envelope = new Envelope();
-        //    Layer.GetExtent(envelope, 0);
-        //    Geometry ringEnvelope = new Geometry(wkbGeometryType.wkbLinearRing);
-        //    ringEnvelope.AddPoint_2D(envelope.MinX, envelope.MinY);
-        //    ringEnvelope.AddPoint_2D(envelope.MaxX, envelope.MinY);
-        //    ringEnvelope.AddPoint_2D(envelope.MaxX, envelope.MaxY);
-        //    ringEnvelope.AddPoint_2D(envelope.MinX, envelope.MaxY);
-        //    ringEnvelope.AddPoint_2D(envelope.MinX, envelope.MinY);
+        public Geopoint ZoomToExtent()
+        {
+            Envelope envelope = new Envelope();
+            Layer.GetExtent(envelope, 0);
+            Geometry ringEnvelope = new Geometry(wkbGeometryType.wkbLinearRing);
+            ringEnvelope.AddPoint_2D(envelope.MinX, envelope.MinY);
+            ringEnvelope.AddPoint_2D(envelope.MaxX, envelope.MinY);
+            ringEnvelope.AddPoint_2D(envelope.MaxX, envelope.MaxY);
+            ringEnvelope.AddPoint_2D(envelope.MinX, envelope.MaxY);
+            ringEnvelope.AddPoint_2D(envelope.MinX, envelope.MinY);
 
-        //    Geometry polyEnvelope = new Geometry(wkbGeometryType.wkbPolygon);
-        //    var centeroid = polyEnvelope.Centroid();
-        //}
+            Geometry polyEnvelope = new Geometry(wkbGeometryType.wkbPolygon);
+            polyEnvelope.AddGeometry(ringEnvelope);
+            Geometry polyEnvelopeTrans = Transform(polyEnvelope);
+            BasicGeoposition newPosition = new BasicGeoposition() { Latitude = polyEnvelopeTrans.Centroid().GetX(0), Longitude = polyEnvelopeTrans.Centroid().GetY(0) };
+            Geopoint newCenter = new Geopoint(newPosition);
+            return newCenter;
+        }
 
+        public Geometry Transform(Geometry geom)
+        {
+            SpatialReference sourceRef = Layer.GetSpatialRef();
+            //Manuelle Eingabe ermöglichen
+            SpatialReference to_crs = new SpatialReference(null);
+            to_crs.ImportFromEPSG(4326);
+            if (sourceRef != to_crs)
+            {
+                CoordinateTransformation ct = new CoordinateTransformation(sourceRef, to_crs, new CoordinateTransformationOptions());
 
+                if (geom.Transform(ct) != 0)
+                {
+                    throw new NotSupportedException("projection failed");
+                }
+                geom.Transform(ct);
+            }
+            return geom;
+        }
     }
 }
