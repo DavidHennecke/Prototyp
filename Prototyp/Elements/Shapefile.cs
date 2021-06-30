@@ -3,8 +3,6 @@ using OSGeo.OGR;
 using OSGeo.OSR;
 using System;
 using System.Collections.Generic;
-using System.IO;
-using System.Text;
 using System.Windows;
 using System.Windows.Controls;
 using Windows.Devices.Geolocation;
@@ -37,7 +35,7 @@ namespace Prototyp.Elements
             return Layer;
         }
 
-        public ListViewItem AddTreeViewChild(Layer Layer)
+        public ListViewItem AddTreeViewChild()
         {
             string layerName = Layer.GetName();
             ListViewItem newChild = new ListViewItem();

@@ -60,7 +60,7 @@ namespace Prototyp
             Shapefile shapefile = new Shapefile();
             shapefile.sFilename = sFilename;
             Layer Layer = shapefile.InitLayer(shapefile.sFilename);
-            ListViewItem newChild = shapefile.AddTreeViewChild(Layer);
+            ListViewItem newChild = shapefile.AddTreeViewChild();
             TableOfContentsLayer.Items.Add(newChild);
             var mapLayerElements = new List<MapElement>();
             long featureCount = Layer.GetFeatureCount(0);
@@ -110,12 +110,9 @@ namespace Prototyp
 
             if (firstLayer == 0)
             {
-
                 Geopoint newCenter = shapefile.ZoomToExtent(Layer);
                 map.TrySetViewAsync(newCenter, 10);
                 firstLayer += 1;
-
-
             }
 
         }
