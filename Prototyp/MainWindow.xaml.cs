@@ -63,14 +63,42 @@ namespace Prototyp
             TableOfContentsVector.Items.Add(newChild);
             var polygons = new List<MapElement>();
             long featureCount = Layer.GetFeatureCount(0);
-            for (int i = 0; i<featureCount;i++)
+            for (int i = 0; i < featureCount; i++)
             {
+                MapPolygon polygon = new MapPolygon();
                 Feature feature = Layer.GetFeature(i);
-                List<BasicGeoposition> polygonPointList = shapefile.InitPointList(feature);
-                if (polygonPointList.Count > 0)
+                Geometry geom = feature.GetGeometryRef();
+                Geometry transGeom = shapefile.Transform(geom);
+                Geometry ring = transGeom.GetGeometryRef(0);
+                var featureType = geom.GetGeometryType();
+                //string test = "";
+                //test += transGeom.GetGeometryCount();
+                //MessageBox.Show(test);
+
+
+                if (featureType == wkbGeometryType.wkbPolygon)
                 {
-                    MapPolygon polygon = shapefile.BuildPolygon(polygonPointList);
+                    polygon = shapefile.BuildPolygon(ring);
                     polygons.Add(polygon);
+                }
+
+                if (featureType == wkbGeometryType.wkbMultiPolygon)
+                {
+                    int pathCount = transGeom.GetGeometryCount();
+
+
+                    for (int pc = 0; pc < pathCount; pc++)
+                    {
+                        Geometry multi = transGeom.GetGeometryRef(pc);
+
+                        for (int k = 0; k < multi.GetGeometryCount(); ++k)
+                        {
+                            Geometry multiRing = multi.GetGeometryRef(k);
+                            polygon = shapefile.BuildPolygon(multiRing);
+                            polygons.Add(polygon);
+                        }
+
+                    }
                 }
             }
 
@@ -81,18 +109,18 @@ namespace Prototyp
             };
             map.Layers.Add(polygonsLayer);
 
-            if (firstLayer == 0) 
+            if (firstLayer == 0)
             {
-                
+
                 Geopoint newCenter = shapefile.ZoomToExtent();
                 map.TrySetViewAsync(newCenter, 10);
                 firstLayer += 1;
 
-                
+
             }
-            
+
         }
 
     }
-    }
+}
 

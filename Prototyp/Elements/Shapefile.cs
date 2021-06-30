@@ -56,42 +56,32 @@ namespace Prototyp.Elements
             return newChild;
         }
 
-        public List<BasicGeoposition> InitPointList (Feature feature)
-        {
-            List<BasicGeoposition> polygonPointList = new List<BasicGeoposition>();
-            Geometry geom = feature.GetGeometryRef();
-            Geometry transGeom = Transform(geom);
-            Geometry ring = transGeom.GetGeometryRef(0);
-            int count = ring.GetPointCount();
-            string test = "";
-            if (count > 0)
-            { 
-                for (int i = 0; i < count; i++)
-                {
-                    polygonPointList.Add(new BasicGeoposition() { Latitude = ring.GetX(i), Longitude = ring.GetY(i) });
-                }
-            } else
-            {
-                test += geom.GetGeometryCount();
-                MessageBox.Show(test);
-            }
-            //test += count;
-            return polygonPointList;
-        }
-
-        public MapPolygon BuildPolygon(List<BasicGeoposition> polygonPointList)
+        public MapPolygon BuildPolygon(Geometry ring)
         {
             MapPolygon polygon = new MapPolygon
             {
-                //Path = new Geopath(polygonPointList),
                 StrokeColor = Colors.Black,
                 StrokeThickness = 1,
                 StrokeDashed = true,
             };
+            List<BasicGeoposition> polygonPointList = new List<BasicGeoposition>();
 
-            polygon.Path = new Geopath(polygonPointList);
+            int count = ring.GetPointCount();
+            if (count > 0)
+            {
+                for (int i = 0; i < count; i++)
+                {
+                    polygonPointList.Add(new BasicGeoposition() { Latitude = ring.GetX(i), Longitude = ring.GetY(i) });
+
+                }
+                polygon.Path = new Geopath(polygonPointList);
+            }
+
+
+
             return polygon;
         }
+
 
         public Geopoint ZoomToExtent()
         {
