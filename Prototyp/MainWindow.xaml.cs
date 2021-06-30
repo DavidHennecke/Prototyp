@@ -20,12 +20,13 @@ namespace Prototyp
 
     public partial class MainWindow : Window
     {
+        public static MainWindow AppWindow;
         public MainWindow()
         {
 
             InitializeComponent();
             GdalBase.ConfigureAll();
-
+            AppWindow = this;
         }
 
         public int firstLayer = 0;
@@ -59,9 +60,9 @@ namespace Prototyp
             Shapefile shapefile = new Shapefile();
             shapefile.sFilename = sFilename;
             Layer Layer = shapefile.InitLayer(shapefile.sFilename);
-            TreeViewItem newChild = shapefile.AddTreeViewChild(Layer);
-            TableOfContentsVector.Items.Add(newChild);
-            var polygons = new List<MapElement>();
+            ListViewItem newChild = shapefile.AddTreeViewChild(Layer);
+            TableOfContentsLayer.Items.Add(newChild);
+            var mapLayerElements = new List<MapElement>();
             long featureCount = Layer.GetFeatureCount(0);
             for (int i = 0; i < featureCount; i++)
             {
@@ -71,15 +72,13 @@ namespace Prototyp
                 Geometry transGeom = shapefile.Transform(geom);
                 Geometry ring = transGeom.GetGeometryRef(0);
                 var featureType = geom.GetGeometryType();
-                //string test = "";
-                //test += transGeom.GetGeometryCount();
-                //MessageBox.Show(test);
+
 
 
                 if (featureType == wkbGeometryType.wkbPolygon)
                 {
                     polygon = shapefile.BuildPolygon(ring);
-                    polygons.Add(polygon);
+                    mapLayerElements.Add(polygon);
                 }
 
                 if (featureType == wkbGeometryType.wkbMultiPolygon)
@@ -95,24 +94,24 @@ namespace Prototyp
                         {
                             Geometry multiRing = multi.GetGeometryRef(k);
                             polygon = shapefile.BuildPolygon(multiRing);
-                            polygons.Add(polygon);
+                            mapLayerElements.Add(polygon);
                         }
 
                     }
                 }
             }
 
-            var polygonsLayer = new MapElementsLayer
+            var mapLayer = new MapElementsLayer
             {
                 ZIndex = 1,
-                MapElements = polygons
+                MapElements = mapLayerElements
             };
-            map.Layers.Add(polygonsLayer);
+            map.Layers.Add(mapLayer);
 
             if (firstLayer == 0)
             {
 
-                Geopoint newCenter = shapefile.ZoomToExtent();
+                Geopoint newCenter = shapefile.ZoomToExtent(Layer);
                 map.TrySetViewAsync(newCenter, 10);
                 firstLayer += 1;
 
@@ -120,6 +119,8 @@ namespace Prototyp
             }
 
         }
+
+
 
     }
 }

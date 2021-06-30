@@ -37,14 +37,16 @@ namespace Prototyp.Elements
             return Layer;
         }
 
-        public TreeViewItem AddTreeViewChild(Layer Layer)
+        public ListViewItem AddTreeViewChild(Layer Layer)
         {
             string layerName = Layer.GetName();
-            TreeViewItem newChild = new TreeViewItem();
+            ListViewItem newChild = new ListViewItem();
             ContextMenu vectorContextMenu = new ContextMenu();
 
             MenuItem ZoomToLayer = new MenuItem();
             ZoomToLayer.Header = "Zoom to Layer";
+            //ZoomToLayer.Click += new RoutedEventHandler(Prototyp.MainWindow.AppWindow.ZoomToLayer_Click);
+            ZoomToLayer.Click += new RoutedEventHandler(ZoomToLayer_Click);
             MenuItem Remove = new MenuItem();
             Remove.Header = "Remove";
 
@@ -52,7 +54,7 @@ namespace Prototyp.Elements
             vectorContextMenu.Items.Add(Remove);
 
             newChild.ContextMenu = vectorContextMenu;
-            newChild.Header = layerName;
+            newChild.Content = layerName;
             return newChild;
         }
 
@@ -76,14 +78,16 @@ namespace Prototyp.Elements
                 }
                 polygon.Path = new Geopath(polygonPointList);
             }
-
-
-
             return polygon;
         }
 
+        public void ZoomToLayer_Click(Object sender, RoutedEventArgs e)
+        {
+            Geopoint newCenter = ZoomToExtent(Layer);
+            Prototyp.MainWindow.AppWindow.map.TrySetViewAsync(newCenter, 10);
+        }
 
-        public Geopoint ZoomToExtent()
+        public Geopoint ZoomToExtent(Layer Layer)
         {
             Envelope envelope = new Envelope();
             Layer.GetExtent(envelope, 0);
@@ -105,6 +109,8 @@ namespace Prototyp.Elements
         public Geometry Transform(Geometry geom)
         {
             SpatialReference sourceRef = Layer.GetSpatialRef();
+
+
             //Manuelle Eingabe ermöglichen
             SpatialReference to_crs = new SpatialReference(null);
             to_crs.ImportFromEPSG(4326);

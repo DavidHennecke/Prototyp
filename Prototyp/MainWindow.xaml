@@ -135,11 +135,15 @@
                         <RowDefinition Height="*"/>
                     </Grid.RowDefinitions>
                     <TreeView Name="TableOfContents" Grid.Row="1" x:FieldModifier="public">
-                        <TreeViewItem x:Name="TableOfContentsVector" x:FieldModifier="public"  Header="Vector" IsSelected="True" IsExpanded="True">
-
+                        <TreeViewItem  Header="Layer" IsSelected="True" IsExpanded="True">
+                            <ListView x:Name="TableOfContentsLayer">
+                               
+                            </ListView>
                         </TreeViewItem>
-                        <TreeViewItem x:Name="TableOfContentsRaster" Header="Raster" IsExpanded="True">
-                            
+                        <TreeViewItem Header="Tables" IsExpanded="True">
+                            <ListView x:Name="TableOfContentsTables">
+
+                            </ListView>
                         </TreeViewItem>
 
                     </TreeView>
@@ -206,7 +210,7 @@
                     </TabControl.Resources>
                     <TabItem Header="Map" Foreground="White">
                         <Grid x:Name="MapGrid" Background="#FF212225">
-                            <controls:MapControl x:Name="map" ZoomInteractionMode="GestureAndControl" TiltInteractionMode="GestureAndControl" MapServiceToken="UwIjGArZvX7q4ca7JK2h~Qst4kuikP9fAc5Y3eGQ44A~AkLKQFzFuGbGHSM9zNxEof2-ceS8ElY8okoPviM9wQu2RQkHXQIyUzJ3LqKnEXNZ" />
+                            <controls:MapControl x:Name="map" x:FieldModifier="public" ZoomInteractionMode="GestureAndControl" TiltInteractionMode="GestureAndControl" MapServiceToken="UwIjGArZvX7q4ca7JK2h~Qst4kuikP9fAc5Y3eGQ44A~AkLKQFzFuGbGHSM9zNxEof2-ceS8ElY8okoPviM9wQu2RQkHXQIyUzJ3LqKnEXNZ" />
                         </Grid>
                     </TabItem>
                     <TabItem Header="Table" Foreground="White">
