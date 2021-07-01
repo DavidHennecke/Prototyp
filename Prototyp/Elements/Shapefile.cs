@@ -40,10 +40,10 @@ namespace Prototyp.Elements
             string layerName = Layer.GetName();
             ListViewItem newChild = new ListViewItem();
             ContextMenu vectorContextMenu = new ContextMenu();
+            CheckBox checkBox = new CheckBox();
 
             MenuItem ZoomToLayer = new MenuItem();
             ZoomToLayer.Header = "Zoom to Layer";
-            //ZoomToLayer.Click += new RoutedEventHandler(Prototyp.MainWindow.AppWindow.ZoomToLayer_Click);
             ZoomToLayer.Click += new RoutedEventHandler(ZoomToLayer_Click);
             MenuItem Remove = new MenuItem();
             Remove.Header = "Remove";

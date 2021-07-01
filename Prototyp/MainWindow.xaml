@@ -4,6 +4,7 @@
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:Prototyp"
+        xmlns:uc="clr-namespace:Prototyp.UserControls"
        
         xmlns:controls="clr-namespace:Microsoft.Toolkit.Wpf.UI.Controls;assembly=Microsoft.Toolkit.Wpf.UI.Controls"
         
@@ -137,7 +138,7 @@
                     <TreeView Name="TableOfContents" Grid.Row="1" x:FieldModifier="public">
                         <TreeViewItem  Header="Layer" IsSelected="True" IsExpanded="True">
                             <ListView x:Name="TableOfContentsLayer">
-                               
+                                
                             </ListView>
                         </TreeViewItem>
                         <TreeViewItem Header="Tables" IsExpanded="True">
