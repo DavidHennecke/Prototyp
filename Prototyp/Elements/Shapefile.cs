@@ -1,6 +1,7 @@
 ﻿using OSGeo.GDAL;
 using OSGeo.OGR;
 using OSGeo.OSR;
+using Prototyp.Custom_Controls;
 using System;
 using System.Collections.Generic;
 using System.Windows;
@@ -15,8 +16,13 @@ namespace Prototyp.Elements
     {
         public string sFilename;
         private Layer Layer;
+        private VectorListViewItem newChild = new VectorListViewItem();
+        private MapElementsLayer mapLayer = new MapElementsLayer
+        {
+            ZIndex = 1,
+        };
 
-        public Layer InitLayer(string sFilename)
+        public void InitLayer(string sFilename)
         {
             Gdal.SetConfigOption("GDAL_FILENAME_IS_UTF8", "NO");
             Gdal.SetConfigOption("SHAPE_ENCODING", "");
@@ -32,31 +38,72 @@ namespace Prototyp.Elements
             {
                 MessageBox.Show("Get the {0}th layer failed! n", "0");
             }
-            return Layer;
+            AddTreeViewChild();
+            AddLayerToMap();
         }
 
-        public ListViewItem AddTreeViewChild()
+        private void AddTreeViewChild()
         {
             string layerName = Layer.GetName();
-            ListViewItem newChild = new ListViewItem();
             ContextMenu vectorContextMenu = new ContextMenu();
-            CheckBox checkBox = new CheckBox();
-
+            newChild.VectorListViewItemCheckBox.Unchecked += new RoutedEventHandler(DisableLayer);
+            newChild.VectorListViewItemCheckBox.Checked += new RoutedEventHandler(EnableLayer);
             MenuItem ZoomToLayer = new MenuItem();
             ZoomToLayer.Header = "Zoom to Layer";
             ZoomToLayer.Click += new RoutedEventHandler(ZoomToLayer_Click);
+            vectorContextMenu.Items.Add(ZoomToLayer);
             MenuItem Remove = new MenuItem();
             Remove.Header = "Remove";
-
-            vectorContextMenu.Items.Add(ZoomToLayer);
+            Remove.Click += new RoutedEventHandler(RemoveLayer);
             vectorContextMenu.Items.Add(Remove);
-
+            MenuItem Properties = new MenuItem();
+            Properties.Header = "Properties";
+            vectorContextMenu.Items.Add(Properties);
             newChild.ContextMenu = vectorContextMenu;
-            newChild.Content = layerName;
-            return newChild;
+            newChild.VectorListViewItemText.Text = layerName;
+            newChild.VectorListViewItemColorPicker.Background = System.Windows.Media.Brushes.Red;
+            Prototyp.MainWindow.AppWindow.TableOfContentsLayer.Items.Add(newChild);
         }
 
-        public MapPolygon BuildPolygon(Geometry ring)
+
+        private void AddLayerToMap()
+        {
+            var mapLayerElements = new List<MapElement>();
+            long featureCount = Layer.GetFeatureCount(0);
+            for (int i = 0; i < featureCount; i++)
+            {
+                MapPolygon polygon = new MapPolygon();
+                Feature feature = Layer.GetFeature(i);
+                OSGeo.OGR.Geometry geom = feature.GetGeometryRef();
+                OSGeo.OGR.Geometry transGeom = Transform(geom);
+                OSGeo.OGR.Geometry ring = transGeom.GetGeometryRef(0);
+                var featureType = geom.GetGeometryType();
+                if (featureType == wkbGeometryType.wkbPolygon)
+                {
+                    polygon = BuildPolygon(ring);
+                    mapLayerElements.Add(polygon);
+                }
+                if (featureType == wkbGeometryType.wkbMultiPolygon)
+                {
+                    int pathCount = transGeom.GetGeometryCount();
+                    for (int pc = 0; pc < pathCount; pc++)
+                    {
+                        Geometry multi = transGeom.GetGeometryRef(pc);
+
+                        for (int k = 0; k < multi.GetGeometryCount(); ++k)
+                        {
+                            Geometry multiRing = multi.GetGeometryRef(k);
+                            polygon = BuildPolygon(multiRing);
+                            mapLayerElements.Add(polygon);
+                        }
+                    }
+                }
+            }
+            mapLayer.MapElements = mapLayerElements;
+            Prototyp.MainWindow.AppWindow.map.Layers.Add(mapLayer);
+        }
+
+        private MapPolygon BuildPolygon(Geometry ring)
         {
             MapPolygon polygon = new MapPolygon
             {
@@ -79,13 +126,29 @@ namespace Prototyp.Elements
             return polygon;
         }
 
+        private void RemoveLayer(Object sender, RoutedEventArgs e)
+        {
+            Prototyp.MainWindow.AppWindow.map.Layers.Remove(mapLayer);
+            Prototyp.MainWindow.AppWindow.TableOfContentsLayer.Items.Remove(newChild);
+        }
+
+        private void DisableLayer(Object sender, RoutedEventArgs e)
+        {
+            Prototyp.MainWindow.AppWindow.map.Layers.Remove(mapLayer);
+        }
+
+        private void EnableLayer(Object sender, RoutedEventArgs e)
+        {
+            Prototyp.MainWindow.AppWindow.map.Layers.Add(mapLayer);
+        }
+
         public void ZoomToLayer_Click(Object sender, RoutedEventArgs e)
         {
-            Geopoint newCenter = ZoomToExtent(Layer);
+            Geopoint newCenter = ZoomToExtent();
             Prototyp.MainWindow.AppWindow.map.TrySetViewAsync(newCenter, 10);
         }
 
-        public Geopoint ZoomToExtent(Layer Layer)
+        public Geopoint ZoomToExtent()
         {
             Envelope envelope = new Envelope();
             Layer.GetExtent(envelope, 0);

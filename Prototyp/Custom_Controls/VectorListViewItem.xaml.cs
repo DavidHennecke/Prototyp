@@ -22,5 +22,6 @@ namespace Prototyp.Custom_Controls
         {
             InitializeComponent();
         }
+
     }
 }

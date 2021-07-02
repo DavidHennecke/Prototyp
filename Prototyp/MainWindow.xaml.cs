@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Windows;
 using Microsoft.Win32;
+using System.Windows.Media;
 using Windows.Devices.Geolocation;
 using Windows.UI;
 using Windows.UI.Xaml.Controls.Maps;
@@ -14,6 +15,8 @@ using System.Windows.Controls;
 using System.IO;
 using System.Threading.Tasks;
 using Prototyp.Elements;
+using Prototyp.Custom_Controls;
+using Geometry = OSGeo.OGR.Geometry;
 
 namespace Prototyp
 {
@@ -41,7 +44,6 @@ namespace Prototyp
 
             if (result == true)
             {
-
                 foreach (string sFilename in dlg.FileNames)
                 {
                     string ext = Path.GetExtension(sFilename);
@@ -50,7 +52,6 @@ namespace Prototyp
                     {
                         AddShapefile(sFilename);
                     }
-
                 }
             }
         }
@@ -59,62 +60,13 @@ namespace Prototyp
         {
             Shapefile shapefile = new Shapefile();
             shapefile.sFilename = sFilename;
-            Layer Layer = shapefile.InitLayer(shapefile.sFilename);
-            ListViewItem newChild = shapefile.AddTreeViewChild();
-            TableOfContentsLayer.Items.Add(newChild);
-            var mapLayerElements = new List<MapElement>();
-            long featureCount = Layer.GetFeatureCount(0);
-            for (int i = 0; i < featureCount; i++)
-            {
-                MapPolygon polygon = new MapPolygon();
-                Feature feature = Layer.GetFeature(i);
-                Geometry geom = feature.GetGeometryRef();
-                Geometry transGeom = shapefile.Transform(geom);
-                Geometry ring = transGeom.GetGeometryRef(0);
-                var featureType = geom.GetGeometryType();
-
-
-
-                if (featureType == wkbGeometryType.wkbPolygon)
-                {
-                    polygon = shapefile.BuildPolygon(ring);
-                    mapLayerElements.Add(polygon);
-                }
-
-                if (featureType == wkbGeometryType.wkbMultiPolygon)
-                {
-                    int pathCount = transGeom.GetGeometryCount();
-
-
-                    for (int pc = 0; pc < pathCount; pc++)
-                    {
-                        Geometry multi = transGeom.GetGeometryRef(pc);
-
-                        for (int k = 0; k < multi.GetGeometryCount(); ++k)
-                        {
-                            Geometry multiRing = multi.GetGeometryRef(k);
-                            polygon = shapefile.BuildPolygon(multiRing);
-                            mapLayerElements.Add(polygon);
-                        }
-
-                    }
-                }
-            }
-
-            var mapLayer = new MapElementsLayer
-            {
-                ZIndex = 1,
-                MapElements = mapLayerElements
-            };
-            map.Layers.Add(mapLayer);
-
+            shapefile.InitLayer(shapefile.sFilename);
             if (firstLayer == 0)
             {
-                Geopoint newCenter = shapefile.ZoomToExtent(Layer);
+                Geopoint newCenter = shapefile.ZoomToExtent();
                 map.TrySetViewAsync(newCenter, 10);
                 firstLayer += 1;
             }
-
         }
 
 
