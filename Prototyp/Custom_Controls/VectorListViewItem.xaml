@@ -7,39 +7,15 @@
              xmlns:local="clr-namespace:Prototyp.Custom_Controls" 
              Focusable="True"
              mc:Ignorable="d" Height="Auto" Width="Auto" Padding="0">
-    <UserControl.Resources>
-        <Style TargetType="{x:Type ListViewItem}">
-            <Setter Property="Background" Value="Transparent"/>
-            <Setter Property="Template">
-                <Setter.Value>
-                    <ControlTemplate TargetType="{x:Type ListViewItem}">
-                        <Border Background="{TemplateBinding Background}" BorderBrush="Transparent" BorderThickness="1">
-                            <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center"/>
-                        </Border>
-                    </ControlTemplate>
-                </Setter.Value>
-            </Setter>
-        </Style>
-    </UserControl.Resources>
-    <ListViewItem Background="Transparent" HorizontalAlignment="Left" Height="Auto" Width="Auto" Padding="0" Focusable="False">
-        <TreeView Padding="0" Focusable="False">
-            <TreeViewItem x:Name="LayerItem" Padding="0" Background="Transparent" Focusable="False">
-                <TreeViewItem.Header>
-                    <DockPanel Height="Auto" Width="Auto" VerticalAlignment="Center" Background="Transparent" Focusable="False">
-                        <Grid Focusable="False">
-                            <Grid.ColumnDefinitions>
-                                <ColumnDefinition Width="30"/>
-                                <ColumnDefinition Width="Auto"/>
-                                <ColumnDefinition Width="32"/>
-                            </Grid.ColumnDefinitions>
-                            <CheckBox Background="Transparent" x:Name="VectorListViewItemCheckBox" Grid.Column="0" IsChecked="True" Margin="5" HorizontalAlignment="left" VerticalAlignment="Center" Focusable="False"/>
-                            <TextBlock Background="Transparent" x:Name="VectorListViewItemText" Grid.Column="1" Width="Auto" Text="" VerticalAlignment="Center" HorizontalAlignment="Left" Margin="5 0 5 0" Focusable="False"/>
-                        </Grid>
-                    </DockPanel>
-                </TreeViewItem.Header>
-                <Button x:Name="VectorListViewItemColorPicker" Margin="0,0,0,1" Focusable="False"/>
-                </TreeViewItem>
-        </TreeView>
-    </ListViewItem>
+    <Grid Focusable="True">
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="30"/>
+            <ColumnDefinition Width="30"/>
+            <ColumnDefinition Width="Auto"/>
+        </Grid.ColumnDefinitions>
+        <CheckBox Background="Transparent" x:Name="VectorListViewItemCheckBox" Grid.Column="0" IsChecked="True" Margin="5" HorizontalAlignment="left" VerticalAlignment="Center"/>
+        <Button Grid.Column="1" VerticalAlignment="Center" x:Name="VectorListViewItemColorPicker" Margin="10,0,0,0" Height="20" Width="20"/>
+        <TextBlock Background="Transparent" x:Name="VectorListViewItemText" Grid.Column="2" Width="Auto" Text="" VerticalAlignment="Center" HorizontalAlignment="Left" Margin="10 0 5 0"/>
+    </Grid>
 </UserControl>
 
