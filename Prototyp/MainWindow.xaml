@@ -8,7 +8,8 @@
        
         xmlns:controls="clr-namespace:Microsoft.Toolkit.Wpf.UI.Controls;assembly=Microsoft.Toolkit.Wpf.UI.Controls"
         
-        xmlns:ui="http://schemas.modernwpf.com/2019" xmlns:xaml1="clr-namespace:Windows.UI.Xaml.Controls.Maps;assembly=Windows.Foundation.UniversalApiContract"
+        xmlns:ui="http://schemas.modernwpf.com/2019" 
+        xmlns:xaml1="clr-namespace:Windows.UI.Xaml.Controls.Maps;assembly=Windows.Foundation.UniversalApiContract"
         ui:ThemeManager.RequestedTheme="Dark"
         ui:WindowHelper.UseModernWindowStyle="True"
         ui:TitleBar.ExtendViewIntoTitleBar="True"
@@ -152,49 +153,45 @@
                     <Border Grid.Row="1" BorderThickness="0 1 0 0" BorderBrush="#FF111111" Margin="0 0 0 0" Padding="0">
 
                     </Border>
+                    
                     <DockPanel Grid.Row="2">
 
-                        <TextBlock DockPanel.Dock="Top" Text="Layer" Margin="15 5 0 0" FontWeight="Bold" FontSize="16"/>
-                        <Border DockPanel.Dock="Top" BorderThickness="0 0 0 1" BorderBrush="#66CDAA" Margin="15 0 10 0" Width="50" HorizontalAlignment="Left"/>
+                        <TextBlock DockPanel.Dock="Top" Text="Layer" Margin="15 5 0 10" FontWeight="Bold" FontSize="16"/>
+                        <!--<Border DockPanel.Dock="Top" BorderThickness="0 0 0 1" BorderBrush="#66CDAA" Margin="15 0 10 0" Width="50" HorizontalAlignment="Left"/>-->
 
-                        <ListView  DockPanel.Dock="Top" Grid.Row="1" x:Name="TableOfContentsLayer" AllowDrop="True" MinHeight="30" Margin="0 0 0 10">
+                        <ListView SelectionMode="Single" Focusable="True" DockPanel.Dock="Top" Grid.Row="1" x:Name="TableOfContentsLayer" AllowDrop="True" MinHeight="30" Margin="0 0 0 10">
                             <ListView.Resources>
                                 <Style TargetType="{x:Type ListViewItem}">
                                     <Setter Property="Background" Value="Transparent"/>
+                                    <Setter Property="HorizontalAlignment" Value="Left"/>
                                     <Setter Property="Template">
                                         <Setter.Value>
                                             <ControlTemplate TargetType="{x:Type ListViewItem}">
-                                                <Border BorderBrush="Transparent" BorderThickness="3 0 0 0">
+                                                <Border x:Name="ContentAreaLayer" BorderBrush="Transparent" BorderThickness="4 0 0 0">
                                                     <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center"/>
                                                 </Border>
+                                                <ControlTemplate.Triggers>
+                                                    <Trigger Property="IsMouseOver" Value="True">
+                                                        <Setter TargetName="ContentAreaLayer" Property="BorderBrush" Value="#66CDAA" />
+                                                    </Trigger>
+                                                </ControlTemplate.Triggers>
                                             </ControlTemplate>
                                         </Setter.Value>
                                     </Setter>
-                                    <Style.Triggers>
-                                        <Trigger Property="IsMouseOver" Value="True">
-                                            <Setter Property="Background" Value="Transparent"/>
-                                            <Setter Property="BorderBrush" Value="#66CDAA"/>
-                                        </Trigger>
-                                    </Style.Triggers>
                                 </Style>
                                 <Style TargetType="{x:Type ListView}">
                                     <Setter Property="Background" Value="Transparent"/>
                                     <Setter Property="Foreground" Value="White"/>
                                     <Setter Property="BorderBrush" Value="Transparent"/>
-                                    <Style.Triggers>
-                                        <Trigger Property="IsMouseOver" Value="True">
-                                            <Setter Property="Background" Value="Transparent"/>
-                                        </Trigger>
-                                    </Style.Triggers>
                                 </Style>
                             </ListView.Resources>
                         </ListView>
                     </DockPanel>
 
                     <DockPanel Grid.Row="3">
-
-                        <TextBlock DockPanel.Dock="Top" Text="Table" Margin="15 5 0 0" FontWeight="Bold" FontSize="16"/>
-                        <Border DockPanel.Dock="Top" BorderThickness="0 0 0 1" BorderBrush="#66CDAA" Margin="15 0 10 0" Width="50" HorizontalAlignment="Left"/>
+                        <Border DockPanel.Dock="Top" BorderThickness="0 0 0 1" BorderBrush="#FF111111" Margin="5 0 5 0"  HorizontalAlignment="Stretch"/>
+                        <TextBlock DockPanel.Dock="Top" Text="Table" Margin="15 5 0 10" FontWeight="Bold" FontSize="16"/>
+                        <!--<Border DockPanel.Dock="Top" BorderThickness="0 0 0 1" BorderBrush="#66CDAA" Margin="15 0 10 0" Width="50" HorizontalAlignment="Left"/>-->
 
 
                         <ListView DockPanel.Dock="Top" Grid.Row="1" x:Name="TableOfContentsTable" AllowDrop="True" MinHeight="30"/>

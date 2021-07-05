@@ -17,10 +17,14 @@ namespace Prototyp.Elements
         public string sFilename;
         private Layer Layer;
         private VectorListViewItem newChild = new VectorListViewItem();
-        private MapElementsLayer mapLayer = new MapElementsLayer
-        {
-            ZIndex = 1,
-        };
+        private MapElementsLayer mapLayer = new MapElementsLayer { };
+        private Color layerColor = new Color();
+        private Random rnd = new Random();
+        private int layerOrderNr;
+        private int layerOrderCount;
+        private int layerOrderZValue;
+
+
 
         public void InitLayer(string sFilename)
         {
@@ -61,8 +65,16 @@ namespace Prototyp.Elements
             vectorContextMenu.Items.Add(Properties);
             newChild.ContextMenu = vectorContextMenu;
             newChild.VectorListViewItemText.Text = layerName;
-            newChild.VectorListViewItemColorPicker.Background = System.Windows.Media.Brushes.Red;
+
+            layerColor = Color.FromArgb(255, (byte)rnd.Next(256), (byte)rnd.Next(256), (byte)rnd.Next(256));
+            var converter = new System.Windows.Media.BrushConverter();
+            var brush = (System.Windows.Media.Brush)converter.ConvertFromString(layerColor.ToString());
+            newChild.VectorListViewItemColorPicker.Background = brush;
+            newChild.VectorListViewItemColorPicker.Click += new RoutedEventHandler(PickColor);
+
+
             Prototyp.MainWindow.AppWindow.TableOfContentsLayer.Items.Add(newChild);
+            ((System.Collections.Specialized.INotifyCollectionChanged)Prototyp.MainWindow.AppWindow.TableOfContentsLayer.Items).CollectionChanged += TableOfContentsLayer_CollectionChanged;
         }
 
 
@@ -100,6 +112,7 @@ namespace Prototyp.Elements
                 }
             }
             mapLayer.MapElements = mapLayerElements;
+            mapLayer.ZIndex = layerOrderZValue;
             Prototyp.MainWindow.AppWindow.map.Layers.Add(mapLayer);
         }
 
@@ -108,6 +121,7 @@ namespace Prototyp.Elements
             MapPolygon polygon = new MapPolygon
             {
                 StrokeColor = Colors.Black,
+                FillColor = layerColor,
                 StrokeThickness = 1,
                 StrokeDashed = true,
             };
@@ -124,6 +138,21 @@ namespace Prototyp.Elements
                 polygon.Path = new Geopath(polygonPointList);
             }
             return polygon;
+        }
+
+        private void TableOfContentsLayer_CollectionChanged(object sender, System.Collections.Specialized.NotifyCollectionChangedEventArgs e)
+        {
+            if (e.Action == System.Collections.Specialized.NotifyCollectionChangedAction.Add)
+            {
+                layerOrderCount = Prototyp.MainWindow.AppWindow.TableOfContentsLayer.Items.Count;
+                layerOrderNr = Prototyp.MainWindow.AppWindow.TableOfContentsLayer.Items.IndexOf(newChild);
+                layerOrderZValue = layerOrderCount + 1 - layerOrderNr;
+                mapLayer.ZIndex = layerOrderZValue;
+            }
+        }
+        private void PickColor(Object sender, RoutedEventArgs e)
+        {
+
         }
 
         private void RemoveLayer(Object sender, RoutedEventArgs e)

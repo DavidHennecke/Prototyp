@@ -3,8 +3,9 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+             xmlns:xctk="http://schemas.xceed.com/wpf/xaml/toolkit"
              xmlns:local="clr-namespace:Prototyp.Custom_Controls" 
-
+             Focusable="True"
              mc:Ignorable="d" Height="Auto" Width="Auto" Padding="0">
     <UserControl.Resources>
         <Style TargetType="{x:Type ListViewItem}">
@@ -18,42 +19,26 @@
                     </ControlTemplate>
                 </Setter.Value>
             </Setter>
-            <Style.Triggers>
-                <Trigger Property="IsMouseOver" Value="True">
-                    <Setter Property="Background" Value="Transparent"/>
-                </Trigger>
-            </Style.Triggers>
-        </Style>
-        <Style TargetType="{x:Type TreeViewItem}">
-            <Setter Property="Background" Value="Transparent"/>
-            <Setter Property="Foreground" Value="White"/>
-            <Style.Triggers>
-                <Trigger Property="IsMouseOver" Value="True">
-                    <Setter Property="Background" Value="Transparent"/>
-                </Trigger>
-            </Style.Triggers>
         </Style>
     </UserControl.Resources>
-    <ListViewItem Height="Auto" Width="Auto" Padding="0" Focusable="False">
+    <ListViewItem Background="Transparent" HorizontalAlignment="Left" Height="Auto" Width="Auto" Padding="0" Focusable="False">
         <TreeView Padding="0" Focusable="False">
-            <TreeViewItem Padding="0" Focusable="False">
+            <TreeViewItem x:Name="LayerItem" Padding="0" Background="Transparent" Focusable="False">
                 <TreeViewItem.Header>
-                    <DockPanel Height="Auto" Width="Auto" VerticalAlignment="Center">
-                        <Grid>
+                    <DockPanel Height="Auto" Width="Auto" VerticalAlignment="Center" Background="Transparent" Focusable="False">
+                        <Grid Focusable="False">
                             <Grid.ColumnDefinitions>
                                 <ColumnDefinition Width="30"/>
                                 <ColumnDefinition Width="Auto"/>
                                 <ColumnDefinition Width="32"/>
                             </Grid.ColumnDefinitions>
-                            <CheckBox x:Name="VectorListViewItemCheckBox" Grid.Column="0" IsChecked="True" Margin="5" HorizontalAlignment="left" VerticalAlignment="Center"/>
-                            <TextBlock x:Name="VectorListViewItemText" Grid.Column="1" Width="Auto" Text="" VerticalAlignment="Center" HorizontalAlignment="Left" Margin="5 0 5 0"/>
+                            <CheckBox Background="Transparent" x:Name="VectorListViewItemCheckBox" Grid.Column="0" IsChecked="True" Margin="5" HorizontalAlignment="left" VerticalAlignment="Center" Focusable="False"/>
+                            <TextBlock Background="Transparent" x:Name="VectorListViewItemText" Grid.Column="1" Width="Auto" Text="" VerticalAlignment="Center" HorizontalAlignment="Left" Margin="5 0 5 0" Focusable="False"/>
                         </Grid>
                     </DockPanel>
                 </TreeViewItem.Header>
-                <Button x:Name="VectorListViewItemColorPicker" Margin="0,0,0,1">
-                    
-                </Button>
-            </TreeViewItem>
+                <Button x:Name="VectorListViewItemColorPicker" Margin="0,0,0,1" Focusable="False"/>
+                </TreeViewItem>
         </TreeView>
     </ListViewItem>
 </UserControl>
