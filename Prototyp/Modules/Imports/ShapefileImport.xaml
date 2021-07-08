@@ -1,0 +1,40 @@
+﻿<UserControl x:Class="Prototyp.Modules.Imports.ShapefileImport"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+             xmlns:local="clr-namespace:Prototyp.Modules.Imports"
+             mc:Ignorable="d" 
+             d:DesignHeight="200" d:DesignWidth="150">
+    <Border x:Name="Module" BorderThickness="1" CornerRadius="10" BorderBrush="Black" Background="#FF212225">
+        <Grid>
+            <Grid.RowDefinitions>
+                <RowDefinition Height="25"/>
+                <RowDefinition Height="5"/>
+                <RowDefinition Height="20"/>
+                <RowDefinition Height="20"/>
+                <RowDefinition Height="20"/>
+                <RowDefinition Height="20"/>
+                <RowDefinition Height="*"/>
+            </Grid.RowDefinitions>
+            <Border x:Name="ModuleHead" Grid.Row="0" BorderThickness="0 0 0 1" BorderBrush="Black">
+                <Grid>
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="*"/>
+                        <ColumnDefinition Width="20"/>
+                    </Grid.ColumnDefinitions>
+                    <TextBlock Grid.Column="0" x:Name="ShapeImportFileName" Text="" FontSize="12" VerticalAlignment="Center" HorizontalAlignment="Left" Foreground="#FFECECEC" Margin="5"/>
+                    <Button x:Name="ModulSettingsButton" Grid.Column="1" Padding="0" Content="cog" Background="#FF212225" FontFamily="{StaticResource FontAwesomeSolid}" VerticalAlignment="Center" HorizontalAlignment="Center" DockPanel.Dock="Right" Width="20" Height="20" FontSize="15" Margin="3" Foreground="White"/>
+                </Grid>
+            </Border>
+            <Grid Grid.Row="2">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="*"/>
+                    <ColumnDefinition Width="20"/>
+                </Grid.ColumnDefinitions>
+                <TextBox Grid.Column="0" x:Name="ShapeImportFilePath"  Text="" FontSize="10" Background="LightGray" Foreground="Black" HorizontalAlignment="Left" VerticalAlignment="Center" Margin="2" Height="20" Width="120" BorderBrush="Transparent"/>
+                <Button Grid.Column="1" x:Name="OpenFileButton" Content="folder-open" Background="#FF212225" FontFamily="{StaticResource FontAwesomeRegular}" VerticalAlignment="Center" HorizontalAlignment="Right" DockPanel.Dock="Left" Width="21" Height="20" Padding="0" FontSize="18" Foreground="#FFD8A14E"/>
+            </Grid>
+        </Grid>
+    </Border>
+</UserControl>

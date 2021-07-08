@@ -159,7 +159,7 @@
                         <TextBlock DockPanel.Dock="Top" Text="Layer" Margin="15 5 0 10" FontWeight="Bold" FontSize="16"/>
                         <!--<Border DockPanel.Dock="Top" BorderThickness="0 0 0 1" BorderBrush="#66CDAA" Margin="15 0 10 0" Width="50" HorizontalAlignment="Left"/>-->
 
-                        <ListView DockPanel.Dock="Top" Grid.Row="1" x:Name="TableOfContentsLayer" AllowDrop="True" MinHeight="30" Margin="0 0 0 10" >
+                        <ListView DockPanel.Dock="Top" Grid.Row="1" x:Name="TableOfContentsLayer" AllowDrop="False" MinHeight="30" Margin="0 0 0 10" >
                            
                         </ListView>
                     </DockPanel>
@@ -203,7 +203,7 @@
                         </Style>
                     </TabControl.Resources>
                     <TabItem Header="Node Editor" Foreground="White">
-                        <Grid Background="#FF595959"/>
+                        <Canvas x:Name="NodeEditor" Height="Auto" Width="Auto" AllowDrop="True" Background="#FF595959" Drop="DropTargetEventNodeEditor" PreviewMouseMove="NodeEditor_PreviewMouseMove" PreviewMouseUp="NodeEditor_PreviewMouseUp"/>
                     </TabItem>
                 </TabControl>
 

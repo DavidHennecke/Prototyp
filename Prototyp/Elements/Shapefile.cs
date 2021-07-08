@@ -72,11 +72,26 @@ namespace Prototyp.Elements
             newChild.VectorListViewItemColorPicker.Background = brush;
             newChild.VectorListViewItemColorPicker.Click += new RoutedEventHandler(PickColor);
 
+            newChild.VectorListViewItemText.PreviewMouseLeftButtonDown += new System.Windows.Input.MouseButtonEventHandler((sender, e) => StartDragEvent(sender, e, newChild));
 
             Prototyp.MainWindow.AppWindow.TableOfContentsLayer.Items.Add(newChild);
             ((System.Collections.Specialized.INotifyCollectionChanged)Prototyp.MainWindow.AppWindow.TableOfContentsLayer.Items).CollectionChanged += TableOfContentsLayer_CollectionChanged;
         }
 
+        private void StartDragEvent(object sender, System.Windows.Input.MouseButtonEventArgs e, VectorListViewItem newChild)
+        {
+            string fileName = (string)sFilename;
+            string LayerName = (string)Layer.GetName();
+
+            DataObject dataObj = new DataObject();
+            dataObj.SetData("Filename", fileName);
+            dataObj.SetData("Layername", LayerName);
+
+            DragDrop.DoDragDrop(newChild, dataObj, DragDropEffects.Move);
+
+        }
+
+        
 
         private void AddLayerToMap()
         {
@@ -89,6 +104,8 @@ namespace Prototyp.Elements
                 OSGeo.OGR.Geometry geom = feature.GetGeometryRef();
                 OSGeo.OGR.Geometry transGeom = Transform(geom);
                 OSGeo.OGR.Geometry ring = transGeom.GetGeometryRef(0);
+                //transGeom.ExportToWkt(out var test);
+                //MessageBox.Show(test);
                 var featureType = geom.GetGeometryType();
                 if (featureType == wkbGeometryType.wkbPolygon)
                 {

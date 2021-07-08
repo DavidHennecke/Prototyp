@@ -17,6 +17,7 @@ using System.Threading.Tasks;
 using Prototyp.Elements;
 using Prototyp.Custom_Controls;
 using Geometry = OSGeo.OGR.Geometry;
+using Prototyp.Modules.Imports;
 
 namespace Prototyp
 {
@@ -56,6 +57,52 @@ namespace Prototyp
             }
         }
 
+
+
+        UIElement dragObject = null;
+        Point offset;
+
+        public void DropTargetEventNodeEditor(object sender, DragEventArgs e)
+        {
+            Canvas target = (Canvas)sender;
+            string fileName = (string)e.Data.GetData("Filename");
+            string LayerName = (string)e.Data.GetData("Layername");
+            ShapefileImport importModul = new ShapefileImport();
+            importModul.ShapeImportFileName.Text = LayerName;
+            importModul.ShapeImportFilePath.Text = fileName;
+            Canvas.SetTop(importModul, 20);
+            Canvas.SetLeft(importModul, 20);
+            importModul.ShapeImportFileName.PreviewMouseDown += new System.Windows.Input.MouseButtonEventHandler ((sender, e) => Module_PreviewMouseDown(sender, e, importModul));
+            target.Children.Add(importModul);
+
+        }
+
+        private void Module_PreviewMouseDown(object sender, System.Windows.Input.MouseButtonEventArgs e, ShapefileImport importModul)
+        {
+            this.dragObject = importModul as UIElement;
+            this.offset = e.GetPosition(this.NodeEditor);
+            this.offset.X -= Canvas.GetLeft(this.dragObject);
+            this.offset.Y -= Canvas.GetTop(this.dragObject);
+            this.NodeEditor.CaptureMouse();
+        }
+
+        private void NodeEditor_PreviewMouseMove(object sender, System.Windows.Input.MouseEventArgs e)
+        {
+            if (this.dragObject == null)
+                return;
+            var position = e.GetPosition(sender as IInputElement);
+            Canvas.SetLeft(this.dragObject, position.X - this.offset.X);
+            Canvas.SetTop(this.dragObject, position.Y - this.offset.Y);
+        }
+
+        private void NodeEditor_PreviewMouseUp(object sender, System.Windows.Input.MouseButtonEventArgs e)
+        {
+            this.dragObject = null;
+            this.NodeEditor.ReleaseMouseCapture();
+        }
+
+
+
         public void AddShapefile(string sFilename)
         {
             Shapefile shapefile = new Shapefile();
@@ -68,6 +115,7 @@ namespace Prototyp
                 firstLayer += 1;
             }
         }
+
 
     }
 }
