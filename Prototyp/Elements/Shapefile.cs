@@ -99,21 +99,23 @@ namespace Prototyp.Elements
             long featureCount = Layer.GetFeatureCount(0);
             for (int i = 0; i < featureCount; i++)
             {
-                MapPolygon polygon = new MapPolygon();
                 Feature feature = Layer.GetFeature(i);
                 OSGeo.OGR.Geometry geom = feature.GetGeometryRef();
                 OSGeo.OGR.Geometry transGeom = Transform(geom);
-                OSGeo.OGR.Geometry ring = transGeom.GetGeometryRef(0);
                 //transGeom.ExportToWkt(out var test);
                 //MessageBox.Show(test);
                 var featureType = geom.GetGeometryType();
                 if (featureType == wkbGeometryType.wkbPolygon)
                 {
+                    OSGeo.OGR.Geometry ring = transGeom.GetGeometryRef(0);
+                    MapPolygon polygon = new MapPolygon();
                     polygon = BuildPolygon(ring);
                     mapLayerElements.Add(polygon);
                 }
                 if (featureType == wkbGeometryType.wkbMultiPolygon)
                 {
+                    OSGeo.OGR.Geometry ring = transGeom.GetGeometryRef(0);
+                    MapPolygon polygon = new MapPolygon();
                     int pathCount = transGeom.GetGeometryCount();
                     for (int pc = 0; pc < pathCount; pc++)
                     {
@@ -126,6 +128,16 @@ namespace Prototyp.Elements
                             mapLayerElements.Add(polygon);
                         }
                     }
+                }
+                if (featureType == wkbGeometryType.wkbPoint)
+                {
+                    Geopoint pos = new Geopoint (new BasicGeoposition () { Latitude = transGeom.GetX(0), Longitude = transGeom.GetY(0) });
+                    MapIcon point = new MapIcon
+                    {
+                        Location = pos,
+                        //NormalizedAnchorPoint = new Windows.Foundation.Point(0.5, 1.0),
+                    };
+                    mapLayerElements.Add(point);
                 }
             }
             mapLayer.MapElements = mapLayerElements;

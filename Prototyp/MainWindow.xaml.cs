@@ -18,6 +18,7 @@ using Prototyp.Elements;
 using Prototyp.Custom_Controls;
 using Geometry = OSGeo.OGR.Geometry;
 using Prototyp.Modules.Imports;
+using Prototyp.Modules.Tools;
 
 namespace Prototyp
 {
@@ -57,10 +58,10 @@ namespace Prototyp
             }
         }
 
-
-
         UIElement dragObject = null;
         Point offset;
+        Point exNode;
+        Point inNode;
 
         public void DropTargetEventNodeEditor(object sender, DragEventArgs e)
         {
@@ -72,14 +73,42 @@ namespace Prototyp
             importModul.ShapeImportFilePath.Text = fileName;
             Canvas.SetTop(importModul, 20);
             Canvas.SetLeft(importModul, 20);
-            importModul.ShapeImportFileName.PreviewMouseDown += new System.Windows.Input.MouseButtonEventHandler ((sender, e) => Module_PreviewMouseDown(sender, e, importModul));
+            importModul.ShapeImportFileName.PreviewMouseDown += new System.Windows.Input.MouseButtonEventHandler ((sender, e) => ShapefileImpot_PreviewMouseDown(sender, e, importModul));
             target.Children.Add(importModul);
-
+            importModul.ModulDeleteButton.Click += new RoutedEventHandler((sender, e) => ShapefileImport.DeleteModul(sender, e, importModul));
+            importModul.exportNode.Click += new RoutedEventHandler(StartDrawConnectionLine);
         }
 
-        private void Module_PreviewMouseDown(object sender, System.Windows.Input.MouseButtonEventArgs e, ShapefileImport importModul)
+        private void StartDrawConnectionLine(object sender, RoutedEventArgs e)
+        {
+            exNode = System.Windows.Input.Mouse.GetPosition(NodeEditor);
+        }
+
+        private void DrawConnectionLine(object sender, RoutedEventArgs e)
+        {
+            System.Windows.Shapes.Line nodeConnection = new System.Windows.Shapes.Line();
+            inNode = System.Windows.Input.Mouse.GetPosition(NodeEditor);
+            nodeConnection.Stroke = Brushes.Black;
+            nodeConnection.X1 = exNode.X;
+            nodeConnection.Y1 = exNode.Y;
+            nodeConnection.X2 = inNode.X;
+            nodeConnection.Y2 = inNode.Y;
+
+            NodeEditor.Children.Add(nodeConnection);
+        }
+
+        private void ShapefileImpot_PreviewMouseDown(object sender, System.Windows.Input.MouseButtonEventArgs e, ShapefileImport importModul)
         {
             this.dragObject = importModul as UIElement;
+            this.offset = e.GetPosition(this.NodeEditor);
+            this.offset.X -= Canvas.GetLeft(this.dragObject);
+            this.offset.Y -= Canvas.GetTop(this.dragObject);
+            this.NodeEditor.CaptureMouse();
+        }
+
+        private void BufferModule_PreviewMouseDown(object sender, System.Windows.Input.MouseButtonEventArgs e, Module_Buffer newBufferModule)
+        {
+            this.dragObject = newBufferModule as UIElement;
             this.offset = e.GetPosition(this.NodeEditor);
             this.offset.X -= Canvas.GetLeft(this.dragObject);
             this.offset.Y -= Canvas.GetTop(this.dragObject);
@@ -114,6 +143,18 @@ namespace Prototyp
                 map.TrySetViewAsync(newCenter, 10);
                 firstLayer += 1;
             }
+        }
+
+        private void BufferButton_Click(object sender, RoutedEventArgs e)
+        {
+            Module_Buffer newBufferModule = new Module_Buffer();
+            Canvas.SetTop(newBufferModule, 20);
+            Canvas.SetLeft(newBufferModule, 20);
+            newBufferModule.BufferHeader.PreviewMouseDown += new System.Windows.Input.MouseButtonEventHandler((sender, e) => BufferModule_PreviewMouseDown(sender, e, newBufferModule));
+            NodeEditor.Children.Add(newBufferModule);
+            newBufferModule.ModulDeleteButton.Click += new RoutedEventHandler((sender, e) => Module_Buffer.DeleteModul(sender, e, newBufferModule));
+            newBufferModule.exportNode.Click += new RoutedEventHandler(StartDrawConnectionLine);
+            newBufferModule.importNode.Click += new RoutedEventHandler(DrawConnectionLine);
         }
 
 

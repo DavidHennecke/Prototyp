@@ -1,0 +1,125 @@
+﻿<UserControl x:Class="Prototyp.Modules.Tools.Module_Buffer"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+             xmlns:local="clr-namespace:Prototyp.Modules.Tools"
+             mc:Ignorable="d" 
+             d:DesignHeight="200" d:DesignWidth="160">
+    <Grid Width="160" Height="200">
+        <Grid>
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="10"/>
+                <ColumnDefinition Width="*"/>
+                <ColumnDefinition Width="10"/>
+            </Grid.ColumnDefinitions>
+
+            <Grid Grid.Column="0">
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="25"/>
+                    <RowDefinition Height="5"/>
+                    <RowDefinition Height="20"/>
+                    <RowDefinition Height="20"/>
+                    <RowDefinition Height="20"/>
+                    <RowDefinition Height="20"/>
+                    <RowDefinition Height="20"/>
+                    <RowDefinition Height="20"/>
+                    <RowDefinition Height="20"/>
+                    <RowDefinition Height="20"/>
+                    <RowDefinition Height="20"/>
+                    <RowDefinition Height="*"/>
+                </Grid.RowDefinitions>
+                <Button Name="importNode" Grid.Row="2" Background="DarkOrange" VerticalAlignment="Center" Height="10" Style="{DynamicResource ImportNode}"/>
+            </Grid>
+
+            <Border Grid.Column="1" BorderThickness="1" CornerRadius="10" BorderBrush="Black" Background="#FF212225">
+                <Grid>
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="25"/>
+                        <RowDefinition Height="5"/>
+                        <RowDefinition Height="20"/>
+                        <RowDefinition Height="20"/>
+                        <RowDefinition Height="20"/>
+                        <RowDefinition Height="20"/>
+                        <RowDefinition Height="20"/>
+                        <RowDefinition Height="20"/>
+                        <RowDefinition Height="20"/>
+                        <RowDefinition Height="20"/>
+                        <RowDefinition Height="20"/>
+                        <RowDefinition Height="*"/>
+                    </Grid.RowDefinitions>
+                    <Border Grid.Row="0" BorderThickness="0 0 0 1" BorderBrush="Black">
+                        <Grid>
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="*"/>
+                                <ColumnDefinition Width="25"/>
+                                <ColumnDefinition Width="25"/>
+                            </Grid.ColumnDefinitions>
+                            <TextBlock x:Name="BufferHeader" Grid.Column="0" Text="Buffer" FontSize="12" VerticalAlignment="Center" HorizontalAlignment="Left" Foreground="#FFECECEC" Margin="5"/>
+                            <Button x:Name="ModulSettingsButton" Grid.Column="1" Padding="0" Content="cog" Background="#FF212225" FontFamily="{StaticResource FontAwesomeSolid}" VerticalAlignment="Center" HorizontalAlignment="Center" DockPanel.Dock="Right" Width="20" Height="20" FontSize="15" Margin="3" Foreground="White"/>
+                            <Button x:Name="ModulDeleteButton" Grid.Column="2" Padding="0" Content="times" Background="#FF212225" FontFamily="{StaticResource FontAwesomeSolid}" VerticalAlignment="Center" HorizontalAlignment="Center" DockPanel.Dock="Right" Width="20" Height="20" FontSize="15" Margin="3" Foreground="#FF9E3030"/>
+                        </Grid>
+                    </Border>
+                    <Grid Grid.Row="2">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="*"/>
+                            <ColumnDefinition Width="*"/>
+                        </Grid.ColumnDefinitions>
+                        <TextBlock Grid.Column="0" Text="Input Feature:" FontSize="10" Foreground="White" HorizontalAlignment="Left" VerticalAlignment="Center" Margin="2" Height="20" Width="120"/>
+                        <TextBlock Grid.Column="1" x:Name="BufferModulInputFeatureTextBlock"  Text="" FontSize="10" Foreground="#66CDAA" HorizontalAlignment="Left" VerticalAlignment="Center" Margin="2" Height="20" Width="120"/>
+                        <!--<Button Grid.Column="1" x:Name="OpenFileButton" Content="folder-open" Background="#FF212225" FontFamily="{StaticResource FontAwesomeRegular}" VerticalAlignment="Center" HorizontalAlignment="Right" DockPanel.Dock="Left" Width="21" Height="20" Padding="0" FontSize="18" Foreground="#FFD8A14E"/>-->
+                    </Grid>
+                    <Grid Grid.Row="3">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="37"/>
+                            <ColumnDefinition Width="*"/>
+                        </Grid.ColumnDefinitions>
+                        <TextBlock Grid.Column="0" Text="Radius:" FontSize="10" Foreground="White" HorizontalAlignment="Left" VerticalAlignment="Center" Margin="2" Height="20" Width="120"/>
+                        <TextBlock Grid.Column="1" x:Name="BufferModulInputRadiusTextBlock"  Text="" FontSize="10" Foreground="#66CDAA" HorizontalAlignment="Left" VerticalAlignment="Center" Margin="2" Height="20" Width="120"/>
+                    </Grid>
+                    <Grid Grid.Row="4">
+                        <Slider x:Name="BufferModulInputRadiusSlider" VerticalAlignment="Top" Padding="0">
+                            <Slider.LayoutTransform>
+                                <ScaleTransform ScaleY="0.5" ScaleX="0.5" CenterX="15" CenterY="15"/>
+                            </Slider.LayoutTransform>
+                        </Slider>
+                    </Grid>
+                    <Grid Grid.Row="8">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="63"/>
+                            <ColumnDefinition Width="*"/>
+                        </Grid.ColumnDefinitions>
+                        <TextBlock Grid.Column="0" Text="Export Name:" FontSize="10" Foreground="White" HorizontalAlignment="Left" VerticalAlignment="Center" Margin="2" Height="20" Width="120"/>
+                        <TextBox Grid.Column="1" x:Name="BufferModulExportName" TextAlignment="Left"  Text="" FontSize="10" Background="LightGray" Foreground="Black" HorizontalAlignment="Left" VerticalAlignment="Center" Margin="2" Height="20" BorderBrush="Transparent"/>
+                    </Grid>
+                    <Grid Grid.Row="9">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="*"/>
+                            <ColumnDefinition Width="20"/>
+                        </Grid.ColumnDefinitions>
+                        <TextBox Grid.Column="0" x:Name="BufferModulExportFilePath"  Text="" FontSize="10" Background="LightGray" Foreground="Black" HorizontalAlignment="Left" VerticalAlignment="Center" Margin="2" Height="20" Width="120" BorderBrush="Transparent"/>
+                        <Button Grid.Column="1" x:Name="BufferModulExportOpenFileButton" Content="folder-open" Background="#FF212225" FontFamily="{StaticResource FontAwesomeRegular}" VerticalAlignment="Center" HorizontalAlignment="Right" DockPanel.Dock="Left" Width="21" Height="20" Padding="0" FontSize="18" Foreground="#FFD8A14E"/>
+                    </Grid>
+                </Grid>
+            </Border>
+
+            <Grid Grid.Column="2">
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="25"/>
+                    <RowDefinition Height="5"/>
+                    <RowDefinition Height="20"/>
+                    <RowDefinition Height="20"/>
+                    <RowDefinition Height="20"/>
+                    <RowDefinition Height="20"/>
+                    <RowDefinition Height="20"/>
+                    <RowDefinition Height="20"/>
+                    <RowDefinition Height="20"/>
+                    <RowDefinition Height="20"/>
+                    <RowDefinition Height="20"/>
+                    <RowDefinition Height="*"/>
+                </Grid.RowDefinitions>
+                <Button Name="exportNode"  Grid.Row="8" Background="green" Height="10" Style="{DynamicResource ExportNode}"/>
+            </Grid>
+        </Grid>
+    </Grid>
+</UserControl>

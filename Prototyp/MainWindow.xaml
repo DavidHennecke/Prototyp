@@ -102,7 +102,23 @@
 
             <Border BorderBrush="#FF212225" Grid.Column="1" BorderThickness="3" Margin="5" CornerRadius="2" DockPanel.Dock="Top">
                 <DockPanel x:Name="ToolBar1" Background="#FF212225" LastChildFill="True">
+                    <Grid>
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="1*"/>
+                            <ColumnDefinition Width="1*"/>
+                            <ColumnDefinition Width="1*"/>
+                            <ColumnDefinition Width="1*"/>
+                            <ColumnDefinition Width="1*"/>
 
+                        </Grid.ColumnDefinitions>
+                        <Grid.RowDefinitions>
+                            <RowDefinition Height="1*"/>
+                            <RowDefinition Height="1*"/>
+                        </Grid.RowDefinitions>
+                        <TextBlock Grid.Column="0" Grid.Row="0" VerticalAlignment="Bottom" Text="Buffer" Panel.ZIndex="1" HorizontalAlignment="Center"/>
+                        <Button x:Name="BufferButton" ToolTip="Buffer" Grid.Column="0" Grid.Row="0" Content="" Background="#FF252221" FontFamily="{StaticResource FontAwesomeRegular}" VerticalAlignment="Top" HorizontalAlignment="Center" Padding="0" Width="50" Height="50" FontSize="40" Click="BufferButton_Click"></Button>
+                    </Grid>
+                    
                 </DockPanel>
             </Border>
 
@@ -203,7 +219,9 @@
                         </Style>
                     </TabControl.Resources>
                     <TabItem Header="Node Editor" Foreground="White">
-                        <Canvas x:Name="NodeEditor" Height="Auto" Width="Auto" AllowDrop="True" Background="#FF595959" Drop="DropTargetEventNodeEditor" PreviewMouseMove="NodeEditor_PreviewMouseMove" PreviewMouseUp="NodeEditor_PreviewMouseUp"/>
+                        <Canvas x:Name="NodeEditor" Height="Auto" Width="Auto" AllowDrop="True" Background="#FF595959" Drop="DropTargetEventNodeEditor" PreviewMouseMove="NodeEditor_PreviewMouseMove" PreviewMouseUp="NodeEditor_PreviewMouseUp">
+                           
+                        </Canvas>
                     </TabItem>
                 </TabControl>
 

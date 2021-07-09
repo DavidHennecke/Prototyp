@@ -11,23 +11,21 @@ using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
 
-namespace Prototyp.Modules.Imports
+namespace Prototyp.Modules.Tools
 {
     /// <summary>
-    /// Interaction logic for ShapefileImport.xaml
+    /// Interaction logic for Module_Buffer.xaml
     /// </summary>
-    public partial class ShapefileImport : UserControl
+    public partial class Module_Buffer : UserControl
     {
-        public ShapefileImport()
+        public Module_Buffer()
         {
             InitializeComponent();
         }
 
-        public static void DeleteModul(object sender, RoutedEventArgs e, ShapefileImport importModul)
+        public static void DeleteModul(object sender, RoutedEventArgs e, Module_Buffer newBufferModule)
         {
-            Prototyp.MainWindow.AppWindow.NodeEditor.Children.Remove(importModul);
+            Prototyp.MainWindow.AppWindow.NodeEditor.Children.Remove(newBufferModule);
         }
-
-
     }
 }
