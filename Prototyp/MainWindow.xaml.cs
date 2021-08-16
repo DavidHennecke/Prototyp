@@ -62,6 +62,8 @@ namespace Prototyp
         Point offset;
         Point exNode;
         Point inNode;
+        
+
 
         public void DropTargetEventNodeEditor(object sender, DragEventArgs e)
         {
@@ -71,8 +73,9 @@ namespace Prototyp
             ShapefileImport importModul = new ShapefileImport();
             importModul.ShapeImportFileName.Text = LayerName;
             importModul.ShapeImportFilePath.Text = fileName;
-            Canvas.SetTop(importModul, 20);
-            Canvas.SetLeft(importModul, 20);
+            Point dropPoint = e.GetPosition(this.NodeEditor);
+            Canvas.SetTop(importModul, dropPoint.Y);
+            Canvas.SetLeft(importModul, dropPoint.X);
             importModul.ShapeImportFileName.PreviewMouseDown += new System.Windows.Input.MouseButtonEventHandler ((sender, e) => ShapefileImpot_PreviewMouseDown(sender, e, importModul));
             target.Children.Add(importModul);
             importModul.ModulDeleteButton.Click += new RoutedEventHandler((sender, e) => ShapefileImport.DeleteModul(sender, e, importModul));
