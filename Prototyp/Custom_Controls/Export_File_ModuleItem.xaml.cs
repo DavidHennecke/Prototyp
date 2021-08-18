@@ -23,7 +23,6 @@ namespace Prototyp.Custom_Controls
             InitializeComponent();
         }
 
-        Button btn = Export_File_ModuleItem.exportNode;
 
         private void exportNode_Click(object sender, RoutedEventArgs e)
         {
