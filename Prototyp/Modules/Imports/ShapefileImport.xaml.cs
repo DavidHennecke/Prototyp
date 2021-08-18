@@ -28,6 +28,5 @@ namespace Prototyp.Modules.Imports
             Prototyp.MainWindow.AppWindow.NodeEditor.Children.Remove(importModul);
         }
 
-
     }
 }

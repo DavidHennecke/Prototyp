@@ -3,6 +3,8 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+             
+             xmlns:uc="clr-namespace:Prototyp.Custom_Controls"
              xmlns:local="clr-namespace:Prototyp.Modules.Tools"
              mc:Ignorable="d" 
              d:DesignHeight="200" d:DesignWidth="160">
@@ -29,7 +31,7 @@
                     <RowDefinition Height="20"/>
                     <RowDefinition Height="*"/>
                 </Grid.RowDefinitions>
-                <Button Name="importNode" Grid.Row="2" Background="DarkOrange" VerticalAlignment="Center" Height="10" Style="{DynamicResource ImportNode}"/>
+                
             </Grid>
 
             <Border Grid.Column="1" BorderThickness="1" CornerRadius="10" BorderBrush="Black" Background="#FF212225">
@@ -62,11 +64,14 @@
                     </Border>
                     <Grid Grid.Row="2">
                         <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="10"/>
+                            <ColumnDefinition Width="2"/>
                             <ColumnDefinition Width="*"/>
                             <ColumnDefinition Width="*"/>
                         </Grid.ColumnDefinitions>
-                        <TextBlock Grid.Column="0" Text="Input Feature:" FontSize="10" Foreground="White" HorizontalAlignment="Left" VerticalAlignment="Center" Margin="2" Height="20" Width="120"/>
-                        <TextBlock Grid.Column="1" x:Name="BufferModulInputFeatureTextBlock"  Text="" FontSize="10" Foreground="#66CDAA" HorizontalAlignment="Left" VerticalAlignment="Center" Margin="2" Height="20" Width="120"/>
+                        <Button Name="importNode" Grid.Column="0" Background="DarkOrange" VerticalAlignment="Center" Height="10" Style="{DynamicResource ImportNode}"/>
+                        <TextBlock Grid.Column="2" Text="Input Feature:" FontSize="10" Foreground="White" HorizontalAlignment="Left" VerticalAlignment="Center" Margin="2 5 0 0" Height="20" />
+                        <TextBlock Grid.Column="3" x:Name="BufferModulInputFeatureTextBlock"  Text="" FontSize="10" Foreground="#66CDAA" HorizontalAlignment="Left" VerticalAlignment="Center" Margin="2 5 0 0" Height="20" Width="120"/>
                         <!--<Button Grid.Column="1" x:Name="OpenFileButton" Content="folder-open" Background="#FF212225" FontFamily="{StaticResource FontAwesomeRegular}" VerticalAlignment="Center" HorizontalAlignment="Right" DockPanel.Dock="Left" Width="21" Height="20" Padding="0" FontSize="18" Foreground="#FFD8A14E"/>-->
                     </Grid>
                     <Grid Grid.Row="3">
@@ -90,36 +95,10 @@
                             <ColumnDefinition Width="*"/>
                         </Grid.ColumnDefinitions>
                         <TextBlock Grid.Column="0" Text="Export Name:" FontSize="10" Foreground="White" HorizontalAlignment="Left" VerticalAlignment="Center" Margin="2" Height="20" Width="120"/>
-                        <TextBox Grid.Column="1" x:Name="BufferModulExportName" TextAlignment="Left"  Text="" FontSize="10" Background="LightGray" Foreground="Black" HorizontalAlignment="Left" VerticalAlignment="Center" Margin="2" Height="20" BorderBrush="Transparent"/>
                     </Grid>
-                    <Grid Grid.Row="9">
-                        <Grid.ColumnDefinitions>
-                            <ColumnDefinition Width="*"/>
-                            <ColumnDefinition Width="20"/>
-                        </Grid.ColumnDefinitions>
-                        <TextBox Grid.Column="0" x:Name="BufferModulExportFilePath"  Text="" FontSize="10" Background="LightGray" Foreground="Black" HorizontalAlignment="Left" VerticalAlignment="Center" Margin="2" Height="20" Width="120" BorderBrush="Transparent"/>
-                        <Button Grid.Column="1" x:Name="BufferModulExportOpenFileButton" Content="folder-open" Background="#FF212225" FontFamily="{StaticResource FontAwesomeRegular}" VerticalAlignment="Center" HorizontalAlignment="Right" DockPanel.Dock="Left" Width="21" Height="20" Padding="0" FontSize="18" Foreground="#FFD8A14E"/>
-                    </Grid>
+                    <uc:Export_File_ModuleItem x:Name="exportFile" Grid.Row="9"/>
                 </Grid>
             </Border>
-
-            <Grid Grid.Column="2">
-                <Grid.RowDefinitions>
-                    <RowDefinition Height="25"/>
-                    <RowDefinition Height="5"/>
-                    <RowDefinition Height="20"/>
-                    <RowDefinition Height="20"/>
-                    <RowDefinition Height="20"/>
-                    <RowDefinition Height="20"/>
-                    <RowDefinition Height="20"/>
-                    <RowDefinition Height="20"/>
-                    <RowDefinition Height="20"/>
-                    <RowDefinition Height="20"/>
-                    <RowDefinition Height="20"/>
-                    <RowDefinition Height="*"/>
-                </Grid.RowDefinitions>
-                <Button Name="exportNode"  Grid.Row="8" Background="green" Height="10" Style="{DynamicResource ExportNode}"/>
-            </Grid>
         </Grid>
     </Grid>
 </UserControl>

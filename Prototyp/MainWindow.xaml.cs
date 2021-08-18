@@ -60,31 +60,26 @@ namespace Prototyp
 
         UIElement dragObject = null;
         Point offset;
-        Point exNode;
+        public Point exNode;
         Point inNode;
         
 
 
         public void DropTargetEventNodeEditor(object sender, DragEventArgs e)
         {
-            Canvas target = (Canvas)sender;
+            Point dropPoint = e.GetPosition(NodeEditor);
+
+            ShapefileImport importModul = new ShapefileImport();
             string fileName = (string)e.Data.GetData("Filename");
             string LayerName = (string)e.Data.GetData("Layername");
-            ShapefileImport importModul = new ShapefileImport();
             importModul.ShapeImportFileName.Text = LayerName;
-            importModul.ShapeImportFilePath.Text = fileName;
-            Point dropPoint = e.GetPosition(this.NodeEditor);
+            importModul.exportFile.FilePath.Text = fileName;
             Canvas.SetTop(importModul, dropPoint.Y);
             Canvas.SetLeft(importModul, dropPoint.X);
             importModul.ShapeImportFileName.PreviewMouseDown += new System.Windows.Input.MouseButtonEventHandler ((sender, e) => ShapefileImpot_PreviewMouseDown(sender, e, importModul));
-            target.Children.Add(importModul);
+            NodeEditor.Children.Add(importModul);
             importModul.ModulDeleteButton.Click += new RoutedEventHandler((sender, e) => ShapefileImport.DeleteModul(sender, e, importModul));
-            importModul.exportNode.Click += new RoutedEventHandler(StartDrawConnectionLine);
-        }
-
-        private void StartDrawConnectionLine(object sender, RoutedEventArgs e)
-        {
-            exNode = System.Windows.Input.Mouse.GetPosition(NodeEditor);
+            //importModul.exportFile.exportNode.Click += new RoutedEventHandler((sender, e) => exNode = Export_File_ModuleItem.StartDrawConnectionLine(sender, e, exNode));
         }
 
         private void DrawConnectionLine(object sender, RoutedEventArgs e)
@@ -156,7 +151,7 @@ namespace Prototyp
             newBufferModule.BufferHeader.PreviewMouseDown += new System.Windows.Input.MouseButtonEventHandler((sender, e) => BufferModule_PreviewMouseDown(sender, e, newBufferModule));
             NodeEditor.Children.Add(newBufferModule);
             newBufferModule.ModulDeleteButton.Click += new RoutedEventHandler((sender, e) => Module_Buffer.DeleteModul(sender, e, newBufferModule));
-            newBufferModule.exportNode.Click += new RoutedEventHandler(StartDrawConnectionLine);
+            //newBufferModule.exportFile.exportNode.Click += new RoutedEventHandler((sender, e) => exNode = Export_File_ModuleItem.StartDrawConnectionLine(sender, e, exNode));
             newBufferModule.importNode.Click += new RoutedEventHandler(DrawConnectionLine);
         }
 

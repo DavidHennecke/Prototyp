@@ -27,5 +27,6 @@ namespace Prototyp.Modules.Tools
         {
             Prototyp.MainWindow.AppWindow.NodeEditor.Children.Remove(newBufferModule);
         }
+
     }
 }

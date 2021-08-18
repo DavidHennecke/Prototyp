@@ -3,13 +3,14 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+             
+             xmlns:uc="clr-namespace:Prototyp.Custom_Controls"
              xmlns:local="clr-namespace:Prototyp.Modules.Imports"
              mc:Ignorable="d" 
              d:DesignHeight="200" d:DesignWidth="150">
     <Grid>
         <Grid.ColumnDefinitions>
             <ColumnDefinition Width="*"/>
-            <ColumnDefinition Width="10"/>
         </Grid.ColumnDefinitions>
         <Border Grid.Column="0" x:Name="Module" BorderThickness="1" CornerRadius="10" BorderBrush="Black" Background="#FF212225">
             <Grid>
@@ -34,14 +35,7 @@
                         <Button x:Name="ModulDeleteButton" Grid.Column="2" Padding="0" Content="times" Background="#FF212225" FontFamily="{StaticResource FontAwesomeSolid}" VerticalAlignment="Center" HorizontalAlignment="Center" DockPanel.Dock="Right" Width="20" Height="20" FontSize="15" Margin="3" Foreground="#FF9E3030"/>
                     </Grid>
                 </Border>
-                <Grid Grid.Row="2">
-                    <Grid.ColumnDefinitions>
-                        <ColumnDefinition Width="*"/>
-                        <ColumnDefinition Width="20"/>
-                    </Grid.ColumnDefinitions>
-                    <TextBox Grid.Column="0" x:Name="ShapeImportFilePath"  Text="" FontSize="10" Background="LightGray" Foreground="Black" HorizontalAlignment="Left" VerticalAlignment="Center" Margin="2" Height="20" Width="120" BorderBrush="Transparent"/>
-                    <Button Grid.Column="1" x:Name="OpenFileButton" Content="folder-open" Background="#FF212225" FontFamily="{StaticResource FontAwesomeRegular}" VerticalAlignment="Center" HorizontalAlignment="Right" DockPanel.Dock="Left" Width="21" Height="20" Padding="0" FontSize="18" Foreground="#FFD8A14E"/>
-                </Grid>
+                <uc:Export_File_ModuleItem x:Name="exportFile" Grid.Row="2"/>
             </Grid>
         </Border>
         <Grid Grid.Column="1">
@@ -54,7 +48,7 @@
                 <RowDefinition Height="20"/>
                 <RowDefinition Height="*"/>
             </Grid.RowDefinitions>
-            <Button Name="exportNode" Grid.Row="2" Background="green" Height="10" Style="{DynamicResource ExportNode}"/>
+            
         </Grid>
     </Grid>
 </UserControl>
