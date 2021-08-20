@@ -13,7 +13,7 @@
             <ColumnDefinition Width="52"/>
             <ColumnDefinition Width="*"/>
         </Grid.ColumnDefinitions>
-        <Button Name="importNode" Grid.Column="0" Background="DarkOrange" VerticalAlignment="Center" Height="10" Style="{DynamicResource ImportNode}"/>
+        <Button Name="importNode" Grid.Column="0" Background="DarkOrange" VerticalAlignment="Center" Height="10" Style="{DynamicResource ImportNode}" Click="importNode_Click"/>
         <TextBlock Grid.Column="2" Text="Input Data:" FontSize="10" Foreground="White" HorizontalAlignment="Left" VerticalAlignment="Center" Margin="2 5 0 0" Height="20" />
         <TextBlock Grid.Column="3" x:Name="BufferModulInputDataTextBlock"  Text="Test" FontSize="10" Foreground="#66CDAA" HorizontalAlignment="Left" VerticalAlignment="Center" Margin="0 5 0 0" Height="20" Width="120"/>
     </Grid>

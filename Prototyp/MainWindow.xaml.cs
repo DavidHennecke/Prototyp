@@ -62,7 +62,6 @@ namespace Prototyp
         Point offset;
         public Point exNode;
         Point inNode;
-        
 
 
         public void DropTargetEventNodeEditor(object sender, DragEventArgs e)
@@ -85,7 +84,6 @@ namespace Prototyp
         private void DrawConnectionLine(object sender, RoutedEventArgs e)
         {
             System.Windows.Shapes.Line nodeConnection = new System.Windows.Shapes.Line();
-            inNode = System.Windows.Input.Mouse.GetPosition(NodeEditor);
             nodeConnection.Stroke = Brushes.Black;
             nodeConnection.X1 = exNode.X;
             nodeConnection.Y1 = exNode.Y;
@@ -152,8 +150,11 @@ namespace Prototyp
             NodeEditor.Children.Add(newBufferModule);
             newBufferModule.ModulDeleteButton.Click += new RoutedEventHandler((sender, e) => Module_Buffer.DeleteModul(sender, e, newBufferModule));
             newBufferModule.exportFile.exportNode.Click += new RoutedEventHandler((sender, e) => exNode = newBufferModule.exportFile.NodePos);
-            //newBufferModule.exportFile.exportNode.Click += new RoutedEventHandler((sender, e) => exNode = Export_File_ModuleItem.StartDrawConnectionLine(sender, e, exNode));
-            newBufferModule.importNode.Click += new RoutedEventHandler(DrawConnectionLine);
+            newBufferModule.importData.importNode.Click += new RoutedEventHandler((sender, e) => 
+            {
+                inNode = newBufferModule.importData.NodePos;
+                DrawConnectionLine(sender, e);
+            });
         }
 
 

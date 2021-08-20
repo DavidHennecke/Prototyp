@@ -22,5 +22,20 @@ namespace Prototyp.Custom_Controls
         {
             InitializeComponent();
         }
+
+        public Point NodePos = new Point();
+
+        private void importNode_Click(object sender, RoutedEventArgs e)
+        {
+            UIElement importNodeButtonUI = importNode;
+
+            NodePos = importNodeButtonUI.TranslatePoint(new Point(0, 0), MainWindow.AppWindow.NodeEditor);
+            NodePos.X = NodePos.X + 5;
+            NodePos.Y = NodePos.Y + 5;
+
+            var test = "";
+            test += NodePos;
+            MessageBox.Show(test);
+        }
     }
 }
