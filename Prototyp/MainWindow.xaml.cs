@@ -79,7 +79,7 @@ namespace Prototyp
             importModul.ShapeImportFileName.PreviewMouseDown += new System.Windows.Input.MouseButtonEventHandler ((sender, e) => ShapefileImpot_PreviewMouseDown(sender, e, importModul));
             NodeEditor.Children.Add(importModul);
             importModul.ModulDeleteButton.Click += new RoutedEventHandler((sender, e) => ShapefileImport.DeleteModul(sender, e, importModul));
-            //importModul.exportFile.exportNode.Click += new RoutedEventHandler((sender, e) => exNode = Export_File_ModuleItem.StartDrawConnectionLine(sender, e, exNode));
+            importModul.exportFile.exportNode.Click += new RoutedEventHandler((sender, e) => exNode = importModul.exportFile.NodePos);
         }
 
         private void DrawConnectionLine(object sender, RoutedEventArgs e)
@@ -151,6 +151,7 @@ namespace Prototyp
             newBufferModule.BufferHeader.PreviewMouseDown += new System.Windows.Input.MouseButtonEventHandler((sender, e) => BufferModule_PreviewMouseDown(sender, e, newBufferModule));
             NodeEditor.Children.Add(newBufferModule);
             newBufferModule.ModulDeleteButton.Click += new RoutedEventHandler((sender, e) => Module_Buffer.DeleteModul(sender, e, newBufferModule));
+            newBufferModule.exportFile.exportNode.Click += new RoutedEventHandler((sender, e) => exNode = newBufferModule.exportFile.NodePos);
             //newBufferModule.exportFile.exportNode.Click += new RoutedEventHandler((sender, e) => exNode = Export_File_ModuleItem.StartDrawConnectionLine(sender, e, exNode));
             newBufferModule.importNode.Click += new RoutedEventHandler(DrawConnectionLine);
         }

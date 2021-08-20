@@ -23,12 +23,15 @@ namespace Prototyp.Custom_Controls
             InitializeComponent();
         }
 
+        public Point NodePos = new Point();
 
         private void exportNode_Click(object sender, RoutedEventArgs e)
         {
             UIElement exportNodeButtonUI = exportNode;
 
-            Point NodePos = exportNodeButtonUI.TranslatePoint(new Point(0, 0), MainWindow.AppWindow.NodeEditor);
+            NodePos = exportNodeButtonUI.TranslatePoint(new Point(0, 0), MainWindow.AppWindow.NodeEditor);
+            NodePos.X = NodePos.X + 5;
+            NodePos.Y = NodePos.Y + 5;
 
             var test = "";
             test += NodePos;
