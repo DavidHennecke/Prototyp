@@ -4,9 +4,9 @@
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:Prototyp"
-        xmlns:uc="clr-namespace:Prototyp.Custom_Controls"
        
         xmlns:controls="clr-namespace:Microsoft.Toolkit.Wpf.UI.Controls;assembly=Microsoft.Toolkit.Wpf.UI.Controls"
+        xmlns:nodenetwork="clr-namespace:NodeNetwork.Views;assembly=NodeNetwork"
         
         xmlns:ui="http://schemas.modernwpf.com/2019" 
         xmlns:xaml1="clr-namespace:Windows.UI.Xaml.Controls.Maps;assembly=Windows.Foundation.UniversalApiContract"
@@ -117,6 +117,8 @@
                         </Grid.RowDefinitions>
                         <TextBlock Grid.Column="0" Grid.Row="0" VerticalAlignment="Bottom" Text="Buffer" Panel.ZIndex="1" HorizontalAlignment="Center"/>
                         <Button x:Name="BufferButton" ToolTip="Buffer" Grid.Column="0" Grid.Row="0" Content="" Background="#FF252221" FontFamily="{StaticResource FontAwesomeRegular}" VerticalAlignment="Top" HorizontalAlignment="Center" Padding="0" Width="50" Height="50" FontSize="40" Click="BufferButton_Click"></Button>
+                        <TextBlock Grid.Column="1" Grid.Row="0" VerticalAlignment="Bottom" Text="Mapping" Panel.ZIndex="1" HorizontalAlignment="Center"/>
+                        <Button x:Name="MappingButton" ToolTip="Buffer" Grid.Column="1" Grid.Row="0" Content="map" Background="#FF252221" FontFamily="{StaticResource FontAwesomeRegular}" VerticalAlignment="Top" HorizontalAlignment="Center" Padding="0" Width="50" Height="50" FontSize="40" Click="MappingButton_Click"></Button>
                     </Grid>
                     
                 </DockPanel>
@@ -219,9 +221,7 @@
                         </Style>
                     </TabControl.Resources>
                     <TabItem Header="Node Editor" Foreground="White">
-                        <Canvas x:Name="NodeEditor" Height="Auto" Width="Auto" AllowDrop="True" Background="#FF595959" Drop="DropTargetEventNodeEditor" PreviewMouseMove="NodeEditor_PreviewMouseMove" PreviewMouseUp="NodeEditor_PreviewMouseUp">
-                           
-                        </Canvas>
+                        <nodenetwork:NetworkView x:Name="networkView" Drop="DropTargetEventNodeEditor" />
                     </TabItem>
                 </TabControl>
 

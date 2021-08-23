@@ -20,6 +20,8 @@
     <PackageReference Include="MaxRev.Gdal.WindowsRuntime.Minimal" Version="3.2.0.300" />
     <PackageReference Include="Microsoft.Toolkit.Wpf.UI.Controls" Version="6.1.2" />
     <PackageReference Include="ModernWpfUI" Version="0.9.4" />
+    <PackageReference Include="NodeNetwork" Version="6.0.0" />
+    <PackageReference Include="NodeNetworkToolkit" Version="6.0.0" />
   </ItemGroup>
 
   <ItemGroup>
@@ -35,6 +37,10 @@
     <Resource Include="Images\VortexIcon.png">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Resource>
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Update="Microsoft.VCRTForwarders.140" Version="1.0.7" />
   </ItemGroup>
 
 </Project>
