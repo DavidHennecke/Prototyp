@@ -5,6 +5,20 @@
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
              xmlns:local="clr-namespace:Prototyp.Modules.Views"
              mc:Ignorable="d" 
-             d:DesignHeight="30" d:DesignWidth="200">
-    <Slider x:Name="valueUpDown" SmallChange="1" TickPlacement="None"/>
+             d:DesignHeight="60" d:DesignWidth="200">
+    <Grid>
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="4*"/>
+            <ColumnDefinition Width="1*"/>
+            <ColumnDefinition Width="1*"/>
+        </Grid.ColumnDefinitions>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="1*"/>
+            <RowDefinition Height="1*"/>
+        </Grid.RowDefinitions>
+        <TextBlock Grid.Row="0" Grid.Column="0" Text="Radius:" VerticalAlignment="Center" HorizontalAlignment="Left" TextAlignment="Center"/>
+        <Slider Grid.Row="1" Grid.Column="0" Maximum="5000" TickFrequency="100" IsSnapToTickEnabled="True" MinWidth="120" Name="slValue" VerticalAlignment="Center" HorizontalAlignment="Center" />
+        <TextBox Grid.Row="1" Grid.Column="1" Margin="20,5,5,5" Text="{Binding ElementName=slValue, Path=Value, UpdateSourceTrigger=PropertyChanged}" VerticalAlignment="Center" HorizontalAlignment="Center" TextAlignment="Center"/>
+        <TextBlock Grid.Row="1" Grid.Column="2" Text="m" VerticalAlignment="Center" HorizontalAlignment="Center" TextAlignment="Center"/>
+    </Grid>
 </UserControl>

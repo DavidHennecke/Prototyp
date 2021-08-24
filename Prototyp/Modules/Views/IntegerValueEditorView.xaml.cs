@@ -27,6 +27,9 @@ namespace Prototyp.Modules.Views
         public IntegerValueEditorView()
         {
             InitializeComponent();
+            this.WhenActivated(d => d(
+                this.Bind(ViewModel, vm => vm.IntValue, v => v.slValue.Value)
+            ));
 
         }
     }

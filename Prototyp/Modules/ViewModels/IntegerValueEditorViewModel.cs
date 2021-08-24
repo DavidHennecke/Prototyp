@@ -14,9 +14,19 @@ namespace Prototyp.Modules.ViewModels
             Splat.Locator.CurrentMutable.Register(() => new IntegerValueEditorView(), typeof(IViewFor<IntegerValueEditorViewModel>));
         }
 
+        #region IntValue
+        private int _intValue;
+        public int IntValue
+        {
+            get => _intValue;
+            set => this.RaiseAndSetIfChanged(ref _intValue, value);
+        }
+        #endregion
+
         public IntegerValueEditorViewModel()
         {
-            Value = 0;
+            this.WhenAnyValue(vm => vm.IntValue)
+                .BindTo(this, vm => vm.Value);
         }
     }
 }

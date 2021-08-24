@@ -91,7 +91,7 @@ namespace Prototyp
             DataSource ds = Ogr.Open(Filepath, 0);
             Layer Layer = ds.GetLayerByIndex(0);
 
-            importNode.importNodeOutput.Value = System.Reactive.Linq.Observable.Return(Layer); ;
+            importNode.importNodeOutput.Value = System.Reactive.Linq.Observable.Return(Layer);
             importNode.importNodeOutput.Name = (string)e.Data.GetData("Layername");
             network.Nodes.Add(importNode);
         }
