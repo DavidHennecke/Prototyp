@@ -67,8 +67,6 @@ namespace Prototyp
             }
         }
 
-        
-
 
         private void BufferButton_Click(object sender, RoutedEventArgs e)
         {

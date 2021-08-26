@@ -30,8 +30,12 @@ namespace Prototyp.Modules
             mappingNodeInput = new ValueNodeInputViewModel<Layer>();
             mappingNodeInput.ValueChanged.Subscribe(newValue =>
                 {
+                    
                     if (newValue != null)
                     {
+                        //string test2 = "";
+                        //test2 += newValue;
+                        //MessageBox.Show(test2);
                         mappingNodeInput.Name = newValue.GetName();
                         layerColor = Color.FromArgb(255, (byte)rnd.Next(256), (byte)rnd.Next(256), (byte)rnd.Next(256));
                         AddLayerToMap(newValue);
@@ -60,10 +64,17 @@ namespace Prototyp.Modules
         {
             var mapLayerElements = new List<MapElement>();
             long featureCount = Layer.GetFeatureCount(0);
+            OSGeo.OGR.Geometry geom = null;
+            //string test3 = "";
+            //test3 += featureCount;
+            //MessageBox.Show(test3);
             for (int i = 0; i < featureCount; i++)
             {
                 Feature feature = Layer.GetFeature(i);
-                OSGeo.OGR.Geometry geom = feature.GetGeometryRef();
+                geom = feature.GetGeometryRef();
+                //string test = "";
+                //test += geom;
+                //MessageBox.Show(test);
                 OSGeo.OGR.Geometry transGeom = Transform(geom, Layer);
                 //transGeom.ExportToWkt(out var test);
                 //MessageBox.Show(test);
@@ -94,7 +105,7 @@ namespace Prototyp.Modules
                 }
                 if (featureType == wkbGeometryType.wkbPoint)
                 {
-                    Geopoint pos = new Geopoint(new BasicGeoposition() { Latitude = transGeom.GetX(0), Longitude = transGeom.GetY(0) });
+                    Geopoint pos = new Geopoint(new BasicGeoposition() { Latitude = transGeom.GetY(0), Longitude = transGeom.GetX(0) });
                     MapIcon point = new MapIcon
                     {
                         Location = pos,
@@ -104,6 +115,7 @@ namespace Prototyp.Modules
                 }
             }
             mapLayer.MapElements = mapLayerElements;
+           
             Prototyp.MainWindow.AppWindow.map.Layers.Add(mapLayer);
         }
 
@@ -112,7 +124,8 @@ namespace Prototyp.Modules
             MapPolygon polygon = new MapPolygon
             {
                 StrokeColor = Colors.Black,
-                FillColor = layerColor,
+                //FillColor = layerColor,
+                FillColor = Colors.Yellow,
                 StrokeThickness = 1,
                 StrokeDashed = true,
             };
@@ -142,7 +155,6 @@ namespace Prototyp.Modules
             if (sourceRef != to_crs)
             {
                 CoordinateTransformation ct = new CoordinateTransformation(sourceRef, to_crs, new CoordinateTransformationOptions());
-
                 if (geom.Transform(ct) != 0)
                 {
                     throw new NotSupportedException("projection failed");
