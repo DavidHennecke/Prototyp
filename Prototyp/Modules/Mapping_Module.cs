@@ -18,6 +18,8 @@ namespace Prototyp.Modules
     public class Mapping_Module : NodeViewModel
     {
         private MapElementsLayer mapLayer = new MapElementsLayer { };
+       
+
         Color layerColor = new Color();
         Random rnd = new Random();
         public ValueNodeInputViewModel<Layer> mappingNodeInput { get; }
@@ -125,10 +127,12 @@ namespace Prototyp.Modules
             {
                 StrokeColor = Colors.Black,
                 //FillColor = layerColor,
-                FillColor = Colors.Yellow,
-                StrokeThickness = 1,
+                FillColor = Color.FromArgb(100, 255, 255, 0),
+
+            StrokeThickness = 1,
                 StrokeDashed = true,
             };
+            
             List<BasicGeoposition> polygonPointList = new List<BasicGeoposition>();
 
             int count = ring.GetPointCount();
