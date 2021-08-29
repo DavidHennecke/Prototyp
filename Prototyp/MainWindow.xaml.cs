@@ -74,6 +74,12 @@ namespace Prototyp
             network.Nodes.Add(bufferNode);
         }
 
+        private void WithInButton_Click(object sender, RoutedEventArgs e)
+        {
+            var withInNode = new WithIn_Module();
+            network.Nodes.Add(withInNode);
+        }
+
         private void MappingButton_Click(object sender, RoutedEventArgs e)
         {
             var mappingNode = new Mapping_Module();

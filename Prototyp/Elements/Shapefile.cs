@@ -101,26 +101,30 @@ namespace Prototyp.Elements
             {
                 Feature feature = Layer.GetFeature(i);
                 OSGeo.OGR.Geometry geom = feature.GetGeometryRef();
-                OSGeo.OGR.Geometry transGeom = Transform(geom);
+                //OSGeo.OGR.Geometry transGeom = Transform(geom);
                 OSGeo.OGR.Geometry ring = null;
                 //transGeom.ExportToWkt(out var test);
                 //MessageBox.Show(test);
                 var featureType = geom.GetGeometryType();
                 if (featureType == wkbGeometryType.wkbPolygon)
                 {
-                    ring = transGeom.GetGeometryRef(0);
+                    //ring = transGeom.GetGeometryRef(0);
+                    ring = geom.GetGeometryRef(0);
                     MapPolygon polygon = new MapPolygon();
                     polygon = BuildPolygon(ring);
                     mapLayerElements.Add(polygon);
                 }
                 if (featureType == wkbGeometryType.wkbMultiPolygon)
                 {
-                    ring = transGeom.GetGeometryRef(0);
+                    //ring = transGeom.GetGeometryRef(0);
+                    ring = geom.GetGeometryRef(0);
                     MapPolygon polygon = new MapPolygon();
-                    int pathCount = transGeom.GetGeometryCount();
+                    //int pathCount = transGeom.GetGeometryCount();
+                    int pathCount = geom.GetGeometryCount();
                     for (int pc = 0; pc < pathCount; pc++)
                     {
-                        Geometry multi = transGeom.GetGeometryRef(pc);
+                        //Geometry multi = transGeom.GetGeometryRef(pc);
+                        Geometry multi = geom.GetGeometryRef(pc);
 
                         for (int k = 0; k < multi.GetGeometryCount(); ++k)
                         {
@@ -132,7 +136,8 @@ namespace Prototyp.Elements
                 }
                 if (featureType == wkbGeometryType.wkbPoint)
                 {
-                    Geopoint pos = new Geopoint (new BasicGeoposition () { Latitude = transGeom.GetY(0), Longitude = transGeom.GetX(0) });
+                    //Geopoint pos = new Geopoint (new BasicGeoposition () { Latitude = transGeom.GetY(0), Longitude = transGeom.GetX(0) });
+                    Geopoint pos = new Geopoint (new BasicGeoposition () { Latitude = geom.GetY(0), Longitude = geom.GetX(0) });
                     MapIcon point = new MapIcon
                     {
                         Location = pos,
@@ -162,7 +167,7 @@ namespace Prototyp.Elements
             {
                 for (int i = 0; i < count; i++)
                 {
-                    polygonPointList.Add(new BasicGeoposition() { Latitude = ring.GetX(i), Longitude = ring.GetY(i) });
+                    polygonPointList.Add(new BasicGeoposition() { Latitude = ring.GetY(i), Longitude = ring.GetX(i) });
 
                 }
                 polygon.Path = new Geopath(polygonPointList);
@@ -220,31 +225,32 @@ namespace Prototyp.Elements
 
             Geometry polyEnvelope = new Geometry(wkbGeometryType.wkbPolygon);
             polyEnvelope.AddGeometry(ringEnvelope);
-            Geometry polyEnvelopeTrans = Transform(polyEnvelope);
-            BasicGeoposition newPosition = new BasicGeoposition() { Latitude = polyEnvelopeTrans.Centroid().GetY(0), Longitude = polyEnvelopeTrans.Centroid().GetX(0) };
+            //Geometry polyEnvelopeTrans = Transform(polyEnvelope);
+            //BasicGeoposition newPosition = new BasicGeoposition() { Latitude = polyEnvelopeTrans.Centroid().GetY(0), Longitude = polyEnvelopeTrans.Centroid().GetX(0) };
+            BasicGeoposition newPosition = new BasicGeoposition() { Latitude = polyEnvelope.Centroid().GetY(0), Longitude = polyEnvelope.Centroid().GetX(0) };
             Geopoint newCenter = new Geopoint(newPosition);
             return newCenter;
         }
 
-        public Geometry Transform(Geometry geom)
-        {
-            SpatialReference sourceRef = Layer.GetSpatialRef();
+        //public Geometry Transform(Geometry geom)
+        //{
+        //    SpatialReference sourceRef = Layer.GetSpatialRef();
 
 
-            //Manuelle Eingabe ermöglichen
-            SpatialReference to_crs = new SpatialReference(null);
-            to_crs.ImportFromEPSG(4326);
-            if (sourceRef != to_crs)
-            {
-                CoordinateTransformation ct = new CoordinateTransformation(sourceRef, to_crs, new CoordinateTransformationOptions());
+        //    //Manuelle Eingabe ermöglichen
+        //    SpatialReference to_crs = new SpatialReference(null);
+        //    to_crs.ImportFromEPSG(4326);
+        //    if (sourceRef != to_crs)
+        //    {
+        //        CoordinateTransformation ct = new CoordinateTransformation(sourceRef, to_crs, new CoordinateTransformationOptions());
 
-                if (geom.Transform(ct) != 0)
-                {
-                    throw new NotSupportedException("projection failed");
-                }
-                geom.Transform(ct);
-            }
-            return geom;
-        }
+        //        if (geom.Transform(ct) != 0)
+        //        {
+        //            throw new NotSupportedException("projection failed");
+        //        }
+        //        geom.Transform(ct);
+        //    }
+        //    return geom;
+        //}
     }
 }

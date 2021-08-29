@@ -91,14 +91,13 @@ namespace Prototyp.Modules
                         SpatialReference crs_4326 = new SpatialReference(null);
                         crs_25833.ImportFromEPSG(25833);
                         crs_4326.ImportFromEPSG(4326);
-                        CoordinateTransformation ct = new CoordinateTransformation(crs_source, crs_25833, new CoordinateTransformationOptions());
-                        geom.Transform(ct);
-
+                      
+                        geom.TransformTo(crs_25833);
 
                         var bufferGeom = geom.Buffer(newValue, 30);
 
-                        CoordinateTransformation ct4326 = new CoordinateTransformation(bufferGeom.GetSpatialReference(), crs_4326, new CoordinateTransformationOptions());
-                        bufferGeom.Transform(ct4326);
+                        bufferGeom.TransformTo(crs_4326);
+                        bufferGeom.SwapXY();
 
                         //string test3 = "";
                         //test3 += bufferGeom.GetSpatialReference();

@@ -119,6 +119,8 @@
                         <Button x:Name="BufferButton" ToolTip="Buffer" Grid.Column="0" Grid.Row="0" Content="" Background="#FF252221" FontFamily="{StaticResource FontAwesomeRegular}" VerticalAlignment="Top" HorizontalAlignment="Center" Padding="0" Width="50" Height="50" FontSize="40" Click="BufferButton_Click"></Button>
                         <TextBlock Grid.Column="1" Grid.Row="0" VerticalAlignment="Bottom" Text="Mapping" Panel.ZIndex="1" HorizontalAlignment="Center"/>
                         <Button x:Name="MappingButton" ToolTip="Buffer" Grid.Column="1" Grid.Row="0" Content="map" Background="#FF252221" FontFamily="{StaticResource FontAwesomeRegular}" VerticalAlignment="Top" HorizontalAlignment="Center" Padding="0" Width="50" Height="50" FontSize="40" Click="MappingButton_Click"></Button>
+                        <TextBlock Grid.Column="0" Grid.Row="1" VerticalAlignment="Bottom" Text="WithIn" Panel.ZIndex="1" HorizontalAlignment="Center"/>
+                        <Button x:Name="WithInButton" ToolTip="WithIn" Grid.Column="0" Grid.Row="1" Content="" Background="#FF252221" FontFamily="{StaticResource FontAwesomeSolid}" VerticalAlignment="Top" HorizontalAlignment="Center" Padding="0" Width="50" Height="50" FontSize="40" Click="WithInButton_Click"/>
                     </Grid>
                     
                 </DockPanel>
