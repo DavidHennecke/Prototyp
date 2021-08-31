@@ -27,13 +27,12 @@ namespace Prototyp.Modules
 
             OSGeo.OGR.Driver driver = Ogr.GetDriverByName("Esri Shapefile");
             DataSource ds = null;
-            Layer withInLayer = null;
             SpatialReference srs = new SpatialReference(null);
             srs.ImportFromEPSG(4326);
             wkbGeometryType geom_type = wkbGeometryType.wkbPolygon;
             ds = driver.CreateDataSource("/vsimem", new string[] { });
             //ds = driver.CreateDataSource("C:/Temp/Test", new string[] { });
-            withInLayer = ds.CreateLayer("withIn", srs, geom_type, new string[] { });
+            Layer withInLayer = ds.CreateLayer("withIn", srs, geom_type, new string[] { });
             var idField = new FieldDefn("id", FieldType.OFTInteger);
             withInLayer.CreateField(idField, 1);
             var newCalc = 0;
@@ -48,12 +47,21 @@ namespace Prototyp.Modules
             {
                 if (newValue != null)
                 {
+                    if (newCalc > 0)
+                    {
+                        for (int i = 0; i < withInLayer.GetFeatureCount(0); i++)
+                        {
+                            withInLayer.DeleteFeature(i);
+                        }
+                        newCalc = 0;
+                    }
                     inputSourceValue = newValue;
                     srs = newValue.GetSpatialRef();
                     withInSourceNodeInput.Name = newValue.GetName();
                     if (inputMaskValue != null)
                     {
                         calcWithIn(inputSourceValue, inputMaskValue, withInLayer);
+                        newCalc = 1;
                     }
                 }
 
@@ -69,6 +77,15 @@ namespace Prototyp.Modules
             {
                 if (newValue != null)
                 {
+                    if (newCalc > 0)
+                    {
+                        for (int i = 0; i < withInLayer.GetFeatureCount(0); i++)
+                        {
+                            withInLayer.DeleteFeature(i);
+                        }
+                        newCalc = 0;
+                    }
+
                     inputMaskValue = newValue;
                     withInMaskNodeInput.Name = newValue.GetName();
 
