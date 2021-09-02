@@ -3,18 +3,39 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 16
 VisualStudioVersion = 16.0.31410.357
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Prototyp", "Prototyp\Prototyp.csproj", "{37A735A2-3B04-4884-83C9-47DA11CB74FB}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Prototyp", "Prototyp\Prototyp.csproj", "{37A735A2-3B04-4884-83C9-47DA11CB74FB}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
+		Debug|ARM64 = Debug|ARM64
+		Debug|x64 = Debug|x64
 		Release|Any CPU = Release|Any CPU
+		Release|ARM64 = Release|ARM64
+		Release|x64 = Release|x64
+		x64|Any CPU = x64|Any CPU
+		x64|ARM64 = x64|ARM64
+		x64|x64 = x64|x64
 	EndGlobalSection
 	GlobalSection(ProjectConfigurationPlatforms) = postSolution
 		{37A735A2-3B04-4884-83C9-47DA11CB74FB}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{37A735A2-3B04-4884-83C9-47DA11CB74FB}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{37A735A2-3B04-4884-83C9-47DA11CB74FB}.Debug|ARM64.ActiveCfg = Debug|ARM64
+		{37A735A2-3B04-4884-83C9-47DA11CB74FB}.Debug|ARM64.Build.0 = Debug|ARM64
+		{37A735A2-3B04-4884-83C9-47DA11CB74FB}.Debug|x64.ActiveCfg = Debug|x64
+		{37A735A2-3B04-4884-83C9-47DA11CB74FB}.Debug|x64.Build.0 = Debug|x64
 		{37A735A2-3B04-4884-83C9-47DA11CB74FB}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{37A735A2-3B04-4884-83C9-47DA11CB74FB}.Release|Any CPU.Build.0 = Release|Any CPU
+		{37A735A2-3B04-4884-83C9-47DA11CB74FB}.Release|ARM64.ActiveCfg = Release|ARM64
+		{37A735A2-3B04-4884-83C9-47DA11CB74FB}.Release|ARM64.Build.0 = Release|ARM64
+		{37A735A2-3B04-4884-83C9-47DA11CB74FB}.Release|x64.ActiveCfg = Release|x64
+		{37A735A2-3B04-4884-83C9-47DA11CB74FB}.Release|x64.Build.0 = Release|x64
+		{37A735A2-3B04-4884-83C9-47DA11CB74FB}.x64|Any CPU.ActiveCfg = x64|Any CPU
+		{37A735A2-3B04-4884-83C9-47DA11CB74FB}.x64|Any CPU.Build.0 = x64|Any CPU
+		{37A735A2-3B04-4884-83C9-47DA11CB74FB}.x64|ARM64.ActiveCfg = x64|ARM64
+		{37A735A2-3B04-4884-83C9-47DA11CB74FB}.x64|ARM64.Build.0 = x64|ARM64
+		{37A735A2-3B04-4884-83C9-47DA11CB74FB}.x64|x64.ActiveCfg = Debug|x64
+		{37A735A2-3B04-4884-83C9-47DA11CB74FB}.x64|x64.Build.0 = Debug|x64
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

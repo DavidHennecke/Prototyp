@@ -8,6 +8,7 @@ using OSGeo.OSR;
 using Prototyp.Modules.ViewModels;
 using ReactiveUI;
 using System;
+using System.IO;
 using System.Reactive.Linq;
 using System.Windows;
 
@@ -30,9 +31,21 @@ namespace Prototyp.Modules
             SpatialReference srs = new SpatialReference(null);
             srs.ImportFromEPSG(4326);
             wkbGeometryType geom_type = wkbGeometryType.wkbPolygon;
-            ds = driver.CreateDataSource("/vsimem", new string[] { });
-            //ds = driver.CreateDataSource("C:/Temp/Test", new string[] { });
-            Layer withInLayer = ds.CreateLayer("withIn", srs, geom_type, new string[] { });
+            //string filepath = "/vsimem/";
+            string filepath = "C:/Temp/Test/";
+            ds = driver.CreateDataSource(filepath, new string[] { });
+            string baseFilename = "withIn";
+            string filename = baseFilename;
+            string file = filepath + filename;
+
+            int filenameCount = 1;
+            while (File.Exists(file + ".shp") == true)
+            {
+                filename = string.Format("{0}({1})", baseFilename, filenameCount);
+                file = filepath + filename;
+                filenameCount++;
+            }
+            Layer withInLayer = ds.CreateLayer(filename, srs, geom_type, new string[] { });
             var idField = new FieldDefn("id", FieldType.OFTInteger);
             withInLayer.CreateField(idField, 1);
             var newCalc = 0;
@@ -61,6 +74,8 @@ namespace Prototyp.Modules
                     if (inputMaskValue != null)
                     {
                         calcWithIn(inputSourceValue, inputMaskValue, withInLayer);
+                        withInNodeOutput.Value = this.WhenAnyObservable(vm => vm.withInMaskNodeInput.ValueChanged)
+                .Select(value => withInLayer);
                         newCalc = 1;
                     }
                 }
@@ -92,6 +107,9 @@ namespace Prototyp.Modules
                     if (inputSourceValue != null)
                     {
                         calcWithIn(inputSourceValue, inputMaskValue, withInLayer);
+                        withInNodeOutput.Value = this.WhenAnyObservable(vm => vm.withInSourceNodeInput.ValueChanged)
+                .Select(value => withInLayer);
+                        newCalc = 1;
                     }
                 }
 
@@ -105,58 +123,46 @@ namespace Prototyp.Modules
             {
                 long featureCountSource = inputSourceValue.GetFeatureCount(0);
                 long featureCountMask = inputMaskValue.GetFeatureCount(0);
-                for (int i = 0; i < featureCountMask; i++)
+                Feature maskFeature = inputMaskValue.GetNextFeature();
+                while (maskFeature != null)
                 {
-
-                    Feature maskFeature = inputMaskValue.GetFeature(i);
+                    
                     OSGeo.OGR.Geometry maskGeom = maskFeature.GetGeometryRef();          
                     var crs_mask = maskGeom.GetSpatialReference();
-
-                    SpatialReference crs_25833 = new SpatialReference(null);
-                    SpatialReference crs_4326 = new SpatialReference(null);
-                    crs_25833.ImportFromEPSG(25833);
-                    crs_4326.ImportFromEPSG(4326);
-                    //CoordinateTransformation maskCt = new CoordinateTransformation(crs_mask, crs_25833, new CoordinateTransformationOptions());
-                    //maskGeom.Transform(maskCt);
-                    string test1 = "";
-                    test1 += "Mask";
-                    MessageBox.Show(test1);
-
-
-
-                    for (int a = 0; a < featureCountSource; a++)
+                  
+                    Feature sourceFeature = inputSourceValue.GetNextFeature();
+                    while (sourceFeature != null)
                     {
-                        Feature sourceFeature = inputSourceValue.GetFeature(a);
+                        
                         Geometry sourceGeom = sourceFeature.GetGeometryRef();
-                        //var crs_source = sourceGeom.GetSpatialReference();
-                        //CoordinateTransformation sourceCt = new CoordinateTransformation(crs_source, crs_25833, new CoordinateTransformationOptions());
-                        //sourceGeom.TransformTo(crs_25833);
-                        //sourceGeom.TransformTo(crs_4326);
-                        //string test2 = "";
-                        //test2 += "Source";
-                        //MessageBox.Show(test2);
-
-
+                        var id = sourceFeature.GetFieldAsInteger(6);
+                       
+                        
                         bool checkWithIn = sourceGeom.Within(maskGeom);
                         if (checkWithIn == true)
                         {
                             FeatureDefn featureDefn = withInLayer.GetLayerDefn();
                             Feature withInFeature = new Feature(featureDefn);
-                            withInFeature.SetFID(a);
-                            withInFeature.SetField("id", a);
-
-                            //CoordinateTransformation ct4326 = new CoordinateTransformation(sourceGeom.GetSpatialReference(), crs_4326, new CoordinateTransformationOptions());
-                            //sourceGeom.Transform(ct4326);
+                            withInFeature.SetFID(id);
+                            withInFeature.SetField("id", id);
+                            
+                            
                             withInFeature.SetGeometryDirectly(sourceGeom);
                             withInLayer.CreateFeature(withInFeature);
                             withInLayer.SyncToDisk();
-                            //string test3 = "";
-                            //test3 += "sync";
-                            //MessageBox.Show(test3);
+                            
                         }
+                        else
+                        {
+                            //string test3 = "";
+                            //test3 += "ausserhalb";
+                            //MessageBox.Show(test3);
+
+                        }
+                        sourceFeature = inputSourceValue.GetNextFeature();
                     }
-                    
-                    
+
+                    maskFeature = inputMaskValue.GetNextFeature();
                 }
                 
             }
@@ -164,10 +170,8 @@ namespace Prototyp.Modules
 
 
             withInNodeOutput = new ValueNodeOutputViewModel<Layer>();
-            withInNodeOutput.Value = this.WhenAnyObservable(vm => vm.withInMaskNodeInput.ValueChanged)
-                .Select(value => withInLayer);
-            withInNodeOutput.Value = this.WhenAnyObservable(vm => vm.withInSourceNodeInput.ValueChanged)
-                .Select(value => withInLayer);
+            
+            
             withInNodeOutput.Name += "WithIn-Result";
             this.Outputs.Add(withInNodeOutput);
 
