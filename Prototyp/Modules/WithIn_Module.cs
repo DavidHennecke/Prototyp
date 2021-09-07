@@ -32,7 +32,6 @@ namespace Prototyp.Modules
             srs.ImportFromEPSG(4326);
             wkbGeometryType geom_type = wkbGeometryType.wkbPolygon;
             string filepath = Path.GetTempPath();
-            //string filepath = "C:/Temp/Test/";
             DataSource ds = driver.CreateDataSource(filepath, new string[] { });
             string filename = System.IO.Path.GetTempFileName();
             Layer withInLayer = ds.CreateLayer(filename, srs, geom_type, new string[] { });
@@ -50,6 +49,7 @@ namespace Prototyp.Modules
             {
                 if (newValueSource != null)
                 {
+                    inputSourceValue = newValueSource;
                     if (newCalc > 0)
                     {
                         for (int i = 0; i < withInLayer.GetFeatureCount(0); i++)
@@ -58,15 +58,14 @@ namespace Prototyp.Modules
                         }
                         newCalc = 0;
                     }
-                    inputSourceValue = newValueSource;
                     //srs = newValueSource.GetSpatialRef();
                     withInSourceNodeInput.Name = newValueSource.GetName();
                     if (inputMaskValue != null)
                     {
                         Task<Layer> calc = calcWithIn(inputSourceValue, inputMaskValue, withInLayer);
                         withInLayer = await calc;
-                        withInNodeOutput.Value = this.WhenAnyObservable(vm => vm.withInMaskNodeInput.ValueChanged)
-                .Select(value => withInLayer);
+                //        withInNodeOutput.Value = this.WhenAnyObservable(vm => vm.withInMaskNodeInput.ValueChanged)
+                //.Select(value => withInLayer);
                         newCalc = 1;
                     }
                 }
@@ -97,8 +96,8 @@ namespace Prototyp.Modules
                     {
                         Task<Layer> calc = calcWithIn(inputSourceValue, inputMaskValue, withInLayer);
                         withInLayer = await calc;
-                        withInNodeOutput.Value = this.WhenAnyObservable(vm => vm.withInSourceNodeInput.ValueChanged)
-                .Select(value => withInLayer);
+                //        withInNodeOutput.Value = this.WhenAnyObservable(vm => vm.withInSourceNodeInput.ValueChanged)
+                //.Select(value => withInLayer);
                         newCalc = 1;
                     }
                 }
@@ -160,8 +159,11 @@ namespace Prototyp.Modules
 
 
             withInNodeOutput = new ValueNodeOutputViewModel<Layer>();
-            
-            
+
+            withInNodeOutput.Value = this.WhenAnyObservable(vm => vm.withInSourceNodeInput.ValueChanged)
+    .Select(value => withInLayer);
+            withInNodeOutput.Value = this.WhenAnyObservable(vm => vm.withInMaskNodeInput.ValueChanged)
+    .Select(value => withInLayer);
             withInNodeOutput.Name += "WithIn-Result";
             this.Outputs.Add(withInNodeOutput);
 
