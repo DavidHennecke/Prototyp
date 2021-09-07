@@ -8,7 +8,6 @@ using OSGeo.OSR;
 using Prototyp.Modules.ViewModels;
 using ReactiveUI;
 using System;
-using System.IO;
 using System.Reactive.Linq;
 using System.Windows;
 
@@ -28,19 +27,19 @@ namespace Prototyp.Modules
             long featureCount = 0;
 
             OSGeo.OGR.Driver driver = Ogr.GetDriverByName("Esri Shapefile");
+            DataSource ds = null;
+            Layer bufferLayer = null;
             SpatialReference srs = new SpatialReference(null);
             srs.ImportFromEPSG(4326);
             wkbGeometryType geom_type = wkbGeometryType.wkbPolygon;
-            string filepath = Path.GetTempPath();
-            DataSource ds = driver.CreateDataSource(filepath, new string[] { });
-            string filename = System.IO.Path.GetTempFileName();
-            Layer bufferLayer = ds.CreateLayer("buffer", srs, geom_type, new string[] { });
+            ds = driver.CreateDataSource("/vsimem", new string[] { });
+            //ds = driver.CreateDataSource("C:/Temp/Test", new string[] { });
+            bufferLayer = ds.CreateLayer("buffer", srs, geom_type, new string[] { });
             var idField = new FieldDefn("id", FieldType.OFTInteger);
             bufferLayer.CreateField(idField, 1);
             var newCalc = 0;
 
             bufferNodeInput = new ValueNodeInputViewModel<Layer>();
-            bufferNodeInput.Name = "Source Input";
             Layer inputValue = null;
             bufferNodeInput.ValueChanged.Subscribe(bufferSourceInput =>
             {
