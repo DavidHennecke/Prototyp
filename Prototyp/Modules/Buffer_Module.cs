@@ -41,15 +41,15 @@ namespace Prototyp.Modules
 
             bufferNodeInput = new ValueNodeInputViewModel<Layer>();
             Layer inputValue = null;
-            bufferNodeInput.ValueChanged.Subscribe(newValue =>
+            bufferNodeInput.ValueChanged.Subscribe(bufferSourceInput =>
             {
-                if (newValue != null)
+                if (bufferSourceInput != null)
                 {
                     
-                    inputValue = newValue;
-                    srs = newValue.GetSpatialRef();
-                    bufferNodeInput.Name = newValue.GetName();
-                    featureCount = newValue.GetFeatureCount(0);
+                    inputValue = bufferSourceInput;
+                    srs = bufferSourceInput.GetSpatialRef();
+                    bufferNodeInput.Name = bufferSourceInput.GetName();
+                    featureCount = bufferSourceInput.GetFeatureCount(0);
                     
                     
                 }
@@ -66,7 +66,7 @@ namespace Prototyp.Modules
             RadiusInput.Port.IsVisible = false;
 
 
-            RadiusInput.ValueChanged.Subscribe(newValue =>
+            RadiusInput.ValueChanged.Subscribe(radiusInputValue =>
             {
                 if (inputValue != null)
                 {
@@ -84,7 +84,7 @@ namespace Prototyp.Modules
                         Feature feature = inputValue.GetFeature(i);
 
                         OSGeo.OGR.Geometry geom = feature.GetGeometryRef();
-                        double radius = Convert.ToDouble(newValue);
+                        double radius = Convert.ToDouble(radiusInputValue);
                         var crs_source = geom.GetSpatialReference();
 
                         SpatialReference crs_25833 = new SpatialReference(null);
@@ -94,7 +94,7 @@ namespace Prototyp.Modules
                       
                         geom.TransformTo(crs_25833);
 
-                        var bufferGeom = geom.Buffer(newValue, 30);
+                        var bufferGeom = geom.Buffer(radiusInputValue, 30);
 
                         bufferGeom.TransformTo(crs_4326);
                         bufferGeom.SwapXY();

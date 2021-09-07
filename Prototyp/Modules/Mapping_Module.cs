@@ -30,17 +30,17 @@ namespace Prototyp.Modules
 
             var cutoff = 0;
             mappingNodeInput = new ValueNodeInputViewModel<Layer>();
-            mappingNodeInput.ValueChanged.Subscribe(newValue =>
+            mappingNodeInput.ValueChanged.Subscribe(mappingInputValue =>
                 {
                     
-                    if (newValue != null)
+                    if (mappingInputValue != null)
                     {
                         //string test2 = "";
                         //test2 += newValue.GetFeatureCount(0);
                         //MessageBox.Show(test2);
-                        mappingNodeInput.Name = newValue.GetName();
+                        mappingNodeInput.Name = mappingInputValue.GetName();
                         layerColor = Color.FromArgb(255, (byte)rnd.Next(256), (byte)rnd.Next(256), (byte)rnd.Next(256));
-                        AddLayerToMap(newValue);
+                        AddLayerToMap(mappingInputValue);
                         cutoff = 1;
                     }
                     else

@@ -10,6 +10,7 @@ using ReactiveUI;
 using System;
 using System.IO;
 using System.Reactive.Linq;
+using System.Threading.Tasks;
 using System.Windows;
 
 namespace Prototyp.Modules
@@ -45,9 +46,9 @@ namespace Prototyp.Modules
 
             withInSourceNodeInput = new ValueNodeInputViewModel<Layer>();
             withInSourceNodeInput.Name = "Source Input";
-            withInSourceNodeInput.ValueChanged.Subscribe(newValue =>
+            withInSourceNodeInput.ValueChanged.Subscribe(async newValueSource =>
             {
-                if (newValue != null)
+                if (newValueSource != null)
                 {
                     if (newCalc > 0)
                     {
@@ -57,12 +58,13 @@ namespace Prototyp.Modules
                         }
                         newCalc = 0;
                     }
-                    inputSourceValue = newValue;
-                    //srs = newValue.GetSpatialRef();
-                    withInSourceNodeInput.Name = newValue.GetName();
+                    inputSourceValue = newValueSource;
+                    //srs = newValueSource.GetSpatialRef();
+                    withInSourceNodeInput.Name = newValueSource.GetName();
                     if (inputMaskValue != null)
                     {
-                        calcWithIn(inputSourceValue, inputMaskValue, withInLayer);
+                        Task<Layer> calc = calcWithIn(inputSourceValue, inputMaskValue, withInLayer);
+                        withInLayer = await calc;
                         withInNodeOutput.Value = this.WhenAnyObservable(vm => vm.withInMaskNodeInput.ValueChanged)
                 .Select(value => withInLayer);
                         newCalc = 1;
@@ -75,9 +77,9 @@ namespace Prototyp.Modules
 
             withInMaskNodeInput = new ValueNodeInputViewModel<Layer>();
             withInMaskNodeInput.Name = "Mask Input";
-            withInMaskNodeInput.ValueChanged.Subscribe(newValue =>
+            withInMaskNodeInput.ValueChanged.Subscribe(async newValueMask =>
             {
-                if (newValue != null)
+                if (newValueMask != null)
                 {
                     if (newCalc > 0)
                     {
@@ -88,12 +90,13 @@ namespace Prototyp.Modules
                         newCalc = 0;
                     }
 
-                    inputMaskValue = newValue;
-                    withInMaskNodeInput.Name = newValue.GetName();
+                    inputMaskValue = newValueMask;
+                    withInMaskNodeInput.Name = newValueMask.GetName();
 
                     if (inputSourceValue != null)
                     {
-                        calcWithIn(inputSourceValue, inputMaskValue, withInLayer);
+                        Task<Layer> calc = calcWithIn(inputSourceValue, inputMaskValue, withInLayer);
+                        withInLayer = await calc;
                         withInNodeOutput.Value = this.WhenAnyObservable(vm => vm.withInSourceNodeInput.ValueChanged)
                 .Select(value => withInLayer);
                         newCalc = 1;
@@ -106,11 +109,12 @@ namespace Prototyp.Modules
 
 
 
-            static void calcWithIn (Layer inputSourceValue, Layer inputMaskValue, Layer withInLayer)
+            static async Task<Layer> calcWithIn (Layer inputSourceValue, Layer inputMaskValue, Layer withInLayer)
             {
                 long featureCountSource = inputSourceValue.GetFeatureCount(0);
                 long featureCountMask = inputMaskValue.GetFeatureCount(0);
                 Feature maskFeature = inputMaskValue.GetNextFeature();
+                Layer tempWithInLayer = withInLayer;
                 while (maskFeature != null)
                 {
                     
@@ -134,8 +138,8 @@ namespace Prototyp.Modules
                             
                             
                             withInFeature.SetGeometryDirectly(sourceGeom);
-                            withInLayer.CreateFeature(withInFeature);
-                            withInLayer.SyncToDisk();
+                            tempWithInLayer.CreateFeature(withInFeature);
+                            tempWithInLayer.SyncToDisk();
                             
                         }
                         else
@@ -150,7 +154,7 @@ namespace Prototyp.Modules
 
                     maskFeature = inputMaskValue.GetNextFeature();
                 }
-                
+                return tempWithInLayer;
             }
 
 
