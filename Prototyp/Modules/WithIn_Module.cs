@@ -27,24 +27,13 @@ namespace Prototyp.Modules
             
 
             OSGeo.OGR.Driver driver = Ogr.GetDriverByName("Esri Shapefile");
-            DataSource ds = null;
             SpatialReference srs = new SpatialReference(null);
             srs.ImportFromEPSG(4326);
             wkbGeometryType geom_type = wkbGeometryType.wkbPolygon;
-            //string filepath = "/vsimem/";
-            string filepath = "C:/Temp/Test/";
-            ds = driver.CreateDataSource(filepath, new string[] { });
-            string baseFilename = "withIn";
-            string filename = baseFilename;
-            string file = filepath + filename;
-
-            int filenameCount = 1;
-            while (File.Exists(file + ".shp") == true)
-            {
-                filename = string.Format("{0}({1})", baseFilename, filenameCount);
-                file = filepath + filename;
-                filenameCount++;
-            }
+            string filepath = Path.GetTempPath();
+            //string filepath = "C:/Temp/Test/";
+            DataSource ds = driver.CreateDataSource(filepath, new string[] { });
+            string filename = System.IO.Path.GetTempFileName();
             Layer withInLayer = ds.CreateLayer(filename, srs, geom_type, new string[] { });
             var idField = new FieldDefn("id", FieldType.OFTInteger);
             withInLayer.CreateField(idField, 1);
@@ -69,7 +58,7 @@ namespace Prototyp.Modules
                         newCalc = 0;
                     }
                     inputSourceValue = newValue;
-                    srs = newValue.GetSpatialRef();
+                    //srs = newValue.GetSpatialRef();
                     withInSourceNodeInput.Name = newValue.GetName();
                     if (inputMaskValue != null)
                     {
@@ -83,8 +72,6 @@ namespace Prototyp.Modules
             });
 
             this.Inputs.Add(withInSourceNodeInput);
-
-
 
             withInMaskNodeInput = new ValueNodeInputViewModel<Layer>();
             withInMaskNodeInput.Name = "Mask Input";
@@ -136,7 +123,6 @@ namespace Prototyp.Modules
                         
                         Geometry sourceGeom = sourceFeature.GetGeometryRef();
                         var id = sourceFeature.GetFieldAsInteger(6);
-                       
                         
                         bool checkWithIn = sourceGeom.Within(maskGeom);
                         if (checkWithIn == true)

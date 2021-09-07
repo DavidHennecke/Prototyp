@@ -97,9 +97,10 @@ namespace Prototyp.Elements
         {
             var mapLayerElements = new List<MapElement>();
             long featureCount = Layer.GetFeatureCount(0);
+            Feature feature;
             for (int i = 0; i < featureCount; i++)
             {
-                Feature feature = Layer.GetFeature(i);
+                feature = Layer.GetFeature(i);
                 OSGeo.OGR.Geometry geom = feature.GetGeometryRef();
                 //OSGeo.OGR.Geometry transGeom = Transform(geom);
                 OSGeo.OGR.Geometry ring = null;
