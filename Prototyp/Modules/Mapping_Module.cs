@@ -17,17 +17,16 @@ namespace Prototyp.Modules
 {
     public class Mapping_Module : NodeViewModel
     {
-        private MapElementsLayer mapLayer = new MapElementsLayer { };
        
-
-        Color layerColor = new Color();
-        Random rnd = new Random();
         public ValueNodeInputViewModel<Layer> mappingNodeInput { get; }
 
         public Mapping_Module()
         {
             this.Name = "Mapping";
-
+            MapElementsLayer mapLayer = new MapElementsLayer { };
+            Color layerColor = new Color();
+            Random rnd = new Random();
+            //Prototyp.MainWindow.AppWindow.map.Layers.Add(mapLayer);
             var cutoff = 0;
             mappingNodeInput = new ValueNodeInputViewModel<Layer>();
             mappingNodeInput.ValueChanged.Subscribe(mappingInputValue =>
@@ -35,12 +34,10 @@ namespace Prototyp.Modules
                     
                     if (mappingInputValue != null)
                     {
-                        //string test2 = "";
-                        //test2 += newValue.GetFeatureCount(0);
-                        //MessageBox.Show(test2);
+                        Prototyp.MainWindow.AppWindow.map.Layers.Add(mapLayer);
                         mappingNodeInput.Name = mappingInputValue.GetName();
                         layerColor = Color.FromArgb(255, (byte)rnd.Next(256), (byte)rnd.Next(256), (byte)rnd.Next(256));
-                        AddLayerToMap(mappingInputValue);
+                        AddLayerToMap(mappingInputValue, mapLayer);
                         cutoff = 1;
                     }
                     else
@@ -48,7 +45,8 @@ namespace Prototyp.Modules
                         if (cutoff == 1)
                         {
                             cutoff = 0;
-                            Prototyp.MainWindow.AppWindow.map.Layers.Remove(mapLayer);
+                            var mapLayerElements = new List<MapElement>();
+                            mapLayer.MapElements = mapLayerElements;
                             mappingNodeInput.Name = null;
                         }
                     };
@@ -62,30 +60,18 @@ namespace Prototyp.Modules
             Splat.Locator.CurrentMutable.Register(() => new NodeView(), typeof(IViewFor<Mapping_Module>));
         }
 
-        private void AddLayerToMap(Layer Layer)
+        private void AddLayerToMap(Layer Layer, MapElementsLayer mapLayer)
         {
             var mapLayerElements = new List<MapElement>();
             long featureCount = Layer.GetFeatureCount(0);
             OSGeo.OGR.Geometry geom = null;
-            //string test3 = "";
-            //test3 += featureCount;
-            //MessageBox.Show(test3);
             for (int i = 0; i < featureCount; i++)
             {
                 Feature feature = Layer.GetFeature(i);
                 geom = feature.GetGeometryRef();
-                //string test = "";
-                //test += geom;
-                //MessageBox.Show(test);
-
-                //OSGeo.OGR.Geometry transGeom = Transform(geom, Layer);
-            
-                //transGeom.ExportToWkt(out var test);
-                //MessageBox.Show(test);
                 var featureType = geom.GetGeometryType();
                 if (featureType == wkbGeometryType.wkbPolygon)
                 {
-                    //OSGeo.OGR.Geometry ring = transGeom.GetGeometryRef(0);
                     OSGeo.OGR.Geometry ring = geom.GetGeometryRef(0);
                     MapPolygon polygon = new MapPolygon();
                     polygon = BuildPolygon(ring);
@@ -93,16 +79,12 @@ namespace Prototyp.Modules
                 }
                 if (featureType == wkbGeometryType.wkbMultiPolygon)
                 {
-                    //OSGeo.OGR.Geometry ring = transGeom.GetGeometryRef(0);
                     OSGeo.OGR.Geometry ring = geom.GetGeometryRef(0);
                     MapPolygon polygon = new MapPolygon();
-                    //int pathCount = transGeom.GetGeometryCount();
                     int pathCount = geom.GetGeometryCount();
                     for (int pc = 0; pc < pathCount; pc++)
                     {
-                        //Geometry multi = transGeom.GetGeometryRef(pc);
                         Geometry multi = geom.GetGeometryRef(pc);
-
                         for (int k = 0; k < multi.GetGeometryCount(); ++k)
                         {
                             Geometry multiRing = multi.GetGeometryRef(k);
@@ -113,19 +95,17 @@ namespace Prototyp.Modules
                 }
                 if (featureType == wkbGeometryType.wkbPoint)
                 {
-                    //Geopoint pos = new Geopoint(new BasicGeoposition() { Latitude = transGeom.GetY(0), Longitude = transGeom.GetX(0) });
                     Geopoint pos = new Geopoint(new BasicGeoposition() { Latitude = geom.GetY(0), Longitude = geom.GetX(0) });
                     MapIcon point = new MapIcon
                     {
                         Location = pos,
-                        //NormalizedAnchorPoint = new Windows.Foundation.Point(0.5, 1.0),
                     };
                     mapLayerElements.Add(point);
                 }
             }
             mapLayer.MapElements = mapLayerElements;
            
-            Prototyp.MainWindow.AppWindow.map.Layers.Add(mapLayer);
+            Prototyp.MainWindow.AppWindow.map.Layers.Replace(mapLayer, mapLayer);
         }
 
         private MapPolygon BuildPolygon(Geometry ring)
