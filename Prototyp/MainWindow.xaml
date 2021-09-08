@@ -16,7 +16,7 @@
 
 
         mc:Ignorable="d"
-        Title="MainWindow" Height="450" Width="800">
+        Title="MainWindow" Height="450" Width="800" WindowState="Maximized" Language="en-GB">
 
 
     <Grid x:Name="Main" Background="#35363A">
