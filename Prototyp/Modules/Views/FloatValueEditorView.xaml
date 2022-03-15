@@ -1,4 +1,4 @@
-﻿<UserControl x:Class="Prototyp.Modules.Views.IntegerValueEditorView"
+﻿<UserControl x:Class="Prototyp.Modules.Views.FloatValueEditorView"
              xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
@@ -16,9 +16,9 @@
             <RowDefinition Height="1*"/>
             <RowDefinition Height="1*"/>
         </Grid.RowDefinitions>
-        <TextBlock Grid.Row="0" Grid.Column="0" Text="Radius:" VerticalAlignment="Center" HorizontalAlignment="Left" TextAlignment="Center"/>
-        <Slider Grid.Row="1" Grid.Column="0" Minimum="100" Maximum="5000" TickFrequency="100" IsSnapToTickEnabled="True" MinWidth="120" Name="slIntValue" VerticalAlignment="Center" HorizontalAlignment="Center" />
-        <TextBox Grid.Row="1" Grid.Column="1" Margin="20,5,5,5" Text="{Binding ElementName=slIntValue, Path=Value, UpdateSourceTrigger=PropertyChanged}" VerticalAlignment="Center" HorizontalAlignment="Center" TextAlignment="Center"/>
-        <TextBlock Grid.Row="1" Grid.Column="2" Text="m" VerticalAlignment="Center" HorizontalAlignment="Center" TextAlignment="Center"/>
+        <TextBlock Grid.Row="0" Grid.Column="0" Text="" VerticalAlignment="Center" HorizontalAlignment="Left" TextAlignment="Center" Name="slName"/>
+        <Slider Grid.Row="1" Grid.Column="0" Minimum="100" Maximum="5000" TickFrequency="100" IsSnapToTickEnabled="True" MinWidth="120" Name="slFloatValue" VerticalAlignment="Center" HorizontalAlignment="Center" />
+        <TextBox Grid.Row="1" Grid.Column="1" Margin="20,5,5,5" Text="{Binding ElementName=slFloatValue, Path=Value, UpdateSourceTrigger=PropertyChanged}" VerticalAlignment="Center" HorizontalAlignment="Center" TextAlignment="Center"/>
+        <TextBlock Grid.Row="1" Grid.Column="2" Text="m" VerticalAlignment="Center" HorizontalAlignment="Center" TextAlignment="Center" Name="slUnit"/>
     </Grid>
 </UserControl>

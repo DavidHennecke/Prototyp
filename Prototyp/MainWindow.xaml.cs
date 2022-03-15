@@ -76,8 +76,8 @@ namespace Prototyp
 
         private void WithInButton_Click(object sender, RoutedEventArgs e)
         {
-            var withInNode = new WithIn_Module();
-            network.Nodes.Add(withInNode);
+            var nodeModule = new Node_Module("C:\\Users\\Hennecke\\ownCloud\\WFLO\\Vortex\\Node-Beschreibungs-Theorie\\VorteXML.xml");
+            network.Nodes.Add(nodeModule);
         }
 
         private void MappingButton_Click(object sender, RoutedEventArgs e)

@@ -28,7 +28,7 @@ namespace Prototyp.Modules.Views
         {
             InitializeComponent();
             this.WhenActivated(d => d(
-                this.Bind(ViewModel, vm => vm.IntValue, v => v.slValue.Value)
+                this.Bind(ViewModel, vm => vm.IntValue, v => v.slIntValue.Value)
             ));
 
         }
