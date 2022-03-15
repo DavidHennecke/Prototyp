@@ -17,7 +17,7 @@ namespace Prototyp.Modules
     public class Buffer_Module : NodeViewModel
     {
         
-        public IntegerValueEditorViewModel ValueEditor { get; } = new IntegerValueEditorViewModel();
+       // public IntegerValueEditorViewModel ValueEditor { get; } = new IntegerValueEditorViewModel();
         public ValueNodeInputViewModel<Layer> bufferNodeInput { get; }
         public ValueNodeInputViewModel<int> RadiusInput { get; }
         public ValueNodeOutputViewModel<Layer> bufferNodeOutput { get; }
@@ -63,7 +63,7 @@ namespace Prototyp.Modules
            
 
             RadiusInput = new ValueNodeInputViewModel<int>();
-            RadiusInput.Editor = ValueEditor;
+           // RadiusInput.Editor = ValueEditor;
             RadiusInput.Port.IsVisible = false;
 
 
