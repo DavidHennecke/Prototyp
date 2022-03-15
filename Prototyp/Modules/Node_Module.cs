@@ -18,7 +18,7 @@ namespace Prototyp.Modules
     public class Node_Module : NodeViewModel
     {
         
-        public FloatValueEditorViewModel sliderEditor { get; }
+        public FloatSliderViewModel sliderEditor { get; }
         public ValueNodeInputViewModel<Layer> layerInput { get; }
         public ValueNodeInputViewModel<float> valueFloatInput { get; }
         public ValueNodeOutputViewModel<Layer> layerOutput { get; }
@@ -57,7 +57,7 @@ namespace Prototyp.Modules
                     {
                         valueFloatInput = new ValueNodeInputViewModel<float>();
                         //toDo: Integration Slider Eigenschaften in XML(Klasse)
-                        sliderEditor = new FloatValueEditorViewModel(toolRow.Name, (float)100.0, (float)5000.0, (float)100.0, "m");
+                        sliderEditor = new FloatSliderViewModel(toolRow.Name, (float)100.0, (float)5000.0, (float)100.0, "m");
                         valueFloatInput.Editor = sliderEditor;
                         valueFloatInput.Port.IsVisible = false;
                         this.Inputs.Add(valueFloatInput);

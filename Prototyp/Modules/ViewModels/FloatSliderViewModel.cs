@@ -7,11 +7,11 @@ using System.Text;
 
 namespace Prototyp.Modules.ViewModels
 {
-    public class FloatValueEditorViewModel : ValueEditorViewModel<float>
+    public class FloatSliderViewModel : ValueEditorViewModel<float>
     {
-        public FloatValueEditorViewModel(string controlName, float minVal, float maxVal, float tick, string unit)
+        public FloatSliderViewModel(string controlName, float minVal, float maxVal, float tick, string unit)
         {
-            Splat.Locator.CurrentMutable.Register(() => new FloatValueEditorView(controlName, minVal, maxVal, tick, unit), typeof(IViewFor<FloatValueEditorViewModel>));
+            Splat.Locator.CurrentMutable.Register(() => new FloatSliderView(controlName, minVal, maxVal, tick, unit), typeof(IViewFor<FloatSliderViewModel>));
         }
 
         #region FloatValue
@@ -23,7 +23,7 @@ namespace Prototyp.Modules.ViewModels
         }
         #endregion
 
-        public FloatValueEditorViewModel()
+        public FloatSliderViewModel()
         {
             this.WhenAnyValue(vm => vm.FloatValue)
                 .BindTo(this, vm => vm.Value);

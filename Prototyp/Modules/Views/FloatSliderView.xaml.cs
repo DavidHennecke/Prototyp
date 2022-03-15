@@ -6,26 +6,26 @@ using ReactiveUI;
 
 namespace Prototyp.Modules.Views
 {
-    public partial class FloatValueEditorView : UserControl, IViewFor<FloatValueEditorViewModel>
+    public partial class FloatSliderView : UserControl, IViewFor<FloatSliderViewModel>
     {
         #region ViewModel
         public static readonly DependencyProperty ViewModelProperty = DependencyProperty.Register(nameof(ViewModel),
-            typeof(FloatValueEditorViewModel), typeof(FloatValueEditorView), new PropertyMetadata(null));
+            typeof(FloatSliderViewModel), typeof(FloatSliderView), new PropertyMetadata(null));
 
-        public FloatValueEditorViewModel ViewModel
+        public FloatSliderViewModel ViewModel
         {
-            get => (FloatValueEditorViewModel)GetValue(ViewModelProperty);
+            get => (FloatSliderViewModel)GetValue(ViewModelProperty);
             set => SetValue(ViewModelProperty, value);
         }
 
         object IViewFor.ViewModel
         {
             get => ViewModel;
-            set => ViewModel = (FloatValueEditorViewModel)value;
+            set => ViewModel = (FloatSliderViewModel)value;
         }
         #endregion
 
-        public FloatValueEditorView(string controlName, float minVal, float maxVal, float tick, string unit)
+        public FloatSliderView(string controlName, float minVal, float maxVal, float tick, string unit)
         {
             InitializeComponent();
             this.slName.Text = controlName;
