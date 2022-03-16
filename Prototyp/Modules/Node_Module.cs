@@ -19,8 +19,10 @@ namespace Prototyp.Modules
     {
         
         public FloatSliderViewModel sliderEditor { get; }
+        public DropDownMenuViewModel dropDownEditor { get; }
         public ValueNodeInputViewModel<Layer> layerInput { get; }
         public ValueNodeInputViewModel<float> valueFloatInput { get; }
+        public ValueNodeInputViewModel<string> valueStringInput { get; }
         public ValueNodeOutputViewModel<Layer> layerOutput { get; }
 
         public Node_Module(string pathXML)
@@ -61,6 +63,14 @@ namespace Prototyp.Modules
                         valueFloatInput.Editor = sliderEditor;
                         valueFloatInput.Port.IsVisible = false;
                         this.Inputs.Add(valueFloatInput);
+                    }
+                    else if (toolRow.controlRow.controlType == VorteXML.ControlType.Dropdown)
+                    {
+                        valueStringInput = new ValueNodeInputViewModel<string>();
+                        dropDownEditor = new DropDownMenuViewModel(toolRow.Name, toolRow.controlRow.dropdown.Values);
+                        valueStringInput.Editor = dropDownEditor;
+                        valueStringInput.Port.IsVisible = false;
+                        this.Inputs.Add(valueStringInput);
                     }
                 }
             }
