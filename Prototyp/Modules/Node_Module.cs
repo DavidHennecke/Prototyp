@@ -58,8 +58,7 @@ namespace Prototyp.Modules
                     if (toolRow.controlRow.controlType == VorteXML.ControlType.Slider)
                     {
                         valueFloatInput = new ValueNodeInputViewModel<float>();
-                        //toDo: Integration Slider Eigenschaften in XML(Klasse)
-                        sliderEditor = new FloatSliderViewModel(toolRow.Name, (float)100.0, (float)5000.0, (float)100.0, "m");
+                        sliderEditor = new FloatSliderViewModel(toolRow.Name, toolRow.controlRow.slider.Start, toolRow.controlRow.slider.End, toolRow.controlRow.slider.TickFrequency, toolRow.controlRow.slider.Unit);
                         valueFloatInput.Editor = sliderEditor;
                         valueFloatInput.Port.IsVisible = false;
                         this.Inputs.Add(valueFloatInput);

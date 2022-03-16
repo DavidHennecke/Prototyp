@@ -45,6 +45,9 @@
             public string Style;
             public float Start;
             public float End;
+            public float Default;
+            public float TickFrequency;
+            public string Unit;
         }
 
         public struct Checkbox
@@ -421,6 +424,42 @@
                             }
                         }
 
+                        if (SubElement.Value == "Default")
+                        {
+                            foreach (var attribs in SubElement.Attributes())
+                            {
+                                if (attribs.Name == "default")
+                                {
+                                    ToolRows[Counter].controlRow.slider.Default = System.Convert.ToSingle(attribs.Value, System.Globalization.CultureInfo.InvariantCulture);
+                                    break;
+                                }
+                            }
+                        }
+
+                        if (SubElement.Value == "TickFrequency")
+                        {
+                            foreach (var attribs in SubElement.Attributes())
+                            {
+                                if (attribs.Name == "default")
+                                {
+                                    ToolRows[Counter].controlRow.slider.TickFrequency = System.Convert.ToSingle(attribs.Value, System.Globalization.CultureInfo.InvariantCulture);
+                                    break;
+                                }
+                            }
+                        }
+
+                        if (SubElement.Value == "Unit")
+                        {
+                            foreach (var attribs in SubElement.Attributes())
+                            {
+                                if (attribs.Name == "default")
+                                {
+                                    ToolRows[Counter].controlRow.slider.Unit = attribs.Value;
+                                    break;
+                                }
+                            }
+                        }
+
                         SubCounter++;
                     }
                 }
@@ -568,7 +607,7 @@
                 InpString = InpString + Line;
             }
 
-            if (ToolRows[Row].inputRow.altControls.Length > 0)
+            if (ToolRows[Row].inputRow.altControls != null)
             {
                 Line = "\t\t\t" + "<AlternateControl>" + "\n";
                 InpString = InpString + Line;
@@ -630,6 +669,19 @@
                 ContString = ContString + Line;
 
                 Line = "\t\t\t\t" + "<Value:Float default='" + ToolRows[Row].controlRow.slider.End.ToString("0.0########", System.Globalization.CultureInfo.InvariantCulture) + "'>End</Value:Float>" + "\n";
+                Line = Line.Replace("'", "\"");
+                ContString = ContString + Line;
+
+                Line = "\t\t\t\t" + "<Value:Float default='" + ToolRows[Row].controlRow.slider.Default.ToString("0.0########", System.Globalization.CultureInfo.InvariantCulture) + "'>Default</Value:Float>" + "\n";
+                Line = Line.Replace("'", "\"");
+                ContString = ContString + Line;
+
+                Line = "\t\t\t\t" + "<Value:Float default='" + ToolRows[Row].controlRow.slider.TickFrequency.ToString("0.0########", System.Globalization.CultureInfo.InvariantCulture) + "'>TickFrequency</Value:Float>" + "\n";
+                Line = Line.Replace("'", "\"");
+                ContString = ContString + Line;
+
+
+                Line = "\t\t\t\t" + "<Value:String default='" + ToolRows[Row].controlRow.slider.Unit + "'>Unit</Value:String>" + "\n";
                 Line = Line.Replace("'", "\"");
                 ContString = ContString + Line;
 
