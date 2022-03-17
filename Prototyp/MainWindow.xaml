@@ -56,13 +56,11 @@
 
 
         </Grid>
-        <Grid x:Name="ToolBarMain" Grid.Row="1">
+        <Grid x:Name="ToolBarMain" Grid.Row="1" Margin="0,0,0,5">
             <Grid.ColumnDefinitions>
                 <ColumnDefinition Width="200"/>
-                <ColumnDefinition Width="300"/>
-                <ColumnDefinition Width="300"/>
-                <ColumnDefinition Width="300"/>
-                <ColumnDefinition Width="300"/>
+                <ColumnDefinition Width="*"/>
+
             </Grid.ColumnDefinitions>
             <Border BorderBrush="#35363A" Grid.Column="0" BorderThickness="3" Margin="0,5,5,5" CornerRadius="2" DockPanel.Dock="Top">
                 <DockPanel x:Name="ToolBar0" Background="#35363A" LastChildFill="True">
@@ -101,7 +99,7 @@
             </Border>
 
             <Border BorderBrush="#FF212225" Grid.Column="1" BorderThickness="3" Margin="5" CornerRadius="2" DockPanel.Dock="Top">
-                <DockPanel x:Name="ToolBar1" Background="#FF212225" LastChildFill="True">
+                <DockPanel x:Name="ToolBar1" Background="#FF212225" LastChildFill="True" Margin="0,0,-3,0">
                     <Grid>
                         <Grid.ColumnDefinitions>
                             <ColumnDefinition Width="1*"/>
@@ -115,34 +113,14 @@
                             <RowDefinition Height="1*"/>
                             <RowDefinition Height="1*"/>
                         </Grid.RowDefinitions>
-                        <TextBlock Grid.Column="0" Grid.Row="0" VerticalAlignment="Bottom" Text="Buffer" Panel.ZIndex="1" HorizontalAlignment="Center"/>
-                        <Button x:Name="BufferButton" ToolTip="Buffer" Grid.Column="0" Grid.Row="0" Content="" Background="#FF252221" FontFamily="{StaticResource FontAwesomeRegular}" VerticalAlignment="Top" HorizontalAlignment="Center" Padding="0" Width="50" Height="50" FontSize="40" Click="BufferButton_Click"></Button>
-                        <TextBlock Grid.Column="1" Grid.Row="0" VerticalAlignment="Bottom" Text="Mapping" Panel.ZIndex="1" HorizontalAlignment="Center"/>
-                        <Button x:Name="MappingButton" ToolTip="Buffer" Grid.Column="1" Grid.Row="0" Content="map" Background="#FF252221" FontFamily="{StaticResource FontAwesomeRegular}" VerticalAlignment="Top" HorizontalAlignment="Center" Padding="0" Width="50" Height="50" FontSize="40" Click="MappingButton_Click"></Button>
-                        <TextBlock Grid.Column="0" Grid.Row="1" VerticalAlignment="Bottom" Text="WithIn" Panel.ZIndex="1" HorizontalAlignment="Center"/>
-                        <Button x:Name="WithInButton" ToolTip="WithIn" Grid.Column="0" Grid.Row="1" Content="" Background="#FF252221" FontFamily="{StaticResource FontAwesomeSolid}" VerticalAlignment="Top" HorizontalAlignment="Center" Padding="0" Width="50" Height="50" FontSize="40" Click="WithInButton_Click"/>
+                        <TextBlock Grid.Column="0" Grid.Row="0" VerticalAlignment="Bottom" Text="WithIn" Panel.ZIndex="1" HorizontalAlignment="Center"/>
+                        <Button x:Name="WithInButton" ToolTip="WithIn" Grid.Column="0" Grid.Row="0" Content="" Background="#FF252221" FontFamily="{StaticResource FontAwesomeSolid}" VerticalAlignment="Top" HorizontalAlignment="Center" Padding="0" Width="50" Height="50" FontSize="40" Click="WithInButton_Click"/>
                     </Grid>
                     
                 </DockPanel>
             </Border>
 
-            <Border BorderBrush="#FF212225" Grid.Column="2" BorderThickness="3" Margin="10,5,5,5" CornerRadius="2" DockPanel.Dock="Top">
-                <DockPanel x:Name="ToolBar2" Background="#FF212225" LastChildFill="True">
-
-                </DockPanel>
-            </Border>
-
-            <Border BorderBrush="#FF212225" Grid.Column="3" BorderThickness="3" Margin="10,5,5,5" CornerRadius="2" DockPanel.Dock="Top">
-                <DockPanel x:Name="ToolBar3" Background="#FF212225" LastChildFill="True">
-
-                </DockPanel>
-            </Border>
-
-            <Border BorderBrush="#FF212225" Grid.Column="4" BorderThickness="3" Margin="10,5,5,5" CornerRadius="2" DockPanel.Dock="Top">
-                <DockPanel x:Name="ToolBar4" Background="#FF212225" LastChildFill="True">
-
-                </DockPanel>
-            </Border>
+            
         </Grid>
         <Grid Grid.Row="2">
             <Grid.ColumnDefinitions>
@@ -255,9 +233,7 @@
                         </Style>
                     </TabControl.Resources>
                     <TabItem Header="Map" Foreground="White">
-                        <Grid x:Name="MapGrid" Background="#FF212225">
-                            <controls:MapControl x:Name="map" x:FieldModifier="public" ZoomInteractionMode="GestureAndControl" TiltInteractionMode="GestureAndControl" MapServiceToken="UwIjGArZvX7q4ca7JK2h~Qst4kuikP9fAc5Y3eGQ44A~AkLKQFzFuGbGHSM9zNxEof2-ceS8ElY8okoPviM9wQu2RQkHXQIyUzJ3LqKnEXNZ" />
-                        </Grid>
+                        <Grid Background="#FF595959"/>
                     </TabItem>
                     <TabItem Header="Table" Foreground="White">
                         <Grid Background="#FF595959"/>

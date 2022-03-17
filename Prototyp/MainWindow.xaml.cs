@@ -1,28 +1,13 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Windows;
-using Microsoft.Win32;
-using System.Windows.Media;
-using Windows.Devices.Geolocation;
-using Windows.UI;
-using Windows.UI.Xaml.Controls.Maps;
-using OSGeo.GDAL;
-using OSGeo.OGR;
-using OSGeo.OSR;
+﻿using DynamicData;
 using MaxRev.Gdal.Core;
-using System.Globalization;
-using System.Windows.Controls;
-using System.IO;
-using System.Threading.Tasks;
-using Prototyp.Elements;
-using Geometry = OSGeo.OGR.Geometry;
+using Microsoft.Win32;
 using NodeNetwork.ViewModels;
-using DynamicData;
-using NodeNetwork.Toolkit.ValueNode;
-using ReactiveUI;
-using System.Reactive.Linq;
-using NodeNetwork.Views;
+using OSGeo.OGR;
+using Prototyp.Elements;
 using Prototyp.Modules;
+using System;
+using System.IO;
+using System.Windows;
 
 namespace Prototyp
 {
@@ -39,7 +24,6 @@ namespace Prototyp
             InitializeComponent();
             GdalBase.ConfigureAll();
             AppWindow = this;
-            //Assign the viewmodel to the view.
             networkView.ViewModel = network;
         }
 
@@ -61,17 +45,12 @@ namespace Prototyp
 
                     if (ext == ".shp")
                     {
-                        AddShapefile(sFilename);
+                        Shapefile shapefile = new Shapefile();
+                        shapefile.sFilename = sFilename;
+                        shapefile.InitLayer(shapefile.sFilename);
                     }
                 }
             }
-        }
-
-
-        private void BufferButton_Click(object sender, RoutedEventArgs e)
-        {
-            var bufferNode = new Buffer_Module();
-            network.Nodes.Add(bufferNode);
         }
 
         private void WithInButton_Click(object sender, RoutedEventArgs e)
@@ -81,13 +60,7 @@ namespace Prototyp
             network.Nodes.Add(nodeModule);
         }
 
-        private void MappingButton_Click(object sender, RoutedEventArgs e)
-        {
-            var mappingNode = new Mapping_Module();
-            network.Nodes.Add(mappingNode);
-        }
-
-
+        //Datei wird in NodeEditor gezogen
         public void DropTargetEventNodeEditor(object sender, DragEventArgs e)
         {
             string Filepath = (string)e.Data.GetData("Filename");
@@ -100,22 +73,6 @@ namespace Prototyp
             importNode.importNodeOutput.Name = (string)e.Data.GetData("Layername");
             network.Nodes.Add(importNode);
         }
-
-        public void AddShapefile(string sFilename)
-        {
-            Shapefile shapefile = new Shapefile();
-            shapefile.sFilename = sFilename;
-            shapefile.InitLayer(shapefile.sFilename);
-            if (firstLayer == 0)
-            {
-                Geopoint newCenter = shapefile.ZoomToExtent();
-                map.TrySetViewAsync(newCenter, 10);
-                firstLayer += 1;
-            }
-        }
-
-
-
     }
 }
 
