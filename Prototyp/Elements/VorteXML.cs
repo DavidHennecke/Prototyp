@@ -1,7 +1,22 @@
 ﻿namespace Prototyp.Elements
 {
-    class VorteXML
+    public class VorteXML
     {
+        /***********************************************************************************
+        
+        Class VorteXML
+        Contains properties and methods for Vortex module XML config file handling.
+                
+        (c) 2022 by Carsten Croonenbroeck, Markus Berger and David Hennecke. Contact us at
+        carsten.croonenbroeck@uni-rostock.de.
+
+            Add license information here.
+
+        Dependencies (NuGet packages):
+        - None.
+
+        *///////////////////////////////////////////////////////////////////////////////////
+
         private string IntNodeStyle;
         private string IntEditorVersion;
         private string IntNodeTitle;
