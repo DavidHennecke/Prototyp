@@ -17,12 +17,11 @@
   </ItemGroup>
 
   <ItemGroup>
-    <PackageReference Include="FlatGeobuf" Version="3.22.2" />
-    <PackageReference Include="GDAL" Version="3.4.1" />
-    <PackageReference Include="GDAL.Native" Version="3.4.1" />
+    <PackageReference Include="GDAL" Version="2.4.4" />
+    <PackageReference Include="MaxRev.Gdal.Core" Version="3.2.0.320" />
+    <PackageReference Include="MaxRev.Gdal.WindowsRuntime.Minimal" Version="3.2.0.300" />
     <PackageReference Include="Microsoft.Toolkit.Wpf.UI.Controls" Version="6.1.2" />
     <PackageReference Include="ModernWpfUI" Version="0.9.4" />
-    <PackageReference Include="NetTopologySuite" Version="2.4.0" />
     <PackageReference Include="NodeNetwork" Version="6.0.0" />
     <PackageReference Include="NodeNetworkToolkit" Version="6.0.0" />
   </ItemGroup>
