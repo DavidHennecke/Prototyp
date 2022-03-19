@@ -55,7 +55,7 @@ namespace Prototyp
 
         private void WithInButton_Click(object sender, RoutedEventArgs e)
         {
-            //MessageBox.Show(Directory.GetCurrentDirectory());
+            //var nodeModule = new Node_Module("C:\\Users\\Hennecke\\ownCloud\\WFLO\\Vortex\\Node-Beschreibungs-Theorie\\VorteXML.xml");
             var nodeModule = new Node_Module("..\\..\\..\\..\\Modules\\Buffer\\Buffer.xml");
             network.Nodes.Add(nodeModule);
         }
