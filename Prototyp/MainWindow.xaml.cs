@@ -28,8 +28,6 @@ namespace Prototyp
             OpenFileDialog openFileDialog = new OpenFileDialog();
             openFileDialog.Filter = "FlatGeobuf files (*.fgb)|*.fgb|" +
                                     "Shapefiles (*.shp)|*.shp|" +
-                                    "ASCII files (*.asc)|*.asc|" +
-                                    "Tiff files (*.tif)|*.tif|" +
                                     "All files (*.*)|*.*";
             openFileDialog.FilterIndex = openFileDialog.Filter.Length;
             openFileDialog.RestoreDirectory = true;
