@@ -11,7 +11,7 @@ namespace Prototyp
 {
     public partial class MainWindow : Window
     {
-        public VectorData vectorData;
+        public System.Collections.Generic.List<VectorData> vectorData = new System.Collections.Generic.List<VectorData>();
 
         //Create a new viewmodel for the NetworkView
         public static MainWindow AppWindow;
@@ -33,25 +33,39 @@ namespace Prototyp
             if (result == true)
             {
                 System.Windows.Forms.Cursor.Current = System.Windows.Forms.Cursors.WaitCursor;
-                if (vectorData != null) while (vectorData.Busy) { System.Threading.Thread.Sleep(50); }
+                if (vectorData.Count > 0)
+                {
+                    if (vectorData[vectorData.Count - 1] != null)
+                    {
+                        while (vectorData[vectorData.Count - 1].Busy)
+                        {
+                            System.Threading.Thread.Sleep(50);
+                        }
+                    }
+                }
 
-                if (Path.GetExtension(openFileDialog.FileName) == ".shp")
+                if (Path.GetExtension(openFileDialog.FileName).ToLower() == ".shp" | Path.GetExtension(openFileDialog.FileName).ToLower() == ".geojson") //TODO: Auch andere GDAL-Layer-Dateitypen möglich.
                 {
                     VectorData.InitGDAL();
                     OSGeo.OGR.DataSource MyDS;
                     MyDS = OSGeo.OGR.Ogr.Open(openFileDialog.FileName, 0);
 
-                    if (MyDS != null) vectorData = new VectorData(MyDS.GetLayerByIndex(0));
+                    if (MyDS != null) vectorData.Add(new VectorData(MyDS.GetLayerByIndex(0)));
                 }
-                else if (Path.GetExtension(openFileDialog.FileName) == ".fgb")
+                else if (Path.GetExtension(openFileDialog.FileName).ToLower() == ".fgb")
                 {
-                    vectorData = new VectorData(openFileDialog.FileName);
+                    vectorData.Add(new VectorData(openFileDialog.FileName));
+                }
+                else
+                {
+                    System.Windows.Forms.Cursor.Current = System.Windows.Forms.Cursors.Default;
+                    return;
                 }
 
-                if (vectorData != null)
+                if (vectorData[vectorData.Count - 1] != null)
                 {
                     MainWindowHelpers mainWindowHelpers = new MainWindowHelpers();
-                    mainWindowHelpers.AddTreeViewChild(vectorData);
+                    mainWindowHelpers.AddTreeViewChild(vectorData[vectorData.Count - 1]);
                 }
 
                 System.Windows.Forms.Cursor.Current = System.Windows.Forms.Cursors.Default;
@@ -67,11 +81,18 @@ namespace Prototyp
         //Objekt wird in den NodeEditor gezogen
         public void DropTargetEventNodeEditor(object sender, DragEventArgs e)
         {
-            var importNode = new Import_Module();
+            Import_Module importNode = new Import_Module();
 
-            importNode.importNodeOutput.Value = System.Reactive.Linq.Observable.Return(vectorData);
-            importNode.importNodeOutput.Name = (string) e.Data.GetData("Vectorname"); //TODO: Eindeutige ID verwenden.
-            network.Nodes.Add(importNode);
+            for (int i = 0; i < vectorData.Count; i++)
+            {
+                if (vectorData[i].Name == (string) e.Data.GetData("Vectorname")) //!!!!!!!!!! TODO: Eindeutige ID verwenden.
+                {
+                    importNode.importNodeOutput.Name = vectorData[i].Name;
+                    importNode.importNodeOutput.Value = System.Reactive.Linq.Observable.Return(vectorData[i]);
+                    network.Nodes.Add(importNode);
+                    break;
+                }
+            }
         }
     }
 }
