@@ -26,8 +26,13 @@ namespace Prototyp
         private void ImportButton_Click(object sender, RoutedEventArgs e)
         {
             OpenFileDialog openFileDialog = new OpenFileDialog();
-            openFileDialog.Filter = "FlatGeobuf files (*.fgb)|*.fgb|Shapefiles (*.shp)|*.shp|All files (*.*)|*.*";
+            openFileDialog.Filter = "FlatGeobuf files (*.fgb)|*.fgb|" +
+                                    "Shapefiles (*.shp)|*.shp|" +
+                                    "ASCII files (*.asc)|*.asc|" +
+                                    "Tiff files (*.tif)|*.tif|" +
+                                    "All files (*.*)|*.*";
             openFileDialog.FilterIndex = openFileDialog.Filter.Length;
+            openFileDialog.RestoreDirectory = true;
 
             Nullable<bool> result = openFileDialog.ShowDialog();
             if (result == true)
