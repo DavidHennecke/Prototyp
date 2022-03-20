@@ -5,16 +5,17 @@ namespace Prototyp
 {
     public class MainWindowHelpers
     {
-        //private int layerOrderNr;
-        //private int layerOrderCount;
-        //private int layerOrderZValue;
+        private Prototyp.Custom_Controls.VectorListViewItem newChild = new Prototyp.Custom_Controls.VectorListViewItem();
 
-        public static void AddTreeViewChild(Prototyp.Elements.VectorData vectorData)
-        {
-            Prototyp.Custom_Controls.VectorListViewItem newChild = new Prototyp.Custom_Controls.VectorListViewItem();
-            Windows.UI.Color vectorColor = new Windows.UI.Color();
-            System.Random rnd = new System.Random();
+        private Windows.UI.Color vectorColor = new Windows.UI.Color();
+        private System.Random rnd = new System.Random();
 
+        private int vectorOrderNr;
+        private int vectorOrderCount;
+        private int vectorOrderZValue;
+
+        public void AddTreeViewChild(Prototyp.Elements.VectorData vectorData)
+        {            
             //Name auf Listeneintrag übergeben
             newChild.VectorListViewItemText.Text = vectorData.Name;
 
@@ -52,47 +53,44 @@ namespace Prototyp
             ((System.Collections.Specialized.INotifyCollectionChanged)Prototyp.MainWindow.AppWindow.TableOfContentsVector.Items).CollectionChanged += TableOfContentsVector_CollectionChanged;
         }
 
-        public static void StartDragEvent(object sender, System.Windows.Input.MouseButtonEventArgs e, Prototyp.Custom_Controls.VectorListViewItem newChild)
+        public void StartDragEvent(object sender, System.Windows.Input.MouseButtonEventArgs e, Prototyp.Custom_Controls.VectorListViewItem newChild)
         {
             DataObject dataObj = new DataObject();
-            dataObj.SetData("Filename", newChild.VectorListViewItemText.Text);
-            dataObj.SetData("Vectorname", newChild.VectorListViewItemText.Text);
+            dataObj.SetData("Vectorname", newChild.VectorListViewItemText.Text); //TODO: Eindeutige ID vergeben.
 
             DragDrop.DoDragDrop(newChild, dataObj, DragDropEffects.Move);
         }
 
-        public static void TableOfContentsVector_CollectionChanged(object sender, System.Collections.Specialized.NotifyCollectionChangedEventArgs e)
+        public void TableOfContentsVector_CollectionChanged(object sender, System.Collections.Specialized.NotifyCollectionChangedEventArgs e)
         {
             if (e.Action == System.Collections.Specialized.NotifyCollectionChangedAction.Add)
             {
-                //TODO
-                //layerOrderCount = Prototyp.MainWindow.AppWindow.TableOfContentsLayer.Items.Count;
-                //layerOrderNr = Prototyp.MainWindow.AppWindow.TableOfContentsLayer.Items.IndexOf(newChild);
-                //layerOrderZValue = layerOrderCount + 1 - layerOrderNr;
+                vectorOrderCount = Prototyp.MainWindow.AppWindow.TableOfContentsVector.Items.Count;
+                vectorOrderNr = Prototyp.MainWindow.AppWindow.TableOfContentsVector.Items.IndexOf(newChild);
+                vectorOrderZValue = vectorOrderCount - vectorOrderNr + 1;
             }
         }
-        public static void PickColor(Object sender, RoutedEventArgs e)
+        public void PickColor(Object sender, RoutedEventArgs e)
         {
 
         }
 
-        public static void RemoveVector(Object sender, RoutedEventArgs e)
+        public void RemoveVector(Object sender, RoutedEventArgs e)
         {
-            //TODO
-            //Prototyp.MainWindow.AppWindow.TableOfContentsVector.Items.Remove(newChild);
+            Prototyp.MainWindow.AppWindow.TableOfContentsVector.Items.Remove(newChild);
         }
 
-        public static void DisableVector(Object sender, RoutedEventArgs e)
-        {
-
-        }
-
-        public static void EnableVector(Object sender, RoutedEventArgs e)
+        public void DisableVector(Object sender, RoutedEventArgs e)
         {
 
         }
 
-        public static void ZoomToVector_Click(Object sender, RoutedEventArgs e)
+        public void EnableVector(Object sender, RoutedEventArgs e)
+        {
+
+        }
+
+        public void ZoomToVector_Click(Object sender, RoutedEventArgs e)
         {
 
         }

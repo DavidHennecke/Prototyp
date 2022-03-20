@@ -48,7 +48,11 @@ namespace Prototyp
                     vectorData = new VectorData(openFileDialog.FileName);
                 }
 
-                if (vectorData != null) MainWindowHelpers.AddTreeViewChild(vectorData);
+                if (vectorData != null)
+                {
+                    MainWindowHelpers mainWindowHelpers = new MainWindowHelpers();
+                    mainWindowHelpers.AddTreeViewChild(vectorData);
+                }
 
                 System.Windows.Forms.Cursor.Current = System.Windows.Forms.Cursors.Default;
             }
@@ -66,7 +70,7 @@ namespace Prototyp
             var importNode = new Import_Module();
 
             importNode.importNodeOutput.Value = System.Reactive.Linq.Observable.Return(vectorData);
-            importNode.importNodeOutput.Name = vectorData.Name;
+            importNode.importNodeOutput.Name = (string) e.Data.GetData("Vectorname"); //TODO: Eindeutige ID verwenden.
             network.Nodes.Add(importNode);
         }
     }
