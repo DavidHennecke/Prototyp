@@ -9,7 +9,6 @@ using System.Windows;
 
 namespace Prototyp
 {
-
     public partial class MainWindow : Window
     {
         public VectorData vectorData;
@@ -61,7 +60,7 @@ namespace Prototyp
             network.Nodes.Add(nodeModule);
         }
 
-        //Datei wird in NodeEditor gezogen
+        //Objekt wird in den NodeEditor gezogen
         public void DropTargetEventNodeEditor(object sender, DragEventArgs e)
         {
             var importNode = new Import_Module();

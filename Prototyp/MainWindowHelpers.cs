@@ -1,8 +1,7 @@
-﻿using Prototyp.Custom_Controls;
-using System;
+﻿using System;
 using System.Windows;
 
-namespace Prototyp.Elements
+namespace Prototyp
 {
     public class MainWindowHelpers
     {
@@ -12,7 +11,7 @@ namespace Prototyp.Elements
 
         public static void AddTreeViewChild(Prototyp.Elements.VectorData vectorData)
         {
-            VectorListViewItem newChild = new VectorListViewItem();
+            Prototyp.Custom_Controls.VectorListViewItem newChild = new Prototyp.Custom_Controls.VectorListViewItem();
             Windows.UI.Color vectorColor = new Windows.UI.Color();
             System.Random rnd = new System.Random();
 
@@ -53,7 +52,7 @@ namespace Prototyp.Elements
             ((System.Collections.Specialized.INotifyCollectionChanged)Prototyp.MainWindow.AppWindow.TableOfContentsVector.Items).CollectionChanged += TableOfContentsVector_CollectionChanged;
         }
 
-        public static void StartDragEvent(object sender, System.Windows.Input.MouseButtonEventArgs e, VectorListViewItem newChild)
+        public static void StartDragEvent(object sender, System.Windows.Input.MouseButtonEventArgs e, Prototyp.Custom_Controls.VectorListViewItem newChild)
         {
             DataObject dataObj = new DataObject();
             dataObj.SetData("Filename", newChild.VectorListViewItemText.Text);
