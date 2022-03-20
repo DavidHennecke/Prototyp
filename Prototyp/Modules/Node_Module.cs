@@ -2,9 +2,6 @@
 using NodeNetwork.Toolkit.ValueNode;
 using NodeNetwork.ViewModels;
 using NodeNetwork.Views;
-using OSGeo.GDAL;
-using OSGeo.OGR;
-using OSGeo.OSR;
 using Prototyp.Elements;
 using Prototyp.Modules.ViewModels;
 using ReactiveUI;
@@ -16,14 +13,13 @@ using System.Windows;
 namespace Prototyp.Modules
 {
     public class Node_Module : NodeViewModel
-    {
-        
+    {        
         public FloatSliderViewModel sliderEditor { get; }
         public DropDownMenuViewModel dropDownEditor { get; }
-        public ValueNodeInputViewModel<Layer> layerInput { get; }
+        public ValueNodeInputViewModel<Prototyp.Elements.VectorData> vectorInput { get; }
         public ValueNodeInputViewModel<float> valueFloatInput { get; }
         public ValueNodeInputViewModel<string> valueStringInput { get; }
-        public ValueNodeOutputViewModel<Layer> layerOutput { get; }
+        public ValueNodeOutputViewModel<Prototyp.Elements.VectorData> vectorOutput { get; }
 
         public Node_Module(string pathXML)
         {
@@ -34,25 +30,21 @@ namespace Prototyp.Modules
             {
                 if (toolRow.rowType == VorteXML.RowType.Input)
                 {
-                    layerInput = new ValueNodeInputViewModel<Layer>();
-                    layerInput.ValueChanged.Subscribe(layerInputSource =>
+                    vectorInput = new ValueNodeInputViewModel<Prototyp.Elements.VectorData>();
+                    vectorInput.ValueChanged.Subscribe(vectorInputSource =>
                     {
-                        if (layerInputSource != null)
+                        if (vectorInputSource != null)
                         {
-                            layerInput.Name = layerInputSource.GetName();
+                            vectorInput.Name = vectorInputSource.Name;
                         }
-
                     });
-
-                    this.Inputs.Add(layerInput);
+                    this.Inputs.Add(vectorInput);
                 }
-
                 else if (toolRow.rowType == VorteXML.RowType.Output)
                 {
-                    layerOutput = new ValueNodeOutputViewModel<Layer>();
-                    this.Outputs.Add(layerOutput);
+                    vectorOutput = new ValueNodeOutputViewModel<Elements.VectorData>();
+                    this.Outputs.Add(vectorOutput);
                 }
-
                 else if (toolRow.rowType == VorteXML.RowType.Control)
                 {
                     if (toolRow.controlRow.controlType == VorteXML.ControlType.Slider)
@@ -72,17 +64,12 @@ namespace Prototyp.Modules
                         this.Inputs.Add(valueStringInput);
                     }
                 }
-            }
-
-            
+            }            
         }
 
         static Node_Module()
         {
             Splat.Locator.CurrentMutable.Register(() => new NodeView(), typeof(IViewFor<Node_Module>));
         }
-
     }
-
-
 }

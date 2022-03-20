@@ -1,6 +1,6 @@
 ﻿namespace Prototyp.Elements
 {
-    class VorteXML
+    public class VorteXML
     {
         /***********************************************************************************
         
