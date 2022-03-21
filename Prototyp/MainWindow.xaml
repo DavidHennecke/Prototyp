@@ -135,6 +135,7 @@
                         <RowDefinition Height="3"/>
                         <RowDefinition Height="Auto"/>
                         <RowDefinition Height="Auto"/>
+                        <RowDefinition Height="Auto"/>
                     </Grid.RowDefinitions>
                     <GridSplitter Grid.Row="3" HorizontalAlignment="Stretch" VerticalAlignment="Top" Height="4" Width="Auto" Margin="10 0 10 0" Background="Transparent"/>
                     <DockPanel Grid.Row="0"  Background="#FF212225" LastChildFill="False" MinWidth="200">
@@ -163,6 +164,16 @@
                     </DockPanel>
 
                     <DockPanel Grid.Row="3">
+
+                        <TextBlock DockPanel.Dock="Top" Text="Raster data" Margin="15 5 0 10" FontWeight="Bold" FontSize="16"/>
+                        <!--<Border DockPanel.Dock="Top" BorderThickness="0 0 0 1" BorderBrush="#66CDAA" Margin="15 0 10 0" Width="50" HorizontalAlignment="Left"/>-->
+
+                        <ListView DockPanel.Dock="Top" Grid.Row="1" x:Name="TableOfContentsRaster" AllowDrop="False" MinHeight="30" Margin="0 0 0 10" >
+
+                        </ListView>
+                    </DockPanel>
+
+                    <DockPanel Grid.Row="4">
                         <Border DockPanel.Dock="Top" BorderThickness="0 0 0 1" BorderBrush="#FF111111" Margin="5 0 5 0"  HorizontalAlignment="Stretch"/>
                         <TextBlock DockPanel.Dock="Top" Text="Table" Margin="15 5 0 10" FontWeight="Bold" FontSize="16"/>
                         <!--<Border DockPanel.Dock="Top" BorderThickness="0 0 0 1" BorderBrush="#66CDAA" Margin="15 0 10 0" Width="50" HorizontalAlignment="Left"/>-->
