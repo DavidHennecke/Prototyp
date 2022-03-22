@@ -14,11 +14,11 @@ using System.Windows.Shapes;
 namespace Prototyp.Custom_Controls
 {
     /// <summary>
-    /// Interaction logic for VectorListViewItem.xaml
+    /// Interaction logic for RasterListViewItem.xaml
     /// </summary>
-    public partial class VectorListViewItem : UserControl
+    public partial class RasterListViewItem : UserControl
     {
-        public VectorListViewItem()
+        public RasterListViewItem()
         {
             InitializeComponent();
         }

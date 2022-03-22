@@ -36,6 +36,8 @@
         private int IntRasterCount;
         private double IntNA;
         private double[] IntGeoTransform;
+        private double IntID = 0.0;
+        private string IntName;
 
         // Getters and setters -------------------------------------------------------------
 
@@ -98,10 +100,23 @@
             set { if (value.Length == 6) IntGeoTransform = value; }
         }
 
+        public double ID
+        {
+            get { return (IntID); }
+        }
+
+        public string Name
+        {
+            get { return (IntName); }
+        }
+
         // Constructors --------------------------------------------------------------------
 
         // Parameterless constructor.
-        public RasterData() { }
+        public RasterData()
+        {
+            MakeID();
+        }
 
         // Constructor that opens an entire file.
         // Example:
@@ -114,6 +129,8 @@
                 InitGDAL();
                 OSGeo.GDAL.Dataset DS = OSGeo.GDAL.Gdal.Open(RasterFileName, OSGeo.GDAL.Access.GA_ReadOnly);
                 ImportDataset(DS, 0, 0, DS.RasterXSize, DS.RasterYSize);
+                MakeID();
+                IntName = GetName(RasterFileName);
             }
             else
             {
@@ -134,6 +151,8 @@
                 InitGDAL();
                 OSGeo.GDAL.Dataset DS = OSGeo.GDAL.Gdal.Open(RasterFileName, OSGeo.GDAL.Access.GA_ReadOnly);
                 ImportDataset(DS, xOff, yOff, xSize, ySize);
+                MakeID();
+                IntName = GetName(RasterFileName);
             }
             else
             {
@@ -148,6 +167,7 @@
         {
             IntBusy = true;
             ImportDataset(DS, 0, 0, DS.RasterXSize, DS.RasterYSize);
+            MakeID();
             IntBusy = false;
         }
 
@@ -157,9 +177,27 @@
         public RasterData(byte[] SerializedData)
         {
             Deserialize(SerializedData);
+            MakeID();
         }
 
         // Private methods -----------------------------------------------------------------
+
+        // Make ID.
+        private void MakeID()
+        {
+            System.Random rnd = new System.Random();
+            IntID = rnd.NextDouble();
+        }
+
+        private string GetName(string FileName)
+        {
+            string[] TempNameArr = FileName.Split("\\");
+            string TempName = TempNameArr[TempNameArr.Length - 1];
+            TempNameArr = TempName.Split(".");
+            TempName = TempNameArr[0];
+
+            return (TempName);
+        }
 
         private OSGeo.GDAL.Dataset ExportDataset()
         {
@@ -272,26 +310,30 @@
         public void Deserialize(byte[] SerializedData)
         {
             IntBusy = true;
-            int HeaderSize = (5 * sizeof(int)) + sizeof(double);
+            int HeaderSize = (6 * sizeof(int)) + sizeof(double);
             int BandSize;
 
             int NumBands = System.BitConverter.ToInt32(SerializedData, 0 * sizeof(int));
             int NumBytesFileType = System.BitConverter.ToInt32(SerializedData, 1 * sizeof(int));
             int NumBytesWKT = System.BitConverter.ToInt32(SerializedData, 2 * sizeof(int));
-            int XSize = System.BitConverter.ToInt32(SerializedData, 3 * sizeof(int));
-            int YSize = System.BitConverter.ToInt32(SerializedData, 4 * sizeof(int));
-            double NA = System.BitConverter.ToDouble(SerializedData, 5 * sizeof(int));
+            int NumBytesName = System.BitConverter.ToInt32(SerializedData, 3 * sizeof(int));
+            int XSize = System.BitConverter.ToInt32(SerializedData, 4 * sizeof(int));
+            int YSize = System.BitConverter.ToInt32(SerializedData, 5 * sizeof(int));
+            double NA = System.BitConverter.ToDouble(SerializedData, 6 * sizeof(int));
             string FileType = System.Text.Encoding.UTF8.GetString(SerializedData, HeaderSize, NumBytesFileType);
             string WKT = System.Text.Encoding.UTF8.GetString(SerializedData, HeaderSize + NumBytesFileType, NumBytesWKT);
+            string Name = System.Text.Encoding.UTF8.GetString(SerializedData, HeaderSize + NumBytesFileType + NumBytesWKT, NumBytesName);
 
             if (NumBands <= 0) throw new System.ArgumentException("Data seem to be inconsistent.");
             if (NumBytesFileType < 0) throw new System.ArgumentException("Data seem to be inconsistent.");
             if (NumBytesWKT < 0) throw new System.ArgumentException("Data seem to be inconsistent.");
+            if (NumBytesName < 0) throw new System.ArgumentException("Data seem to be inconsistent.");
             if (XSize <= 0) throw new System.ArgumentException("Data seem to be inconsistent.");
             if (YSize <= 0) throw new System.ArgumentException("Data seem to be inconsistent.");
 
             IntFileType = FileType;
             IntWKT_SRS = WKT;
+            IntName = Name;
             IntRasterXSize = XSize;
             IntRasterYSize = YSize;
             IntRasterCount = NumBands;
@@ -299,7 +341,7 @@
             IntBands = new sBand[NumBands];
 
             BandSize = XSize * YSize;
-            HeaderSize = HeaderSize + NumBytesFileType + NumBytesWKT;
+            HeaderSize = HeaderSize + NumBytesFileType + NumBytesWKT + NumBytesName;
             byte[] TempArr;
             TempArr = new byte[6 * sizeof(double)];
             for (int i = 0; i < TempArr.Length; i++) TempArr[i] = SerializedData[HeaderSize + i];
@@ -327,8 +369,9 @@
 
             byte[] FileTypeBytes = System.Text.Encoding.UTF8.GetBytes(IntFileType);
             byte[] WKTStringBytes = System.Text.Encoding.UTF8.GetBytes(IntWKT_SRS);
+            byte[] NameBytes = System.Text.Encoding.UTF8.GetBytes(IntName);
             byte[] GeoTransformBytes;
-            byte[] Result = new byte[(5 * sizeof(int)) + (7 * sizeof(double)) + FileTypeBytes.Length + WKTStringBytes.Length + (sizeof(double) * BandSize * IntRasterCount)];
+            byte[] Result = new byte[(6 * sizeof(int)) + (7 * sizeof(double)) + FileTypeBytes.Length + WKTStringBytes.Length + NameBytes.Length + (sizeof(double) * BandSize * IntRasterCount)];
 
             TempArr = System.BitConverter.GetBytes(IntRasterCount);
             for (int i = 0; i < TempArr.Length; i++) Result[(Offset * sizeof(int)) + i] = TempArr[i];
@@ -339,6 +382,10 @@
             Offset++;
 
             TempArr = System.BitConverter.GetBytes(WKTStringBytes.Length);
+            for (int i = 0; i < TempArr.Length; i++) Result[(Offset * sizeof(int)) + i] = TempArr[i];
+            Offset++;
+
+            TempArr = System.BitConverter.GetBytes(NameBytes.Length);
             for (int i = 0; i < TempArr.Length; i++) Result[(Offset * sizeof(int)) + i] = TempArr[i];
             Offset++;
 
@@ -353,7 +400,7 @@
             TempArr = System.BitConverter.GetBytes(IntNA);
             for (int i = 0; i < TempArr.Length; i++) Result[(Offset * sizeof(int)) + i] = TempArr[i];
 
-            Offset = (5 * sizeof(int)) + sizeof(double);
+            Offset = (6 * sizeof(int)) + sizeof(double);
             for (int i = Offset; i < Offset + FileTypeBytes.Length; i++)
             {
                 Result[i] = FileTypeBytes[j];
@@ -367,6 +414,13 @@
                 j++;
             }
             Offset = Offset + WKTStringBytes.Length;
+            j = 0;
+            for (int i = Offset; i < Offset + NameBytes.Length; i++)
+            {
+                Result[i] = NameBytes[j];
+                j++;
+            }
+            Offset = Offset + NameBytes.Length;
 
             GeoTransformBytes = DoubleArr2ByteArr(IntGeoTransform);
             j = 0;

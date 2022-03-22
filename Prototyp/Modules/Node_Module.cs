@@ -17,9 +17,11 @@ namespace Prototyp.Modules
         public FloatSliderViewModel sliderEditor { get; }
         public DropDownMenuViewModel dropDownEditor { get; }
         public ValueNodeInputViewModel<Prototyp.Elements.VectorData> vectorInput { get; }
+        public ValueNodeInputViewModel<Prototyp.Elements.RasterData> rasterInput { get; }
         public ValueNodeInputViewModel<float> valueFloatInput { get; }
         public ValueNodeInputViewModel<string> valueStringInput { get; }
         public ValueNodeOutputViewModel<Prototyp.Elements.VectorData> vectorOutput { get; }
+        public ValueNodeOutputViewModel<Prototyp.Elements.RasterData> rasterOutput { get; }
 
         public Node_Module(string pathXML)
         {
@@ -30,20 +32,63 @@ namespace Prototyp.Modules
             {
                 if (toolRow.rowType == VorteXML.RowType.Input)
                 {
-                    vectorInput = new ValueNodeInputViewModel<Prototyp.Elements.VectorData>();
-                    vectorInput.ValueChanged.Subscribe(vectorInputSource =>
+                    for (int i = 0; i < toolRow.inputRow.inputTypes.Length; i++)
                     {
-                        if (vectorInputSource != null)
+                        if (toolRow.inputRow.inputTypes[i] == VorteXML.ConnectorType.VectorLine | toolRow.inputRow.inputTypes[i] == VorteXML.ConnectorType.VectorPoint | toolRow.inputRow.inputTypes[i] == VorteXML.ConnectorType.VectorPolygon)
                         {
-                            vectorInput.Name = vectorInputSource.Name;
+                            vectorInput = new ValueNodeInputViewModel<Prototyp.Elements.VectorData>();
+                            vectorInput.ValueChanged.Subscribe(vectorInputSource =>
+                            {
+                                if (vectorInputSource != null)
+                                {
+                                    vectorInput.Name = vectorInputSource.Name;
+                                }
+                            });
+                            this.Inputs.Add(vectorInput);
+                            break;
                         }
-                    });
-                    this.Inputs.Add(vectorInput);
+                        //else if (toolRow.inputRow.inputTypes[i] == VorteXML.ConnectorType...) //TODO: z.B. Raster-Typ
+                        //{
+                            //rasterInput = new ValueNodeInputViewModel<Prototyp.Elements.RasterData>();
+                            //rasterInput.ValueChanged.Subscribe(rasterInputSource =>
+                            //{
+                            //    if (rasterInputSource != null)
+                            //    {
+                            //        rasterInput.Name = rasterInputSource.Name;
+                            //    }
+                            //});
+                            //this.Inputs.Add(rasterInput);
+                            //break;
+                        //}
+                        //...
+                        else
+                        {
+                            throw new System.Exception("No implemented input connector type specified.");
+                        }
+                    }
                 }
                 else if (toolRow.rowType == VorteXML.RowType.Output)
                 {
-                    vectorOutput = new ValueNodeOutputViewModel<Elements.VectorData>();
-                    this.Outputs.Add(vectorOutput);
+                    for (int i = 0; i < toolRow.outputRow.outputTypes.Length; i++)
+                    {
+                        if (toolRow.outputRow.outputTypes[i] == VorteXML.ConnectorType.VectorLine | toolRow.outputRow.outputTypes[i] == VorteXML.ConnectorType.VectorPoint | toolRow.outputRow.outputTypes[i] == VorteXML.ConnectorType.VectorPolygon)
+                        {
+                            vectorOutput = new ValueNodeOutputViewModel<Elements.VectorData>();
+                            this.Outputs.Add(vectorOutput);
+                            break;
+                        }
+                        //else if (toolRow.outputRow.outputTypes[i] == VorteXML.ConnectorType...) //TODO: z.B. Raster-Typ
+                        //{
+                        //    rasterOutput = new ValueNodeOutputViewModel<Elements.RasterData>();
+                        //    this.Outputs.Add(rasterOutput);
+                        //    break;
+                        //}
+                        //...
+                        else
+                        {
+                            throw new System.Exception("No implemented output connector type specified.");
+                        }
+                    }
                 }
                 else if (toolRow.rowType == VorteXML.RowType.Control)
                 {
@@ -64,7 +109,7 @@ namespace Prototyp.Modules
                         this.Inputs.Add(valueStringInput);
                     }
                 }
-            }            
+            }
         }
 
         static Node_Module()

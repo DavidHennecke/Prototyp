@@ -9,12 +9,12 @@ using System.Text;
 
 namespace Prototyp.Modules
 {
-    public class Import_Module : NodeViewModel
+    public class VectorImport_Module : NodeViewModel
     {
         public ValueNodeInputViewModel<string> importNodeInput { get; }
         public ValueNodeOutputViewModel<Prototyp.Elements.VectorData> importNodeOutput { get; }
 
-        public Import_Module()
+        public VectorImport_Module()
         {
             this.Name = "Dataset";
             importNodeOutput = new ValueNodeOutputViewModel<Prototyp.Elements.VectorData>();
@@ -23,9 +23,9 @@ namespace Prototyp.Modules
             this.Outputs.Add(importNodeOutput);
         }
 
-        static Import_Module()
+        static VectorImport_Module()
         {
-            Splat.Locator.CurrentMutable.Register(() => new NodeView(), typeof(IViewFor<Import_Module>));
+            Splat.Locator.CurrentMutable.Register(() => new NodeView(), typeof(IViewFor<VectorImport_Module>));
         }
     }
 }
