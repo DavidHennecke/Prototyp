@@ -5,13 +5,13 @@ namespace Prototyp
 {
     public class MainWindowHelpers
     {
+        private System.Random rnd = new System.Random();
+
         private Prototyp.Custom_Controls.VectorListViewItem newVectorChild = new Prototyp.Custom_Controls.VectorListViewItem();
         private Prototyp.Custom_Controls.RasterListViewItem newRasterChild = new Prototyp.Custom_Controls.RasterListViewItem();
 
         private Windows.UI.Color vectorColor = new Windows.UI.Color();
         private Windows.UI.Color rasterColor = new Windows.UI.Color();
-
-        private System.Random rnd = new System.Random();
 
         private int vectorOrderNr;
         private int vectorOrderCount;

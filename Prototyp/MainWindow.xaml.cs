@@ -100,6 +100,10 @@ namespace Prototyp
                     MainWindowHelpers mainWindowHelpers = new MainWindowHelpers();
                     mainWindowHelpers.AddTreeViewChild(rasterData[rasterData.Count - 1]);
                 }
+                //else if (...) //TODO: Ggf. andere Datentypen...
+                //{
+
+                //}
                 else
                 {
                     System.Windows.Forms.Cursor.Current = System.Windows.Forms.Cursors.Default;
