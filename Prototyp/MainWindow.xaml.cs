@@ -88,7 +88,7 @@ namespace Prototyp
 
             for (int i = 0; i < vectorData.Count; i++)
             {
-                if (vectorData[i].Name == (string) e.Data.GetData("Vectorname")) //!!!!!!!!!! TODO: Eindeutige ID verwenden.
+                if (vectorData[i].ID.ToString() == (string) e.Data.GetData("ID"))
                 {
                     importNode.importNodeOutput.Name = vectorData[i].Name;
                     importNode.importNodeOutput.Value = System.Reactive.Linq.Observable.Return(vectorData[i]);

@@ -40,6 +40,7 @@ namespace Prototyp.Elements
         private OSGeo.OSR.SpatialReference IntSRS;
         private string IntName;
         private string IntDescription;
+        private double IntID = 0.0;
 
         // Getters and setters -------------------------------------------------------------
 
@@ -131,11 +132,18 @@ namespace Prototyp.Elements
                 }
             }
         }
+        public double ID
+        {
+            get { return (IntID); }
+        }
 
         // Constructors --------------------------------------------------------------------
 
         // Parameterless constructor.
-        public VectorData() { }
+        public VectorData()
+        {
+            MakeID();
+        }
 
         // Constructor that opens an entire FlatGeobuf file.
         // Example:
@@ -157,6 +165,7 @@ namespace Prototyp.Elements
 
                 IntVecData = System.IO.File.ReadAllBytes(FlatGeobufFileName);
                 HandleNameAndCRS();
+                MakeID();
             }
             else
             {
@@ -195,6 +204,7 @@ namespace Prototyp.Elements
                     HandleHeader(MyHeader);
 
                     IntVecData = FlatGeobuf.NTS.FeatureCollectionConversions.Serialize(NewCollection, FlatGeobuf.GeometryType.Unknown);
+                    MakeID();
                 }
             }
             else
@@ -214,10 +224,18 @@ namespace Prototyp.Elements
                 IntBusy = true;
                 IntVecData = ImportLayer(LayerData);
                 IntBusy = false;
+                MakeID();
             }
         }
 
         // Private methods -----------------------------------------------------------------
+
+        // Make ID.
+        private void MakeID()
+        {
+            System.Random rnd = new System.Random();
+            IntID = rnd.NextDouble();
+        }
 
         // Imports a GDAL layer.
         private byte[] ImportLayer(OSGeo.OGR.Layer LayerData)

@@ -17,7 +17,8 @@ namespace Prototyp
         public void AddTreeViewChild(Prototyp.Elements.VectorData vectorData)
         {            
             //Name auf Listeneintrag übergeben
-            newChild.VectorListViewItemText.Text = vectorData.Name; //!!!!!!!!!! TODO: Eindeutige ID vergeben.
+            newChild.VectorListViewItemText.Text = vectorData.Name;
+            newChild.VectorListViewItemText.Uid = vectorData.ID.ToString();
 
             //Vektordaten an- und ausschalten auf Karte
             newChild.VectorListViewItemCheckBox.Unchecked += new RoutedEventHandler(DisableVector);
@@ -56,7 +57,8 @@ namespace Prototyp
         public void StartDragEvent(object sender, System.Windows.Input.MouseButtonEventArgs e, Prototyp.Custom_Controls.VectorListViewItem newChild)
         {
             DataObject dataObj = new DataObject();
-            dataObj.SetData("Vectorname", newChild.VectorListViewItemText.Text); //!!!!!!!!!! TODO: Eindeutige ID vergeben.
+            dataObj.SetData("Vectorname", newChild.VectorListViewItemText.Text);
+            dataObj.SetData("ID", newChild.VectorListViewItemText.Uid);
 
             DragDrop.DoDragDrop(newChild, dataObj, DragDropEffects.Move);
         }
