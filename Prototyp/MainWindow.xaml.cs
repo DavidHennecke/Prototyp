@@ -118,6 +118,7 @@ namespace Prototyp
         {
             var nodeModule = new Node_Module("..\\..\\..\\..\\Modules\\Buffer\\Buffer.xml");
             network.Nodes.Add(nodeModule);
+            //TODO: Binary hier starten.
         }
 
         //Objekt wird in den NodeEditor gezogen
