@@ -13,7 +13,7 @@ using System.Windows;
 namespace Prototyp.Modules
 {
     public class Node_Module : NodeViewModel
-    {        
+    {
         public FloatSliderViewModel sliderEditor { get; }
         public DropDownMenuViewModel dropDownEditor { get; }
         public ValueNodeInputViewModel<Prototyp.Elements.VectorData> vectorInput { get; }
@@ -22,11 +22,15 @@ namespace Prototyp.Modules
         public ValueNodeInputViewModel<string> valueStringInput { get; }
         public ValueNodeOutputViewModel<Prototyp.Elements.VectorData> vectorOutput { get; }
         public ValueNodeOutputViewModel<Prototyp.Elements.RasterData> rasterOutput { get; }
+        public int port { get; }
+        public GrpcServer.ControlConnector.ControlConnectorClient grpcConnection { get; }
 
-        public Node_Module(string pathXML)
+        public Node_Module(string pathXML, int port, GrpcServer.ControlConnector.ControlConnectorClient grpcConnection)
         {
             VorteXML newModule = new VorteXML(pathXML);
             this.Name = newModule.NodeTitle;
+            this.port = port;
+            this.grpcConnection = grpcConnection;
 
             foreach (VorteXML.ToolRow toolRow in newModule.ToolRows)
             {
