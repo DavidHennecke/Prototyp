@@ -27,7 +27,8 @@ namespace Prototyp.Elements
             Add license information here.
 
         Dependencies (NuGet packages):
-        - GDAL.Native
+        - MaxRev.Gdal.Core
+        - MaxRev.Gdal.WindowsRuntime.Minimal
         - FlatGeobuf
         - NetTopologySuite (comes with FlatGeobuf, update if necessary)
 
@@ -582,11 +583,8 @@ namespace Prototyp.Elements
         // Static helper that initializes GDAL.
         public static void InitGDAL()
         {
-            //Environment.SetEnvironmentVariable("PROJ_LIB", "C:\\Users\\[USERNAME]\\source\\repos\\Prototyp\\Prototyp\\bin\\x64\\Debug\\netcoreapp3.1\\runtimes\\win-x64\\native\\maxrev.gdal.core.libshared");
-            // "PROJ_LIB" muss in den Umgebungsvariablen eingetragen sein siehe hier: https://github.com/OSGeo/gdal/issues/1647 und hier: https://stackoverflow.com/questions/4788398/changes-via-setenvironmentvariable-do-not-take-effect-in-library-that-uses-geten
-
-            GdalConfiguration.ConfigureGdal();
-            GdalConfiguration.ConfigureOgr();
+            MaxRev.Gdal.Core.GdalBase.ConfigureAll();
+            OSGeo.OGR.Ogr.RegisterAll();
 
             OSGeo.GDAL.Gdal.SetConfigOption("GDAL_FILENAME_IS_UTF8", "NO");
             OSGeo.GDAL.Gdal.SetConfigOption("SHAPE_ENCODING", "");
