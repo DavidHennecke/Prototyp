@@ -118,6 +118,11 @@ namespace Prototyp
         {
             var nodeModule = new Node_Module("..\\..\\..\\..\\Modules\\Buffer\\Buffer.xml");
             network.Nodes.Add(nodeModule);
+
+            //TODO: Das sollte eigentlich bereits beim Programmstart durchlaufen werden, dann auf Basis aller installierten Module.
+            ToolButton1.Text = nodeModule.Name;
+            WithInButton.ToolTip = nodeModule.Name;
+
             //TODO: Binary hier starten.
         }
 
@@ -134,6 +139,7 @@ namespace Prototyp
                     {
                         importNode.importNodeOutput.Name = vectorData[i].Name;
                         importNode.importNodeOutput.Value = System.Reactive.Linq.Observable.Return(vectorData[i]);
+                        importNode.Position = e.GetPosition(networkView);
                         network.Nodes.Add(importNode);
                         break;
                     }
@@ -149,6 +155,7 @@ namespace Prototyp
                     {
                         importNode.importNodeOutput.Name = rasterData[i].Name;
                         importNode.importNodeOutput.Value = System.Reactive.Linq.Observable.Return(rasterData[i]);
+                        importNode.Position = e.GetPosition(networkView);
                         network.Nodes.Add(importNode);
                         break;
                     }
