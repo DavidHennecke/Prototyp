@@ -115,6 +115,8 @@
                         </Grid.RowDefinitions>
                         <TextBlock x:Name="ToolButton1" Grid.Column="0" Grid.Row="0" VerticalAlignment="Bottom" Text="WithIn" Panel.ZIndex="1" HorizontalAlignment="Center"/>
                         <Button x:Name="WithInButton" ToolTip="WithIn" Grid.Column="0" Grid.Row="0" Content="" Background="#FF252221" FontFamily="{StaticResource FontAwesomeSolid}" VerticalAlignment="Top" HorizontalAlignment="Center" Padding="0" Width="50" Height="50" FontSize="40" Click="WithInButton_Click"/>
+                        <TextBlock x:Name="ToolButton2" Grid.Column="1" Grid.Row="0" VerticalAlignment="Bottom" Text="Banane" Panel.ZIndex="1" HorizontalAlignment="Center"/>
+                        <Button x:Name="WithInButton2" ToolTip="Banane" Grid.Column="1" Grid.Row="0" Content="" Background="#FF252221" FontFamily="{StaticResource FontAwesomeSolid}" VerticalAlignment="Top" HorizontalAlignment="Center" Padding="0" Width="50" Height="50" FontSize="40" Click="WithInButton2_Click"/>
                     </Grid>
                     
                 </DockPanel>

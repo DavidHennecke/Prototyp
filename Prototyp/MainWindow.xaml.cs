@@ -126,6 +126,11 @@ namespace Prototyp
             //TODO: Binary hier starten.
         }
 
+        private void WithInButton2_Click(object sender, RoutedEventArgs e)
+        {
+            MessageBox.Show("Hallo");
+        }
+
         //Objekt wird in den NodeEditor gezogen
         public void DropTargetEventNodeEditor(object sender, DragEventArgs e)
         {
