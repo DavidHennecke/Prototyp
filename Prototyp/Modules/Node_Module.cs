@@ -13,7 +13,7 @@ using System.Windows;
 namespace Prototyp.Modules
 {
     public class Node_Module : NodeViewModel
-    {        
+    {
         public FloatSliderViewModel sliderEditor { get; }
         public DropDownMenuViewModel dropDownEditor { get; }
         public ValueNodeInputViewModel<Prototyp.Elements.VectorData> vectorInput { get; }
@@ -22,37 +22,15 @@ namespace Prototyp.Modules
         public ValueNodeInputViewModel<string> valueStringInput { get; }
         public ValueNodeOutputViewModel<Prototyp.Elements.VectorData> vectorOutput { get; }
         public ValueNodeOutputViewModel<Prototyp.Elements.RasterData> rasterOutput { get; }
-        private int intPort;
-        //private ControlConnector.ControlConnectorClient intGrpcConnection;
+        public int port { get; }
+        public GrpcClient.ControlConnector.ControlConnectorClient grpcConnection { get; }
 
-        // Getters and setters -------------------------------------------------------------
-
-        public int Port
-        {
-            get { return (intPort); }
-        }
-
-        //public ControlConnector.ControlConnectorClient grpcConnection
-        //{
-        //    get { return (intGrpcConnection); }
-        //}
-
-        // Constructors --------------------------------------------------------------------
-
-        // Parameterless constructor.
-        public Node_Module()
-        {
-            // Nothing much to do here...
-        }
-
-        // Create a node from its XML config file.
-        public Node_Module(string pathXML, int DesignatedPort)//, ControlConnector.ControlConnectorClient DesignatedConnection)
+        public Node_Module(string pathXML, int port, GrpcClient.ControlConnector.ControlConnectorClient grpcConnection)
         {
             VorteXML newModule = new VorteXML(pathXML);
-            
-            Name = newModule.NodeTitle;
-            intPort = DesignatedPort;
-            //intGrpcConnection = DesignatedConnection;
+            this.Name = newModule.NodeTitle;
+            this.port = port;
+            this.grpcConnection = grpcConnection;
 
             foreach (VorteXML.ToolRow toolRow in newModule.ToolRows)
             {

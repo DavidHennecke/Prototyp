@@ -15,7 +15,7 @@
     <None Remove="Images\VortexIcon.ico" />
     <None Remove="Images\VortexIcon.png" />
   </ItemGroup>
-
+	
   <ItemGroup>
     <None Remove="Protos\controlConnector.proto" />
   </ItemGroup>
@@ -36,10 +36,11 @@
     <PackageReference Include="NodeNetwork" Version="6.0.0" />
     <PackageReference Include="NodeNetworkToolkit" Version="6.0.0" />
   </ItemGroup>
-  
+
   <ItemGroup>
-    <Protobuf Include="Protos\controlConnector.proto" GrpcServices="Client" />
-  </ItemGroup>   
+    <ProjectReference Include="..\GrpcClient\GrpcClient.csproj" />
+  </ItemGroup>
+
 
   <ItemGroup>
     <Resource Include="Fonts\FontAwesome5Regular.otf">

@@ -134,44 +134,46 @@ namespace Prototyp
 
         private void Button1_Click(object sender, RoutedEventArgs e)
         {
-            //Find lowest available node port (ID)
-            int port = 5000;
-            foreach (Node_Module node in network.Nodes.Items)
+            //Find lowest available node ID
+            int port = 5001;
+            foreach(Node_Module node in network.Nodes.Items)
             {
-                if (node.Port == port)
+                if(node.port == port)
                 {
                     port++;
+                    //TODO: Check if port is open https://stackoverflow.com/questions/570098/in-c-how-to-check-if-a-tcp-port-is-available
                 }
             }
             if (!Node_Module.PortAvailable(port)) throw new System.Exception("This port is not available."); //TODO: Besseres Handling. Nächsten Kandidaten holen?
 
-            //ControlConnector.ControlConnectorClient grpcConnection;
+
+            GrpcClient.ControlConnector.ControlConnectorClient grpcConnection;
             using (System.Diagnostics.Process myProcess = new System.Diagnostics.Process())
             {
-                ////Start binary
-                ////TODO: Pfad zur Binary aus der XML holen
-                //string path = "";
-                //System.Diagnostics.ProcessStartInfo myProcessStartInfo = new System.Diagnostics.ProcessStartInfo(path, port.ToString());
+                //Start binary
+                //TODO: Pfad zur Binary aus der XML holen
+                string path = "";
+                System.Diagnostics.ProcessStartInfo myProcessStartInfo = new System.Diagnostics.ProcessStartInfo(
+                    "..\\..\\..\\..\\Modules\\Buffer\\Buffer.exe", port.ToString());
 
-                //myProcessStartInfo.UseShellExecute = true;
-                //myProcess.StartInfo = myProcessStartInfo;
-                //myProcess.Start();
+                myProcessStartInfo.UseShellExecute = true;
+                myProcess.StartInfo = myProcessStartInfo;
+                myProcess.Start();
 
-                ////Establish GRPC connection
-                ////TODO: nicht nur localhost
-                //string url = "https://localhost:" + port;
-                //Grpc.Net.Client.GrpcChannel channel = Grpc.Net.Client.GrpcChannel.ForAddress(url);
-                ////grpcConnection = new ControlConnector.ControlConnectorClient(channel);
+                //Establish GRPC connection
+                //TODO: nicht nur localhost
+                var url = "https://localhost:" + port;
+                var channel = Grpc.Net.Client.GrpcChannel.ForAddress(url);
+                grpcConnection = new GrpcClient.ControlConnector.ControlConnectorClient(channel);
             }
 
-            Node_Module nodeModule = new Node_Module("..\\..\\..\\..\\Modules\\Buffer\\Buffer.xml", port); //, grpcConnection);
+            var nodeModule = new Node_Module("..\\..\\..\\..\\Modules\\Buffer\\Buffer.xml", port, grpcConnection);
+
             network.Nodes.Add(nodeModule);
 
             //TODO: Das sollte eigentlich bereits beim Programmstart durchlaufen werden, dann auf Basis aller installierten Module.
             ToolButton1.Text = nodeModule.Name;
             Button1.ToolTip = nodeModule.Name;
-
-            //TODO: Binary hier starten.
         }
 
         private void Button2_Click(object sender, RoutedEventArgs e)
