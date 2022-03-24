@@ -14,15 +14,33 @@ namespace Prototyp
         public System.Collections.Generic.List<VectorData> vectorData = new System.Collections.Generic.List<VectorData>();
         public System.Collections.Generic.List<RasterData> rasterData = new System.Collections.Generic.List<RasterData>();
 
-        //Create a new viewmodel for the NetworkView
+        private string ModulesPath;
+
         public static MainWindow AppWindow;
         NetworkViewModel network = new NetworkViewModel();
+
+        // Constructors --------------------------------------------------------------------
+
+        // Parameterless constructor: Create a new viewmodel for the NetworkView.
         public MainWindow()
         {
+            ModulesPath = "..\\..\\..\\..\\Custom modules";
+            ParseModules();
+
             InitializeComponent();
             AppWindow = this;
             networkView.ViewModel = network;
         }
+
+        // Static methods --------------------------------------------------------------------
+
+        public void ParseModules()
+        {
+            
+            MessageBox.Show(ModulesPath);
+        }
+
+        // Private methods --------------------------------------------------------------------
 
         private void ImportButton_Click(object sender, RoutedEventArgs e)
         {
@@ -114,7 +132,7 @@ namespace Prototyp
             }
         }
 
-        private void WithInButton_Click(object sender, RoutedEventArgs e)
+        private void Button1_Click(object sender, RoutedEventArgs e)
         {
             //Find lowest available node ID
             int port = 5001;
@@ -126,6 +144,8 @@ namespace Prototyp
                     //TODO: Check if port is open https://stackoverflow.com/questions/570098/in-c-how-to-check-if-a-tcp-port-is-available
                 }
             }
+            if (!Node_Module.PortAvailable(port)) throw new System.Exception("This port is not available."); //TODO: Besseres Handling. Nächsten Kandidaten holen?
+
 
             GrpcClient.ControlConnector.ControlConnectorClient grpcConnection;
             using (System.Diagnostics.Process myProcess = new System.Diagnostics.Process())
@@ -148,14 +168,15 @@ namespace Prototyp
             }
 
             var nodeModule = new Node_Module("..\\..\\..\\..\\Modules\\Buffer\\Buffer.xml", port, grpcConnection);
+
             network.Nodes.Add(nodeModule);
 
             //TODO: Das sollte eigentlich bereits beim Programmstart durchlaufen werden, dann auf Basis aller installierten Module.
             ToolButton1.Text = nodeModule.Name;
-            WithInButton.ToolTip = nodeModule.Name;
+            Button1.ToolTip = nodeModule.Name;
         }
 
-        private void WithInButton2_Click(object sender, RoutedEventArgs e)
+        private void Button2_Click(object sender, RoutedEventArgs e)
         {
             MessageBox.Show("Hallo");
         }
