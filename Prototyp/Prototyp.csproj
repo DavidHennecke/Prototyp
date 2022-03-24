@@ -22,12 +22,6 @@
   
   <ItemGroup>
     <PackageReference Include="FlatGeobuf" Version="3.22.2" />
-    <PackageReference Include="Google.Protobuf" Version="3.19.4" />
-    <PackageReference Include="Grpc.Net.Client" Version="2.44.0" />
-    <PackageReference Include="Grpc.Tools" Version="2.45.0">
-      <PrivateAssets>all</PrivateAssets>
-      <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
-    </PackageReference>
     <PackageReference Include="MaxRev.Gdal.Core" Version="3.3.3.110" />
     <PackageReference Include="MaxRev.Gdal.WindowsRuntime.Minimal" Version="3.3.3.110" />
     <PackageReference Include="Microsoft.Toolkit.Wpf.UI.Controls" Version="6.1.2" />
