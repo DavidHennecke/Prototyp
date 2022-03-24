@@ -22,15 +22,35 @@ namespace Prototyp.Modules
         public ValueNodeInputViewModel<string> valueStringInput { get; }
         public ValueNodeOutputViewModel<Prototyp.Elements.VectorData> vectorOutput { get; }
         public ValueNodeOutputViewModel<Prototyp.Elements.RasterData> rasterOutput { get; }
-        public int port { get; }
-        public GrpcClient.ControlConnector.ControlConnectorClient grpcConnection { get; }
+        private int IntPort;
+        private GrpcClient.ControlConnector.ControlConnectorClient IntGrpcConnection;
+
+        // Getters and setters -------------------------------------------------------------
+
+        public int Port
+        {
+            get { return (IntPort); }
+        }
+
+        public GrpcClient.ControlConnector.ControlConnectorClient grpcConnection
+        {
+            get { return (IntGrpcConnection); }
+        }
+
+        // Constructors --------------------------------------------------------------------
+
+        // Parameterless constructor.
+        public Node_Module()
+        {
+            // Nothing much to do here...
+        }
 
         public Node_Module(string pathXML, int port, GrpcClient.ControlConnector.ControlConnectorClient grpcConnection)
         {
             VorteXML newModule = new VorteXML(pathXML);
-            this.Name = newModule.NodeTitle;
-            this.port = port;
-            this.grpcConnection = grpcConnection;
+            Name = newModule.NodeTitle;
+            IntPort = port;
+            IntGrpcConnection = grpcConnection;
 
             foreach (VorteXML.ToolRow toolRow in newModule.ToolRows)
             {

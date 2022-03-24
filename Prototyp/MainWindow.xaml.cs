@@ -11,8 +11,10 @@ namespace Prototyp
 {
     public partial class MainWindow : Window
     {
-        public System.Collections.Generic.List<VectorData> vectorData = new System.Collections.Generic.List<VectorData>();
-        public System.Collections.Generic.List<RasterData> rasterData = new System.Collections.Generic.List<RasterData>();
+        private System.Collections.Generic.List<VectorData> vectorData = new System.Collections.Generic.List<VectorData>();
+        private System.Collections.Generic.List<RasterData> rasterData = new System.Collections.Generic.List<RasterData>();
+        private System.Collections.Generic.List<VorteXML> vorteXMLStructures = new System.Collections.Generic.List<VorteXML>();
+        private System.Collections.Generic.List<string> BinaryPaths = new System.Collections.Generic.List<string>();
 
         private string ModulesPath;
 
@@ -24,23 +26,60 @@ namespace Prototyp
         // Parameterless constructor: Create a new viewmodel for the NetworkView.
         public MainWindow()
         {
-            ModulesPath = "..\\..\\..\\..\\Custom modules";
-            ParseModules();
-
+            // Startup NetworkView.
             InitializeComponent();
             AppWindow = this;
             networkView.ViewModel = network;
-        }
-
-        // Static methods --------------------------------------------------------------------
-
-        public void ParseModules()
-        {
             
-            MessageBox.Show(ModulesPath);
+            // Initialize modules path and start parsing.
+            //TODO: Besseren Weg finden, um das parent directory zu bestimmen.
+            ModulesPath = System.IO.Directory.GetCurrentDirectory();
+            System.IO.DirectoryInfo ParentDir = System.IO.Directory.GetParent(ModulesPath);
+            ParentDir = System.IO.Directory.GetParent(ParentDir.FullName);
+            ParentDir = System.IO.Directory.GetParent(ParentDir.FullName);
+            ParentDir = System.IO.Directory.GetParent(ParentDir.FullName);
+            ModulesPath = ParentDir.FullName + "\\Custom modules";
+            
+            ParseModules(ModulesPath);
         }
 
         // Private methods --------------------------------------------------------------------
+
+        public void ParseModules(string Path)
+        {
+            string[] SubDirs = Directory.GetDirectories(Path);
+            string[] FileNames;
+            string XMLName;
+            VorteXML ThisXML;
+
+            foreach (string Dir in SubDirs)
+            {
+                FileNames = System.IO.Directory.GetFiles(Dir);
+                foreach (string FileName in FileNames)
+                {
+                    if (FileName.ToLower().EndsWith(".xml"))
+                    {
+                        XMLName = FileName;
+                        ThisXML = new VorteXML(XMLName);
+                        vorteXMLStructures.Add(ThisXML);
+                        BinaryPaths.Add(Dir + "\\" + ThisXML.NodeTitle);
+
+                        //TODO: Buttons sollten ein Array von Buttons sein: https://stackoverflow.com/questions/2481769/how-to-create-an-array-of-buttons-in-wpf
+                        ToolButton1.Text = ThisXML.NodeTitle;
+                        Button1.ToolTip = ThisXML.NodeTitle;
+
+                        System.Windows.Media.Imaging.BitmapImage MyImage = new System.Windows.Media.Imaging.BitmapImage();
+                        MyImage.BeginInit();
+                        MyImage.UriSource = new Uri(Dir + "/Icon.png", UriKind.Absolute);
+                        MyImage.EndInit();
+                        B1Image.Source = MyImage;
+                        break;
+                    }
+                }
+            }
+        }
+
+        // User control handlers --------------------------------------------------------------------
 
         private void ImportButton_Click(object sender, RoutedEventArgs e)
         {
@@ -135,45 +174,36 @@ namespace Prototyp
         private void Button1_Click(object sender, RoutedEventArgs e)
         {
             //Find lowest available node ID
-            int port = 5001;
-            foreach(Node_Module node in network.Nodes.Items)
+            int port = 5000;
+            foreach (Node_Module node in network.Nodes.Items)
             {
-                if(node.port == port)
+                if (node.Port == port)
                 {
                     port++;
-                    //TODO: Check if port is open https://stackoverflow.com/questions/570098/in-c-how-to-check-if-a-tcp-port-is-available
                 }
             }
             if (!Node_Module.PortAvailable(port)) throw new System.Exception("This port is not available."); //TODO: Besseres Handling. Nächsten Kandidaten holen?
 
-
             GrpcClient.ControlConnector.ControlConnectorClient grpcConnection;
             using (System.Diagnostics.Process myProcess = new System.Diagnostics.Process())
             {
-                //Start binary
-                //TODO: Pfad zur Binary aus der XML holen
-                string path = "";
-                System.Diagnostics.ProcessStartInfo myProcessStartInfo = new System.Diagnostics.ProcessStartInfo(
-                    "..\\..\\..\\..\\Modules\\Buffer\\Buffer.exe", port.ToString());
+                System.Diagnostics.ProcessStartInfo myProcessStartInfo = new System.Diagnostics.ProcessStartInfo(BinaryPaths[0] + ".exe", port.ToString());
 
-                myProcessStartInfo.UseShellExecute = true;
+                //myProcessStartInfo.CreateNoWindow = true; //Ja, dies macht das Server-Window wirklich unsichtbar. Sicherstellen, dass der Krempel terminiert wird.
+                myProcessStartInfo.UseShellExecute = false; //Muss für .NETCore tatsächlich false sein, weil ShellExecute wirklich nur auf der Windows-Plattform verfügbar ist.
                 myProcess.StartInfo = myProcessStartInfo;
                 myProcess.Start();
 
                 //Establish GRPC connection
                 //TODO: nicht nur localhost
-                var url = "https://localhost:" + port;
-                var channel = Grpc.Net.Client.GrpcChannel.ForAddress(url);
+                string url = "https://localhost:" + port;
+                Grpc.Net.Client.GrpcChannel channel = Grpc.Net.Client.GrpcChannel.ForAddress(url);
                 grpcConnection = new GrpcClient.ControlConnector.ControlConnectorClient(channel);
             }
 
-            var nodeModule = new Node_Module("..\\..\\..\\..\\Modules\\Buffer\\Buffer.xml", port, grpcConnection);
+            Node_Module nodeModule = new Node_Module(BinaryPaths[0] + ".xml", port, grpcConnection);
 
             network.Nodes.Add(nodeModule);
-
-            //TODO: Das sollte eigentlich bereits beim Programmstart durchlaufen werden, dann auf Basis aller installierten Module.
-            ToolButton1.Text = nodeModule.Name;
-            Button1.ToolTip = nodeModule.Name;
         }
 
         private void Button2_Click(object sender, RoutedEventArgs e)

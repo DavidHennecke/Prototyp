@@ -114,9 +114,13 @@
                             <RowDefinition Height="1*"/>
                         </Grid.RowDefinitions>
                         <TextBlock x:Name="ToolButton1" Grid.Column="0" Grid.Row="0" VerticalAlignment="Bottom" Text="" Panel.ZIndex="1" HorizontalAlignment="Center"/>
-                        <Button x:Name="Button1" ToolTip="" Grid.Column="0" Grid.Row="0" Content="" Background="#FF252221" FontFamily="{StaticResource FontAwesomeSolid}" VerticalAlignment="Top" HorizontalAlignment="Center" Padding="0" Width="50" Height="50" FontSize="40" Click="Button1_Click"/>
+                        <Button x:Name="Button1" ToolTip="" Grid.Column="0" Grid.Row="0" Background="#FF252221" FontFamily="{StaticResource FontAwesomeSolid}" VerticalAlignment="Top" HorizontalAlignment="Center" Padding="0" Width="50" Height="50" FontSize="40" Click="Button1_Click">
+                            <Image Name="B1Image" Source="Images\VortexIcon.png"/>
+                        </Button>
                         <TextBlock x:Name="ToolButton2" Grid.Column="1" Grid.Row="0" VerticalAlignment="Bottom" Text="" Panel.ZIndex="1" HorizontalAlignment="Center"/>
-                        <Button x:Name="Button2" ToolTip="" Grid.Column="1" Grid.Row="0" Content="" Background="#FF252221" FontFamily="{StaticResource FontAwesomeSolid}" VerticalAlignment="Top" HorizontalAlignment="Center" Padding="0" Width="50" Height="50" FontSize="40" Click="Button2_Click"/>
+                        <Button x:Name="Button2" ToolTip="" Grid.Column="1" Grid.Row="0" Background="#FF252221" FontFamily="{StaticResource FontAwesomeSolid}" VerticalAlignment="Top" HorizontalAlignment="Center" Padding="0" Width="50" Height="50" FontSize="40" Click="Button2_Click">
+                            <Image Name="B2Image" Source="Images\VortexIcon.png"/>
+                        </Button>
                     </Grid>
                     
                 </DockPanel>
