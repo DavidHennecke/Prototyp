@@ -14,15 +14,33 @@ namespace Prototyp
         public System.Collections.Generic.List<VectorData> vectorData = new System.Collections.Generic.List<VectorData>();
         public System.Collections.Generic.List<RasterData> rasterData = new System.Collections.Generic.List<RasterData>();
 
-        //Create a new viewmodel for the NetworkView
+        private string ModulesPath;
+
         public static MainWindow AppWindow;
         NetworkViewModel network = new NetworkViewModel();
+
+        // Constructors --------------------------------------------------------------------
+
+        // Parameterless constructor: Create a new viewmodel for the NetworkView.
         public MainWindow()
         {
+            ModulesPath = "..\\..\\..\\..\\Custom modules";
+            ParseModules();
+
             InitializeComponent();
             AppWindow = this;
             networkView.ViewModel = network;
         }
+
+        // Static methods --------------------------------------------------------------------
+
+        public void ParseModules()
+        {
+            
+            MessageBox.Show(ModulesPath);
+        }
+
+        // Private methods --------------------------------------------------------------------
 
         private void ImportButton_Click(object sender, RoutedEventArgs e)
         {
@@ -114,19 +132,49 @@ namespace Prototyp
             }
         }
 
-        private void WithInButton_Click(object sender, RoutedEventArgs e)
+        private void Button1_Click(object sender, RoutedEventArgs e)
         {
-            var nodeModule = new Node_Module("..\\..\\..\\..\\Modules\\Buffer\\Buffer.xml");
+            //Find lowest available node port (ID)
+            int port = 5000;
+            foreach (Node_Module node in network.Nodes.Items)
+            {
+                if (node.Port == port)
+                {
+                    port++;
+                }
+            }
+            if (!Node_Module.PortAvailable(port)) throw new System.Exception("This port is not available."); //TODO: Besseres Handling. Nächsten Kandidaten holen?
+
+            //ControlConnector.ControlConnectorClient grpcConnection;
+            using (System.Diagnostics.Process myProcess = new System.Diagnostics.Process())
+            {
+                ////Start binary
+                ////TODO: Pfad zur Binary aus der XML holen
+                //string path = "";
+                //System.Diagnostics.ProcessStartInfo myProcessStartInfo = new System.Diagnostics.ProcessStartInfo(path, port.ToString());
+
+                //myProcessStartInfo.UseShellExecute = true;
+                //myProcess.StartInfo = myProcessStartInfo;
+                //myProcess.Start();
+
+                ////Establish GRPC connection
+                ////TODO: nicht nur localhost
+                //string url = "https://localhost:" + port;
+                //Grpc.Net.Client.GrpcChannel channel = Grpc.Net.Client.GrpcChannel.ForAddress(url);
+                ////grpcConnection = new ControlConnector.ControlConnectorClient(channel);
+            }
+
+            Node_Module nodeModule = new Node_Module("..\\..\\..\\..\\Modules\\Buffer\\Buffer.xml", port); //, grpcConnection);
             network.Nodes.Add(nodeModule);
 
             //TODO: Das sollte eigentlich bereits beim Programmstart durchlaufen werden, dann auf Basis aller installierten Module.
             ToolButton1.Text = nodeModule.Name;
-            WithInButton.ToolTip = nodeModule.Name;
+            Button1.ToolTip = nodeModule.Name;
 
             //TODO: Binary hier starten.
         }
 
-        private void WithInButton2_Click(object sender, RoutedEventArgs e)
+        private void Button2_Click(object sender, RoutedEventArgs e)
         {
             MessageBox.Show("Hallo");
         }

@@ -22,11 +22,37 @@ namespace Prototyp.Modules
         public ValueNodeInputViewModel<string> valueStringInput { get; }
         public ValueNodeOutputViewModel<Prototyp.Elements.VectorData> vectorOutput { get; }
         public ValueNodeOutputViewModel<Prototyp.Elements.RasterData> rasterOutput { get; }
+        private int intPort;
+        //private ControlConnector.ControlConnectorClient intGrpcConnection;
 
-        public Node_Module(string pathXML)
+        // Getters and setters -------------------------------------------------------------
+
+        public int Port
+        {
+            get { return (intPort); }
+        }
+
+        //public ControlConnector.ControlConnectorClient grpcConnection
+        //{
+        //    get { return (intGrpcConnection); }
+        //}
+
+        // Constructors --------------------------------------------------------------------
+
+        // Parameterless constructor.
+        public Node_Module()
+        {
+            // Nothing much to do here...
+        }
+
+        // Create a node from its XML config file.
+        public Node_Module(string pathXML, int DesignatedPort)//, ControlConnector.ControlConnectorClient DesignatedConnection)
         {
             VorteXML newModule = new VorteXML(pathXML);
-            this.Name = newModule.NodeTitle;
+            
+            Name = newModule.NodeTitle;
+            intPort = DesignatedPort;
+            //intGrpcConnection = DesignatedConnection;
 
             foreach (VorteXML.ToolRow toolRow in newModule.ToolRows)
             {
@@ -110,6 +136,24 @@ namespace Prototyp.Modules
                     }
                 }
             }
+        }
+
+        // Static methods ------------------------------------------------------------------
+
+        public static bool PortAvailable(int Port) // Source: https://stackoverflow.com/questions/570098/in-c-how-to-check-if-a-tcp-port-is-available
+        {
+            System.Net.NetworkInformation.IPGlobalProperties ipGlobalProperties = System.Net.NetworkInformation.IPGlobalProperties.GetIPGlobalProperties();
+            System.Net.NetworkInformation.TcpConnectionInformation[] tcpConnInfoArray = ipGlobalProperties.GetActiveTcpConnections();
+
+            foreach (System.Net.NetworkInformation.TcpConnectionInformation tcpi in tcpConnInfoArray)
+            {
+                if (tcpi.LocalEndPoint.Port == Port)
+                {
+                    return (false);
+                }
+            }
+
+            return (true);
         }
 
         static Node_Module()
