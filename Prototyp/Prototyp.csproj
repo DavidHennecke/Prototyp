@@ -15,25 +15,19 @@
     <None Remove="Images\VortexIcon.ico" />
     <None Remove="Images\VortexIcon.png" />
   </ItemGroup>
-
-  <ItemGroup>
-    <Protobuf Include="Protos\controlConnector.proto" GrpcServices="Client" />
-  </ItemGroup>
 	
   <ItemGroup>
     <PackageReference Include="FlatGeobuf" Version="3.22.2" />
     <PackageReference Include="GDAL.Native" Version="3.4.2" />
-    <PackageReference Include="Google.Protobuf" Version="3.19.4" />
-    <PackageReference Include="Grpc.Net.Client" Version="2.44.0" />
-    <PackageReference Include="Grpc.Tools" Version="2.45.0">
-      <PrivateAssets>all</PrivateAssets>
-      <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
-    </PackageReference>
     <PackageReference Include="Microsoft.Toolkit.Wpf.UI.Controls" Version="6.1.2" />
     <PackageReference Include="ModernWpfUI" Version="0.9.4" />
     <PackageReference Include="NetTopologySuite" Version="2.4.0" />
     <PackageReference Include="NodeNetwork" Version="6.0.0" />
     <PackageReference Include="NodeNetworkToolkit" Version="6.0.0" />
+  </ItemGroup>
+	
+  <ItemGroup>
+    <ProjectReference Include="..\GrpcClient\GrpcClient.csproj" />
   </ItemGroup>
 
   <ItemGroup>

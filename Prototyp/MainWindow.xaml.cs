@@ -127,14 +127,14 @@ namespace Prototyp
                 }
             }
 
-            GrpcServer.ControlConnector.ControlConnectorClient grpcConnection;
+            GrpcClient.ControlConnector.ControlConnectorClient grpcConnection;
             using (System.Diagnostics.Process myProcess = new System.Diagnostics.Process())
             {
                 //Start binary
                 //TODO: Pfad zur Binary aus der XML holen
                 string path = "";
                 System.Diagnostics.ProcessStartInfo myProcessStartInfo = new System.Diagnostics.ProcessStartInfo(
-                    path, port.ToString());
+                    "..\\..\\..\\..\\Modules\\Buffer\\Buffer.exe", port.ToString());
 
                 myProcessStartInfo.UseShellExecute = true;
                 myProcess.StartInfo = myProcessStartInfo;
@@ -144,7 +144,7 @@ namespace Prototyp
                 //TODO: nicht nur localhost
                 var url = "https://localhost:" + port;
                 var channel = Grpc.Net.Client.GrpcChannel.ForAddress(url);
-                grpcConnection = new GrpcServer.ControlConnector.ControlConnectorClient(channel);
+                grpcConnection = new GrpcClient.ControlConnector.ControlConnectorClient(channel);
             }
 
             var nodeModule = new Node_Module("..\\..\\..\\..\\Modules\\Buffer\\Buffer.xml", port, grpcConnection);

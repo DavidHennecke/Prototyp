@@ -23,9 +23,9 @@ namespace Prototyp.Modules
         public ValueNodeOutputViewModel<Prototyp.Elements.VectorData> vectorOutput { get; }
         public ValueNodeOutputViewModel<Prototyp.Elements.RasterData> rasterOutput { get; }
         public int port { get; }
-        public GrpcServer.ControlConnector.ControlConnectorClient grpcConnection { get; }
+        public GrpcClient.ControlConnector.ControlConnectorClient grpcConnection { get; }
 
-        public Node_Module(string pathXML, int port, GrpcServer.ControlConnector.ControlConnectorClient grpcConnection)
+        public Node_Module(string pathXML, int port, GrpcClient.ControlConnector.ControlConnectorClient grpcConnection)
         {
             VorteXML newModule = new VorteXML(pathXML);
             this.Name = newModule.NodeTitle;
