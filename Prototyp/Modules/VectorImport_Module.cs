@@ -16,11 +16,11 @@ namespace Prototyp.Modules
 
         public VectorImport_Module()
         {
-            this.Name = "Dataset";
+            Name = "Dataset";
             importNodeOutput = new ValueNodeOutputViewModel<Prototyp.Elements.VectorData>();
             importNodeOutput.Value = null;
             importNodeOutput.Name = null;
-            this.Outputs.Add(importNodeOutput);
+            Outputs.Add(importNodeOutput);
         }
 
         static VectorImport_Module()

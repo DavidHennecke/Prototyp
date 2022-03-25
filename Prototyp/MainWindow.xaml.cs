@@ -11,6 +11,8 @@ namespace Prototyp
 {
     public partial class MainWindow : Window
     {
+        private const int BASEPORT = 5000;
+
         private System.Collections.Generic.List<VectorData> vectorData = new System.Collections.Generic.List<VectorData>();
         private System.Collections.Generic.List<RasterData> rasterData = new System.Collections.Generic.List<RasterData>();
         private System.Collections.Generic.List<VorteXML> vorteXMLStructures = new System.Collections.Generic.List<VorteXML>();
@@ -64,15 +66,32 @@ namespace Prototyp
                         vorteXMLStructures.Add(ThisXML);
                         BinaryPaths.Add(Dir + "\\" + ThisXML.NodeTitle);
 
-                        //TODO: Buttons sollten ein Array von Buttons sein: https://stackoverflow.com/questions/2481769/how-to-create-an-array-of-buttons-in-wpf
-                        ToolButton1.Text = ThisXML.NodeTitle;
-                        Button1.ToolTip = ThisXML.NodeTitle;
+                        //TODO: Grrr, Buttons sollten ein Array von Buttons sein!
+                        if (ThisXML.NodeTitle == "Buffer")
+                        {
+                            ToolButton1.Text = ThisXML.NodeTitle;
+                            Button1.ToolTip = ThisXML.NodeTitle;
+                        }
+                        if (ThisXML.NodeTitle == "RasterTest")
+                        {
+                            ToolButton2.Text = ThisXML.NodeTitle;
+                            Button2.ToolTip = ThisXML.NodeTitle;
+                        }
 
                         System.Windows.Media.Imaging.BitmapImage MyImage = new System.Windows.Media.Imaging.BitmapImage();
                         MyImage.BeginInit();
                         MyImage.UriSource = new Uri(Dir + "/Icon.png", UriKind.Absolute);
                         MyImage.EndInit();
-                        B1Image.Source = MyImage;
+
+                        if (ThisXML.NodeTitle == "Buffer")
+                        {
+                            B1Image.Source = MyImage;
+                        }
+                        if (ThisXML.NodeTitle == "RasterTest")
+                        {
+                            B2Image.Source = MyImage;
+                        }
+
                         break;
                     }
                 }
@@ -174,7 +193,7 @@ namespace Prototyp
         private void Button1_Click(object sender, RoutedEventArgs e)
         {
             //Find lowest available node ID
-            int port = 5000;
+            int port = BASEPORT;
             foreach (Node_Module node in network.Nodes.Items)
             {
                 if (node.Port == port)
@@ -208,7 +227,37 @@ namespace Prototyp
 
         private void Button2_Click(object sender, RoutedEventArgs e)
         {
-            MessageBox.Show("Hallo");
+            //Find lowest available node ID
+            int port = BASEPORT;
+            foreach (Node_Module node in network.Nodes.Items)
+            {
+                if (node.Port == port)
+                {
+                    port++;
+                }
+            }
+            if (!Node_Module.PortAvailable(port)) throw new System.Exception("This port is not available."); //TODO: Besseres Handling. Nächsten Kandidaten holen?
+
+            GrpcClient.ControlConnector.ControlConnectorClient grpcConnection;
+            using (System.Diagnostics.Process myProcess = new System.Diagnostics.Process())
+            {
+                System.Diagnostics.ProcessStartInfo myProcessStartInfo = new System.Diagnostics.ProcessStartInfo(BinaryPaths[1] + ".exe", port.ToString());
+
+                //myProcessStartInfo.CreateNoWindow = true; //Ja, dies macht das Server-Window wirklich unsichtbar. Sicherstellen, dass der Krempel terminiert wird.
+                myProcessStartInfo.UseShellExecute = false; //Muss für .NETCore tatsächlich false sein, weil ShellExecute wirklich nur auf der Windows-Plattform verfügbar ist.
+                myProcess.StartInfo = myProcessStartInfo;
+                myProcess.Start();
+
+                //Establish GRPC connection
+                //TODO: nicht nur localhost
+                string url = "https://localhost:" + port;
+                Grpc.Net.Client.GrpcChannel channel = Grpc.Net.Client.GrpcChannel.ForAddress(url);
+                grpcConnection = new GrpcClient.ControlConnector.ControlConnectorClient(channel);
+            }
+
+            Node_Module nodeModule = new Node_Module(BinaryPaths[1] + ".xml", port, grpcConnection);
+
+            network.Nodes.Add(nodeModule);
         }
 
         //Objekt wird in den NodeEditor gezogen

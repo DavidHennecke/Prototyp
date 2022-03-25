@@ -16,11 +16,11 @@ namespace Prototyp.Modules
 
         public RasterImport_Module()
         {
-            this.Name = "Dataset";
+            Name = "Dataset";
             importNodeOutput = new ValueNodeOutputViewModel<Prototyp.Elements.RasterData>();
             importNodeOutput.Value = null;
             importNodeOutput.Name = null;
-            this.Outputs.Add(importNodeOutput);
+            Outputs.Add(importNodeOutput);
         }
 
         static RasterImport_Module()

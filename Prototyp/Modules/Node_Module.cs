@@ -3,19 +3,16 @@ using NodeNetwork.Toolkit.ValueNode;
 using NodeNetwork.ViewModels;
 using NodeNetwork.Views;
 using Prototyp.Elements;
-using Prototyp.Modules.ViewModels;
 using ReactiveUI;
 using System;
-using System.IO;
 using System.Reactive.Linq;
-using System.Windows;
 
 namespace Prototyp.Modules
 {
     public class Node_Module : NodeViewModel
     {
-        public FloatSliderViewModel sliderEditor { get; }
-        public DropDownMenuViewModel dropDownEditor { get; }
+        public Modules.ViewModels.FloatSliderViewModel sliderEditor { get; }
+        public Modules.ViewModels.DropDownMenuViewModel dropDownEditor { get; }
         public ValueNodeInputViewModel<Prototyp.Elements.VectorData> vectorInput { get; }
         public ValueNodeInputViewModel<Prototyp.Elements.RasterData> rasterInput { get; }
         public ValueNodeInputViewModel<float> valueFloatInput { get; }
@@ -68,23 +65,23 @@ namespace Prototyp.Modules
                                     vectorInput.Name = vectorInputSource.Name;
                                 }
                             });
-                            this.Inputs.Add(vectorInput);
+                            Inputs.Add(vectorInput);
                             break;
                         }
-                        //else if (toolRow.inputRow.inputTypes[i] == VorteXML.ConnectorType...) //TODO: z.B. Raster-Typ
-                        //{
-                            //rasterInput = new ValueNodeInputViewModel<Prototyp.Elements.RasterData>();
-                            //rasterInput.ValueChanged.Subscribe(rasterInputSource =>
-                            //{
-                            //    if (rasterInputSource != null)
-                            //    {
-                            //        rasterInput.Name = rasterInputSource.Name;
-                            //    }
-                            //});
-                            //this.Inputs.Add(rasterInput);
-                            //break;
-                        //}
-                        //...
+                        else if (toolRow.inputRow.inputTypes[i] == VorteXML.ConnectorType.Raster)
+                        {
+                            rasterInput = new ValueNodeInputViewModel<Prototyp.Elements.RasterData>();
+                            rasterInput.ValueChanged.Subscribe(rasterInputSource =>
+                            {
+                                if (rasterInputSource != null)
+                                {
+                                    rasterInput.Name = rasterInputSource.Name;
+                                }
+                            });
+                            Inputs.Add(rasterInput);
+                            break;
+                        }
+                        //... TODO: Support more types?
                         else
                         {
                             throw new System.Exception("No implemented input connector type specified.");
@@ -98,19 +95,19 @@ namespace Prototyp.Modules
                         if (toolRow.outputRow.outputTypes[i] == VorteXML.ConnectorType.VectorLine | toolRow.outputRow.outputTypes[i] == VorteXML.ConnectorType.VectorPoint | toolRow.outputRow.outputTypes[i] == VorteXML.ConnectorType.VectorPolygon)
                         {
                             vectorOutput = new ValueNodeOutputViewModel<Elements.VectorData>();
-                            this.Outputs.Add(vectorOutput);
+                            Outputs.Add(vectorOutput);
                             break;
                         }
-                        //else if (toolRow.outputRow.outputTypes[i] == VorteXML.ConnectorType...) //TODO: z.B. Raster-Typ
-                        //{
-                        //    rasterOutput = new ValueNodeOutputViewModel<Elements.RasterData>();
-                        //    this.Outputs.Add(rasterOutput);
-                        //    break;
-                        //}
-                        //...
+                        else if (toolRow.outputRow.outputTypes[i] == VorteXML.ConnectorType.Raster)
+                        {
+                            rasterOutput = new ValueNodeOutputViewModel<Elements.RasterData>();
+                            Outputs.Add(rasterOutput);
+                            break;
+                        }
+                        //... TODO: Support more types?
                         else
                         {
-                            throw new System.Exception("No implemented output connector type specified.");
+                            throw new System.Exception("An unimplemented output connector type was specified.");
                         }
                     }
                 }
@@ -119,18 +116,18 @@ namespace Prototyp.Modules
                     if (toolRow.controlRow.controlType == VorteXML.ControlType.Slider)
                     {
                         valueFloatInput = new ValueNodeInputViewModel<float>();
-                        sliderEditor = new FloatSliderViewModel(toolRow.Name, toolRow.controlRow.slider.Start, toolRow.controlRow.slider.End, toolRow.controlRow.slider.TickFrequency, toolRow.controlRow.slider.Unit);
+                        sliderEditor = new Modules.ViewModels.FloatSliderViewModel(toolRow.Name, toolRow.controlRow.slider.Start, toolRow.controlRow.slider.End, toolRow.controlRow.slider.TickFrequency, toolRow.controlRow.slider.Unit);
                         valueFloatInput.Editor = sliderEditor;
                         valueFloatInput.Port.IsVisible = false;
-                        this.Inputs.Add(valueFloatInput);
+                        Inputs.Add(valueFloatInput);
                     }
                     else if (toolRow.controlRow.controlType == VorteXML.ControlType.Dropdown)
                     {
                         valueStringInput = new ValueNodeInputViewModel<string>();
-                        dropDownEditor = new DropDownMenuViewModel(toolRow.Name, toolRow.controlRow.dropdown.Values);
+                        dropDownEditor = new Modules.ViewModels.DropDownMenuViewModel(toolRow.Name, toolRow.controlRow.dropdown.Values);
                         valueStringInput.Editor = dropDownEditor;
                         valueStringInput.Port.IsVisible = false;
-                        this.Inputs.Add(valueStringInput);
+                        Inputs.Add(valueStringInput);
                     }
                 }
             }

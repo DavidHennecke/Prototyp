@@ -47,10 +47,10 @@
             // Vector types
             VectorPoint,
             VectorLine,
-            VectorPolygon
+            VectorPolygon,
 
-            // e.g. raster types
-            // ...
+            // Raster types
+            Raster
 
             // Add primitive types such as int, float, string, ...? E.g. for controls.
         }
@@ -276,7 +276,8 @@
                         if (SubElement.Name == "{Vector}Point") ToolRows[Counter].inputRow.inputTypes[SubCounter] = ConnectorType.VectorPoint;
                         if (SubElement.Name == "{Vector}Line") ToolRows[Counter].inputRow.inputTypes[SubCounter] = ConnectorType.VectorLine;
                         if (SubElement.Name == "{Vector}Polygon") ToolRows[Counter].inputRow.inputTypes[SubCounter] = ConnectorType.VectorPolygon;
-                        //...
+
+                        if (SubElement.Name == "{Raster}Raster") ToolRows[Counter].inputRow.inputTypes[SubCounter] = ConnectorType.Raster;
 
                         SubCounter++;
                     }
@@ -308,7 +309,8 @@
                         if (SubElement.Name == "{Vector}Point") ToolRows[Counter].inputRow.altControls[SubCounter].inputType = ConnectorType.VectorPoint;
                         if (SubElement.Name == "{Vector}Line") ToolRows[Counter].inputRow.altControls[SubCounter].inputType = ConnectorType.VectorLine;
                         if (SubElement.Name == "{Vector}Polygon") ToolRows[Counter].inputRow.altControls[SubCounter].inputType = ConnectorType.VectorPolygon;
-                        //...
+
+                        if (SubElement.Name == "{Raster}Raster") ToolRows[Counter].inputRow.altControls[SubCounter].inputType = ConnectorType.Raster;
 
                         SubCounter2 = 0;
                         foreach (var nodes2 in SubElement.Nodes())
@@ -372,7 +374,8 @@
                         if (SubElement.Name == "{Vector}Point") ToolRows[Counter].outputRow.outputTypes[SubCounter] = ConnectorType.VectorPoint;
                         if (SubElement.Name == "{Vector}Line") ToolRows[Counter].outputRow.outputTypes[SubCounter] = ConnectorType.VectorLine;
                         if (SubElement.Name == "{Vector}Polygon") ToolRows[Counter].outputRow.outputTypes[SubCounter] = ConnectorType.VectorPolygon;
-                        //...
+
+                        if (SubElement.Name == "{Raster}Raster") ToolRows[Counter].outputRow.outputTypes[SubCounter] = ConnectorType.Raster;
 
                         SubCounter++;
                     }
@@ -613,7 +616,8 @@
                     if (ToolRows[Row].inputRow.inputTypes[i] == ConnectorType.VectorPoint) Line = "\t\t\t\t" + "<Vector:Point />" + "\n";
                     if (ToolRows[Row].inputRow.inputTypes[i] == ConnectorType.VectorLine) Line = "\t\t\t\t" + "<Vector:Line />" + "\n";
                     if (ToolRows[Row].inputRow.inputTypes[i] == ConnectorType.VectorPolygon) Line = "\t\t\t\t" + "<Vector:Polygon />" + "\n";
-                    // ...
+
+                    if (ToolRows[Row].inputRow.inputTypes[i] == ConnectorType.Raster) Line = "\t\t\t\t" + "<Raster:Raster />" + "\n";
 
                     InpString = InpString + Line;
                 }
@@ -633,7 +637,8 @@
                     if (ToolRows[Row].inputRow.altControls[i].inputType == ConnectorType.VectorPoint) AltTypeStr = "Vector:Point";
                     if (ToolRows[Row].inputRow.altControls[i].inputType == ConnectorType.VectorLine) AltTypeStr = "Vector:Line";
                     if (ToolRows[Row].inputRow.altControls[i].inputType == ConnectorType.VectorPolygon) AltTypeStr = "Vector:Polygon";
-                    // ...
+
+                    if (ToolRows[Row].inputRow.altControls[i].inputType == ConnectorType.Raster) AltTypeStr = "Raster:Raster";
 
                     Line = "\t\t\t\t" + "<" + AltTypeStr + ">" + "\n";
                     InpString = InpString + Line;
@@ -780,7 +785,8 @@
                 if (ToolRows[Row].outputRow.outputTypes[i] == ConnectorType.VectorPoint) OutTypeStr = "Vector:Point";
                 if (ToolRows[Row].outputRow.outputTypes[i] == ConnectorType.VectorLine) OutTypeStr = "Vector:Line";
                 if (ToolRows[Row].outputRow.outputTypes[i] == ConnectorType.VectorPolygon) OutTypeStr = "Vector:Polygon";
-                // ...
+
+                if (ToolRows[Row].outputRow.outputTypes[i] == ConnectorType.Raster) OutTypeStr = "Raster:Raster";
 
                 Line = "\t\t\t\t" + "<" + OutTypeStr + " />" + "\n";
                 OutString = OutString + Line;
