@@ -7,6 +7,17 @@ using System;
 using System.IO;
 using System.Windows;
 
+/* -------------------------------
+
+TODO:
+1.) Dynamisches Array von Buttons.
+2.) Bug in RxApp.cs, der auftritt, wenn z.B. der Ausgang eines Buffers an den Eingang eines anderen
+    Buffers angeschlossen wird. Wodurch kommt das, wie beheben?
+3.) Überlegen: Aktuell ist die Bedienung inkonsistent: Die Import-Nodes müssen in den Editor gedroppt
+    werden, die Tools kommen per Click rein. Tools auch per Drag&Drop einbringen? Wie?
+
+------------------------------- */
+
 namespace Prototyp
 {
     public partial class MainWindow : Window
@@ -17,9 +28,10 @@ namespace Prototyp
         private System.Collections.Generic.List<RasterData> rasterData = new System.Collections.Generic.List<RasterData>();
         private System.Collections.Generic.List<VorteXML> vorteXMLStructures = new System.Collections.Generic.List<VorteXML>();
         private System.Collections.Generic.List<string> BinaryPaths = new System.Collections.Generic.List<string>();
+        private System.Collections.Generic.List<int> UsedPorts = new System.Collections.Generic.List<int>();
 
         private string ModulesPath;
-
+        
         public static MainWindow AppWindow;
         NetworkViewModel network = new NetworkViewModel();
 
@@ -194,15 +206,16 @@ namespace Prototyp
         {
             //Find lowest available node ID
             int port = BASEPORT;
-            foreach (Node_Module node in network.Nodes.Items)
+            foreach (int PortsListItem in UsedPorts)
             {
-                if (node.Port == port)
+                if (port == PortsListItem)
                 {
                     port++;
                 }
             }
             if (!Node_Module.PortAvailable(port)) throw new System.Exception("This port is not available."); //TODO: Besseres Handling. Nächsten Kandidaten holen?
 
+            UsedPorts.Add(port);
             GrpcClient.ControlConnector.ControlConnectorClient grpcConnection;
             using (System.Diagnostics.Process myProcess = new System.Diagnostics.Process())
             {
@@ -220,7 +233,7 @@ namespace Prototyp
                 grpcConnection = new GrpcClient.ControlConnector.ControlConnectorClient(channel);
             }
 
-            Node_Module nodeModule = new Node_Module(BinaryPaths[0] + ".xml", port, grpcConnection);
+            Node_Module nodeModule = new Node_Module(BinaryPaths[0] + ".xml", grpcConnection);
 
             network.Nodes.Add(nodeModule);
         }
@@ -229,15 +242,16 @@ namespace Prototyp
         {
             //Find lowest available node ID
             int port = BASEPORT;
-            foreach (Node_Module node in network.Nodes.Items)
+            foreach (int PortsListItem in UsedPorts)
             {
-                if (node.Port == port)
+                if (port == PortsListItem)
                 {
                     port++;
                 }
             }
             if (!Node_Module.PortAvailable(port)) throw new System.Exception("This port is not available."); //TODO: Besseres Handling. Nächsten Kandidaten holen?
 
+            UsedPorts.Add(port);
             GrpcClient.ControlConnector.ControlConnectorClient grpcConnection;
             using (System.Diagnostics.Process myProcess = new System.Diagnostics.Process())
             {
@@ -255,7 +269,7 @@ namespace Prototyp
                 grpcConnection = new GrpcClient.ControlConnector.ControlConnectorClient(channel);
             }
 
-            Node_Module nodeModule = new Node_Module(BinaryPaths[1] + ".xml", port, grpcConnection);
+            Node_Module nodeModule = new Node_Module(BinaryPaths[1] + ".xml", grpcConnection);
 
             network.Nodes.Add(nodeModule);
         }

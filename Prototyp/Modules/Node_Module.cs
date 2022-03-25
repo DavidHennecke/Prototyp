@@ -19,15 +19,9 @@ namespace Prototyp.Modules
         public ValueNodeInputViewModel<string> valueStringInput { get; }
         public ValueNodeOutputViewModel<Prototyp.Elements.VectorData> vectorOutput { get; }
         public ValueNodeOutputViewModel<Prototyp.Elements.RasterData> rasterOutput { get; }
-        private int IntPort;
         private GrpcClient.ControlConnector.ControlConnectorClient IntGrpcConnection;
 
         // Getters and setters -------------------------------------------------------------
-
-        public int Port
-        {
-            get { return (IntPort); }
-        }
 
         public GrpcClient.ControlConnector.ControlConnectorClient grpcConnection
         {
@@ -42,11 +36,11 @@ namespace Prototyp.Modules
             // Nothing much to do here...
         }
 
-        public Node_Module(string pathXML, int port, GrpcClient.ControlConnector.ControlConnectorClient grpcConnection)
+        public Node_Module(string pathXML, GrpcClient.ControlConnector.ControlConnectorClient grpcConnection)
         {
             VorteXML newModule = new VorteXML(pathXML);
             Name = newModule.NodeTitle;
-            IntPort = port;
+            
             IntGrpcConnection = grpcConnection;
 
             foreach (VorteXML.ToolRow toolRow in newModule.ToolRows)
