@@ -95,36 +95,19 @@
                 </DockPanel>
             </Border>
 
-            <Border BorderBrush="#FF212225" Grid.Column="1" BorderThickness="3" Margin="5" CornerRadius="2" DockPanel.Dock="Top">
-                <DockPanel x:Name="ToolBar1" Background="#FF212225" LastChildFill="True" Margin="0,0,-3,0">
-                    <Grid>
-                        <Grid.ColumnDefinitions>
-                            <ColumnDefinition Width="1*"/>
-                            <ColumnDefinition Width="1*"/>
-                            <ColumnDefinition Width="1*"/>
-                            <ColumnDefinition Width="1*"/>
-                            <ColumnDefinition Width="1*"/>
-
-                        </Grid.ColumnDefinitions>
-                        <Grid.RowDefinitions>
-                            <RowDefinition Height="1*"/>
-                            <RowDefinition Height="1*"/>
-                        </Grid.RowDefinitions>
-                        <TextBlock x:Name="ToolButton1" Grid.Column="0" Grid.Row="0" VerticalAlignment="Bottom" Text="" Panel.ZIndex="1" HorizontalAlignment="Center"/>
-                        <Button x:Name="Button1" ToolTip="" Grid.Column="0" Grid.Row="0" Background="#FF252221" FontFamily="{StaticResource FontAwesomeSolid}" VerticalAlignment="Top" HorizontalAlignment="Center" Padding="0" Width="50" Height="50" FontSize="40" Click="Button1_Click">
-                            <Image Name="B1Image" Source="Images\VortexIcon.png"/>
-                        </Button>
-                        <TextBlock x:Name="ToolButton2" Grid.Column="1" Grid.Row="0" VerticalAlignment="Bottom" Text="" Panel.ZIndex="1" HorizontalAlignment="Center"/>
-                        <Button x:Name="Button2" ToolTip="" Grid.Column="1" Grid.Row="0" Background="#FF252221" FontFamily="{StaticResource FontAwesomeSolid}" VerticalAlignment="Top" HorizontalAlignment="Center" Padding="0" Width="50" Height="50" FontSize="40" Click="Button2_Click">
-                            <Image Name="B2Image" Source="Images\VortexIcon.png"/>
-                        </Button>
-                    </Grid>
-                    
-                </DockPanel>
-            </Border>
-
-            
+            <ComboBox x:Name="ToolsComboBox" Grid.Column="1" Margin="10" MinWidth="200" SelectionChanged="ComboSelectionChanged">
+                <ComboBox.ItemTemplate>
+                    <DataTemplate>
+                        <StackPanel Orientation="Horizontal">
+                            <Image MaxHeight="48" MaxWidth="48" Source="{Binding IconPath}" RenderOptions.BitmapScalingMode="HighQuality" />
+                            <TextBlock Text="   " VerticalAlignment="Center" HorizontalAlignment="Center" />
+                            <TextBlock Text="{Binding ToolName}" VerticalAlignment="Center" HorizontalAlignment="Center" FontSize="18" />
+                        </StackPanel>
+                    </DataTemplate>
+                </ComboBox.ItemTemplate>                    
+            </ComboBox>
         </Grid>
+        
         <Grid Grid.Row="2">
             <Grid.ColumnDefinitions>
                 <ColumnDefinition Width="Auto"/>

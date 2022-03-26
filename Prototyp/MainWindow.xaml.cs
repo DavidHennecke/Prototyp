@@ -10,34 +10,38 @@ using System.Windows;
 /* -------------------------------
 
 TODO:
-1.) Dynamisches Array von Buttons.
-2.) Bug in RxApp.cs, der auftritt, wenn z.B. der Ausgang eines Buffers an den Eingang eines anderen
+Bug in RxApp.cs, der auftritt, wenn z.B. der Ausgang eines Buffers an den Eingang eines anderen
     Buffers angeschlossen wird. Wodurch kommt das, wie beheben?
-3.) Überlegen: Aktuell ist die Bedienung inkonsistent: Die Import-Nodes müssen in den Editor gedroppt
-    werden, die Tools kommen per Click rein. Tools auch per Drag&Drop einbringen? Wie?
 
 ------------------------------- */
 
 namespace Prototyp
 {
+    public class ComboItem
+    {
+        public string IconPath { get; set; }
+        public string ToolName { get; set; }
+        public VorteXML VorteXMLStruct { get; set; }
+        public string BinaryPath { get; set; }
+    }
+
     public partial class MainWindow : Window
     {
         private const int BASEPORT = 5000;
 
         private System.Collections.Generic.List<VectorData> vectorData = new System.Collections.Generic.List<VectorData>();
         private System.Collections.Generic.List<RasterData> rasterData = new System.Collections.Generic.List<RasterData>();
-        private System.Collections.Generic.List<VorteXML> vorteXMLStructures = new System.Collections.Generic.List<VorteXML>();
-        private System.Collections.Generic.List<string> BinaryPaths = new System.Collections.Generic.List<string>();
         private System.Collections.Generic.List<int> UsedPorts = new System.Collections.Generic.List<int>();
+        private System.Collections.Generic.List<ComboItem> ComboItems = new System.Collections.Generic.List<ComboItem>();
 
         private string ModulesPath;
-        
+        private NetworkViewModel network = new NetworkViewModel();
+
         public static MainWindow AppWindow;
-        NetworkViewModel network = new NetworkViewModel();
 
         // Constructors --------------------------------------------------------------------
 
-        // Parameterless constructor: Create a new viewmodel for the NetworkView.
+        // Parameterless constructor: Initialize.
         public MainWindow()
         {
             // Init WPF.
@@ -46,8 +50,8 @@ namespace Prototyp
             // Startup NetworkView.
             AppWindow = this;
             networkView.ViewModel = network;
-            
-            // Initialize modules path and start parsing.
+
+            // Init modules path and start parsing.
             //TODO: Besseren Weg finden, um das parent directory zu bestimmen.
             ModulesPath = System.IO.Directory.GetCurrentDirectory();
             System.IO.DirectoryInfo ParentDir = System.IO.Directory.GetParent(ModulesPath);
@@ -77,39 +81,22 @@ namespace Prototyp
                     {
                         XMLName = FileName;
                         ThisXML = new VorteXML(XMLName);
-                        vorteXMLStructures.Add(ThisXML);
-                        BinaryPaths.Add(Dir + "\\" + ThisXML.NodeTitle);
 
-                        //TODO: Grrr, Buttons sollten ein Array von Buttons sein!
-                        if (ThisXML.NodeTitle == "Buffer")
-                        {
-                            ToolButton1.Text = ThisXML.NodeTitle;
-                            Button1.ToolTip = ThisXML.NodeTitle;
-                        }
-                        if (ThisXML.NodeTitle == "RasterTest")
-                        {
-                            ToolButton2.Text = ThisXML.NodeTitle;
-                            Button2.ToolTip = ThisXML.NodeTitle;
-                        }
+                        ComboItem NextItem = new ComboItem();
 
-                        System.Windows.Media.Imaging.BitmapImage MyImage = new System.Windows.Media.Imaging.BitmapImage();
-                        MyImage.BeginInit();
-                        MyImage.UriSource = new Uri(Dir + "/Icon.png", UriKind.Absolute);
-                        MyImage.EndInit();
+                        NextItem.IconPath = Dir + "/Icon.png";
+                        NextItem.VorteXMLStruct = ThisXML;
+                        NextItem.ToolName = ThisXML.NodeTitle;
+                        NextItem.BinaryPath = Dir + "\\" + ThisXML.NodeTitle;
 
-                        if (ThisXML.NodeTitle == "Buffer")
-                        {
-                            B1Image.Source = MyImage;
-                        }
-                        if (ThisXML.NodeTitle == "RasterTest")
-                        {
-                            B2Image.Source = MyImage;
-                        }
+                        ComboItems.Add(NextItem);
 
                         break;
                     }
                 }
             }
+
+            ToolsComboBox.ItemsSource = ComboItems;
         }
 
         // User control handlers --------------------------------------------------------------------
@@ -204,78 +191,6 @@ namespace Prototyp
             }
         }
 
-        private void Button1_Click(object sender, RoutedEventArgs e)
-        {
-            //Find lowest available node ID
-            int port = BASEPORT;
-            foreach (int PortsListItem in UsedPorts)
-            {
-                if (port == PortsListItem)
-                {
-                    port++;
-                }
-            }
-            if (!Node_Module.PortAvailable(port)) throw new System.Exception("This port is not available."); //TODO: Besseres Handling. Nächsten Kandidaten holen?
-
-            UsedPorts.Add(port);
-            GrpcClient.ControlConnector.ControlConnectorClient grpcConnection;
-            using (System.Diagnostics.Process myProcess = new System.Diagnostics.Process())
-            {
-                System.Diagnostics.ProcessStartInfo myProcessStartInfo = new System.Diagnostics.ProcessStartInfo(BinaryPaths[0] + ".exe", port.ToString());
-
-                //myProcessStartInfo.CreateNoWindow = true; //Ja, dies macht das Server-Window wirklich unsichtbar. Sicherstellen, dass der Krempel terminiert wird.
-                myProcessStartInfo.UseShellExecute = false; //Muss für .NETCore tatsächlich false sein, weil ShellExecute wirklich nur auf der Windows-Plattform verfügbar ist.
-                myProcess.StartInfo = myProcessStartInfo;
-                myProcess.Start();
-
-                //Establish GRPC connection
-                //TODO: nicht nur localhost
-                string url = "https://localhost:" + port;
-                Grpc.Net.Client.GrpcChannel channel = Grpc.Net.Client.GrpcChannel.ForAddress(url);
-                grpcConnection = new GrpcClient.ControlConnector.ControlConnectorClient(channel);
-            }
-
-            Node_Module nodeModule = new Node_Module(BinaryPaths[0] + ".xml", grpcConnection);
-
-            network.Nodes.Add(nodeModule);
-        }
-
-        private void Button2_Click(object sender, RoutedEventArgs e)
-        {   
-            //Find lowest available node ID
-            int port = BASEPORT;
-            foreach (int PortsListItem in UsedPorts)
-            {
-                if (port == PortsListItem)
-                {
-                    port++;
-                }
-            }
-            if (!Node_Module.PortAvailable(port)) throw new System.Exception("This port is not available."); //TODO: Besseres Handling. Nächsten Kandidaten holen?
-
-            UsedPorts.Add(port);
-            GrpcClient.ControlConnector.ControlConnectorClient grpcConnection;
-            using (System.Diagnostics.Process myProcess = new System.Diagnostics.Process())
-            {
-                System.Diagnostics.ProcessStartInfo myProcessStartInfo = new System.Diagnostics.ProcessStartInfo(BinaryPaths[1] + ".exe", port.ToString());
-
-                //myProcessStartInfo.CreateNoWindow = true; //Ja, dies macht das Server-Window wirklich unsichtbar. Sicherstellen, dass der Krempel terminiert wird.
-                myProcessStartInfo.UseShellExecute = false; //Muss für .NETCore tatsächlich false sein, weil ShellExecute wirklich nur auf der Windows-Plattform verfügbar ist.
-                myProcess.StartInfo = myProcessStartInfo;
-                myProcess.Start();
-
-                //Establish GRPC connection
-                //TODO: nicht nur localhost
-                string url = "https://localhost:" + port;
-                Grpc.Net.Client.GrpcChannel channel = Grpc.Net.Client.GrpcChannel.ForAddress(url);
-                grpcConnection = new GrpcClient.ControlConnector.ControlConnectorClient(channel);
-            }
-
-            Node_Module nodeModule = new Node_Module(BinaryPaths[1] + ".xml", grpcConnection);
-
-            network.Nodes.Add(nodeModule);
-        }
-
         //Objekt wird in den NodeEditor gezogen
         public void DropTargetEventNodeEditor(object sender, DragEventArgs e)
         {
@@ -311,6 +226,54 @@ namespace Prototyp
                     }
                 }
             }
+            //else if (...) //TODO: Ggf. andere Datentypen...
+            //{
+
+            //}
+            else
+            {
+
+            }
+        }
+
+        private void ComboSelectionChanged(object sender, System.Windows.Controls.SelectionChangedEventArgs e)
+        {
+            int Index = ToolsComboBox.SelectedIndex;
+            if (Index == -1) return;
+
+            //Find lowest available node ID
+            int port = BASEPORT;
+            for (int i = 0; i < UsedPorts.Count; i++)
+            {
+                if (port == UsedPorts[i])
+                {
+                    port++;
+                }
+            }
+            if (!Node_Module.PortAvailable(port)) throw new System.Exception("This port is not available."); //TODO: Besseres Handling. Nächsten Kandidaten holen?
+
+            GrpcClient.ControlConnector.ControlConnectorClient grpcConnection;
+
+            using (System.Diagnostics.Process myProcess = new System.Diagnostics.Process())
+            {
+                System.Diagnostics.ProcessStartInfo myProcessStartInfo = new System.Diagnostics.ProcessStartInfo(ComboItems[Index].BinaryPath + ".exe", port.ToString());
+
+                //myProcessStartInfo.CreateNoWindow = true; //Ja, dies macht das Server-Window wirklich unsichtbar. Sicherstellen, dass der Krempel terminiert wird.
+                myProcessStartInfo.UseShellExecute = false; //Muss für .NETCore tatsächlich false sein, weil ShellExecute wirklich nur auf der Windows-Plattform verfügbar ist.
+                myProcess.StartInfo = myProcessStartInfo;
+                myProcess.Start();
+
+                //Establish GRPC connection
+                //TODO: nicht nur localhost
+                string url = "https://localhost:" + port.ToString();
+                Grpc.Net.Client.GrpcChannel channel = Grpc.Net.Client.GrpcChannel.ForAddress(url);
+                grpcConnection = new GrpcClient.ControlConnector.ControlConnectorClient(channel);
+            }
+
+            Node_Module nodeModule = new Node_Module(ComboItems[Index].BinaryPath + ".xml", grpcConnection);
+
+            UsedPorts.Add(port);
+            network.Nodes.Add(nodeModule);
         }
     }
 }
