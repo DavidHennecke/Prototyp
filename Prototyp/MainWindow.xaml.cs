@@ -204,7 +204,13 @@ namespace Prototyp
                     {
                         importNode.importNodeOutput.Name = vectorData[i].Name;
                         importNode.importNodeOutput.Value = System.Reactive.Linq.Observable.Return(vectorData[i]);
-                        importNode.Position = e.GetPosition(networkView);
+
+                        Point TempPoint;
+                        TempPoint = e.GetPosition(networkView);
+                        TempPoint.X = (TempPoint.X - networkView.ViewModel.DragOffset.X) / networkView.ViewModel.ZoomFactor;
+                        TempPoint.Y = (TempPoint.Y - networkView.ViewModel.DragOffset.Y) / networkView.ViewModel.ZoomFactor;
+                        importNode.Position = TempPoint;
+
                         network.Nodes.Add(importNode);
                         break;
                     }
