@@ -40,8 +40,10 @@ namespace Prototyp
         // Parameterless constructor: Create a new viewmodel for the NetworkView.
         public MainWindow()
         {
-            // Startup NetworkView.
+            // Init WPF.
             InitializeComponent();
+
+            // Startup NetworkView.
             AppWindow = this;
             networkView.ViewModel = network;
             
