@@ -274,6 +274,8 @@ namespace Prototyp
 
             UsedPorts.Add(port);
             network.Nodes.Add(nodeModule);
+
+            ToolsComboBox.SelectedIndex = -1;
         }
     }
 }
