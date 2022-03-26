@@ -241,7 +241,7 @@ namespace Prototyp
         }
 
         private void Button2_Click(object sender, RoutedEventArgs e)
-        {
+        {   
             //Find lowest available node ID
             int port = BASEPORT;
             foreach (int PortsListItem in UsedPorts)
