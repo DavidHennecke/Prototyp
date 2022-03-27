@@ -96,6 +96,12 @@ namespace Prototyp
                 }
             }
 
+            // Order the list alphabetically
+            ComboItems.Sort((x, y) => x.ToolName.CompareTo(y.ToolName));
+
+            // Order the list alphabetically in descending order
+            //ComboItems.Sort((x, y) => y.ToolName.CompareTo(x.ToolName));
+
             ToolsComboBox.ItemsSource = ComboItems;
         }
 
