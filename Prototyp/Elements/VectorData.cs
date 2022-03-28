@@ -50,21 +50,14 @@ namespace Prototyp.Elements
             get { return (SerializeVec()); }
             set
             {
-                if (value.Length >= 8)
+                if (ByteArrValid(value))
                 {
-                    if (value[0] != 0x66 | value[1] != 0x67 | value[2] != 0x62 | value[4] != 0x66 | value[5] != 0x67 | value[6] != 0x62)
-                    {
-                        IntVecData = value;
-                        HandleNameAndCRS();
-                    }
-                    else
-                    {
-                        throw new System.Exception("Array does not represent a valid FlatGeobuf format.");
-                    }
+                    IntVecData = value;
+                    HandleNameAndCRS();
                 }
                 else
                 {
-                    throw new System.Exception("Array is too short to represent a valid FlatGeobuf format.");
+                    throw new System.Exception("Array does not represent a valid FlatGeobuf format.");
                 }
             }
         }
@@ -158,7 +151,7 @@ namespace Prototyp.Elements
                 {
                     byte[] FileBuffer = new byte[8];
                     SourceFile.Read(FileBuffer, 0, FileBuffer.Length);
-                    if (FileBuffer[0] != 0x66 | FileBuffer[1] != 0x67 | FileBuffer[2] != 0x62 | FileBuffer[4] != 0x66 | FileBuffer[5] != 0x67 | FileBuffer[6] != 0x62)
+                    if (!ByteArrValid(FileBuffer))
                     {
                         throw new System.Exception("File is not in valid FlatGeobuf format.");
                     }
@@ -229,6 +222,19 @@ namespace Prototyp.Elements
             }
         }
 
+        // Constructor that is provided a byte array containing serialized FGB VectorData.
+        // Example:
+        // VectorData vectorData = new VectorData(VecArray);
+        public VectorData(byte[] VecArray, bool HandleHeader = true) // For faster processing, set HandleHeader to false, esp. if the data contained there aren't used anyway.
+        {
+            if (ByteArrValid(VecArray))
+            {
+                IntVecData = VecArray;
+                if (HandleHeader) HandleNameAndCRS();
+                MakeID();
+            }
+        }
+
         // Private methods -----------------------------------------------------------------
 
         // Make ID.
@@ -236,6 +242,19 @@ namespace Prototyp.Elements
         {
             System.Random rnd = new System.Random();
             IntID = rnd.NextDouble();
+        }
+
+        // Checks the FGB-validity of a provided byte array.
+        private bool ByteArrValid(byte[] TestData)
+        {
+            if (TestData.Length >= 8)
+            {
+                if (TestData[0] == 0x66 & TestData[1] == 0x67 & TestData[2] == 0x62 & TestData[4] == 0x66 & TestData[5] == 0x67 & TestData[6] == 0x62)
+                {
+                    return (true);
+                }
+            }
+            return (false);
         }
 
         // Imports a GDAL layer.
@@ -434,10 +453,13 @@ namespace Prototyp.Elements
             IntDescription = MyHeader.Description;
             FlatGeobuf.Crs? MyCRS = MyHeader.Crs;
             string WKTString = MyCRS?.Wkt;
-            string Organization = MyCRS?.Org;
             int Code = (int)MyCRS?.Code;
-            string Proj4;
-            IntSRS.ImportFromWkt(ref WKTString);
+            string Organization;
+
+            try { Organization = MyCRS?.Org; } catch { Organization = ""; }
+            try { IntSRS.ImportFromWkt(ref WKTString); } catch { }
+            
+            string Proj4;            
             IntSRS.ExportToProj4(out Proj4);
             if (Proj4 == "")
             {
