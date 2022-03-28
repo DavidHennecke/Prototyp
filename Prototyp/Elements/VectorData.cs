@@ -225,12 +225,12 @@ namespace Prototyp.Elements
         // Constructor that is provided a byte array containing serialized FGB VectorData.
         // Example:
         // VectorData vectorData = new VectorData(VecArray);
-        public VectorData(byte[] VecArray, bool HandleHeader = true) // For faster processing, set HandleHeader to false, esp. if the data contained there aren't used anyway.
+        public VectorData(byte[] VecArray, bool Thorough = true) // For faster processing, set Thorough to false, esp. if the CRS data contained aren't used anyway.
         {
             if (ByteArrValid(VecArray))
             {
                 IntVecData = VecArray;
-                if (HandleHeader) HandleNameAndCRS();
+                HandleNameAndCRS(Thorough);
                 MakeID();
             }
         }
@@ -444,7 +444,7 @@ namespace Prototyp.Elements
             return (MyData);
         }
 
-        private void HandleHeader(FlatGeobuf.Header MyHeader)
+        private void HandleHeader(FlatGeobuf.Header MyHeader, bool Thorough = true)
         {
             InitGDAL();
             IntSRS = new OSGeo.OSR.SpatialReference(null);
@@ -454,11 +454,14 @@ namespace Prototyp.Elements
             FlatGeobuf.Crs? MyCRS = MyHeader.Crs;
             string WKTString = MyCRS?.Wkt;
             int Code = (int)MyCRS?.Code;
-            string Organization;
+            string Organization = "EPSG";
 
-            try { Organization = MyCRS?.Org; } catch { Organization = ""; }
-            try { IntSRS.ImportFromWkt(ref WKTString); } catch { }
-            
+            if (Thorough)
+            {
+                try { Organization = MyCRS?.Org; } catch { }
+                try { IntSRS.ImportFromWkt(ref WKTString); } catch { }
+            }
+
             string Proj4;            
             IntSRS.ExportToProj4(out Proj4);
             if (Proj4 == "")
@@ -467,12 +470,12 @@ namespace Prototyp.Elements
             }
         }
 
-        private void HandleNameAndCRS()
+        private void HandleNameAndCRS(bool Thorough = true)
         {
             using (System.IO.MemoryStream MemStream = new System.IO.MemoryStream(IntVecData))
             {
                 FlatGeobuf.Header MyHeader = FlatGeobuf.Helpers.ReadHeader(MemStream);
-                HandleHeader(MyHeader);
+                HandleHeader(MyHeader, Thorough);
             }
         }
 
