@@ -71,6 +71,7 @@ namespace Prototyp
             string[] FileNames;
             string XMLName;
             VorteXML ThisXML;
+            System.Collections.Generic.List<ComboItem> LocalList = new System.Collections.Generic.List<ComboItem>();
 
             foreach (string Dir in SubDirs)
             {
@@ -89,7 +90,7 @@ namespace Prototyp
                         NextItem.ToolName = ThisXML.NodeTitle;
                         NextItem.BinaryPath = Dir + "\\" + ThisXML.NodeTitle;
 
-                        ComboItems.Add(NextItem);
+                        LocalList.Add(NextItem);
 
                         break;
                     }
@@ -97,12 +98,18 @@ namespace Prototyp
             }
 
             // Order the list alphabetically
-            ComboItems.Sort((x, y) => x.ToolName.CompareTo(y.ToolName));
-
+            LocalList.Sort((x, y) => x.ToolName.CompareTo(y.ToolName));
             // Order the list alphabetically in descending order
-            //ComboItems.Sort((x, y) => y.ToolName.CompareTo(x.ToolName));
+            //LocalList.Sort((x, y) => y.ToolName.CompareTo(x.ToolName));
+
+            ComboItems.Clear();
+            ComboItem CaptionItem = new ComboItem();
+            CaptionItem.ToolName = "Select your tool here...";
+            ComboItems.Add(CaptionItem);
+            for (int i = 0; i < LocalList.Count; i++) ComboItems.Add(LocalList[i]);
 
             ToolsComboBox.ItemsSource = ComboItems;
+            ToolsComboBox.SelectedIndex = 0;
         }
 
         // User control handlers --------------------------------------------------------------------
@@ -251,7 +258,7 @@ namespace Prototyp
         private void ComboSelectionChanged(object sender, System.Windows.Controls.SelectionChangedEventArgs e)
         {
             int Index = ToolsComboBox.SelectedIndex;
-            if (Index == -1) return;
+            if (Index <= 0) return;
 
             //Find lowest available node ID
             int port = BASEPORT;
@@ -287,7 +294,7 @@ namespace Prototyp
             UsedPorts.Add(port);
             network.Nodes.Add(nodeModule);
 
-            ToolsComboBox.SelectedIndex = -1;
+            ToolsComboBox.SelectedIndex = 0;
         }
     }
 }
