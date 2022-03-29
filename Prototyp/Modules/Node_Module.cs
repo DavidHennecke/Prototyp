@@ -90,18 +90,13 @@ namespace Prototyp.Modules
                     {
                         if (toolRow.outputRow.outputTypes[i] == VorteXML.ConnectorType.VectorLine | toolRow.outputRow.outputTypes[i] == VorteXML.ConnectorType.VectorPoint | toolRow.outputRow.outputTypes[i] == VorteXML.ConnectorType.VectorPolygon)
                         {
-
-
                             vectorOutput = new ValueNodeOutputViewModel<Elements.VectorData>();
                             VectorData result = new VectorData();
                             vectorOutput.Value = Observable.Return(result);
-                            //vectorOutput.Name = "Vector-Output";
                             outNameEditor = new Modules.ViewModels.OutputNameViewModel(vectorOutput.Name);
-                            outNameEditor.Value = "Vector-Output";
+                            outNameEditor.Value = "Vector output";
                             vectorOutput.Editor = outNameEditor;
-                            outNameEditor.ValueChanged.Subscribe(v => { 
-                                result.Name = v;
-                            });
+                            outNameEditor.ValueChanged.Subscribe (v => { result.Name = v; });
                             
                             Outputs.Add(vectorOutput);
                             break;
@@ -111,7 +106,11 @@ namespace Prototyp.Modules
                             rasterOutput = new ValueNodeOutputViewModel<Elements.RasterData>();
                             RasterData result = new RasterData();
                             rasterOutput.Value = Observable.Return(result);
-                            rasterOutput.Name = "Raster-Output";
+                            outNameEditor = new Modules.ViewModels.OutputNameViewModel(rasterOutput.Name);
+                            outNameEditor.Value = "Raster output";
+                            rasterOutput.Editor = outNameEditor;
+                            outNameEditor.ValueChanged.Subscribe(v => { result.Name = v; });
+
                             Outputs.Add(rasterOutput);
                             break;
                         }

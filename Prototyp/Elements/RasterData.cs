@@ -109,6 +109,7 @@
         public string Name
         {
             get { return (IntName); }
+            set { IntName = value; }
         }
 
         // Constructors --------------------------------------------------------------------
