@@ -290,7 +290,6 @@ namespace Prototyp
             }
 
             Node_Module nodeModule = new Node_Module(ComboItems[Index].BinaryPath + ".xml", grpcConnection);
-
             UsedPorts.Add(port);
             network.Nodes.Add(nodeModule);
 

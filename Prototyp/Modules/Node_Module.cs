@@ -6,12 +6,14 @@ using Prototyp.Elements;
 using ReactiveUI;
 using System;
 using System.Reactive.Linq;
+using System.Windows;
 
 namespace Prototyp.Modules
 {
     public class Node_Module : NodeViewModel
     {
         public Modules.ViewModels.FloatSliderViewModel sliderEditor { get; }
+        public Modules.ViewModels.OutputNameViewModel outNameEditor { get; }
         public Modules.ViewModels.DropDownMenuViewModel dropDownEditor { get; }
         public ValueNodeInputViewModel<Prototyp.Elements.VectorData> vectorInput { get; }
         public ValueNodeInputViewModel<Prototyp.Elements.RasterData> rasterInput { get; }
@@ -88,10 +90,19 @@ namespace Prototyp.Modules
                     {
                         if (toolRow.outputRow.outputTypes[i] == VorteXML.ConnectorType.VectorLine | toolRow.outputRow.outputTypes[i] == VorteXML.ConnectorType.VectorPoint | toolRow.outputRow.outputTypes[i] == VorteXML.ConnectorType.VectorPolygon)
                         {
+
+
                             vectorOutput = new ValueNodeOutputViewModel<Elements.VectorData>();
                             VectorData result = new VectorData();
                             vectorOutput.Value = Observable.Return(result);
-                            vectorOutput.Name = "Vector-Output";
+                            //vectorOutput.Name = "Vector-Output";
+                            outNameEditor = new Modules.ViewModels.OutputNameViewModel(vectorOutput.Name);
+                            outNameEditor.Value = "Vector-Output";
+                            vectorOutput.Editor = outNameEditor;
+                            outNameEditor.ValueChanged.Subscribe(v => { 
+                                result.Name = v;
+                            });
+                            
                             Outputs.Add(vectorOutput);
                             break;
                         }
