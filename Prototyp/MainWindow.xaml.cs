@@ -10,8 +10,7 @@ using System.Windows;
 /* -------------------------------
 
 TODO:
-Bug in RxApp.cs, der auftritt, wenn z.B. der Ausgang eines Buffers an den Eingang eines anderen
-    Buffers angeschlossen wird. Wodurch kommt das, wie beheben?
+
 
 ------------------------------- */
 
@@ -152,6 +151,13 @@ namespace Prototyp
                     if (MyDS != null)
                     {
                         vectorData.Add(new VectorData(MyDS.GetLayerByIndex(0)));
+                        //// Testcode start
+                        //// Bitte noch nicht löschen!
+                        //byte[] Test1 = vectorData[vectorData.Count - 1].VecData;
+                        //string Test2 = Convert.ToBase64String(Test1);
+                        //byte[] Test3 = Convert.FromBase64String(Test2);
+                        //VectorData Test4 = new VectorData(Test3);
+                        //// Testcode end
                         MainWindowHelpers mainWindowHelpers = new MainWindowHelpers();
                         mainWindowHelpers.AddTreeViewChild(vectorData[vectorData.Count - 1]);
                     }
@@ -170,6 +176,19 @@ namespace Prototyp
                     }
 
                     vectorData.Add(new VectorData(openFileDialog.FileName));
+                    //// Testcode start
+                    //// Bitte noch nicht löschen!
+                    //byte[] Test1 = vectorData[vectorData.Count - 1].VecData;
+                    //string Test2 = Convert.ToBase64String(Test1);
+                    //MessageBox.Show(Test2.Substring(0, 100));
+                    //byte[] Test3 = Convert.FromBase64String(Test2);
+                    //VectorData Test4 = new VectorData(Test3);
+
+                    //for (int i = 0; i < Test1.Length; i++)
+                    //{
+                    //    if (Test1[i] != Test3[i]) MessageBox.Show("Index: " + i.ToString() + ", Test1: " + Test1[i].ToString("X") + ", Test3: " + Test3[i].ToString("X"));
+                    //}
+                    //// Testcode end
                     MainWindowHelpers mainWindowHelpers = new MainWindowHelpers();
                     mainWindowHelpers.AddTreeViewChild(vectorData[vectorData.Count - 1]);
                 }

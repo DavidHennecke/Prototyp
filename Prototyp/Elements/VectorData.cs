@@ -225,12 +225,12 @@ namespace Prototyp.Elements
         // Constructor that is provided a byte array containing serialized FGB VectorData.
         // Example:
         // VectorData vectorData = new VectorData(VecArray);
-        public VectorData(byte[] VecArray, bool Thorough = true) // For faster processing, set Thorough to false, esp. if the CRS data contained aren't used anyway.
+        public VectorData(byte[] VecArray)
         {
             if (ByteArrValid(VecArray))
             {
                 IntVecData = VecArray;
-                HandleNameAndCRS(Thorough);
+                HandleNameAndCRS();
                 MakeID();
             }
         }
@@ -444,7 +444,7 @@ namespace Prototyp.Elements
             return (MyData);
         }
 
-        private void HandleHeader(FlatGeobuf.Header MyHeader, bool Thorough = true)
+        private void HandleHeader(FlatGeobuf.Header MyHeader)
         {
             InitGDAL();
             IntSRS = new OSGeo.OSR.SpatialReference(null);
@@ -454,13 +454,8 @@ namespace Prototyp.Elements
             FlatGeobuf.Crs? MyCRS = MyHeader.Crs;
             string WKTString = MyCRS?.Wkt;
             int Code = (int)MyCRS?.Code;
-            string Organization = "EPSG";
-
-            if (Thorough)
-            {
-                try { Organization = MyCRS?.Org; } catch { }
-                try { IntSRS.ImportFromWkt(ref WKTString); } catch { }
-            }
+            string Organization = MyCRS?.Org;
+            IntSRS.ImportFromWkt(ref WKTString);
 
             string Proj4;            
             IntSRS.ExportToProj4(out Proj4);
@@ -470,12 +465,12 @@ namespace Prototyp.Elements
             }
         }
 
-        private void HandleNameAndCRS(bool Thorough = true)
+        private void HandleNameAndCRS()
         {
             using (System.IO.MemoryStream MemStream = new System.IO.MemoryStream(IntVecData))
             {
                 FlatGeobuf.Header MyHeader = FlatGeobuf.Helpers.ReadHeader(MemStream);
-                HandleHeader(MyHeader, Thorough);
+                HandleHeader(MyHeader);
             }
         }
 
