@@ -89,12 +89,18 @@ namespace Prototyp.Modules
                         if (toolRow.outputRow.outputTypes[i] == VorteXML.ConnectorType.VectorLine | toolRow.outputRow.outputTypes[i] == VorteXML.ConnectorType.VectorPoint | toolRow.outputRow.outputTypes[i] == VorteXML.ConnectorType.VectorPolygon)
                         {
                             vectorOutput = new ValueNodeOutputViewModel<Elements.VectorData>();
+                            VectorData result = new VectorData();
+                            vectorOutput.Value = Observable.Return(result);
+                            vectorOutput.Name = "Vector-Output";
                             Outputs.Add(vectorOutput);
                             break;
                         }
                         else if (toolRow.outputRow.outputTypes[i] == VorteXML.ConnectorType.Raster)
                         {
                             rasterOutput = new ValueNodeOutputViewModel<Elements.RasterData>();
+                            RasterData result = new RasterData();
+                            rasterOutput.Value = Observable.Return(result);
+                            rasterOutput.Name = "Raster-Output";
                             Outputs.Add(rasterOutput);
                             break;
                         }
