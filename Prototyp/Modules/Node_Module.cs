@@ -10,9 +10,7 @@ using System.Windows;
 
 namespace Prototyp.Modules
 {
-    //Property Extension 
-    //https://stackoverflow.com/questions/17616239/c-sharp-extend-class-by-adding-properties
-
+    //Property extension, see https://stackoverflow.com/questions/17616239/c-sharp-extend-class-by-adding-properties
     public static class NodeOutputViewModelExtension
     {
         static readonly System.Runtime.CompilerServices.ConditionalWeakTable<NodeOutputViewModel, IntObject> IDs = new System.Runtime.CompilerServices.ConditionalWeakTable<NodeOutputViewModel, IntObject>();
@@ -52,10 +50,7 @@ namespace Prototyp.Modules
         public ValueNodeOutputViewModel<Prototyp.Elements.RasterData> rasterOutput { get; }
         private GrpcClient.ControlConnector.ControlConnectorClient IntGrpcConnection;
         public string url;
-        public string inputPortNr;
        
-
-
         // Getters and setters -------------------------------------------------------------
 
         public GrpcClient.ControlConnector.ControlConnectorClient grpcConnection

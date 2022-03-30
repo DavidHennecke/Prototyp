@@ -6,7 +6,6 @@ using Prototyp.Modules;
 using System;
 using System.IO;
 using System.Windows;
-using NodeNetwork.Toolkit.ValueNode;
 
 /* -------------------------------
 
@@ -322,8 +321,8 @@ namespace Prototyp
                 myProcess.StartInfo = myProcessStartInfo;
                 myProcess.Start();
 
-                //Establish GRPC connection
-                //TODO: nicht nur localhost
+                // Establish GRPC connection
+                // TODO: nicht nur localhost
                 string url = "https://localhost:" + port.ToString();
                 Grpc.Net.Client.GrpcChannel channel = Grpc.Net.Client.GrpcChannel.ForAddress(url);
                 grpcConnection = new GrpcClient.ControlConnector.ControlConnectorClient(channel);
@@ -331,19 +330,12 @@ namespace Prototyp
                 UsedPorts.Add(port);
                 network.Nodes.Add(nodeModule);
             }
-
-            
-            
-           
-
             ToolsComboBox.SelectedIndex = 0;
         }
 
         private void PlayButton_Click(object sender, RoutedEventArgs e)
-        {
-         
-            //Collect all current node-channel-connections
-
+        {         
+            // Collect all current node-channel-connections
             foreach (ConnectionViewModel conn in network.Connections.Items)
             {
                 MessageBox.Show(conn.Output.Parent.GetType().ToString());
@@ -352,8 +344,8 @@ namespace Prototyp
                 {
                     //nc.ImportNodeOutput = ((VectorImport_Module)conn.Output.Parent).importNodeOutput.Value;
 
-                    //TO DO: 
-                    //VectorImport_Module Klasse erweitern mit neuer Property (Zeiger auf Datenliste) + ähnliche Umsetzung wie bei Node-Module -> auch für Raster
+                    // TODO: 
+                    // VectorImport_Module Klasse erweitern mit neuer Property (Zeiger auf Datenliste) + ähnliche Umsetzung wie bei Node-Module -> auch für Raster
 
                     nc.OutputChannel = 0;
 
@@ -365,7 +357,7 @@ namespace Prototyp
                 }
                 else
                 {
-                    //URL im ((Node_Module)conn.Output.Parent).url
+                    // URL im ((Node_Module)conn.Output.Parent).url
                     nc.OutputNode = (Node_Module)conn.Output.Parent;
                     nc.OutputChannel = conn.Output.GetID();
 
@@ -376,7 +368,6 @@ namespace Prototyp
                     nodeConnections.Add(nc);
                     MessageBox.Show(nc.OutputChannel + " => " + nc.InputChannel);
                 }
-
             }
         }
     }
