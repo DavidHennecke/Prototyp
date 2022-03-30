@@ -2,6 +2,18 @@
 
 namespace Prototyp.Elements
 {
+    public enum StringConstructorParams
+    {
+        GDAL,
+        ByteArrString
+    }
+
+    public enum ToStringParams
+    {
+        GeoJSON,
+        ByteString
+    }
+
     public class VectorData
     {
         /***********************************************************************************
@@ -119,7 +131,7 @@ namespace Prototyp.Elements
             {
                 if (value != null)
                 {
-                    IntVecData = FlatGeobuf.NTS.FeatureCollectionConversions.Serialize(value, FlatGeobuf.GeometryType.Unknown);
+                    IntVecData = IntSerialize(value, FlatGeobuf.GeometryType.Unknown);
                     IntSRS = null;
                     IntName = null;
                     IntDescription = null;
@@ -168,6 +180,40 @@ namespace Prototyp.Elements
             IntBusy = false;
         }
 
+        // Constructor that accepts a string and decides what to do based on the second parameter.
+        // Examples:
+        // VectorData vectorData = new VectorData("C:/Temp/UScounties.shp", StringConstructorParams.GDAL);
+        // VectorData vectorData = new VectorData(MyByteArray, StringConstructorParams.ByteArrString);
+        public VectorData(string MyString, StringConstructorParams Params)
+        {
+            if (Params == StringConstructorParams.GDAL)
+            {
+                IntBusy = true;
+                InitGDAL();
+                OSGeo.OGR.DataSource MyDS;
+                MyDS = OSGeo.OGR.Ogr.Open(MyString, 0);
+                if (MyDS != null)
+                {
+                    IntVecData = ImportLayer(MyDS.GetLayerByIndex(0));
+                    HandleNameAndCRS();
+                    MakeID();
+                }
+                IntBusy = false;
+            }
+            else if (Params == StringConstructorParams.ByteArrString)
+            {
+                IntBusy = true;
+                IntVecData = StringToByteArr(MyString);
+                HandleNameAndCRS();
+                MakeID();
+                IntBusy = false;
+            }
+            else
+            {
+                throw new System.Exception("No valid value for parameter 'Params' provided.");
+            }
+        }
+
         // Constructor that opens a rectangle out of a FlatGeobuf file.
         // Example:
         // var FilterRect = new NetTopologySuite.Geometries.Envelope(-100, -90, 40, 30);
@@ -197,7 +243,7 @@ namespace Prototyp.Elements
                     FlatGeobuf.Header MyHeader = FlatGeobuf.Helpers.ReadHeader(SourceFile);
                     HandleHeader(MyHeader);
 
-                    IntVecData = FlatGeobuf.NTS.FeatureCollectionConversions.Serialize(NewCollection, FlatGeobuf.GeometryType.Unknown);
+                    IntVecData = IntSerialize(NewCollection, FlatGeobuf.GeometryType.Unknown);
                     MakeID();
                 }
             }
@@ -217,8 +263,8 @@ namespace Prototyp.Elements
             {
                 IntBusy = true;
                 IntVecData = ImportLayer(LayerData);
-                IntBusy = false;
                 MakeID();
+                IntBusy = false;
             }
         }
 
@@ -229,9 +275,11 @@ namespace Prototyp.Elements
         {
             if (ByteArrValid(VecArray))
             {
+                IntBusy = true;
                 IntVecData = VecArray;
                 HandleNameAndCRS();
                 MakeID();
+                IntBusy = false;
             }
         }
 
@@ -315,7 +363,7 @@ namespace Prototyp.Elements
             IntName = LayerData.GetName();
             IntDescription = null;
 
-            return (FlatGeobuf.NTS.FeatureCollectionConversions.Serialize(NTSFC, FlatGeobuf.GeometryType.Unknown));
+            return (IntSerialize(NTSFC, FlatGeobuf.GeometryType.Unknown));
         }
 
         // Returns the internal data representation as a GDAL layer.
@@ -433,7 +481,7 @@ namespace Prototyp.Elements
             NetTopologySuite.IO.GeoJsonReader MyReader = new NetTopologySuite.IO.GeoJsonReader();
             NetTopologySuite.Features.FeatureCollection MyFC = MyReader.Read<NetTopologySuite.Features.FeatureCollection>(JSONData);
             byte[] MyData = null;
-            if (MyFC != null) MyData = FlatGeobuf.NTS.FeatureCollectionConversions.Serialize(MyFC, FlatGeobuf.GeometryType.Unknown);
+            if (MyFC != null) MyData = IntSerialize(MyFC, FlatGeobuf.GeometryType.Unknown);
             InitGDAL();
             IntSRS = new OSGeo.OSR.SpatialReference(null);
             IntSRS.ImportFromEPSG(4326);
@@ -611,17 +659,31 @@ namespace Prototyp.Elements
             OSGeo.GDAL.Gdal.SetConfigOption("PROJ_DEBUG", "5");
         }
 
+        public static string ByteArrToString(byte[] ByteArr)
+        {
+            return (System.Convert.ToBase64String(ByteArr));
+        }
+
+        public static byte[] StringToByteArr(string ByteStr)
+        {
+            return (System.Convert.FromBase64String(ByteStr));
+        }
+
         // Methods -------------------------------------------------------------------------
 
-        public string ToString(bool GeoJSON = false)
+        public string ToString(ToStringParams? Params)
         {
             string MyString = null;
 
             if (IntVecData != null)
             {
-                if (GeoJSON)
+                if (Params == ToStringParams.GeoJSON)
                 {
                     MyString = GetAsGeoJSON();
+                }
+                else if (Params == ToStringParams.ByteString)
+                {
+                    MyString = ByteArrToString(IntVecData);
                 }
                 else
                 {

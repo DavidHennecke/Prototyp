@@ -133,11 +133,34 @@
                 ImportDataset(DS, 0, 0, DS.RasterXSize, DS.RasterYSize);
                 MakeID();
                 IntName = GetName(RasterFileName);
+                IntBusy = false;
             }
             else
             {
                 IntBusy = false;
                 throw new System.Exception("File does not exist.");
+            }
+        }
+
+        // Constructor that accepts a string and decides what to do based on the second parameter.
+        // Examples:
+        // RasterData rasterData = new RasterData(MyByteArrayString, StringConstructorParams.ByteArrString);
+        public RasterData(string MyString, StringConstructorParams Params)
+        {
+            if (Params == StringConstructorParams.ByteArrString)
+            {
+                IntBusy = true;
+                Deserialize(System.Convert.FromBase64String(MyString));
+                MakeID();
+                IntBusy = false;
+            }
+            //else if (Params == ???)
+            //{
+                // TODO: Add other params handlers?
+            //}
+            else
+            {
+                throw new System.Exception("No valid value for parameter 'Params' provided.");
             }
             IntBusy = false;
         }
@@ -608,7 +631,7 @@
 
         public override string ToString()
         {
-            return (IntWKT_SRS);
+            return (System.Convert.ToBase64String(this.Serialize()));
         }
     }
 }

@@ -144,23 +144,21 @@ namespace Prototyp
                         }
                     }
 
-                    VectorData.InitGDAL();
-                    OSGeo.OGR.DataSource MyDS;
-                    MyDS = OSGeo.OGR.Ogr.Open(openFileDialog.FileName, 0);
+                    vectorData.Add(new VectorData(openFileDialog.FileName, StringConstructorParams.GDAL));
+                    //// Testcode start
+                    //// Bitte noch nicht löschen!
+                    //string Test1 = vectorData[vectorData.Count - 1].ToString(ToStringParams.ByteString);
+                    //VectorData Test2 = new VectorData(Test1, StringConstructorParams.ByteArrString);
 
-                    if (MyDS != null)
-                    {
-                        vectorData.Add(new VectorData(MyDS.GetLayerByIndex(0)));
-                        //// Testcode start
-                        //// Bitte noch nicht löschen!
-                        //byte[] Test1 = vectorData[vectorData.Count - 1].VecData;
-                        //string Test2 = Convert.ToBase64String(Test1);
-                        //byte[] Test3 = Convert.FromBase64String(Test2);
-                        //VectorData Test4 = new VectorData(Test3);
-                        //// Testcode end
-                        MainWindowHelpers mainWindowHelpers = new MainWindowHelpers();
-                        mainWindowHelpers.AddTreeViewChild(vectorData[vectorData.Count - 1]);
-                    }
+                    //byte[] ByteArr1 = vectorData[vectorData.Count - 1].VecData;
+                    //byte[] ByteArr2 = Test2.VecData;
+                    //for (int i = 0; i < ByteArr1.Length; i++)
+                    //{
+                    //    if (ByteArr1[i] != ByteArr2[i]) MessageBox.Show("Index: " + i.ToString() + ", ByteArr1: " + ByteArr1[i].ToString("X") + ", ByteArr2: " + ByteArr2[i].ToString("X"));
+                    //}
+                    //// Testcode end
+                    MainWindowHelpers mainWindowHelpers = new MainWindowHelpers();
+                   mainWindowHelpers.AddTreeViewChild(vectorData[vectorData.Count - 1]);
                 }
                 else if (Path.GetExtension(openFileDialog.FileName).ToLower() == ".fgb")
                 {
@@ -178,15 +176,14 @@ namespace Prototyp
                     vectorData.Add(new VectorData(openFileDialog.FileName));
                     //// Testcode start
                     //// Bitte noch nicht löschen!
-                    //byte[] Test1 = vectorData[vectorData.Count - 1].VecData;
-                    //string Test2 = Convert.ToBase64String(Test1);
-                    //MessageBox.Show(Test2.Substring(0, 100));
-                    //byte[] Test3 = Convert.FromBase64String(Test2);
-                    //VectorData Test4 = new VectorData(Test3);
+                    //string Test1 = vectorData[vectorData.Count - 1].ToString(ToStringParams.ByteString);
+                    //VectorData Test2 = new VectorData(Test1, StringConstructorParams.ByteArrString);
 
-                    //for (int i = 0; i < Test1.Length; i++)
+                    //byte[] ByteArr1 = vectorData[vectorData.Count - 1].VecData;
+                    //byte[] ByteArr2 = Test2.VecData;
+                    //for (int i = 0; i < ByteArr1.Length; i++)
                     //{
-                    //    if (Test1[i] != Test3[i]) MessageBox.Show("Index: " + i.ToString() + ", Test1: " + Test1[i].ToString("X") + ", Test3: " + Test3[i].ToString("X"));
+                    //    if (ByteArr1[i] != ByteArr2[i]) MessageBox.Show("Index: " + i.ToString() + ", ByteArr1: " + ByteArr1[i].ToString("X") + ", ByteArr2: " + ByteArr2[i].ToString("X"));
                     //}
                     //// Testcode end
                     MainWindowHelpers mainWindowHelpers = new MainWindowHelpers();
@@ -206,6 +203,18 @@ namespace Prototyp
                     }
 
                     rasterData.Add(new RasterData(openFileDialog.FileName));
+                    //// Testcode start
+                    // Bitte noch nicht löschen!
+                    //string Test1 = rasterData[rasterData.Count - 1].ToString();
+                    //RasterData Test2 = new RasterData(Test1, StringConstructorParams.ByteArrString);
+
+                    //byte[] ByteArr1 = rasterData[rasterData.Count - 1].Serialize();
+                    //byte[] ByteArr2 = Test2.Serialize();
+                    //for (int i = 0; i < ByteArr1.Length; i++)
+                    //{
+                    //    if (ByteArr1[i] != ByteArr2[i]) MessageBox.Show("Index: " + i.ToString() + ", ByteArr1: " + ByteArr1[i].ToString("X") + ", ByteArr2: " + ByteArr2[i].ToString("X"));
+                    //}
+                    //// Testcode end
                     MainWindowHelpers mainWindowHelpers = new MainWindowHelpers();
                     mainWindowHelpers.AddTreeViewChild(rasterData[rasterData.Count - 1]);
                 }

@@ -104,12 +104,11 @@ namespace Prototyp.Modules
                         {
                             rasterOutput = new ValueNodeOutputViewModel<Elements.RasterData>();
                             RasterData result = new RasterData();
-                            rasterOutput.Value = Observable.Return(result);
                             outNameEditor = new Modules.ViewModels.OutputNameViewModel(rasterOutput.Name);
                             outNameEditor.Value = "Raster output";
                             rasterOutput.Editor = outNameEditor;
                             outNameEditor.ValueChanged.Subscribe(v => { result.Name = v; });
-
+                            rasterOutput.Value = this.WhenAnyObservable(vm => vm.outNameEditor.ValueChanged).Select(value => result);
                             Outputs.Add(rasterOutput);
                             break;
                         }
