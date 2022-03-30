@@ -237,7 +237,8 @@ namespace Prototyp.Elements
                 {
                     System.Collections.Generic.IEnumerable<NetTopologySuite.Features.IFeature> FeaturesList = FlatGeobuf.NTS.FeatureCollectionConversions.Deserialize(SourceFile, FlatGeobufRect);
                     NetTopologySuite.Features.FeatureCollection NewCollection = new NetTopologySuite.Features.FeatureCollection();
-                    foreach (NetTopologySuite.Features.IFeature ListElement in FeaturesList) { NewCollection.Add(ListElement); }
+                    //foreach (NetTopologySuite.Features.IFeature ListElement in FeaturesList) { NewCollection.Add(ListElement); }
+                    System.Threading.Tasks.Parallel.ForEach(FeaturesList, ListElement => { NewCollection.Add(ListElement); });
 
                     SourceFile.Seek(0, 0);
                     FlatGeobuf.Header MyHeader = FlatGeobuf.Helpers.ReadHeader(SourceFile);
