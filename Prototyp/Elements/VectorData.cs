@@ -235,9 +235,9 @@ namespace Prototyp.Elements
 
                 using (System.IO.Stream SourceFile = System.IO.File.OpenRead(FlatGeobufFileName))
                 {
-                    var FeaturesList = FlatGeobuf.NTS.FeatureCollectionConversions.Deserialize(SourceFile, FlatGeobufRect);
+                    System.Collections.Generic.IEnumerable<NetTopologySuite.Features.IFeature> FeaturesList = FlatGeobuf.NTS.FeatureCollectionConversions.Deserialize(SourceFile, FlatGeobufRect);
                     NetTopologySuite.Features.FeatureCollection NewCollection = new NetTopologySuite.Features.FeatureCollection();
-                    foreach (var ListElement in FeaturesList) { NewCollection.Add(ListElement); }
+                    foreach (NetTopologySuite.Features.IFeature ListElement in FeaturesList) { NewCollection.Add(ListElement); }
 
                     SourceFile.Seek(0, 0);
                     FlatGeobuf.Header MyHeader = FlatGeobuf.Helpers.ReadHeader(SourceFile);
@@ -548,14 +548,14 @@ namespace Prototyp.Elements
 
         private byte[] IntSerialize(NetTopologySuite.Features.FeatureCollection fc, FlatGeobuf.GeometryType geometryType, byte dimensions = 2, System.Collections.Generic.IList<FlatGeobuf.NTS.ColumnMeta> columns = null)
         {
-            var featureFirst = fc.First();
+            NetTopologySuite.Features.IFeature featureFirst = fc.First();
             if (columns == null && featureFirst.Attributes != null)
             {
                 columns = featureFirst.Attributes.GetNames()
                           .Select(n => new FlatGeobuf.NTS.ColumnMeta() { Name = n, Type = ToColumnType(featureFirst.Attributes.GetType(n)) })
                           .ToList();
             }
-            var memoryStream = new System.IO.MemoryStream();
+            System.IO.MemoryStream memoryStream = new System.IO.MemoryStream();
             IntSerialize(memoryStream, fc, geometryType, dimensions, columns);
             return (memoryStream.ToArray());
         }
@@ -568,14 +568,14 @@ namespace Prototyp.Elements
         private async System.Threading.Tasks.Task IntSerializeAsync(System.IO.Stream output, System.Collections.Generic.IEnumerable<NetTopologySuite.Features.IFeature> features, FlatGeobuf.GeometryType geometryType, byte dimensions = 2, System.Collections.Generic.IList<FlatGeobuf.NTS.ColumnMeta> columns = null)
         {
             await output.WriteAsync(FlatGeobuf.Constants.MagicBytes, 0, FlatGeobuf.Constants.MagicBytes.Length);
-            var headerBuffer = IntBuildHeader(0, geometryType, dimensions, columns, null);
-            var bytes = headerBuffer.ToSizedArray();
+            FlatBuffers.ByteBuffer headerBuffer = IntBuildHeader(0, geometryType, dimensions, columns, null);
+            byte[] bytes = headerBuffer.ToSizedArray();
             await output.WriteAsync(bytes, 0, bytes.Length);
             headerBuffer.Position = headerBuffer.Position + 4;
-            var header = FlatGeobuf.Header.GetRootAsHeader(headerBuffer).UnPack();
-            foreach (var feature in features)
+            FlatGeobuf.HeaderT header = FlatGeobuf.Header.GetRootAsHeader(headerBuffer).UnPack();
+            foreach (NetTopologySuite.Features.IFeature feature in features)
             {
-                var buffer = FlatGeobuf.NTS.FeatureConversions.ToByteBuffer(feature, header);
+                FlatBuffers.ByteBuffer buffer = FlatGeobuf.NTS.FeatureConversions.ToByteBuffer(feature, header);
                 bytes = buffer.ToSizedArray();
                 await output.WriteAsync(bytes, 0, bytes.Length);
             }
@@ -595,7 +595,7 @@ namespace Prototyp.Elements
             string Organization = IntSRS.GetAuthorityName(null);
             int Code = System.Convert.ToInt32(IntSRS.GetAuthorityCode(null));
 
-            var builder = new FlatBuffers.FlatBufferBuilder(1024);
+            FlatBuffers.FlatBufferBuilder builder = new FlatBuffers.FlatBufferBuilder(1024);
 
             FlatBuffers.Offset<FlatGeobuf.Crs> MyCRS = FlatGeobuf.Crs.CreateCrs(
                                                        builder,
@@ -614,7 +614,7 @@ namespace Prototyp.Elements
             FlatBuffers.VectorOffset? columnsOffset = null;
             if (columns != null)
             {
-                var columnsArray = columns
+                FlatBuffers.Offset<FlatGeobuf.Column>[] columnsArray = columns
                                    .Select(c => FlatGeobuf.Column.CreateColumn(builder, builder.CreateString(c.Name), c.Type))
                                    .ToArray();
                 columnsOffset = FlatGeobuf.Header.CreateColumnsVector(builder, columnsArray);
@@ -639,7 +639,7 @@ namespace Prototyp.Elements
             }
 
             FlatGeobuf.Header.AddFeaturesCount(builder, count);
-            var offset = FlatGeobuf.Header.EndHeader(builder);
+            FlatBuffers.Offset<FlatGeobuf.Header> offset = FlatGeobuf.Header.EndHeader(builder);
 
             builder.FinishSizePrefixed(offset.Value);
 

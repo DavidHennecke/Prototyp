@@ -147,15 +147,15 @@ namespace Prototyp
                     vectorData.Add(new VectorData(openFileDialog.FileName, StringConstructorParams.GDAL));
                     //// Testcode start
                     //// Bitte noch nicht löschen!
-                    //string Test1 = vectorData[vectorData.Count - 1].ToString(ToStringParams.ByteString);
-                    //VectorData Test2 = new VectorData(Test1, StringConstructorParams.ByteArrString);
+                    string Test1 = vectorData[vectorData.Count - 1].ToString(ToStringParams.ByteString);
+                    VectorData Test2 = new VectorData(Test1, StringConstructorParams.ByteArrString);
 
-                    //byte[] ByteArr1 = vectorData[vectorData.Count - 1].VecData;
-                    //byte[] ByteArr2 = Test2.VecData;
-                    //for (int i = 0; i < ByteArr1.Length; i++)
-                    //{
-                    //    if (ByteArr1[i] != ByteArr2[i]) MessageBox.Show("Index: " + i.ToString() + ", ByteArr1: " + ByteArr1[i].ToString("X") + ", ByteArr2: " + ByteArr2[i].ToString("X"));
-                    //}
+                    byte[] ByteArr1 = vectorData[vectorData.Count - 1].VecData;
+                    byte[] ByteArr2 = Test2.VecData;
+                    for (int i = 0; i < ByteArr1.Length; i++)
+                    {
+                        if (ByteArr1[i] != ByteArr2[i]) MessageBox.Show("Index: " + i.ToString() + ", ByteArr1: " + ByteArr1[i].ToString("X") + ", ByteArr2: " + ByteArr2[i].ToString("X"));
+                    }
                     //// Testcode end
                     MainWindowHelpers mainWindowHelpers = new MainWindowHelpers();
                    mainWindowHelpers.AddTreeViewChild(vectorData[vectorData.Count - 1]);
@@ -176,15 +176,15 @@ namespace Prototyp
                     vectorData.Add(new VectorData(openFileDialog.FileName));
                     //// Testcode start
                     //// Bitte noch nicht löschen!
-                    //string Test1 = vectorData[vectorData.Count - 1].ToString(ToStringParams.ByteString);
-                    //VectorData Test2 = new VectorData(Test1, StringConstructorParams.ByteArrString);
+                    string Test1 = vectorData[vectorData.Count - 1].ToString(ToStringParams.ByteString);
+                    VectorData Test2 = new VectorData(Test1, StringConstructorParams.ByteArrString);
 
-                    //byte[] ByteArr1 = vectorData[vectorData.Count - 1].VecData;
-                    //byte[] ByteArr2 = Test2.VecData;
-                    //for (int i = 0; i < ByteArr1.Length; i++)
-                    //{
-                    //    if (ByteArr1[i] != ByteArr2[i]) MessageBox.Show("Index: " + i.ToString() + ", ByteArr1: " + ByteArr1[i].ToString("X") + ", ByteArr2: " + ByteArr2[i].ToString("X"));
-                    //}
+                    byte[] ByteArr1 = vectorData[vectorData.Count - 1].VecData;
+                    byte[] ByteArr2 = Test2.VecData;
+                    for (int i = 0; i < ByteArr1.Length; i++)
+                    {
+                        if (ByteArr1[i] != ByteArr2[i]) MessageBox.Show("Index: " + i.ToString() + ", ByteArr1: " + ByteArr1[i].ToString("X") + ", ByteArr2: " + ByteArr2[i].ToString("X"));
+                    }
                     //// Testcode end
                     MainWindowHelpers mainWindowHelpers = new MainWindowHelpers();
                     mainWindowHelpers.AddTreeViewChild(vectorData[vectorData.Count - 1]);
@@ -204,16 +204,16 @@ namespace Prototyp
 
                     rasterData.Add(new RasterData(openFileDialog.FileName));
                     //// Testcode start
-                    // Bitte noch nicht löschen!
-                    //string Test1 = rasterData[rasterData.Count - 1].ToString();
-                    //RasterData Test2 = new RasterData(Test1, StringConstructorParams.ByteArrString);
+                    //// Bitte noch nicht löschen!
+                    string Test1 = rasterData[rasterData.Count - 1].ToString();
+                    RasterData Test2 = new RasterData(Test1, StringConstructorParams.ByteArrString);
 
-                    //byte[] ByteArr1 = rasterData[rasterData.Count - 1].Serialize();
-                    //byte[] ByteArr2 = Test2.Serialize();
-                    //for (int i = 0; i < ByteArr1.Length; i++)
-                    //{
-                    //    if (ByteArr1[i] != ByteArr2[i]) MessageBox.Show("Index: " + i.ToString() + ", ByteArr1: " + ByteArr1[i].ToString("X") + ", ByteArr2: " + ByteArr2[i].ToString("X"));
-                    //}
+                    byte[] ByteArr1 = rasterData[rasterData.Count - 1].Serialize();
+                    byte[] ByteArr2 = Test2.Serialize();
+                    for (int i = 0; i < ByteArr1.Length; i++)
+                    {
+                        if (ByteArr1[i] != ByteArr2[i]) MessageBox.Show("Index: " + i.ToString() + ", ByteArr1: " + ByteArr1[i].ToString("X") + ", ByteArr2: " + ByteArr2[i].ToString("X"));
+                    }
                     //// Testcode end
                     MainWindowHelpers mainWindowHelpers = new MainWindowHelpers();
                     mainWindowHelpers.AddTreeViewChild(rasterData[rasterData.Count - 1]);
