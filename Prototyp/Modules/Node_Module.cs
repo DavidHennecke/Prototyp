@@ -10,6 +10,35 @@ using System.Windows;
 
 namespace Prototyp.Modules
 {
+    //Property Extension 
+    //https://stackoverflow.com/questions/17616239/c-sharp-extend-class-by-adding-properties
+
+    public static class NodeOutputViewModelExtension
+    {
+        static readonly System.Runtime.CompilerServices.ConditionalWeakTable<NodeOutputViewModel, IntObject> IDs = new System.Runtime.CompilerServices.ConditionalWeakTable<NodeOutputViewModel, IntObject>();
+        public static int GetID(this NodeOutputViewModel ID) { return IDs.GetOrCreateValue(ID).Value; }
+
+        public static void SetID(this NodeOutputViewModel ID, int newID) { IDs.GetOrCreateValue(ID).Value = newID; }
+
+        class IntObject
+        {
+            public int Value;
+        }
+    }
+
+    public static class NodeInputViewModelExtension
+    {
+        static readonly System.Runtime.CompilerServices.ConditionalWeakTable<NodeInputViewModel, IntObject> IDs = new System.Runtime.CompilerServices.ConditionalWeakTable<NodeInputViewModel, IntObject>();
+        public static int GetID(this NodeInputViewModel ID) { return IDs.GetOrCreateValue(ID).Value; }
+
+        public static void SetID(this NodeInputViewModel ID, int newID) { IDs.GetOrCreateValue(ID).Value = newID; }
+
+        class IntObject
+        {
+            public int Value;
+        }
+    }
+
     public class Node_Module : NodeViewModel
     {
         public Modules.ViewModels.FloatSliderViewModel sliderEditor { get; }
@@ -22,6 +51,10 @@ namespace Prototyp.Modules
         public ValueNodeOutputViewModel<Prototyp.Elements.VectorData> vectorOutput { get; }
         public ValueNodeOutputViewModel<Prototyp.Elements.RasterData> rasterOutput { get; }
         private GrpcClient.ControlConnector.ControlConnectorClient IntGrpcConnection;
+        public string url;
+        public string inputPortNr;
+       
+
 
         // Getters and setters -------------------------------------------------------------
 
@@ -38,10 +71,11 @@ namespace Prototyp.Modules
             // Nothing much to do here...
         }
 
-        public Node_Module(string pathXML, GrpcClient.ControlConnector.ControlConnectorClient grpcConnection)
+        public Node_Module(string pathXML, GrpcClient.ControlConnector.ControlConnectorClient grpcConnection, string url)
         {
             VorteXML newModule = new VorteXML(pathXML);
             Name = newModule.NodeTitle;
+            this.url = url;
             
             IntGrpcConnection = grpcConnection;
 
@@ -54,6 +88,7 @@ namespace Prototyp.Modules
                         if (toolRow.inputRow.inputTypes[i] == VorteXML.ConnectorType.VectorLine | toolRow.inputRow.inputTypes[i] == VorteXML.ConnectorType.VectorPoint | toolRow.inputRow.inputTypes[i] == VorteXML.ConnectorType.VectorPolygon)
                         {
                             vectorInput = new ValueNodeInputViewModel<Prototyp.Elements.VectorData>();
+                            vectorInput.SetID(i);
                             vectorInput.ValueChanged.Subscribe(vectorInputSource =>
                             {
                                 if (vectorInputSource != null)
@@ -67,6 +102,7 @@ namespace Prototyp.Modules
                         else if (toolRow.inputRow.inputTypes[i] == VorteXML.ConnectorType.Raster)
                         {
                             rasterInput = new ValueNodeInputViewModel<Prototyp.Elements.RasterData>();
+                            rasterInput.SetID(i);
                             rasterInput.ValueChanged.Subscribe(rasterInputSource =>
                             {
                                 if (rasterInputSource != null)
@@ -91,6 +127,7 @@ namespace Prototyp.Modules
                         if (toolRow.outputRow.outputTypes[i] == VorteXML.ConnectorType.VectorLine | toolRow.outputRow.outputTypes[i] == VorteXML.ConnectorType.VectorPoint | toolRow.outputRow.outputTypes[i] == VorteXML.ConnectorType.VectorPolygon)
                         {
                             vectorOutput = new ValueNodeOutputViewModel<Elements.VectorData>();
+                            vectorOutput.SetID(i);
                             VectorData result = new VectorData();
                             outNameEditor = new Modules.ViewModels.OutputNameViewModel(vectorOutput.Name);
                             outNameEditor.Value = "Vector output";
@@ -98,11 +135,13 @@ namespace Prototyp.Modules
                             outNameEditor.ValueChanged.Subscribe (v => { result.Name = v; });
                             vectorOutput.Value = this.WhenAnyObservable(vm => vm.outNameEditor.ValueChanged).Select(value => result);
                             Outputs.Add(vectorOutput);
+                            
                             break;
                         }
                         else if (toolRow.outputRow.outputTypes[i] == VorteXML.ConnectorType.Raster)
                         {
                             rasterOutput = new ValueNodeOutputViewModel<Elements.RasterData>();
+                            rasterOutput.SetID(i);
                             RasterData result = new RasterData();
                             outNameEditor = new Modules.ViewModels.OutputNameViewModel(rasterOutput.Name);
                             outNameEditor.Value = "Raster output";

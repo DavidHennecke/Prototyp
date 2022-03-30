@@ -6,6 +6,7 @@ using Prototyp.Modules;
 using System;
 using System.IO;
 using System.Windows;
+using NodeNetwork.Toolkit.ValueNode;
 
 /* -------------------------------
 
@@ -24,6 +25,16 @@ namespace Prototyp
         public string BinaryPath { get; set; }
     }
 
+    public class NodeConnection
+    {
+        public int InputChannel { get; set; }
+        public int OutputChannel { get; set; }
+        public IObservable<VectorData> ImportNodeOutput { get; set; }
+        public Node_Module InputNode { get; set; }
+        public Node_Module OutputNode { get; set; }
+        public bool isModule { get; set; }
+    }
+
     public partial class MainWindow : Window
     {
         private const int BASEPORT = 5000;
@@ -32,6 +43,7 @@ namespace Prototyp
         private System.Collections.Generic.List<RasterData> rasterData = new System.Collections.Generic.List<RasterData>();
         private System.Collections.Generic.List<int> UsedPorts = new System.Collections.Generic.List<int>();
         private System.Collections.Generic.List<ComboItem> ComboItems = new System.Collections.Generic.List<ComboItem>();
+        private System.Collections.Generic.List<NodeConnection> nodeConnections = new System.Collections.Generic.List<NodeConnection>();
 
         private string ModulesPath;
         private NetworkViewModel network = new NetworkViewModel();
@@ -315,13 +327,57 @@ namespace Prototyp
                 string url = "https://localhost:" + port.ToString();
                 Grpc.Net.Client.GrpcChannel channel = Grpc.Net.Client.GrpcChannel.ForAddress(url);
                 grpcConnection = new GrpcClient.ControlConnector.ControlConnectorClient(channel);
+                Node_Module nodeModule = new Node_Module(ComboItems[Index].BinaryPath + ".xml", grpcConnection, url);
+                UsedPorts.Add(port);
+                network.Nodes.Add(nodeModule);
             }
 
-            Node_Module nodeModule = new Node_Module(ComboItems[Index].BinaryPath + ".xml", grpcConnection);
-            UsedPorts.Add(port);
-            network.Nodes.Add(nodeModule);
+            
+            
+           
 
             ToolsComboBox.SelectedIndex = 0;
+        }
+
+        private void PlayButton_Click(object sender, RoutedEventArgs e)
+        {
+         
+            //Collect all current node-channel-connections
+
+            foreach (ConnectionViewModel conn in network.Connections.Items)
+            {
+                MessageBox.Show(conn.Output.Parent.GetType().ToString());
+                NodeConnection nc = new NodeConnection();
+                if (!(conn.Output.Parent is Node_Module))
+                {
+                    //nc.ImportNodeOutput = ((VectorImport_Module)conn.Output.Parent).importNodeOutput.Value;
+
+                    //TO DO: 
+                    //VectorImport_Module Klasse erweitern mit neuer Property (Zeiger auf Datenliste) + ähnliche Umsetzung wie bei Node-Module -> auch für Raster
+
+                    nc.OutputChannel = 0;
+
+                    nc.InputNode = (Node_Module)conn.Input.Parent;
+                    nc.InputChannel = conn.Input.GetID();
+
+                    nc.isModule = false;
+                    nodeConnections.Add(nc);
+                }
+                else
+                {
+                    //URL im ((Node_Module)conn.Output.Parent).url
+                    nc.OutputNode = (Node_Module)conn.Output.Parent;
+                    nc.OutputChannel = conn.Output.GetID();
+
+                    nc.InputNode = (Node_Module)conn.Input.Parent;
+                    nc.InputChannel = conn.Input.GetID();
+
+                    nc.isModule = true;
+                    nodeConnections.Add(nc);
+                    MessageBox.Show(nc.OutputChannel + " => " + nc.InputChannel);
+                }
+
+            }
         }
     }
 }
