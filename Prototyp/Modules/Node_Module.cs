@@ -92,12 +92,11 @@ namespace Prototyp.Modules
                         {
                             vectorOutput = new ValueNodeOutputViewModel<Elements.VectorData>();
                             VectorData result = new VectorData();
-                            vectorOutput.Value = Observable.Return(result);
                             outNameEditor = new Modules.ViewModels.OutputNameViewModel(vectorOutput.Name);
                             outNameEditor.Value = "Vector output";
                             vectorOutput.Editor = outNameEditor;
                             outNameEditor.ValueChanged.Subscribe (v => { result.Name = v; });
-                            
+                            vectorOutput.Value = this.WhenAnyObservable(vm => vm.outNameEditor.ValueChanged).Select(value => result);
                             Outputs.Add(vectorOutput);
                             break;
                         }
