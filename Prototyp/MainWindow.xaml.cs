@@ -28,7 +28,7 @@ namespace Prototyp
     {
         public int InputChannel { get; set; }
         public int OutputChannel { get; set; }
-        public IObservable<VectorData> ImportNodeOutput { get; set; }
+        public VectorData ImportNodeOutput { get; set; }
         public Node_Module InputNode { get; set; }
         public Node_Module OutputNode { get; set; }
         public bool isModule { get; set; }
@@ -248,15 +248,14 @@ namespace Prototyp
         {
             if ((string)e.Data.GetData("Type") == "Vector")
             {
-                VectorImport_Module importNode = new VectorImport_Module();
+                
 
                 for (int i = 0; i < vectorData.Count; i++)
                 {
                     if (vectorData[i].ID.ToString() == (string)e.Data.GetData("ID"))
                     {
-                        importNode.importNodeOutput.Name = vectorData[i].Name;
-                        importNode.importNodeOutput.Value = System.Reactive.Linq.Observable.Return(vectorData[i]);
-
+                        VectorImport_Module importNode = new VectorImport_Module(vectorData[i].Name ,vectorData[i].FeatureCollection[0].Geometry.GeometryType, i);
+                       
                         Point TempPoint;
                         TempPoint = e.GetPosition(networkView);
                         TempPoint.X = (TempPoint.X - networkView.ViewModel.DragOffset.X) / networkView.ViewModel.ZoomFactor;
@@ -270,14 +269,13 @@ namespace Prototyp
             }
             else if ((string)e.Data.GetData("Type") == "Raster")
             {
-                RasterImport_Module importNode = new RasterImport_Module();
+                
 
                 for (int i = 0; i < rasterData.Count; i++)
                 {
                     if (rasterData[i].ID.ToString() == (string)e.Data.GetData("ID"))
                     {
-                        importNode.importNodeOutput.Name = rasterData[i].Name;
-                        importNode.importNodeOutput.Value = System.Reactive.Linq.Observable.Return(rasterData[i]);
+                        RasterImport_Module importNode = new RasterImport_Module(rasterData[i]);
                         importNode.Position = e.GetPosition(networkView);
                         network.Nodes.Add(importNode);
                         break;
@@ -359,7 +357,7 @@ namespace Prototyp
 
                     // TODO: 
                     // VectorImport_Module-Klasse erweitern mit neuer Property (Zeiger auf Datenliste) + ähnliche Umsetzung wie bei Node-Module -> auch für Raster
-
+                    nc.ImportNodeOutput = vectorData[conn.Output.GetDataPointer()];
                     nc.OutputChannel = 0;
 
                     nc.InputNode = (Node_Module)conn.Input.Parent;

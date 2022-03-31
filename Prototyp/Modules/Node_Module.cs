@@ -14,9 +14,14 @@ namespace Prototyp.Modules
     public static class NodeOutputViewModelExtension
     {
         static readonly System.Runtime.CompilerServices.ConditionalWeakTable<NodeOutputViewModel, IntObject> IDs = new System.Runtime.CompilerServices.ConditionalWeakTable<NodeOutputViewModel, IntObject>();
+        static readonly System.Runtime.CompilerServices.ConditionalWeakTable<NodeOutputViewModel, IntObject> DataPointers = new System.Runtime.CompilerServices.ConditionalWeakTable<NodeOutputViewModel, IntObject>();
         public static int GetID(this NodeOutputViewModel ID) { return IDs.GetOrCreateValue(ID).Value; }
 
         public static void SetID(this NodeOutputViewModel ID, int newID) { IDs.GetOrCreateValue(ID).Value = newID; }
+
+        public static int GetDataPointer(this NodeOutputViewModel DataPointer) { return DataPointers.GetOrCreateValue(DataPointer).Value; }
+
+        public static void SetDataPointer(this NodeOutputViewModel DataPointer, int newDataPointer) { DataPointers.GetOrCreateValue(DataPointer).Value = newDataPointer; }
 
         class IntObject
         {
