@@ -326,10 +326,7 @@ namespace Prototyp
                 }
                 else
                 {
-                    //nc.ImportNodeOutput = ((VectorImport_Module)conn.Output.Parent).importNodeOutput.Value;
-
-                    // TODO: 
-                    // VectorImport_Module-Klasse erweitern mit neuer Property (Zeiger auf Datenliste) + ähnliche Umsetzung wie bei Node-Module -> auch für Raster
+                    // Data ID in vectorData[i].ID mit foreach durch Liste iterieren.
                     nc.ImportNodeOutput = conn.Output.GetDataID();
                     nc.OutputChannel = 0;
 
