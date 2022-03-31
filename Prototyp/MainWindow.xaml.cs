@@ -340,22 +340,7 @@ namespace Prototyp
             {
                 MessageBox.Show(conn.Output.Parent.GetType().ToString());
                 NodeConnection nc = new NodeConnection();
-                if (!(conn.Output.Parent is Node_Module))
-                {
-                    //nc.ImportNodeOutput = ((VectorImport_Module)conn.Output.Parent).importNodeOutput.Value;
-
-                    // TODO: 
-                    // VectorImport_Module Klasse erweitern mit neuer Property (Zeiger auf Datenliste) + ähnliche Umsetzung wie bei Node-Module -> auch für Raster
-
-                    nc.OutputChannel = 0;
-
-                    nc.InputNode = (Node_Module)conn.Input.Parent;
-                    nc.InputChannel = conn.Input.GetID();
-
-                    nc.isModule = false;
-                    nodeConnections.Add(nc);
-                }
-                else
+                if (conn.Output.Parent is Node_Module)
                 {
                     // URL im ((Node_Module)conn.Output.Parent).url
                     nc.OutputNode = (Node_Module)conn.Output.Parent;
@@ -366,7 +351,22 @@ namespace Prototyp
 
                     nc.isModule = true;
                     nodeConnections.Add(nc);
-                    MessageBox.Show(nc.OutputChannel + " => " + nc.InputChannel);
+                    MessageBox.Show(nc.OutputChannel + " -> " + nc.InputChannel);
+                }
+                else
+                {
+                    //nc.ImportNodeOutput = ((VectorImport_Module)conn.Output.Parent).importNodeOutput.Value;
+
+                    // TODO: 
+                    // VectorImport_Module-Klasse erweitern mit neuer Property (Zeiger auf Datenliste) + ähnliche Umsetzung wie bei Node-Module -> auch für Raster
+
+                    nc.OutputChannel = 0;
+
+                    nc.InputNode = (Node_Module)conn.Input.Parent;
+                    nc.InputChannel = conn.Input.GetID();
+
+                    nc.isModule = false;
+                    nodeConnections.Add(nc);
                 }
             }
         }
