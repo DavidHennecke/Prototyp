@@ -14,15 +14,19 @@ namespace Prototyp.Modules
         public ValueNodeInputViewModel<string> importNodeInput { get; }
         public ValueNodeOutputViewModel<Prototyp.Elements.RasterData> importNodeOutput { get; }
 
-        public RasterImport_Module(Elements.RasterData data)
+        public RasterImport_Module(string dataName, string dataType, double dataID)
         {
-            Name = "Dataset";
+            Name = dataName;
             importNodeOutput = new ValueNodeOutputViewModel<Prototyp.Elements.RasterData>();
             importNodeOutput.Value = null;
             importNodeOutput.Name = null;
-            importNodeOutput.Name = data.GetType().ToString();
-            importNodeOutput.Value = System.Reactive.Linq.Observable.Return(data);
             Outputs.Add(importNodeOutput);
+            Elements.RasterData placeholder = new Elements.RasterData();
+            placeholder.Name = dataType;
+
+            importNodeOutput.SetDataID(dataID);
+            importNodeOutput.Name = dataType;
+            importNodeOutput.Value = System.Reactive.Linq.Observable.Return(placeholder);
         }
 
         static RasterImport_Module()

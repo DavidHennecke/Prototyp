@@ -28,7 +28,7 @@ namespace Prototyp
     {
         public int InputChannel { get; set; }
         public int OutputChannel { get; set; }
-        public VectorData ImportNodeOutput { get; set; }
+        public double ImportNodeOutput { get; set; }
         public Node_Module InputNode { get; set; }
         public Node_Module OutputNode { get; set; }
         public bool isModule { get; set; }
@@ -225,8 +225,7 @@ namespace Prototyp
                 {
                     if (vectorData[i].ID.ToString() == (string)e.Data.GetData("ID"))
                     {
-                        VectorImport_Module importNode = new VectorImport_Module(vectorData[i].Name ,vectorData[i].FeatureCollection[0].Geometry.GeometryType, i);
-                       
+                        VectorImport_Module importNode = new VectorImport_Module(vectorData[i].Name ,vectorData[i].FeatureCollection[0].Geometry.GeometryType, vectorData[i].ID);
                         Point TempPoint;
                         TempPoint = e.GetPosition(networkView);
                         TempPoint.X = (TempPoint.X - networkView.ViewModel.DragOffset.X) / networkView.ViewModel.ZoomFactor;
@@ -246,7 +245,7 @@ namespace Prototyp
                 {
                     if (rasterData[i].ID.ToString() == (string)e.Data.GetData("ID"))
                     {
-                        RasterImport_Module importNode = new RasterImport_Module(rasterData[i]);
+                        RasterImport_Module importNode = new RasterImport_Module(rasterData[i].Name, rasterData[i].FileType, rasterData[i].ID);
                         importNode.Position = e.GetPosition(networkView);
                         network.Nodes.Add(importNode);
                         break;
@@ -320,7 +319,7 @@ namespace Prototyp
 
                     nc.isModule = true;
                     nodeConnections.Add(nc);
-                    MessageBox.Show(nc.OutputChannel + " -> " + nc.InputChannel);
+                    MessageBox.Show(nc.OutputNode + "_" + nc.OutputChannel + " -> " + nc.InputNode + "_" + nc.InputChannel);
                 }
                 else
                 {
@@ -328,7 +327,7 @@ namespace Prototyp
 
                     // TODO: 
                     // VectorImport_Module-Klasse erweitern mit neuer Property (Zeiger auf Datenliste) + ähnliche Umsetzung wie bei Node-Module -> auch für Raster
-                    nc.ImportNodeOutput = vectorData[conn.Output.GetDataPointer()];
+                    nc.ImportNodeOutput = conn.Output.GetDataID();
                     nc.OutputChannel = 0;
 
                     nc.InputNode = (Node_Module)conn.Input.Parent;
@@ -336,6 +335,7 @@ namespace Prototyp
 
                     nc.isModule = false;
                     nodeConnections.Add(nc);
+                    MessageBox.Show(nc.ImportNodeOutput +"_" + nc.OutputChannel + " -> " + nc.InputNode + "_" + nc.InputChannel);
                 }
             }
         }
