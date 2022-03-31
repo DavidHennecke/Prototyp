@@ -132,12 +132,17 @@ namespace Prototyp.Modules
                         {
                             vectorOutput = new ValueNodeOutputViewModel<Elements.VectorData>();
                             vectorOutput.SetID(i);
-                            VectorData result = new VectorData();
-                            outNameEditor = new Modules.ViewModels.OutputNameViewModel(vectorOutput.Name);
-                            outNameEditor.Value = "Vector output";
-                            vectorOutput.Editor = outNameEditor;
-                            outNameEditor.ValueChanged.Subscribe (v => { result.Name = v; });
-                            vectorOutput.Value = this.WhenAnyObservable(vm => vm.outNameEditor.ValueChanged).Select(value => result);
+                            VectorData placeholder = new VectorData();
+                            // Name-Editor Implementation
+                            //outNameEditor = new Modules.ViewModels.OutputNameViewModel(vectorOutput.Name);
+                            //outNameEditor.Value = "Vector output";
+                            //vectorOutput.Editor = outNameEditor;
+                            //outNameEditor.ValueChanged.Subscribe (v => { result.Name = v; });
+                            //vectorOutput.Value = this.WhenAnyObservable(vm => vm.outNameEditor.ValueChanged).Select(value => result);
+
+                            placeholder.Name = "VectorGeomType";
+                            vectorOutput.Name = "VectorGeomType";
+                            vectorOutput.Value = System.Reactive.Linq.Observable.Return(placeholder);
                             Outputs.Add(vectorOutput);
                             
                             break;
@@ -146,12 +151,16 @@ namespace Prototyp.Modules
                         {
                             rasterOutput = new ValueNodeOutputViewModel<Elements.RasterData>();
                             rasterOutput.SetID(i);
-                            RasterData result = new RasterData();
-                            outNameEditor = new Modules.ViewModels.OutputNameViewModel(rasterOutput.Name);
-                            outNameEditor.Value = "Raster output";
-                            rasterOutput.Editor = outNameEditor;
-                            outNameEditor.ValueChanged.Subscribe(v => { result.Name = v; });
-                            rasterOutput.Value = this.WhenAnyObservable(vm => vm.outNameEditor.ValueChanged).Select(value => result);
+                            RasterData placeholder = new RasterData();
+                            // Name-Editor Implementation
+                            //outNameEditor = new Modules.ViewModels.OutputNameViewModel(rasterOutput.Name);
+                            //outNameEditor.Value = "Raster output";
+                            //rasterOutput.Editor = outNameEditor;
+                            //outNameEditor.ValueChanged.Subscribe(v => { result.Name = v; });
+                            //rasterOutput.Value = this.WhenAnyObservable(vm => vm.outNameEditor.ValueChanged).Select(value => result);
+                            placeholder.Name = "RasterType";
+                            rasterOutput.Name = "RasterType";
+                            rasterOutput.Value = System.Reactive.Linq.Observable.Return(placeholder);
                             Outputs.Add(rasterOutput);
                             break;
                         }
