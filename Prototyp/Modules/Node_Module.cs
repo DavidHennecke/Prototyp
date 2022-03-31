@@ -42,6 +42,7 @@ namespace Prototyp.Modules
         }
     }
 
+
     public class Node_Module : NodeViewModel
     {
         public Modules.ViewModels.FloatSliderViewModel sliderEditor { get; }
@@ -136,8 +137,8 @@ namespace Prototyp.Modules
                             //outNameEditor.ValueChanged.Subscribe (v => { result.Name = v; });
                             //vectorOutput.Value = this.WhenAnyObservable(vm => vm.outNameEditor.ValueChanged).Select(value => result);
 
-                            placeholder.Name = "VectorGeomType";
-                            vectorOutput.Name = "VectorGeomType";
+                            placeholder.Name = toolRow.outputRow.outputTypes[i].ToString();
+                            vectorOutput.Name = toolRow.outputRow.outputTypes[i].ToString();
                             vectorOutput.Value = System.Reactive.Linq.Observable.Return(placeholder);
                             Outputs.Add(vectorOutput);
                             
@@ -154,8 +155,8 @@ namespace Prototyp.Modules
                             //rasterOutput.Editor = outNameEditor;
                             //outNameEditor.ValueChanged.Subscribe(v => { result.Name = v; });
                             //rasterOutput.Value = this.WhenAnyObservable(vm => vm.outNameEditor.ValueChanged).Select(value => result);
-                            placeholder.Name = "RasterType";
-                            rasterOutput.Name = "RasterType";
+                            placeholder.Name = toolRow.outputRow.outputTypes[i].ToString();
+                            rasterOutput.Name = toolRow.outputRow.outputTypes[i].ToString();
                             rasterOutput.Value = System.Reactive.Linq.Observable.Return(placeholder);
                             Outputs.Add(rasterOutput);
                             break;
