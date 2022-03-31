@@ -10,7 +10,9 @@ using System.Windows;
 
 namespace Prototyp.Modules
 {
-    //Property extension, see https://stackoverflow.com/questions/17616239/c-sharp-extend-class-by-adding-properties
+    //Property extensions, see https://stackoverflow.com/questions/17616239/c-sharp-extend-class-by-adding-properties
+
+    // Extend OUTput
     public static class NodeOutputViewModelExtension
     {
         static readonly System.Runtime.CompilerServices.ConditionalWeakTable<NodeOutputViewModel, IntObject> IDs = new System.Runtime.CompilerServices.ConditionalWeakTable<NodeOutputViewModel, IntObject>();
@@ -30,6 +32,7 @@ namespace Prototyp.Modules
         }
     }
 
+    // Extend INput
     public static class NodeInputViewModelExtension
     {
         static readonly System.Runtime.CompilerServices.ConditionalWeakTable<NodeInputViewModel, IntObject> IDs = new System.Runtime.CompilerServices.ConditionalWeakTable<NodeInputViewModel, IntObject>();
@@ -41,7 +44,6 @@ namespace Prototyp.Modules
             public int Value;
         }
     }
-
 
     public class Node_Module : NodeViewModel
     {
@@ -155,6 +157,7 @@ namespace Prototyp.Modules
                             //rasterOutput.Editor = outNameEditor;
                             //outNameEditor.ValueChanged.Subscribe(v => { result.Name = v; });
                             //rasterOutput.Value = this.WhenAnyObservable(vm => vm.outNameEditor.ValueChanged).Select(value => result);
+
                             placeholder.Name = toolRow.outputRow.outputTypes[i].ToString();
                             rasterOutput.Name = toolRow.outputRow.outputTypes[i].ToString();
                             rasterOutput.Value = System.Reactive.Linq.Observable.Return(placeholder);

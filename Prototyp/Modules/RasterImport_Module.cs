@@ -3,9 +3,6 @@ using NodeNetwork.Toolkit.ValueNode;
 using NodeNetwork.ViewModels;
 using NodeNetwork.Views;
 using ReactiveUI;
-using System;
-using System.Collections.Generic;
-using System.Text;
 
 namespace Prototyp.Modules
 {
@@ -18,15 +15,13 @@ namespace Prototyp.Modules
         {
             Name = dataName;
             importNodeOutput = new ValueNodeOutputViewModel<Prototyp.Elements.RasterData>();
-            importNodeOutput.Value = null;
-            importNodeOutput.Name = null;
             Outputs.Add(importNodeOutput);
-            Elements.RasterData placeholder = new Elements.RasterData();
+            Prototyp.Elements.RasterData placeholder = new Prototyp.Elements.RasterData();
             placeholder.Name = dataType;
 
-            importNodeOutput.SetDataID(dataID);
             importNodeOutput.Name = dataType;
             importNodeOutput.Value = System.Reactive.Linq.Observable.Return(placeholder);
+            importNodeOutput.SetDataID(dataID);
         }
 
         static RasterImport_Module()
