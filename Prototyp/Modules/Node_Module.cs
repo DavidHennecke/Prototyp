@@ -16,11 +16,8 @@ namespace Prototyp.Modules
         static readonly System.Runtime.CompilerServices.ConditionalWeakTable<NodeOutputViewModel, IntObject> IDs = new System.Runtime.CompilerServices.ConditionalWeakTable<NodeOutputViewModel, IntObject>();
         static readonly System.Runtime.CompilerServices.ConditionalWeakTable<NodeOutputViewModel, DoubleObject> DataIDs = new System.Runtime.CompilerServices.ConditionalWeakTable<NodeOutputViewModel, DoubleObject>();
         public static int GetID(this NodeOutputViewModel ID) { return IDs.GetOrCreateValue(ID).iValue; }
-
         public static void SetID(this NodeOutputViewModel ID, int newID) { IDs.GetOrCreateValue(ID).iValue = newID; }
-
         public static double GetDataID(this NodeOutputViewModel DataID) { return DataIDs.GetOrCreateValue(DataID).dValue; }
-
         public static void SetDataID(this NodeOutputViewModel DataID, double newDataID) { DataIDs.GetOrCreateValue(DataID).dValue = newDataID; }
 
         class IntObject
@@ -37,7 +34,6 @@ namespace Prototyp.Modules
     {
         static readonly System.Runtime.CompilerServices.ConditionalWeakTable<NodeInputViewModel, IntObject> IDs = new System.Runtime.CompilerServices.ConditionalWeakTable<NodeInputViewModel, IntObject>();
         public static int GetID(this NodeInputViewModel ID) { return IDs.GetOrCreateValue(ID).Value; }
-
         public static void SetID(this NodeInputViewModel ID, int newID) { IDs.GetOrCreateValue(ID).Value = newID; }
 
         class IntObject

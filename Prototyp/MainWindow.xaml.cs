@@ -217,15 +217,14 @@ namespace Prototyp
         //Objekt wird in den NodeEditor gezogen
         public void DropTargetEventNodeEditor(object sender, DragEventArgs e)
         {
-            if ((string)e.Data.GetData("Type") == "Vector")
-            {
-                
-
+            if (((string)e.Data.GetData("Type")).ToLower() == "vector")
+            {             
                 for (int i = 0; i < vectorData.Count; i++)
                 {
                     if (vectorData[i].ID.ToString() == (string)e.Data.GetData("ID"))
                     {
-                        VectorImport_Module importNode = new VectorImport_Module(vectorData[i].Name ,vectorData[i].FeatureCollection[0].Geometry.GeometryType, vectorData[i].ID);
+                        VectorImport_Module importNode = new VectorImport_Module(vectorData[i].Name, vectorData[i].FeatureCollection[0].Geometry.GeometryType, vectorData[i].ID);
+                        
                         Point TempPoint;
                         TempPoint = e.GetPosition(networkView);
                         TempPoint.X = (TempPoint.X - networkView.ViewModel.DragOffset.X) / networkView.ViewModel.ZoomFactor;
@@ -237,16 +236,20 @@ namespace Prototyp
                     }
                 }
             }
-            else if ((string)e.Data.GetData("Type") == "Raster")
-            {
-                
-
+            else if (((string)e.Data.GetData("Type")).ToLower() == "raster")
+            {              
                 for (int i = 0; i < rasterData.Count; i++)
                 {
                     if (rasterData[i].ID.ToString() == (string)e.Data.GetData("ID"))
                     {
                         RasterImport_Module importNode = new RasterImport_Module(rasterData[i].Name, rasterData[i].FileType, rasterData[i].ID);
-                        importNode.Position = e.GetPosition(networkView);
+
+                        Point TempPoint;
+                        TempPoint = e.GetPosition(networkView);
+                        TempPoint.X = (TempPoint.X - networkView.ViewModel.DragOffset.X) / networkView.ViewModel.ZoomFactor;
+                        TempPoint.Y = (TempPoint.Y - networkView.ViewModel.DragOffset.Y) / networkView.ViewModel.ZoomFactor;
+                        importNode.Position = TempPoint;
+
                         network.Nodes.Add(importNode);
                         break;
                     }

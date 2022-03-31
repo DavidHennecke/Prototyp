@@ -3,9 +3,6 @@ using NodeNetwork.Toolkit.ValueNode;
 using NodeNetwork.ViewModels;
 using NodeNetwork.Views;
 using ReactiveUI;
-using System;
-using System.Collections.Generic;
-using System.Text;
 
 namespace Prototyp.Modules
 {
@@ -18,15 +15,13 @@ namespace Prototyp.Modules
         {
             Name = dataName;
             importNodeOutput = new ValueNodeOutputViewModel<Prototyp.Elements.VectorData>();
-            importNodeOutput.Value = null;
-            importNodeOutput.Name = null;
             Outputs.Add(importNodeOutput);
-            Elements.VectorData placeholder = new Elements.VectorData();
+            Prototyp.Elements.VectorData placeholder = new Prototyp.Elements.VectorData();
             placeholder.Name = geomType;
 
-            importNodeOutput.SetDataID(dataID);
             importNodeOutput.Name = geomType;
             importNodeOutput.Value = System.Reactive.Linq.Observable.Return(placeholder);
+            importNodeOutput.SetDataID(dataID);
         }
 
         static VectorImport_Module()
