@@ -2,12 +2,6 @@
 
 namespace Prototyp.Elements
 {
-    public enum StringConstructorParams
-    {
-        GDAL,
-        ByteArrString
-    }
-
     public enum ToStringParams
     {
         GeoJSON,
@@ -151,56 +145,16 @@ namespace Prototyp.Elements
             MakeID();
         }
 
-        // Constructor that opens an entire FlatGeobuf file.
-        // Example:
-        // VectorData vectorData = new VectorData("C:/Temp/UScounties.fgb");
-        public VectorData(string FlatGeobufFileName)
-        {
-            if (System.IO.File.Exists(FlatGeobufFileName))
-            {
-                IntBusy = true;
-                using (System.IO.Stream SourceFile = System.IO.File.OpenRead(FlatGeobufFileName))
-                {
-                    byte[] FileBuffer = new byte[8];
-                    SourceFile.Read(FileBuffer, 0, FileBuffer.Length);
-                    if (!ByteArrValid(FileBuffer))
-                    {
-                        throw new System.Exception("File is not in valid FlatGeobuf format.");
-                    }
-                }
-
-                IntVecData = System.IO.File.ReadAllBytes(FlatGeobufFileName);
-                HandleNameAndCRS();
-                MakeID();
-            }
-            else
-            {
-                throw new System.Exception("File does not exist.");
-            }
-            IntBusy = false;
-        }
-
-        // Constructor that accepts a string and decides what to do based on the second parameter.
+        // Constructor that accepts a string and decides what to do internally.
+        // First, a Base64 coded ByteArray is assumed. If that's not it, it is assumed that the string
+        // contains a file name. If that's an fgb file, open it. If not, try GDAL.
         // Examples:
-        // VectorData vectorData = new VectorData("C:/Temp/UScounties.shp", StringConstructorParams.GDAL);
-        // VectorData vectorData = new VectorData(MyByteArray, StringConstructorParams.ByteArrString);
-        public VectorData(string MyString, StringConstructorParams Params)
+        // VectorData vectorData = new VectorData(MyByteArray;
+        // VectorData vectorData = new VectorData("C:/Temp/UScounties.fgb");
+        // VectorData vectorData = new VectorData("C:/Temp/UScounties.shp");
+        public VectorData(string MyString)
         {
-            if (Params == StringConstructorParams.GDAL)
-            {
-                IntBusy = true;
-                InitGDAL();
-                OSGeo.OGR.DataSource MyDS;
-                MyDS = OSGeo.OGR.Ogr.Open(MyString, 0);
-                if (MyDS != null)
-                {
-                    IntVecData = ImportLayer(MyDS.GetLayerByIndex(0));
-                    HandleNameAndCRS();
-                    MakeID();
-                }
-                IntBusy = false;
-            }
-            else if (Params == StringConstructorParams.ByteArrString)
+            if (MyString.StartsWith("ZmdiA2ZnYg")) //Base64 for fgb header
             {
                 IntBusy = true;
                 IntVecData = StringToByteArr(MyString);
@@ -210,7 +164,38 @@ namespace Prototyp.Elements
             }
             else
             {
-                throw new System.Exception("No valid value for parameter 'Params' provided.");
+                if (System.IO.File.Exists(MyString))
+                {
+                    IntBusy = true;
+                    using (System.IO.Stream SourceFile = System.IO.File.OpenRead(MyString))
+                    {
+                        byte[] FileBuffer = new byte[8];
+                        SourceFile.Read(FileBuffer, 0, FileBuffer.Length);
+                        if (ByteArrValid(FileBuffer)) // Detected an fgb file.
+                        {
+                            IntVecData = System.IO.File.ReadAllBytes(MyString);
+                            HandleNameAndCRS();
+                            MakeID();
+                        }
+                        else // No fgb. Try GDAL, then.
+                        {
+                            InitGDAL();
+                            OSGeo.OGR.DataSource MyDS;
+                            MyDS = OSGeo.OGR.Ogr.Open(MyString, 0);
+                            if (MyDS != null)
+                            {
+                                IntVecData = ImportLayer(MyDS.GetLayerByIndex(0));
+                                HandleNameAndCRS();
+                                MakeID();
+                            }
+                        }
+                    }
+                    IntBusy = false;
+                }
+                else
+                {
+                    throw new System.Exception("File does not exist.");
+                }
             }
         }
 
@@ -689,7 +674,7 @@ namespace Prototyp.Elements
                 else
                 {
                     NetTopologySuite.Features.FeatureCollection MyFC = FlatGeobuf.NTS.FeatureCollectionConversions.Deserialize(IntVecData);
-                    MyString = "Number of features: " + MyFC.Count + ". To obtain the data as a GeoJSON string, use \".ToString(true)\" or method \".GetAsGeoJSON()\" directly.";
+                    MyString = "Number of features: " + MyFC.Count + ". To obtain the data as a GeoJSON string, use \".ToString(ToStringParams.GeoJSON)\" or method \".GetAsGeoJSON()\" directly.";
                 }
             }
 

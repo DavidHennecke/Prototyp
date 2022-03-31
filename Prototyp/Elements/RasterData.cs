@@ -120,49 +120,31 @@
             MakeID();
         }
 
-        // Constructor that opens an entire file.
+        // Constructor that accepts a string and decides what to do internally.
+        // First, it is assumed that the string contains a file name.
+        // If that's not it, a Base64 coded byte array string is assumed.
         // Example:
         // RasterData rasterData = new RasterData("C:/Temp/WindData.asc");
-        public RasterData(string RasterFileName)
+        // RasterData rasterData = new RasterData(MyByteArrayString);
+        public RasterData(string MyString)
         {
-            if (System.IO.File.Exists(RasterFileName))
+            if (System.IO.File.Exists(MyString))
             {
                 IntBusy = true;
                 InitGDAL();
-                OSGeo.GDAL.Dataset DS = OSGeo.GDAL.Gdal.Open(RasterFileName, OSGeo.GDAL.Access.GA_ReadOnly);
+                OSGeo.GDAL.Dataset DS = OSGeo.GDAL.Gdal.Open(MyString, OSGeo.GDAL.Access.GA_ReadOnly);
                 ImportDataset(DS, 0, 0, DS.RasterXSize, DS.RasterYSize);
                 MakeID();
-                IntName = GetName(RasterFileName);
+                IntName = GetName(MyString);
                 IntBusy = false;
             }
             else
-            {
-                IntBusy = false;
-                throw new System.Exception("File does not exist.");
-            }
-        }
-
-        // Constructor that accepts a string and decides what to do based on the second parameter.
-        // Examples:
-        // RasterData rasterData = new RasterData(MyByteArrayString, StringConstructorParams.ByteArrString);
-        public RasterData(string MyString, StringConstructorParams Params)
-        {
-            if (Params == StringConstructorParams.ByteArrString)
             {
                 IntBusy = true;
                 Deserialize(System.Convert.FromBase64String(MyString));
                 MakeID();
                 IntBusy = false;
             }
-            //else if (Params == ???)
-            //{
-                // TODO: Add other params handlers?
-            //}
-            else
-            {
-                throw new System.Exception("No valid value for parameter 'Params' provided.");
-            }
-            IntBusy = false;
         }
 
         // Constructor that opens a rectangle from a file.
