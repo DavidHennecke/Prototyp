@@ -23,11 +23,11 @@ namespace Prototyp
 
         public void AddTreeViewChild(Prototyp.Elements.VectorData vectorData)
         {
-            //Name auf Listeneintrag übergeben
+            // Name auf Listeneintrag übergeben
             newVectorChild.VectorListViewItemText.Text = vectorData.Name;
             newVectorChild.VectorListViewItemText.Uid = vectorData.ID.ToString();
 
-            //Vektordaten an- und ausschalten auf Karte
+            // Vektordaten an- und ausschalten auf Karte
             newVectorChild.VectorListViewItemCheckBox.Unchecked += new RoutedEventHandler(DisableVector);
             newVectorChild.VectorListViewItemCheckBox.Checked += new RoutedEventHandler(EnableVector);
 
@@ -46,28 +46,31 @@ namespace Prototyp
             vectorContextMenu.Items.Add(Properties);
             newVectorChild.ContextMenu = vectorContextMenu;
 
-            //Vektorfarbe bestimmen
+            // ID zuweisen
+            newVectorChild.Uid = vectorData.ID.ToString();
+
+            // Vektorfarbe bestimmen
             vectorColor = Windows.UI.Color.FromArgb(255, (byte) rnd.Next(256), (byte) rnd.Next(256), (byte) rnd.Next(256));
             var converter = new System.Windows.Media.BrushConverter();
             var brush = (System.Windows.Media.Brush) converter.ConvertFromString(vectorColor.ToString());
             newVectorChild.VectorListViewItemColorPicker.Background = brush;
             newVectorChild.VectorListViewItemColorPicker.Click += new RoutedEventHandler(PickColor);
 
-            //Drag-Event starten, um Vektordaten in NodeEditor zu ziehen
+            // Drag-Event starten, um Vektordaten in NodeEditor zu ziehen
             newVectorChild.VectorListViewItemText.PreviewMouseLeftButtonDown += new System.Windows.Input.MouseButtonEventHandler((sender, e) => StartDragEvent(sender, e, newVectorChild));
 
-            //new Child wird dem Table of Contents hinzugefügt
+            // new Child wird dem Table of Contents hinzugefügt
             Prototyp.MainWindow.AppWindow.TableOfContentsVector.Items.Add(newVectorChild);
             ((System.Collections.Specialized.INotifyCollectionChanged)Prototyp.MainWindow.AppWindow.TableOfContentsVector.Items).CollectionChanged += TableOfContentsVector_CollectionChanged;
         }
 
         public void AddTreeViewChild(Prototyp.Elements.RasterData rasterData)
         {
-            //Name auf Listeneintrag übergeben
+            // Name auf Listeneintrag übergeben
             newRasterChild.RasterListViewItemText.Text = rasterData.Name;
             newRasterChild.RasterListViewItemText.Uid = rasterData.ID.ToString();
 
-            //Rasterdaten an- und ausschalten auf Karte
+            // Rasterdaten an- und ausschalten auf Karte
             newRasterChild.RasterListViewItemCheckBox.Unchecked += new RoutedEventHandler(DisableRaster);
             newRasterChild.RasterListViewItemCheckBox.Checked += new RoutedEventHandler(EnableRaster);
 
@@ -86,17 +89,20 @@ namespace Prototyp
             rasterContextMenu.Items.Add(Properties);
             newRasterChild.ContextMenu = rasterContextMenu;
 
-            //Rasterfarbe bestimmen
+            // ID zuweisen
+            newVectorChild.Uid = rasterData.ID.ToString();
+
+            // Rasterfarbe bestimmen
             rasterColor = Windows.UI.Color.FromArgb(255, (byte)rnd.Next(256), (byte)rnd.Next(256), (byte)rnd.Next(256));
             var converter = new System.Windows.Media.BrushConverter();
             var brush = (System.Windows.Media.Brush)converter.ConvertFromString(rasterColor.ToString());
             newRasterChild.RasterListViewItemColorPicker.Background = brush;
             newRasterChild.RasterListViewItemColorPicker.Click += new RoutedEventHandler(PickColor);
 
-            //Drag-Event starten, um Rasterdaten in NodeEditor zu ziehen
+            // Drag-Event starten, um Rasterdaten in NodeEditor zu ziehen
             newRasterChild.RasterListViewItemText.PreviewMouseLeftButtonDown += new System.Windows.Input.MouseButtonEventHandler((sender, e) => StartDragEvent(sender, e, newRasterChild));
 
-            //new Child wird dem Table of Contents hinzugefügt
+            // new Child wird dem Table of Contents hinzugefügt
             Prototyp.MainWindow.AppWindow.TableOfContentsRaster.Items.Add(newRasterChild);
             ((System.Collections.Specialized.INotifyCollectionChanged)Prototyp.MainWindow.AppWindow.TableOfContentsRaster.Items).CollectionChanged += TableOfContentsRaster_CollectionChanged;
         }
@@ -149,11 +155,13 @@ namespace Prototyp
         public void RemoveVector(Object sender, RoutedEventArgs e)
         {
             Prototyp.MainWindow.AppWindow.TableOfContentsVector.Items.Remove(newVectorChild);
+            Prototyp.MainWindow.AppWindow.RemoveVectorData(newVectorChild.Uid);
         }
 
         public void RemoveRaster(Object sender, RoutedEventArgs e)
         {
             Prototyp.MainWindow.AppWindow.TableOfContentsRaster.Items.Remove(newRasterChild);
+            Prototyp.MainWindow.AppWindow.RemoveRasterData(newVectorChild.Uid);
         }
 
         public void DisableVector(Object sender, RoutedEventArgs e)

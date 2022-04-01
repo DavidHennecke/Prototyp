@@ -37,6 +37,10 @@ namespace Prototyp
     public partial class MainWindow : Window
     {
         private const int BASEPORT = 5000;
+        
+        private const string COMBOMSG = "Select your tool here...";
+        private const string ALPHABET = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
+        private bool Typing = false;
 
         private System.Collections.Generic.List<VectorData> vectorData = new System.Collections.Generic.List<VectorData>();
         private System.Collections.Generic.List<RasterData> rasterData = new System.Collections.Generic.List<RasterData>();
@@ -75,7 +79,7 @@ namespace Prototyp
 
         // Private methods --------------------------------------------------------------------
 
-        public void ParseModules(string Path)
+        private void ParseModules(string Path)
         {
             string[] SubDirs = Directory.GetDirectories(Path);
             string[] FileNames;
@@ -114,12 +118,38 @@ namespace Prototyp
 
             ComboItems.Clear();
             ComboItem CaptionItem = new ComboItem();
-            CaptionItem.ToolName = "Select your tool here...";
+            CaptionItem.ToolName = COMBOMSG;
             ComboItems.Add(CaptionItem);
             for (int i = 0; i < LocalList.Count; i++) ComboItems.Add(LocalList[i]);
 
             ToolsComboBox.ItemsSource = ComboItems;
             ToolsComboBox.SelectedIndex = 0;
+        }
+
+        // Public methods ---------------------------------------------------------------------------
+
+        public void RemoveVectorData(string Uid)
+        {
+            for (int i = 0; i < vectorData.Count; i++)
+            {
+                if (vectorData[i].ID.ToString() == Uid)
+                {
+                    vectorData.RemoveAt(i);
+                    break;
+                }
+            }
+        }
+
+        public void RemoveRasterData(string Uid)
+        {
+            for (int i = 0; i < rasterData.Count; i++)
+            {
+                if (rasterData[i].ID.ToString() == Uid)
+                {
+                    rasterData.RemoveAt(i);
+                    break;
+                }
+            }
         }
 
         // User control handlers --------------------------------------------------------------------
@@ -158,15 +188,15 @@ namespace Prototyp
                     vectorData.Add(new VectorData(openFileDialog.FileName));
                     //// Testcode start
                     //// Bitte noch nicht löschen!
-                    string Test1 = vectorData[vectorData.Count - 1].ToString(ToStringParams.ByteString);
-                    VectorData Test2 = new VectorData(Test1);
+                    //string Test1 = vectorData[vectorData.Count - 1].ToString(ToStringParams.ByteString);
+                    //VectorData Test2 = new VectorData(Test1);
 
-                    byte[] ByteArr1 = vectorData[vectorData.Count - 1].VecData;
-                    byte[] ByteArr2 = Test2.VecData;
-                    for (int i = 0; i < ByteArr1.Length; i++)
-                    {
-                        if (ByteArr1[i] != ByteArr2[i]) MessageBox.Show("Index: " + i.ToString() + ", ByteArr1: " + ByteArr1[i].ToString("X") + ", ByteArr2: " + ByteArr2[i].ToString("X"));
-                    }
+                    //byte[] ByteArr1 = vectorData[vectorData.Count - 1].VecData;
+                    //byte[] ByteArr2 = Test2.VecData;
+                    //for (int i = 0; i < ByteArr1.Length; i++)
+                    //{
+                    //    if (ByteArr1[i] != ByteArr2[i]) MessageBox.Show("Index: " + i.ToString() + ", ByteArr1: " + ByteArr1[i].ToString("X") + ", ByteArr2: " + ByteArr2[i].ToString("X"));
+                    //}
                     //// Testcode end
                     MainWindowHelpers mainWindowHelpers = new MainWindowHelpers();
                     mainWindowHelpers.AddTreeViewChild(vectorData[vectorData.Count - 1]);
@@ -187,15 +217,15 @@ namespace Prototyp
                     rasterData.Add(new RasterData(openFileDialog.FileName));
                     //// Testcode start
                     //// Bitte noch nicht löschen!
-                    string Test1 = rasterData[rasterData.Count - 1].ToString();
-                    RasterData Test2 = new RasterData(Test1);
+                    //string Test1 = rasterData[rasterData.Count - 1].ToString();
+                    //RasterData Test2 = new RasterData(Test1);
 
-                    byte[] ByteArr1 = rasterData[rasterData.Count - 1].Serialize();
-                    byte[] ByteArr2 = Test2.Serialize();
-                    for (int i = 0; i < ByteArr1.Length; i++)
-                    {
-                        if (ByteArr1[i] != ByteArr2[i]) MessageBox.Show("Index: " + i.ToString() + ", ByteArr1: " + ByteArr1[i].ToString("X") + ", ByteArr2: " + ByteArr2[i].ToString("X"));
-                    }
+                    //byte[] ByteArr1 = rasterData[rasterData.Count - 1].Serialize();
+                    //byte[] ByteArr2 = Test2.Serialize();
+                    //for (int i = 0; i < ByteArr1.Length; i++)
+                    //{
+                    //    if (ByteArr1[i] != ByteArr2[i]) MessageBox.Show("Index: " + i.ToString() + ", ByteArr1: " + ByteArr1[i].ToString("X") + ", ByteArr2: " + ByteArr2[i].ToString("X"));
+                    //}
                     //// Testcode end
                     MainWindowHelpers mainWindowHelpers = new MainWindowHelpers();
                     mainWindowHelpers.AddTreeViewChild(rasterData[rasterData.Count - 1]);
@@ -269,6 +299,7 @@ namespace Prototyp
         {
             int Index = ToolsComboBox.SelectedIndex;
             if (Index <= 0) return;
+            if (Typing) return;
 
             //Find lowest available node ID
             int port = BASEPORT;
@@ -302,6 +333,66 @@ namespace Prototyp
                 network.Nodes.Add(nodeModule);
             }
             ToolsComboBox.SelectedIndex = 0;
+        }
+
+        private void ComboKeyUp(object sender, System.Windows.Input.KeyEventArgs e)
+        {
+            ToolsComboBox.IsDropDownOpen = true;
+            Typing = true;
+
+            if (ComboItems[0].ToolName == COMBOMSG) ComboItems[0].ToolName = "";
+
+            if (e.Key == System.Windows.Input.Key.Back)
+            {
+                if (ComboItems[0].ToolName == "") return;
+                ComboItems[0].ToolName = ComboItems[0].ToolName.Substring(0, ComboItems[0].ToolName.Length - 1);
+                ToolsComboBox.ItemsSource = null;
+                ToolsComboBox.ItemsSource = ComboItems;
+                for (int i = 1; i < ComboItems.Count; i++)
+                {
+                    if (ComboItems[i].ToolName.ToLower().Contains(ComboItems[0].ToolName))
+                    {
+                        ToolsComboBox.SelectedIndex = i;
+                        break;
+                    }
+                }
+                return;
+            }
+
+            if (e.Key == System.Windows.Input.Key.Return | e.Key == System.Windows.Input.Key.Enter)
+            {
+                for (int i = 1; i < ComboItems.Count; i++)
+                {
+                    if (ComboItems[i].ToolName.ToLower().Contains(ComboItems[0].ToolName))
+                    {
+                        ToolsComboBox.SelectedIndex = 0;
+                        ComboItems[0].ToolName = COMBOMSG;
+                        ToolsComboBox.ItemsSource = null;
+                        ToolsComboBox.ItemsSource = ComboItems;
+                        Typing = false;
+                        ToolsComboBox.SelectedIndex = i;
+                        break;
+                    }
+                }
+                return;
+            }
+
+            if (ALPHABET.Contains(e.Key.ToString())) ComboItems[0].ToolName = ComboItems[0].ToolName + e.Key.ToString().ToLower();
+            ToolsComboBox.ItemsSource = null;
+            ToolsComboBox.ItemsSource = ComboItems;
+            for (int i = 1; i < ComboItems.Count; i++)
+            {
+                if (ComboItems[i].ToolName.ToLower().Contains(ComboItems[0].ToolName))
+                {
+                    ToolsComboBox.SelectedIndex = i;
+                    break;
+                }
+            }
+        }
+
+        private void ComboTextBodyMouseUp(object sender, System.Windows.Input.MouseButtonEventArgs e)
+        {
+            System.Diagnostics.Debug.WriteLine("Hallo");
         }
 
         private void PlayButton_Click(object sender, RoutedEventArgs e)
