@@ -330,6 +330,7 @@ namespace Prototyp
                     vorteXML.ToolRows[i].rowType = Prototyp.Elements.VorteXML.RowType.Input;
                     vorteXML.ToolRows[i].inputRow.inputTypes = new Prototyp.Elements.VorteXML.ConnectorType[ListViewEntries[i].InputTypes.Count];
 
+                    if (ListViewEntries[i].InputTypes.Count == 0) return (null); // Module description corrupted: ANY input type must be allowed.
                     int j = 0;
                     foreach (string InpTy in ListViewEntries[i].InputTypes)
                     {
@@ -339,7 +340,6 @@ namespace Prototyp
                         if (InpTy == "Raster") vorteXML.ToolRows[i].inputRow.inputTypes[j] = Prototyp.Elements.VorteXML.ConnectorType.Raster;
                         j++;
                     }
-                    if (j == 0) return (null); // Module description corrupted: ANY input type must be allowed.
                 }
                 else if (ListViewEntries[i].SlotType.Contains("Control"))
                 {
@@ -365,13 +365,13 @@ namespace Prototyp
 
                         vorteXML.ToolRows[i].controlRow.dropdown.Values = new string[ListViewEntries[i].DropDownEntries.Count];
 
+                        if (ListViewEntries[i].DropDownEntries.Count == 0) return (null); // Module description corrupted: ANY dropdown entry must be present.
                         int j = 0;
                         foreach (string DD in ListViewEntries[i].DropDownEntries)
                         {
                             vorteXML.ToolRows[i].controlRow.dropdown.Values[j] = DD;
                             j++;
                         }
-                        if (j == 0) return (null); // Module description corrupted: ANY dropdown entry must be present.
                     }
                 }
                 else if (ListViewEntries[i].SlotType == "Output")
@@ -379,6 +379,7 @@ namespace Prototyp
                     vorteXML.ToolRows[i].rowType = Prototyp.Elements.VorteXML.RowType.Output;
                     vorteXML.ToolRows[i].outputRow.outputTypes = new Prototyp.Elements.VorteXML.ConnectorType[ListViewEntries[i].OutputTypes.Count];
 
+                    if (ListViewEntries[i].OutputTypes.Count == 0) return (null); // Module description corrupted: ANY output type must be allowed.
                     int j = 0;
                     foreach (string OutTy in ListViewEntries[i].OutputTypes)
                     {
@@ -387,7 +388,6 @@ namespace Prototyp
                         if (OutTy == "VectorPolygon") vorteXML.ToolRows[i].outputRow.outputTypes[j] = Prototyp.Elements.VorteXML.ConnectorType.VectorPolygon;
                         if (OutTy == "Raster") vorteXML.ToolRows[i].outputRow.outputTypes[j] = Prototyp.Elements.VorteXML.ConnectorType.Raster;
                         j++;
-                        if (j == 0) return (null); // Module description corrupted: ANY output type must be allowed.
                     }
                 }
             }
