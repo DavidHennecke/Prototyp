@@ -122,6 +122,7 @@ namespace Prototyp
             ComboItems.Add(CaptionItem);
             for (int i = 0; i < LocalList.Count; i++) ComboItems.Add(LocalList[i]);
 
+            ToolsComboBox.ItemsSource = null;
             ToolsComboBox.ItemsSource = ComboItems;
             ToolsComboBox.SelectedIndex = 0;
         }
@@ -321,7 +322,21 @@ namespace Prototyp
                 //myProcessStartInfo.CreateNoWindow = true; //Ja, dies macht das Server-Window wirklich unsichtbar. Sicherstellen, dass der Krempel terminiert wird.
                 myProcessStartInfo.UseShellExecute = false; //Muss für .NETCore tatsächlich false sein, weil ShellExecute wirklich nur auf der Windows-Plattform verfügbar ist.
                 myProcess.StartInfo = myProcessStartInfo;
-                myProcess.Start();
+                try
+                {
+                    myProcess.Start();
+                }
+                catch
+                {
+                    //if (!System.IO.File.Exists(ComboItems[Index].BinaryPath + ".exe"))
+                    //{
+                    //    throw new System.Exception("Could not start binary: No executable file present.");
+                    //}
+                    //else
+                    //{
+                    //    throw new System.Exception("Could not start binary: Reason unknown.");
+                    //}
+                }
 
                 // Establish GRPC connection
                 // TODO: nicht nur localhost
@@ -447,6 +462,101 @@ namespace Prototyp
                     MessageBox.Show(nc.ImportNodeOutput +"_" + nc.OutputChannel + " -> " + nc.InputNode + "_" + nc.InputChannel);
                 }
             }
+        }
+
+        private void StopButton_Click(object sender, RoutedEventArgs e)
+        {
+            ModuleDesigner moduleDesigner = new ModuleDesigner();
+            moduleDesigner.Owner = this;
+            moduleDesigner.ShowDialog();
+
+            if (!moduleDesigner.OkayClicked) return;
+            if (moduleDesigner.ListViewEntries.Count == 0) return;
+
+            VorteXML vorteXML = new VorteXML();
+
+            vorteXML.EditorVersion = "0.1";
+            vorteXML.NodeStyle = "default";
+            vorteXML.NodeTitle = moduleDesigner.TxtName.Text;
+
+            vorteXML.ToolRows = new VorteXML.ToolRow[moduleDesigner.ListViewEntries.Count];
+            for (int i = 0; i < moduleDesigner.ListViewEntries.Count; i++)
+            {
+                vorteXML.ToolRows[i].Index = i + 1;
+                vorteXML.ToolRows[i].Name = moduleDesigner.ListViewEntries[i].RowName;
+
+                if (moduleDesigner.ListViewEntries[i].SlotType == "Input")
+                {
+                    vorteXML.ToolRows[i].rowType = VorteXML.RowType.Input;
+                    vorteXML.ToolRows[i].inputRow.inputTypes = new VorteXML.ConnectorType[moduleDesigner.ListViewEntries[i].InputTypes.Count];
+
+                    int j = 0;
+                    foreach (string InpTy in moduleDesigner.ListViewEntries[i].InputTypes)
+                    {
+                        if (InpTy == "VectorPoint") vorteXML.ToolRows[i].inputRow.inputTypes[j] = VorteXML.ConnectorType.VectorPoint;
+                        if (InpTy == "VectorLine") vorteXML.ToolRows[i].inputRow.inputTypes[j] = VorteXML.ConnectorType.VectorLine;
+                        if (InpTy == "VectorPolygon") vorteXML.ToolRows[i].inputRow.inputTypes[j] = VorteXML.ConnectorType.VectorPolygon;
+                        if (InpTy == "Raster") vorteXML.ToolRows[i].inputRow.inputTypes[j] = VorteXML.ConnectorType.Raster;
+                        j++;
+                    }
+                    if (j == 0) return; // Module description corrupted: ANY input type must be allowed.
+                }
+                else if (moduleDesigner.ListViewEntries[i].SlotType.Contains("Control"))
+                {
+                    vorteXML.ToolRows[i].rowType = VorteXML.RowType.Control;
+
+                    if (moduleDesigner.ListViewEntries[i].ControlType == "Slider")
+                    {
+                        vorteXML.ToolRows[i].controlRow.controlType = VorteXML.ControlType.Slider;
+
+                        vorteXML.ToolRows[i].controlRow.slider.Style = "default";
+
+                        vorteXML.ToolRows[i].controlRow.slider.Start = moduleDesigner.ListViewEntries[i].SliderStart;
+                        vorteXML.ToolRows[i].controlRow.slider.End = moduleDesigner.ListViewEntries[i].SliderEnd;
+                        vorteXML.ToolRows[i].controlRow.slider.Default = moduleDesigner.ListViewEntries[i].SliderDefault;
+                        vorteXML.ToolRows[i].controlRow.slider.TickFrequency = moduleDesigner.ListViewEntries[i].SliderTickFrequency;
+                        vorteXML.ToolRows[i].controlRow.slider.Unit = moduleDesigner.ListViewEntries[i].SliderUnit;
+                    }
+                    else if (moduleDesigner.ListViewEntries[i].ControlType == "Dropdown")
+                    {
+                        vorteXML.ToolRows[i].controlRow.controlType = VorteXML.ControlType.Dropdown;
+
+                        vorteXML.ToolRows[i].controlRow.dropdown.Style = "default";
+
+                        vorteXML.ToolRows[i].controlRow.dropdown.Values = new string[moduleDesigner.ListViewEntries[i].DropDownEntries.Count];
+
+                        int j = 0;
+                        foreach (string DD in moduleDesigner.ListViewEntries[i].DropDownEntries)
+                        {
+                            vorteXML.ToolRows[i].controlRow.dropdown.Values[j] = DD;
+                            j++;
+                        }
+                        if (j == 0) return; // Module description corrupted: ANY dropdown entry must be present.
+                    }
+                }
+                else if (moduleDesigner.ListViewEntries[i].SlotType == "Output")
+                {
+                    vorteXML.ToolRows[i].rowType = VorteXML.RowType.Output;
+                    vorteXML.ToolRows[i].outputRow.outputTypes = new VorteXML.ConnectorType[moduleDesigner.ListViewEntries[i].OutputTypes.Count];
+
+                    int j = 0;
+                    foreach (string OutTy in moduleDesigner.ListViewEntries[i].OutputTypes)
+                    {
+                        if (OutTy == "VectorPoint") vorteXML.ToolRows[i].outputRow.outputTypes[j] = VorteXML.ConnectorType.VectorPoint;
+                        if (OutTy == "VectorLine") vorteXML.ToolRows[i].outputRow.outputTypes[j] = VorteXML.ConnectorType.VectorLine;
+                        if (OutTy == "VectorPolygon") vorteXML.ToolRows[i].outputRow.outputTypes[j] = VorteXML.ConnectorType.VectorPolygon;
+                        if (OutTy == "Raster") vorteXML.ToolRows[i].outputRow.outputTypes[j] = VorteXML.ConnectorType.Raster;
+                        j++;
+                        if (j == 0) return; // Module description corrupted: ANY output type must be allowed.
+                    }
+                }
+            }
+
+            string XMLStr = vorteXML.ExportXML();
+            DirectoryInfo di = Directory.CreateDirectory(ModulesPath + "\\" + vorteXML.NodeTitle);
+            File.WriteAllText(di.FullName + "\\" + vorteXML.NodeTitle + ".xml", XMLStr);
+            ComboItems.Clear();
+            ParseModules(ModulesPath);
         }
     }
 }

@@ -126,7 +126,7 @@
         public string NodeStyle
         {
             get { return (IntNodeStyle); }
-            set { NodeStyle = value; }
+            set { IntNodeStyle = value; }
         }
 
         public string EditorVersion

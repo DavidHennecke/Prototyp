@@ -1,0 +1,45 @@
+﻿<Window x:Class="Prototyp.ModuleProperties"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:Prototyp"
+        mc:Ignorable="d"
+        Title="ModuleProperties" Height="390" Width="900" ResizeMode="CanMinimize">
+    <Grid>
+        <Rectangle HorizontalAlignment="Left" Height="242" Margin="10,10,0,0" Stroke="Black" VerticalAlignment="Top" Width="186"/>
+        <TextBlock HorizontalAlignment="Left" Height="20" Margin="30,30,0,0" Text="Input types" TextWrapping="Wrap" VerticalAlignment="Top" Width="70"/>
+        <CheckBox x:Name="ChkInVectorPoint" Content="Vector point" Margin="30,55,0,0" VerticalAlignment="Top"/>
+        <CheckBox x:Name="ChkInVectorLine" Content="Vector line" Margin="30,85,0,0" VerticalAlignment="Top"/>
+        <CheckBox x:Name="ChkInVectorPolygon" Content="Vector polygon" Margin="30,115,0,0" VerticalAlignment="Top"/>
+        <CheckBox x:Name="ChkInRaster" Content="Raster" Margin="30,145,0,0" VerticalAlignment="Top"/>
+
+        <Rectangle HorizontalAlignment="Left" Height="242" Margin="201,10,0,0" Stroke="Black" VerticalAlignment="Top" Width="254"/>
+        <TextBlock HorizontalAlignment="Left" Margin="220,30,0,0" Text="Slider properties" TextWrapping="Wrap" VerticalAlignment="Top"/>
+        <TextBlock HorizontalAlignment="Left" Height="15" Margin="220,60,0,0" Text="Start:" TextWrapping="Wrap" VerticalAlignment="Top" Width="69"/>
+        <TextBlock HorizontalAlignment="Left" Height="15" Margin="220,95,0,0" Text="End:" TextWrapping="Wrap" VerticalAlignment="Top" Width="44"/>
+        <TextBlock HorizontalAlignment="Left" Height="15" Margin="220,135,0,0" Text="Default:" TextWrapping="Wrap" VerticalAlignment="Top" Width="48"/>
+        <TextBlock HorizontalAlignment="Left" Height="15" Margin="220,165,0,0" Text="Tick frequency:" TextWrapping="Wrap" VerticalAlignment="Top" Width="87"/>
+        <TextBlock HorizontalAlignment="Left" Height="15" Margin="220,200,0,0" Text="Unit:" TextWrapping="Wrap" VerticalAlignment="Top" Width="44"/>
+        <TextBox x:Name="TxtSliderStart" HorizontalAlignment="Left" Margin="330,55,0,0" Text="0" TextWrapping="Wrap" VerticalAlignment="Top" Width="87" TextAlignment="Right"/>
+        <TextBox x:Name="TxtSliderEnd" HorizontalAlignment="Left" Margin="330,90,0,0" Text="100" TextWrapping="Wrap" VerticalAlignment="Top" Width="87" TextAlignment="Right"/>
+        <TextBox x:Name="TxtSliderDefault" HorizontalAlignment="Left" Margin="330,125,0,0" Text="50" TextWrapping="Wrap" VerticalAlignment="Top" Width="87" TextAlignment="Right"/>
+        <TextBox x:Name="TxtSliderTick" HorizontalAlignment="Left" Margin="330,160,0,0" Text="10" TextWrapping="Wrap" VerticalAlignment="Top" Width="87" TextAlignment="Right"/>
+        <TextBox x:Name="TxtSliderUnit" HorizontalAlignment="Left" Margin="330,195,0,0" Text="m" TextWrapping="Wrap" VerticalAlignment="Top" Width="87" TextAlignment="Right"/>
+
+        <Rectangle HorizontalAlignment="Left" Height="242" Margin="460,10,0,0" Stroke="Black" VerticalAlignment="Top" Width="218"/>
+        <TextBlock HorizontalAlignment="Left" Margin="480,30,0,0" Text="Dropdown entries" TextWrapping="Wrap" VerticalAlignment="Top"/>
+        <TextBox x:Name="TxtDropdownEntries" HorizontalAlignment="Left" Margin="480,55,0,0" Text="" TextWrapping="Wrap" VerticalAlignment="Top" Width="174" Height="172" AcceptsReturn="True"/>
+
+        <Rectangle HorizontalAlignment="Left" Height="242" Margin="685,10,0,0" Stroke="Black" VerticalAlignment="Top" Width="186"/>
+        <TextBlock HorizontalAlignment="Left" Height="20" Margin="705,30,0,0" Text="Output types" TextWrapping="Wrap" VerticalAlignment="Top" Width="70"/>
+        <CheckBox x:Name="ChkOutVectorPoint" Content="Vector point" Margin="705,55,0,0" VerticalAlignment="Top"/>
+        <CheckBox x:Name="ChkOutVectorLine" Content="Vector line" Margin="705,85,0,0" VerticalAlignment="Top"/>
+        <CheckBox x:Name="ChkOutVectorPolygon" Content="Vector polygon" Margin="705,115,0,0" VerticalAlignment="Top"/>
+        <CheckBox x:Name="ChkOutRaster" Content="Raster" Margin="705,145,0,0" VerticalAlignment="Top"/>
+        <Button x:Name="BtOkay" Content="Okay" Margin="822,307,0,0" VerticalAlignment="Top" Click="BtOkay_Click"/>
+        <Button x:Name="BtCancel" Content="Cancel" Margin="758,307,0,0" VerticalAlignment="Top" Click="BtCancel_Click"/>
+        <TextBlock HorizontalAlignment="Left" Margin="42,278,0,0" Text="Row name:" TextWrapping="Wrap" VerticalAlignment="Top"/>
+        <TextBox x:Name="TxtRowName" HorizontalAlignment="Left" Margin="122,270,0,0" Text="RowName" TextWrapping="Wrap" VerticalAlignment="Top" Width="120"/>
+    </Grid>
+</Window>

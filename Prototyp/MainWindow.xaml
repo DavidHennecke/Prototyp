@@ -73,7 +73,7 @@
                     <Border BorderBrush="#FF212225" BorderThickness="3" CornerRadius="2" DockPanel.Dock="Top" Margin="2">
                         <DockPanel  Background="#FF212225" LastChildFill="True" >
                             <Button x:Name="PlayButton" Content="play" Background="#FF212225" FontFamily="{StaticResource FontAwesomeSolid}" VerticalAlignment="Center"  DockPanel.Dock="Left" Width="50" Height="50" FontSize="30" Foreground="#FF009107" Click="PlayButton_Click"/>
-                            <Button x:Name="StopButton" Content="stop" Background="#FF212225" FontFamily="{StaticResource FontAwesomeSolid}" VerticalAlignment="Center" DockPanel.Dock="Left" Width="50" Height="50" FontSize="30" Foreground="#FFAC0000"/>
+                            <Button x:Name="StopButton" Content="stop" Background="#FF212225" FontFamily="{StaticResource FontAwesomeSolid}" VerticalAlignment="Center" DockPanel.Dock="Left" Width="50" Height="50" FontSize="30" Foreground="#FFAC0000" Click="StopButton_Click"/>
                             <Grid DockPanel.Dock="Left">
                                 <Grid.ColumnDefinitions>
                                     <ColumnDefinition Width="*"/>
