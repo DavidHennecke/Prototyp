@@ -44,6 +44,8 @@ namespace Prototyp
             MyListBox.ItemsSource = ListViewEntries;
         }
 
+        // Private methods -------------------------------------------------------------------------
+
         private void MakePreview()
         {
             previewNetwork.Nodes.Clear();
@@ -53,14 +55,23 @@ namespace Prototyp
             
             Prototyp.Modules.Node_Module nodeModule = new Prototyp.Modules.Node_Module(vorteXML);
             previewNetwork.ZoomFactor = 2.0 / 3.0;
+            
+            System.Windows.Point TempPoint;
+            TempPoint.X = 119.0 / 3.0;
+            TempPoint.Y = 275.0 / 6.0;
+            previewNetwork.DragOffset = TempPoint;
+
             previewNetwork.Nodes.Add(nodeModule);
         }
+
+        // Event handlers -------------------------------------------------------------------------
 
         private void CmdAddInput_Click(object sender, RoutedEventArgs e)
         {
             ListViewEntries.Add(new ListViewEntry() { SlotType = "Input" });
             MyListBox.ItemsSource = null;
             MyListBox.ItemsSource = ListViewEntries;
+            MyListBox.SelectedIndex = ListViewEntries.Count - 1;
         }
 
         private void CmdAddControl_Click(object sender, RoutedEventArgs e)
@@ -82,6 +93,7 @@ namespace Prototyp
 
             MyListBox.ItemsSource = null;
             MyListBox.ItemsSource = ListViewEntries;
+            MyListBox.SelectedIndex = ListViewEntries.Count - 1;
         }
 
         private void CmdAddOutput_Click(object sender, RoutedEventArgs e)
@@ -89,6 +101,7 @@ namespace Prototyp
             ListViewEntries.Add(new ListViewEntry() { SlotType = "Output" });
             MyListBox.ItemsSource = null;
             MyListBox.ItemsSource = ListViewEntries;
+            MyListBox.SelectedIndex = ListViewEntries.Count - 1;
         }
 
         private void CmdEditProperties_Click(object sender, RoutedEventArgs e)
@@ -291,6 +304,12 @@ namespace Prototyp
             OkayClicked = true;
             this.Close();
         }
+        private void TxtName_TextChanged(object sender, System.Windows.Controls.TextChangedEventArgs e)
+        {
+            MakePreview();
+        }
+
+        // Public methods -------------------------------------------------------------------------
 
         public Prototyp.Elements.VorteXML MakeXML()
         {
