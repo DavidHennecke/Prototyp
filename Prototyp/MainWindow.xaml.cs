@@ -376,19 +376,12 @@ namespace Prototyp
 
             if (e.Key == System.Windows.Input.Key.Escape)
             {
-                for (int i = 1; i < ComboItems.Count; i++)
-                {
-                    if (ComboItems[i].ToolName.ToLower().Contains(ComboItems[0].ToolName))
-                    {
-                        ToolsComboBox.IsDropDownOpen = false;
-                        ComboItems[0].ToolName = COMBOMSG;
-                        ToolsComboBox.ItemsSource = null;
-                        ToolsComboBox.ItemsSource = ComboItems;
-                        ToolsComboBox.SelectedIndex = 0;
-                        Typing = false;
-                        break;
-                    }
-                }
+                ToolsComboBox.IsDropDownOpen = false;
+                ComboItems[0].ToolName = COMBOMSG;
+                ToolsComboBox.ItemsSource = null;
+                ToolsComboBox.ItemsSource = ComboItems;
+                ToolsComboBox.SelectedIndex = 0;
+                Typing = false;
                 return;
             }
 
