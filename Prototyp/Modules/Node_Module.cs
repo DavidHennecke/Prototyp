@@ -96,7 +96,7 @@ namespace Prototyp.Modules
 
         // Private methods -----------------------------------------------------------------
 
-        private void ParseXML(VorteXML newModule, bool inMain)
+        private void ParseXML(VorteXML newModule, bool inMain) //Use inMain = true for MainWindow node editor, inMain = false for ModuleDesigner preview.
         {
             foreach (VorteXML.ToolRow toolRow in newModule.ToolRows)
             {
