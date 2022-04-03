@@ -1,4 +1,6 @@
-﻿using System.Windows;
+﻿using DynamicData;
+using System.Windows;
+using NodeNetwork.ViewModels;
 
 namespace Prototyp
 {
@@ -7,6 +9,8 @@ namespace Prototyp
     /// </summary>
     public partial class ModuleDesigner : Window
     {
+        private NetworkViewModel previewNetwork = new NetworkViewModel();
+
         public class ListViewEntry
         {
             public string SlotType { get; set; }
@@ -35,7 +39,21 @@ namespace Prototyp
         {
             InitializeComponent();
 
+            networkPreView.ViewModel = previewNetwork;
+
             MyListBox.ItemsSource = ListViewEntries;
+        }
+
+        private void MakePreview()
+        {
+            previewNetwork.Nodes.Clear();
+
+            Prototyp.Elements.VorteXML vorteXML = MakeXML();
+            if (vorteXML == null) return;
+            
+            Prototyp.Modules.Node_Module nodeModule = new Prototyp.Modules.Node_Module(vorteXML);
+            previewNetwork.ZoomFactor = 2.0 / 3.0;
+            previewNetwork.Nodes.Add(nodeModule);
         }
 
         private void CmdAddInput_Click(object sender, RoutedEventArgs e)
@@ -199,6 +217,8 @@ namespace Prototyp
                 if ((bool)moduleProperties.ChkOutVectorPolygon.IsChecked) ListViewEntries[MyListBox.SelectedIndex].OutputTypes.Add("VectorPolygon");
                 if ((bool)moduleProperties.ChkOutRaster.IsChecked) ListViewEntries[MyListBox.SelectedIndex].OutputTypes.Add("Raster");
             }
+
+            MakePreview();
         }
 
         private void CmdDelete_Click(object sender, RoutedEventArgs e)
@@ -208,6 +228,8 @@ namespace Prototyp
             ListViewEntries.RemoveAt(MyListBox.SelectedIndex);
             MyListBox.ItemsSource = null;
             MyListBox.ItemsSource = ListViewEntries;
+
+            MakePreview();
         }
 
         private void CmdUp_Click(object sender, RoutedEventArgs e)
@@ -224,6 +246,8 @@ namespace Prototyp
             MyListBox.ItemsSource = ListViewEntries;
 
             MyListBox.SelectedIndex = SwapPos - 1;
+
+            MakePreview();
         }
 
         private void CmdDown_Click(object sender, RoutedEventArgs e)
@@ -240,6 +264,8 @@ namespace Prototyp
             MyListBox.ItemsSource = ListViewEntries;
 
             MyListBox.SelectedIndex = SwapPos + 1;
+
+            MakePreview();
         }
 
         private void CmdClear_Click(object sender, RoutedEventArgs e)
@@ -251,6 +277,8 @@ namespace Prototyp
 
             MyListBox.ItemsSource = null;
             MyListBox.ItemsSource = ListViewEntries;
+
+            MakePreview();
         }
 
         private void BtnCancel_Click(object sender, RoutedEventArgs e)
@@ -262,6 +290,90 @@ namespace Prototyp
         {
             OkayClicked = true;
             this.Close();
+        }
+
+        public Prototyp.Elements.VorteXML MakeXML()
+        {
+            Prototyp.Elements.VorteXML vorteXML = new Prototyp.Elements.VorteXML();
+
+            vorteXML.EditorVersion = "0.1";
+            vorteXML.NodeStyle = "default";
+            vorteXML.NodeTitle = TxtName.Text;
+
+            vorteXML.ToolRows = new Prototyp.Elements.VorteXML.ToolRow[ListViewEntries.Count];
+            for (int i = 0; i < ListViewEntries.Count; i++)
+            {
+                vorteXML.ToolRows[i].Index = i + 1;
+                vorteXML.ToolRows[i].Name = ListViewEntries[i].RowName;
+
+                if (ListViewEntries[i].SlotType == "Input")
+                {
+                    vorteXML.ToolRows[i].rowType = Prototyp.Elements.VorteXML.RowType.Input;
+                    vorteXML.ToolRows[i].inputRow.inputTypes = new Prototyp.Elements.VorteXML.ConnectorType[ListViewEntries[i].InputTypes.Count];
+
+                    int j = 0;
+                    foreach (string InpTy in ListViewEntries[i].InputTypes)
+                    {
+                        if (InpTy == "VectorPoint") vorteXML.ToolRows[i].inputRow.inputTypes[j] = Prototyp.Elements.VorteXML.ConnectorType.VectorPoint;
+                        if (InpTy == "VectorLine") vorteXML.ToolRows[i].inputRow.inputTypes[j] = Prototyp.Elements.VorteXML.ConnectorType.VectorLine;
+                        if (InpTy == "VectorPolygon") vorteXML.ToolRows[i].inputRow.inputTypes[j] = Prototyp.Elements.VorteXML.ConnectorType.VectorPolygon;
+                        if (InpTy == "Raster") vorteXML.ToolRows[i].inputRow.inputTypes[j] = Prototyp.Elements.VorteXML.ConnectorType.Raster;
+                        j++;
+                    }
+                    if (j == 0) return (null); // Module description corrupted: ANY input type must be allowed.
+                }
+                else if (ListViewEntries[i].SlotType.Contains("Control"))
+                {
+                    vorteXML.ToolRows[i].rowType = Prototyp.Elements.VorteXML.RowType.Control;
+
+                    if (ListViewEntries[i].ControlType == "Slider")
+                    {
+                        vorteXML.ToolRows[i].controlRow.controlType = Prototyp.Elements.VorteXML.ControlType.Slider;
+
+                        vorteXML.ToolRows[i].controlRow.slider.Style = "default";
+
+                        vorteXML.ToolRows[i].controlRow.slider.Start = ListViewEntries[i].SliderStart;
+                        vorteXML.ToolRows[i].controlRow.slider.End = ListViewEntries[i].SliderEnd;
+                        vorteXML.ToolRows[i].controlRow.slider.Default = ListViewEntries[i].SliderDefault;
+                        vorteXML.ToolRows[i].controlRow.slider.TickFrequency = ListViewEntries[i].SliderTickFrequency;
+                        vorteXML.ToolRows[i].controlRow.slider.Unit = ListViewEntries[i].SliderUnit;
+                    }
+                    else if (ListViewEntries[i].ControlType == "Dropdown")
+                    {
+                        vorteXML.ToolRows[i].controlRow.controlType = Prototyp.Elements.VorteXML.ControlType.Dropdown;
+
+                        vorteXML.ToolRows[i].controlRow.dropdown.Style = "default";
+
+                        vorteXML.ToolRows[i].controlRow.dropdown.Values = new string[ListViewEntries[i].DropDownEntries.Count];
+
+                        int j = 0;
+                        foreach (string DD in ListViewEntries[i].DropDownEntries)
+                        {
+                            vorteXML.ToolRows[i].controlRow.dropdown.Values[j] = DD;
+                            j++;
+                        }
+                        if (j == 0) return (null); // Module description corrupted: ANY dropdown entry must be present.
+                    }
+                }
+                else if (ListViewEntries[i].SlotType == "Output")
+                {
+                    vorteXML.ToolRows[i].rowType = Prototyp.Elements.VorteXML.RowType.Output;
+                    vorteXML.ToolRows[i].outputRow.outputTypes = new Prototyp.Elements.VorteXML.ConnectorType[ListViewEntries[i].OutputTypes.Count];
+
+                    int j = 0;
+                    foreach (string OutTy in ListViewEntries[i].OutputTypes)
+                    {
+                        if (OutTy == "VectorPoint") vorteXML.ToolRows[i].outputRow.outputTypes[j] = Prototyp.Elements.VorteXML.ConnectorType.VectorPoint;
+                        if (OutTy == "VectorLine") vorteXML.ToolRows[i].outputRow.outputTypes[j] = Prototyp.Elements.VorteXML.ConnectorType.VectorLine;
+                        if (OutTy == "VectorPolygon") vorteXML.ToolRows[i].outputRow.outputTypes[j] = Prototyp.Elements.VorteXML.ConnectorType.VectorPolygon;
+                        if (OutTy == "Raster") vorteXML.ToolRows[i].outputRow.outputTypes[j] = Prototyp.Elements.VorteXML.ConnectorType.Raster;
+                        j++;
+                        if (j == 0) return (null); // Module description corrupted: ANY output type must be allowed.
+                    }
+                }
+            }
+
+            return (vorteXML);
         }
     }
 }

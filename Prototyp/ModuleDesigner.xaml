@@ -4,9 +4,10 @@
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:Prototyp"
+        xmlns:nodenetwork="clr-namespace:NodeNetwork.Views;assembly=NodeNetwork"
         xmlns:Controls="clr-namespace:Microsoft.Toolkit.Wpf.UI.Controls;assembly=Microsoft.Toolkit.Wpf.UI.Controls" x:Class="Prototyp.ModuleDesigner"
         mc:Ignorable="d"
-        Title="ModuleDesigner" Height="450" Width="500" UseLayoutRounding="False" ResizeMode="CanMinimize">
+        Title="ModuleDesigner" Height="450" Width="720" UseLayoutRounding="False" ResizeMode="CanMinimize">
     <Grid>
         <ListBox x:Name="MyListBox" HorizontalAlignment="Left" Height="275" Margin="154,75,0,0" VerticalAlignment="Top" Width="246">
             <ListBox.ItemTemplate>
@@ -27,7 +28,9 @@
 
         <TextBox x:Name="TxtName" HorizontalAlignment="Left" Height="3" Margin="244,25,0,0" Text="NewModule" TextWrapping="Wrap" VerticalAlignment="Top" Width="156"/>
         <TextBlock HorizontalAlignment="Left" Height="18" Margin="154,32,0,0" Text="Module name" TextWrapping="Wrap" VerticalAlignment="Top" Width="85"/>
-        <Button x:Name="BtnCancel" Content="Cancel" Height="32" Margin="268,356,0,0" VerticalAlignment="Top" Width="78" Click="BtnCancel_Click"/>
-        <Button x:Name="BtnOkay" Content="Okay" Margin="351,356,0,0" VerticalAlignment="Top" Click="BtnOkay_Click"/>
+        <Button x:Name="BtnCancel" Content="Cancel" Height="32" Margin="538,365,0,0" VerticalAlignment="Top" Width="78" Click="BtnCancel_Click"/>
+        <Button x:Name="BtnOkay" Content="Okay" Margin="621,365,0,0" VerticalAlignment="Top" Click="BtnOkay_Click"/>
+
+        <nodenetwork:NetworkView x:Name="networkPreView" Cursor="Hand" Margin="416,75,50,61" />
     </Grid>
 </Window>

@@ -74,6 +74,7 @@ namespace Prototyp.Modules
             // Nothing much to do here...
         }
 
+        // Used for actually adding something to the main window node editor.
         public Node_Module(string pathXML, GrpcClient.ControlConnector.ControlConnectorClient grpcConnection, string url)
         {
             VorteXML newModule = new VorteXML(pathXML);
@@ -161,6 +162,85 @@ namespace Prototyp.Modules
                             placeholder.Name = toolRow.outputRow.outputTypes[i].ToString();
                             rasterOutput.Name = toolRow.outputRow.outputTypes[i].ToString();
                             rasterOutput.Value = System.Reactive.Linq.Observable.Return(placeholder);
+                            Outputs.Add(rasterOutput);
+                            break;
+                        }
+                        //... TODO: Support more types?
+                        else
+                        {
+                            throw new System.Exception("An unimplemented output connector type was specified.");
+                        }
+                    }
+                }
+                else if (toolRow.rowType == VorteXML.RowType.Control)
+                {
+                    if (toolRow.controlRow.controlType == VorteXML.ControlType.Slider)
+                    {
+                        valueFloatInput = new ValueNodeInputViewModel<float>();
+                        sliderEditor = new Modules.ViewModels.FloatSliderViewModel(toolRow.Name, toolRow.controlRow.slider.Start, toolRow.controlRow.slider.End, toolRow.controlRow.slider.TickFrequency, toolRow.controlRow.slider.Unit);
+                        valueFloatInput.Editor = sliderEditor;
+                        valueFloatInput.Port.IsVisible = false;
+                        Inputs.Add(valueFloatInput);
+                    }
+                    else if (toolRow.controlRow.controlType == VorteXML.ControlType.Dropdown)
+                    {
+                        valueStringInput = new ValueNodeInputViewModel<string>();
+                        dropDownEditor = new Modules.ViewModels.DropDownMenuViewModel(toolRow.Name, toolRow.controlRow.dropdown.Values);
+                        valueStringInput.Editor = dropDownEditor;
+                        valueStringInput.Port.IsVisible = false;
+                        Inputs.Add(valueStringInput);
+                    }
+                }
+            }
+        }
+
+        // Used for the module designer preview.
+        public Node_Module(VorteXML newModule)
+        {
+            Name = newModule.NodeTitle;
+
+            foreach (VorteXML.ToolRow toolRow in newModule.ToolRows)
+            {
+                if (toolRow.rowType == VorteXML.RowType.Input)
+                {
+                    for (int i = 0; i < toolRow.inputRow.inputTypes.Length; i++)
+                    {
+                        if (toolRow.inputRow.inputTypes[i] == VorteXML.ConnectorType.VectorLine | toolRow.inputRow.inputTypes[i] == VorteXML.ConnectorType.VectorPoint | toolRow.inputRow.inputTypes[i] == VorteXML.ConnectorType.VectorPolygon)
+                        {
+                            vectorInput = new ValueNodeInputViewModel<Prototyp.Elements.VectorData>();
+                            vectorInput.Name = toolRow.Name;
+                            Inputs.Add(vectorInput);
+                            break;
+                        }
+                        else if (toolRow.inputRow.inputTypes[i] == VorteXML.ConnectorType.Raster)
+                        {
+                            rasterInput = new ValueNodeInputViewModel<Prototyp.Elements.RasterData>();
+                            rasterInput.Name = toolRow.Name;
+                            Inputs.Add(rasterInput);
+                            break;
+                        }
+                        //... TODO: Support more types?
+                        else
+                        {
+                            throw new System.Exception("No implemented input connector type specified.");
+                        }
+                    }
+                }
+                else if (toolRow.rowType == VorteXML.RowType.Output)
+                {
+                    for (int i = 0; i < toolRow.outputRow.outputTypes.Length; i++)
+                    {
+                        if (toolRow.outputRow.outputTypes[i] == VorteXML.ConnectorType.VectorLine | toolRow.outputRow.outputTypes[i] == VorteXML.ConnectorType.VectorPoint | toolRow.outputRow.outputTypes[i] == VorteXML.ConnectorType.VectorPolygon)
+                        {
+                            vectorOutput = new ValueNodeOutputViewModel<Elements.VectorData>();
+                            vectorOutput.Name = toolRow.Name;
+                            Outputs.Add(vectorOutput);
+                            break;
+                        }
+                        else if (toolRow.outputRow.outputTypes[i] == VorteXML.ConnectorType.Raster)
+                        {
+                            rasterOutput = new ValueNodeOutputViewModel<Elements.RasterData>();
+                            rasterOutput.Name = toolRow.Name;
                             Outputs.Add(rasterOutput);
                             break;
                         }
