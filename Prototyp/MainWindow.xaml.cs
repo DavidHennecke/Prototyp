@@ -31,7 +31,6 @@ namespace Prototyp
         public double ImportNodeOutput { get; set; }
         public Node_Module InputNode { get; set; }
         public Node_Module OutputNode { get; set; }
-        public bool isModule { get; set; }
     }
 
     public partial class MainWindow : Window
@@ -46,7 +45,6 @@ namespace Prototyp
         private System.Collections.Generic.List<RasterData> rasterData = new System.Collections.Generic.List<RasterData>();
         private System.Collections.Generic.List<int> UsedPorts = new System.Collections.Generic.List<int>();
         private System.Collections.Generic.List<ComboItem> ComboItems = new System.Collections.Generic.List<ComboItem>();
-        private System.Collections.Generic.List<NodeConnection> nodeConnections = new System.Collections.Generic.List<NodeConnection>();
 
         private string ModulesPath;
         private NetworkViewModel network = new NetworkViewModel();
@@ -315,16 +313,16 @@ namespace Prototyp
 
             GrpcClient.ControlConnector.ControlConnectorClient grpcConnection;
 
-            using (System.Diagnostics.Process myProcess = new System.Diagnostics.Process())
+            using (System.Diagnostics.Process moduleProcess = new System.Diagnostics.Process())
             {
-                System.Diagnostics.ProcessStartInfo myProcessStartInfo = new System.Diagnostics.ProcessStartInfo(ComboItems[Index].BinaryPath + ".exe", port.ToString());
+                System.Diagnostics.ProcessStartInfo moduleProcessInfo = new System.Diagnostics.ProcessStartInfo(ComboItems[Index].BinaryPath + ".exe", port.ToString());
 
                 //myProcessStartInfo.CreateNoWindow = true; //Ja, dies macht das Server-Window wirklich unsichtbar. Sicherstellen, dass der Krempel terminiert wird.
-                myProcessStartInfo.UseShellExecute = false; //Muss für .NETCore tatsächlich false sein, weil ShellExecute wirklich nur auf der Windows-Plattform verfügbar ist.
-                myProcess.StartInfo = myProcessStartInfo;
+                moduleProcessInfo.UseShellExecute = false; //Muss für .NETCore tatsächlich false sein, weil ShellExecute wirklich nur auf der Windows-Plattform verfügbar ist.
+                moduleProcess.StartInfo = moduleProcessInfo;
                 try
                 {
-                    myProcess.Start();
+                    moduleProcess.Start();
                 }
                 catch
                 {
@@ -416,12 +414,15 @@ namespace Prototyp
             }
         }
 
-        private void PlayButton_Click(object sender, RoutedEventArgs e)
-        {         
+        private async void PlayButton_Click(object sender, RoutedEventArgs e)
+        {
+            System.Collections.Generic.List<NodeConnection> modules = new System.Collections.Generic.List<NodeConnection>();
+            System.Collections.Generic.List<NodeConnection> imports = new System.Collections.Generic.List<NodeConnection>();
+
             // Collect all current node-channel-connections
             foreach (ConnectionViewModel conn in network.Connections.Items)
             {
-                MessageBox.Show(conn.Output.Parent.GetType().ToString());
+                //MessageBox.Show(conn.Output.Parent.GetType().ToString());
                 NodeConnection nc = new NodeConnection();
                 if (conn.Output.Parent is Node_Module)
                 {
@@ -432,9 +433,8 @@ namespace Prototyp
                     nc.InputNode = (Node_Module)conn.Input.Parent;
                     nc.InputChannel = conn.Input.GetID();
 
-                    nc.isModule = true;
-                    nodeConnections.Add(nc);
-                    MessageBox.Show(nc.OutputNode + "_" + nc.OutputChannel + " -> " + nc.InputNode + "_" + nc.InputChannel);
+                    modules.Add(nc);
+                    //MessageBox.Show(nc.OutputNode + "_" + nc.OutputChannel + " -> " + nc.InputNode + "_" + nc.InputChannel);
                 }
                 else
                 {
@@ -445,11 +445,53 @@ namespace Prototyp
                     nc.InputNode = (Node_Module)conn.Input.Parent;
                     nc.InputChannel = conn.Input.GetID();
 
-                    nc.isModule = false;
-                    nodeConnections.Add(nc);
-                    MessageBox.Show(nc.ImportNodeOutput +"_" + nc.OutputChannel + " -> " + nc.InputNode + "_" + nc.InputChannel);
+                    imports.Add(nc);
+                    //MessageBox.Show(nc.ImportNodeOutput +"_" + nc.OutputChannel + " -> " + nc.InputNode + "_" + nc.InputChannel);
                 }
             }
+
+            //STEP 2: remove imports that already happened (TODO)
+            //STEP 4: Update module configs (TODO)
+            //STEP 3: Load inputs into the correct modules
+            //
+            foreach (NodeConnection nc in imports)
+            {
+                //Get data
+                string layer = vectorData[(int)nc.ImportNodeOutput].ToString(ToStringParams.ByteString);
+                //Split into chunks of 65536 bytes (64 KiB)
+                System.Collections.Generic.List<string> chunks = new System.Collections.Generic.List<string>();
+                int maxChunkSize = 65536 / sizeof(Char);
+                for (int i = 0; i < layer.Length; i += maxChunkSize)
+                {
+                    chunks.Add(layer.Substring(i, Math.Min(maxChunkSize, layer.Length - i)));
+                }
+                //Upload data to module through GRPC call (TODO: multitasking?)
+                using (var call = nc.InputNode.grpcConnection.SetLayer())
+                {
+                    foreach(string chunk in chunks)
+                    {
+                        await call.RequestStream.WriteAsync(new GrpcClient.ByteStream { Chunk = Google.Protobuf.ByteString.FromBase64(chunk) });
+                    }
+                    await call.RequestStream.CompleteAsync();
+                    GrpcClient.LayerResponse response = await call.ResponseAsync;
+                    if (response.Finished == 1)
+                    {
+                        Console.Write("Data loaded from " + nc.ImportNodeOutput + " to " + nc.InputNode + "_" + nc.InputChannel);
+                    }
+                    else
+                    {
+                        Console.Write("Data load failed from " + nc.ImportNodeOutput + " to " + nc.InputNode + "_" + nc.InputChannel);
+                    }
+                }
+            }
+            //STEP 4: Run modules (TODO)
+            //
+            string connections = "";
+            foreach(NodeConnection nc in modules)
+            {
+                connections = connections + nc.OutputNode + "_" + nc.OutputChannel + " -> " + nc.InputNode + "_" + nc.InputChannel + "\n";
+            }
+            MessageBox.Show(connections);
         }
 
         private void StopButton_Click(object sender, RoutedEventArgs e)
