@@ -53,13 +53,14 @@ namespace Prototyp
         private const int BASEPORT = 5000;
         
         private const string COMBOMSG = "Select your tool here...";
-        private const string ALPHABET = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
+        private const string ALPHABET = "ABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890";
         private bool Typing = false;
 
         private System.Collections.Generic.List<VectorData> vectorData = new System.Collections.Generic.List<VectorData>();
         private System.Collections.Generic.List<RasterData> rasterData = new System.Collections.Generic.List<RasterData>();
         private System.Collections.Generic.List<int> UsedPorts = new System.Collections.Generic.List<int>();
         private System.Collections.Generic.List<ComboItem> ComboItems = new System.Collections.Generic.List<ComboItem>();
+        private System.Collections.Generic.List<ComboItem> ComboSearchItems = new System.Collections.Generic.List<ComboItem>();
 
         private string ModulesPath;
         private NetworkViewModel network = new NetworkViewModel();
@@ -368,28 +369,48 @@ namespace Prototyp
             ToolsComboBox.IsDropDownOpen = true;
             Typing = true;
 
-            if (ComboItems[0].ToolName == COMBOMSG) ComboItems[0].ToolName = "";
+            string KeyPress = "";
+            if (e.Key == System.Windows.Input.Key.Back) KeyPress = "Back";
+            if (e.Key == System.Windows.Input.Key.Escape) KeyPress = "Esc";
+            if (e.Key == System.Windows.Input.Key.Return | e.Key == System.Windows.Input.Key.Enter) KeyPress = "Ret";
+            if (e.Key == System.Windows.Input.Key.D1) KeyPress = "1";
+            if (e.Key == System.Windows.Input.Key.D2) KeyPress = "2";
+            if (e.Key == System.Windows.Input.Key.D3) KeyPress = "3";
+            if (e.Key == System.Windows.Input.Key.D4) KeyPress = "4";
+            if (e.Key == System.Windows.Input.Key.D5) KeyPress = "5";
+            if (e.Key == System.Windows.Input.Key.D6) KeyPress = "6";
+            if (e.Key == System.Windows.Input.Key.D7) KeyPress = "7";
+            if (e.Key == System.Windows.Input.Key.D8) KeyPress = "8";
+            if (e.Key == System.Windows.Input.Key.D9) KeyPress = "9";
+            if (e.Key == System.Windows.Input.Key.D0) KeyPress = "0";
+            if (ALPHABET.Contains(e.Key.ToString())) KeyPress = e.Key.ToString();
 
-            if (e.Key == System.Windows.Input.Key.Back)
+            if (KeyPress == "Back")
             {
-                if (ComboItems[0].ToolName == "") return;
-                ComboItems[0].ToolName = ComboItems[0].ToolName.Substring(0, ComboItems[0].ToolName.Length - 1);
-                ToolsComboBox.ItemsSource = null;
-                ToolsComboBox.ItemsSource = ComboItems;
+                if (ComboSearchItems.Count == 0) return;
+
+                string TempString = ComboSearchItems[0].ToolName.Substring(0, ComboSearchItems[0].ToolName.Length - 1);
+                ComboSearchItems.Clear();
+                ComboSearchItems.Add(ComboItems[0]);
+                ComboSearchItems[0].ToolName = TempString;
+
                 for (int i = 1; i < ComboItems.Count; i++)
                 {
-                    if (ComboItems[i].ToolName.ToLower().Contains(ComboItems[0].ToolName))
+                    if (ComboItems[i].ToolName.ToLower().Contains(ComboSearchItems[0].ToolName))
                     {
-                        ToolsComboBox.SelectedIndex = i;
-                        break;
+                        ComboSearchItems.Add(ComboItems[i]);
                     }
                 }
+                ToolsComboBox.ItemsSource = null;
+                ToolsComboBox.ItemsSource = ComboItems;
+                ToolsComboBox.SelectedIndex = 0;
                 return;
             }
 
-            if (e.Key == System.Windows.Input.Key.Escape)
+            if (KeyPress == "Esc")
             {
                 ToolsComboBox.IsDropDownOpen = false;
+                ComboSearchItems.Clear();
                 ComboItems[0].ToolName = COMBOMSG;
                 ToolsComboBox.ItemsSource = null;
                 ToolsComboBox.ItemsSource = ComboItems;
@@ -398,34 +419,55 @@ namespace Prototyp
                 return;
             }
 
-            if (e.Key == System.Windows.Input.Key.Return | e.Key == System.Windows.Input.Key.Enter)
+            if (KeyPress == "Ret")
             {
+                if (ComboSearchItems.Count == 0) return;
+
                 for (int i = 1; i < ComboItems.Count; i++)
                 {
-                    if (ComboItems[i].ToolName.ToLower().Contains(ComboItems[0].ToolName))
+                    if (ComboItems[i].ToolName.ToLower().Contains(ComboSearchItems[0].ToolName))
                     {
-                        ToolsComboBox.SelectedIndex = 0;
+                        ComboSearchItems.Clear();
                         ComboItems[0].ToolName = COMBOMSG;
                         ToolsComboBox.ItemsSource = null;
                         ToolsComboBox.ItemsSource = ComboItems;
+
                         Typing = false;
                         ToolsComboBox.SelectedIndex = i;
+
                         break;
                     }
                 }
                 return;
             }
 
-            if (ALPHABET.Contains(e.Key.ToString())) ComboItems[0].ToolName = ComboItems[0].ToolName + e.Key.ToString().ToLower();
-            ToolsComboBox.ItemsSource = null;
-            ToolsComboBox.ItemsSource = ComboItems;
-            for (int i = 1; i < ComboItems.Count; i++)
+            if (ALPHABET.Contains(KeyPress))
             {
-                if (ComboItems[i].ToolName.ToLower().Contains(ComboItems[0].ToolName))
+                string TempString;
+                if (ComboSearchItems.Count > 0)
                 {
-                    ToolsComboBox.SelectedIndex = i;
-                    break;
+                    TempString = ComboSearchItems[0].ToolName + KeyPress.ToLower();
                 }
+                else
+                {
+                    TempString = KeyPress.ToLower();
+                }
+                ComboSearchItems.Clear();
+                ComboSearchItems.Add(ComboItems[0]);
+                ComboSearchItems[0].ToolName = TempString;
+
+                for (int i = 1; i < ComboItems.Count; i++)
+                {
+                    if (ComboItems[i].ToolName.ToLower().Contains(ComboSearchItems[0].ToolName))
+                    {
+                        ComboSearchItems.Add(ComboItems[i]);
+                    }
+                }
+
+                ToolsComboBox.ItemsSource = null;
+                ToolsComboBox.ItemsSource = ComboSearchItems;
+                if (ComboSearchItems.Count > 1) ToolsComboBox.SelectedIndex = 1;
+                return;
             }
         }
 
