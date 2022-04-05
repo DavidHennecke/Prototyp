@@ -33,6 +33,21 @@ namespace Prototyp
         public Node_Module OutputNode { get; set; }
     }
 
+    public class NodeProgressReport{
+        public Node_Module node { get; set; }
+        public int progress { get; set; }
+        public NodeProgress stage { get; set; }
+    }
+
+    public enum NodeProgress
+    {
+        Waiting,        //Not all inputs ready, node is waiting for inputs
+        Marked,         //All required inputs are ready
+        Processing,     //Currently running the process
+        Finished,       //Process finished successfully
+        Interrupted     //Process ended unsuccessfully
+    }
+
     public partial class MainWindow : Window
     {
         private const int BASEPORT = 5000;
@@ -418,7 +433,7 @@ namespace Prototyp
         {
             System.Collections.Generic.List<NodeConnection> modules = new System.Collections.Generic.List<NodeConnection>();
             System.Collections.Generic.List<NodeConnection> imports = new System.Collections.Generic.List<NodeConnection>();
-
+            System.Collections.Generic.List<Node_Module> marked = new System.Collections.Generic.List<Node_Module>();
             // Collect all current node-channel-connections
             foreach (ConnectionViewModel conn in network.Connections.Items)
             {
@@ -452,7 +467,7 @@ namespace Prototyp
 
             //STEP 2: remove imports that already happened (TODO)
             //STEP 4: Update module configs (TODO)
-            //STEP 3: Load inputs into the correct modules
+            //STEP 3: Load inputs into the correct modules and mark starting modules of graph
             //
             foreach (NodeConnection nc in imports)
             {
@@ -476,22 +491,94 @@ namespace Prototyp
                     GrpcClient.LayerResponse response = await call.ResponseAsync;
                     if (response.Finished == 1)
                     {
-                        Console.Write("Data loaded from " + nc.ImportNodeOutput + " to " + nc.InputNode + "_" + nc.InputChannel);
+                        System.Diagnostics.Trace.WriteLine("Data loaded from " + nc.ImportNodeOutput + " to " + nc.InputNode + "_" + nc.InputChannel);
+                        marked.Add(nc.OutputNode);
                     }
                     else
                     {
-                        Console.Write("Data load failed from " + nc.ImportNodeOutput + " to " + nc.InputNode + "_" + nc.InputChannel);
+                        System.Diagnostics.Trace.WriteLine("Data load failed from " + nc.ImportNodeOutput + " to " + nc.InputNode + "_" + nc.InputChannel);
                     }
                 }
             }
-            //STEP 4: Run modules (TODO)
+            //STEP 4: Run modules (TODO - WIP)
             //
-            string connections = "";
-            foreach(NodeConnection nc in modules)
+            //Initialize Progress object to report module progress
+            var progressIndicator = new Progress<NodeProgressReport>(ReportProgress);
+            //Start module handling process
+            if(await RunGraphAsync(modules, marked, progressIndicator))
             {
-                connections = connections + nc.OutputNode + "_" + nc.OutputChannel + " -> " + nc.InputNode + "_" + nc.InputChannel + "\n";
+                System.Diagnostics.Trace.WriteLine("All nodes processed");
+            } 
+            else
+            {
+                System.Diagnostics.Trace.WriteLine("Node processing interrupted");
             }
-            MessageBox.Show(connections);
+        }
+
+        async System.Threading.Tasks.Task<bool> RunGraphAsync(System.Collections.Generic.List<NodeConnection> connections, System.Collections.Generic.List<Node_Module> marked, IProgress<NodeProgressReport> progress)
+        {
+            bool successful = await System.Threading.Tasks.Task.Run<bool>(async () =>
+            {
+                //Async node graph traversal
+                //Prepare and mark nodes
+                foreach (NodeConnection nc in connections)
+                {
+                    NodeProgressReport report = new NodeProgressReport();
+                    report.node = nc.InputNode;
+                    report.stage = NodeProgress.Waiting;
+                    progress.Report(report);
+                    //TODO: find marked nodes
+                }
+                //TODO: Run activated nodes, mark new nodes, keep running
+                foreach (NodeConnection nc in connections)
+                {
+                    //Make grpc call and report progress throughout
+                    var request = new GrpcClient.RunRequest { };
+                    NodeProgressReport report = new NodeProgressReport();
+                    report.node = nc.InputNode;
+                    using (var call = nc.InputNode.grpcConnection.RunProcess(request))
+                    {
+                        report.stage = NodeProgress.Processing;
+                        report.progress = 0;
+                        progress.Report(report);
+                        while (await call.ResponseStream.MoveNext(System.Threading.CancellationToken.None))
+                        {
+                            GrpcClient.RunUpdate update = call.ResponseStream.Current;
+                            //report.progress = update.Progress;
+                            //progress.Report(report);
+                        }
+                        report.progress = 100;
+                        report.stage = NodeProgress.Finished;
+                        progress.Report(report);
+                    }
+                }
+                return true;
+            });
+            return successful;
+        }
+
+        //Method to report node state from async tasks
+        private void ReportProgress(NodeProgressReport report)
+        {
+            //TODO: Update the UI to reflect all the progress values that is passed back.
+            switch (report.stage)
+            {
+                case NodeProgress.Waiting:
+                    System.Diagnostics.Trace.WriteLine("Node " + report.node.url + " waiting for input.");
+                    break;
+                case NodeProgress.Marked:
+                    break;
+                case NodeProgress.Processing:
+                    System.Diagnostics.Trace.WriteLine("Node " + report.node.url + " progress: " + report.progress);
+                    break;
+                case NodeProgress.Finished:
+                    System.Diagnostics.Trace.WriteLine("Node " + report.node.url + " finished!");
+                    break;
+                case NodeProgress.Interrupted:
+                    break;
+                default:
+                    break;
+            }
         }
 
         private void StopButton_Click(object sender, RoutedEventArgs e)
