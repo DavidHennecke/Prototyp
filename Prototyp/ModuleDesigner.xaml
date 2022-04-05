@@ -4,6 +4,12 @@
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:Prototyp"
+    
+        xmlns:ui="http://schemas.modernwpf.com/2019"
+        xmlns:xaml1="clr-namespace:Windows.UI.Xaml.Controls.Maps;assembly=Windows.Foundation.UniversalApiContract"
+        ui:ThemeManager.RequestedTheme="Dark"
+        ui:WindowHelper.UseModernWindowStyle="True"    
+    
         xmlns:nodenetwork="clr-namespace:NodeNetwork.Views;assembly=NodeNetwork"
         xmlns:Controls="clr-namespace:Microsoft.Toolkit.Wpf.UI.Controls;assembly=Microsoft.Toolkit.Wpf.UI.Controls" x:Class="Prototyp.ModuleDesigner"
         mc:Ignorable="d"
@@ -31,6 +37,6 @@
         <Button x:Name="BtnCancel" Content="Cancel" Height="32" Margin="538,365,0,0" VerticalAlignment="Top" Width="78" Click="BtnCancel_Click"/>
         <Button x:Name="BtnOkay" Content="Okay" Margin="621,365,0,0" VerticalAlignment="Top" Click="BtnOkay_Click"/>
 
-        <nodenetwork:NetworkView x:Name="networkPreView" Cursor="Hand" Margin="416,75,50,61" />
+        <nodenetwork:NetworkView x:Name="networkPreView" Cursor="Hand" Margin="416,75,50,69" />
     </Grid>
 </Window>

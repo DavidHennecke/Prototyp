@@ -8,7 +8,7 @@
         xmlns:controls="clr-namespace:Microsoft.Toolkit.Wpf.UI.Controls;assembly=Microsoft.Toolkit.Wpf.UI.Controls"
         xmlns:nodenetwork="clr-namespace:NodeNetwork.Views;assembly=NodeNetwork"
         
-        xmlns:ui="http://schemas.modernwpf.com/2019" 
+        xmlns:ui="http://schemas.modernwpf.com/2019"
         xmlns:xaml1="clr-namespace:Windows.UI.Xaml.Controls.Maps;assembly=Windows.Foundation.UniversalApiContract"
         ui:ThemeManager.RequestedTheme="Dark"
         ui:WindowHelper.UseModernWindowStyle="True"

@@ -4,6 +4,12 @@
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:Prototyp"
+
+        xmlns:ui="http://schemas.modernwpf.com/2019"
+        xmlns:xaml1="clr-namespace:Windows.UI.Xaml.Controls.Maps;assembly=Windows.Foundation.UniversalApiContract"
+        ui:ThemeManager.RequestedTheme="Dark"
+        ui:WindowHelper.UseModernWindowStyle="True"        
+        
         mc:Ignorable="d"
         Title="ControlTypeSelector" Height="200" Width="280" ResizeMode="CanMinimize">
     <Grid>

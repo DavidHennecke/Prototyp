@@ -389,6 +389,18 @@ namespace Prototyp
             {
                 if (ComboSearchItems.Count == 0) return;
 
+                if (ComboSearchItems[0].ToolName.Length == 1)
+                {
+                    ToolsComboBox.IsDropDownOpen = false;
+                    ComboSearchItems.Clear();
+                    ComboItems[0].ToolName = COMBOMSG;
+                    ToolsComboBox.ItemsSource = null;
+                    ToolsComboBox.ItemsSource = ComboItems;
+                    ToolsComboBox.SelectedIndex = 0;
+                    Typing = false;
+                    return;
+                }
+
                 string TempString = ComboSearchItems[0].ToolName.Substring(0, ComboSearchItems[0].ToolName.Length - 1);
                 ComboSearchItems.Clear();
                 ComboSearchItems.Add(ComboItems[0]);
@@ -402,8 +414,8 @@ namespace Prototyp
                     }
                 }
                 ToolsComboBox.ItemsSource = null;
-                ToolsComboBox.ItemsSource = ComboItems;
-                ToolsComboBox.SelectedIndex = 0;
+                ToolsComboBox.ItemsSource = ComboSearchItems;
+                if (ComboSearchItems.Count > 1) ToolsComboBox.SelectedIndex = 1;
                 return;
             }
 

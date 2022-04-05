@@ -4,17 +4,23 @@
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:Prototyp"
+        
+        xmlns:ui="http://schemas.modernwpf.com/2019"
+        xmlns:xaml1="clr-namespace:Windows.UI.Xaml.Controls.Maps;assembly=Windows.Foundation.UniversalApiContract"
+        ui:ThemeManager.RequestedTheme="Dark"
+        ui:WindowHelper.UseModernWindowStyle="True"
+        
         mc:Ignorable="d"
         Title="ModuleProperties" Height="390" Width="900" ResizeMode="CanMinimize">
     <Grid>
-        <Rectangle HorizontalAlignment="Left" Height="242" Margin="10,10,0,0" Stroke="Black" VerticalAlignment="Top" Width="186"/>
+        <Rectangle HorizontalAlignment="Left" Height="242" Margin="10,10,0,0" Stroke="White" VerticalAlignment="Top" Width="186"/>
         <TextBlock HorizontalAlignment="Left" Height="20" Margin="30,30,0,0" Text="Input types" TextWrapping="Wrap" VerticalAlignment="Top" Width="70"/>
         <CheckBox x:Name="ChkInVectorPoint" Content="Vector point" Margin="30,55,0,0" VerticalAlignment="Top"/>
         <CheckBox x:Name="ChkInVectorLine" Content="Vector line" Margin="30,85,0,0" VerticalAlignment="Top"/>
         <CheckBox x:Name="ChkInVectorPolygon" Content="Vector polygon" Margin="30,115,0,0" VerticalAlignment="Top"/>
         <CheckBox x:Name="ChkInRaster" Content="Raster" Margin="30,145,0,0" VerticalAlignment="Top"/>
 
-        <Rectangle HorizontalAlignment="Left" Height="242" Margin="201,10,0,0" Stroke="Black" VerticalAlignment="Top" Width="254"/>
+        <Rectangle HorizontalAlignment="Left" Height="242" Margin="201,10,0,0" Stroke="White" VerticalAlignment="Top" Width="254"/>
         <TextBlock HorizontalAlignment="Left" Margin="220,30,0,0" Text="Slider properties" TextWrapping="Wrap" VerticalAlignment="Top"/>
         <TextBlock HorizontalAlignment="Left" Height="15" Margin="220,60,0,0" Text="Start:" TextWrapping="Wrap" VerticalAlignment="Top" Width="69"/>
         <TextBlock HorizontalAlignment="Left" Height="15" Margin="220,95,0,0" Text="End:" TextWrapping="Wrap" VerticalAlignment="Top" Width="44"/>
@@ -27,11 +33,11 @@
         <TextBox x:Name="TxtSliderTick" HorizontalAlignment="Left" Margin="330,160,0,0" Text="10" TextWrapping="Wrap" VerticalAlignment="Top" Width="87" TextAlignment="Right"/>
         <TextBox x:Name="TxtSliderUnit" HorizontalAlignment="Left" Margin="330,195,0,0" Text="m" TextWrapping="Wrap" VerticalAlignment="Top" Width="87" TextAlignment="Right"/>
 
-        <Rectangle HorizontalAlignment="Left" Height="242" Margin="460,10,0,0" Stroke="Black" VerticalAlignment="Top" Width="218"/>
+        <Rectangle HorizontalAlignment="Left" Height="242" Margin="460,10,0,0" Stroke="White" VerticalAlignment="Top" Width="218"/>
         <TextBlock HorizontalAlignment="Left" Margin="480,30,0,0" Text="Dropdown entries" TextWrapping="Wrap" VerticalAlignment="Top"/>
         <TextBox x:Name="TxtDropdownEntries" HorizontalAlignment="Left" Margin="480,55,0,0" Text="" TextWrapping="Wrap" VerticalAlignment="Top" Width="174" Height="172" AcceptsReturn="True"/>
 
-        <Rectangle HorizontalAlignment="Left" Height="242" Margin="685,10,0,0" Stroke="Black" VerticalAlignment="Top" Width="186"/>
+        <Rectangle HorizontalAlignment="Left" Height="242" Margin="685,10,0,0" Stroke="White" VerticalAlignment="Top" Width="186"/>
         <TextBlock HorizontalAlignment="Left" Height="20" Margin="705,30,0,0" Text="Output types" TextWrapping="Wrap" VerticalAlignment="Top" Width="70"/>
         <CheckBox x:Name="ChkOutVectorPoint" Content="Vector point" Margin="705,55,0,0" VerticalAlignment="Top"/>
         <CheckBox x:Name="ChkOutVectorLine" Content="Vector line" Margin="705,85,0,0" VerticalAlignment="Top"/>
