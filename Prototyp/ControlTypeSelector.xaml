@@ -11,7 +11,7 @@
         ui:WindowHelper.UseModernWindowStyle="True"        
         
         mc:Ignorable="d"
-        Title="ControlTypeSelector" Height="200" Width="280" ResizeMode="CanMinimize">
+        Title="ControlTypeSelector" Height="200" Width="280" ResizeMode="CanMinimize" Background="#FF272727">
     <Grid>
         <RadioButton x:Name="RdoSlider" Content="Slider" Margin="10,10,0,0" VerticalAlignment="Top" IsChecked="True"/>
         <RadioButton x:Name="RdoDropdown" Content="Dropdown" Margin="10,47,0,0" VerticalAlignment="Top"/>

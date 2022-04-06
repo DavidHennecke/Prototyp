@@ -13,9 +13,9 @@
         xmlns:nodenetwork="clr-namespace:NodeNetwork.Views;assembly=NodeNetwork"
         xmlns:Controls="clr-namespace:Microsoft.Toolkit.Wpf.UI.Controls;assembly=Microsoft.Toolkit.Wpf.UI.Controls" x:Class="Prototyp.ModuleDesigner"
         mc:Ignorable="d"
-        Title="ModuleDesigner" Height="450" Width="720" UseLayoutRounding="False" ResizeMode="CanMinimize">
+        Title="ModuleDesigner" Height="450" Width="720" UseLayoutRounding="False" ResizeMode="CanMinimize" Background="#FF272727">
     <Grid>
-        <ListBox x:Name="MyListBox" HorizontalAlignment="Left" Height="275" Margin="154,75,0,0" VerticalAlignment="Top" Width="246">
+        <ListBox x:Name="MyListBox" Background="#FF212225" HorizontalAlignment="Left" Height="275" Margin="154,75,0,0" VerticalAlignment="Top" Width="246">
             <ListBox.ItemTemplate>
                 <DataTemplate>
                     <TextBlock Text="{Binding SlotType}"></TextBlock>
@@ -32,7 +32,7 @@
         <Button x:Name="CmdDown" Width="120" Height="30" Content="Down" Margin="20,285,0,0" VerticalAlignment="Top" Click="CmdDown_Click"/>
         <Button x:Name="CmdClear" Width="120" Height="30" Content="Clear" Margin="20,320,0,0" VerticalAlignment="Top" Click="CmdClear_Click"/>
 
-        <TextBox x:Name="TxtName" HorizontalAlignment="Left" Height="3" Margin="244,25,0,0" Text="NewModule" TextWrapping="Wrap" VerticalAlignment="Top" Width="156" TextChanged="TxtName_TextChanged"/>
+        <TextBox x:Name="TxtName" HorizontalAlignment="Left" Background="#FF212225" Height="3" Margin="244,25,0,0" Text="NewModule" TextWrapping="Wrap" VerticalAlignment="Top" Width="156" TextChanged="TxtName_TextChanged"/>
         <TextBlock HorizontalAlignment="Left" Height="18" Margin="154,32,0,0" Text="Module name" TextWrapping="Wrap" VerticalAlignment="Top" Width="85"/>
         <Button x:Name="BtnCancel" Content="Cancel" Height="32" Margin="538,365,0,0" VerticalAlignment="Top" Width="78" Click="BtnCancel_Click"/>
         <Button x:Name="BtnOkay" Content="Okay" Margin="621,365,0,0" VerticalAlignment="Top" Click="BtnOkay_Click"/>

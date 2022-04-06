@@ -11,7 +11,7 @@
         ui:WindowHelper.UseModernWindowStyle="True"
         
         mc:Ignorable="d"
-        Title="ModuleProperties" Height="390" Width="900" ResizeMode="CanMinimize">
+        Title="ModuleProperties" Height="390" Width="900" ResizeMode="CanMinimize" Background="#FF272727">
     <Grid>
         <Rectangle HorizontalAlignment="Left" Height="242" Margin="10,10,0,0" Stroke="White" VerticalAlignment="Top" Width="186"/>
         <TextBlock HorizontalAlignment="Left" Height="20" Margin="30,30,0,0" Text="Input types" TextWrapping="Wrap" VerticalAlignment="Top" Width="70"/>
@@ -27,15 +27,15 @@
         <TextBlock HorizontalAlignment="Left" Height="15" Margin="220,135,0,0" Text="Default:" TextWrapping="Wrap" VerticalAlignment="Top" Width="48"/>
         <TextBlock HorizontalAlignment="Left" Height="15" Margin="220,165,0,0" Text="Tick frequency:" TextWrapping="Wrap" VerticalAlignment="Top" Width="87"/>
         <TextBlock HorizontalAlignment="Left" Height="15" Margin="220,200,0,0" Text="Unit:" TextWrapping="Wrap" VerticalAlignment="Top" Width="44"/>
-        <TextBox x:Name="TxtSliderStart" HorizontalAlignment="Left" Margin="330,55,0,0" Text="0" TextWrapping="Wrap" VerticalAlignment="Top" Width="87" TextAlignment="Right"/>
-        <TextBox x:Name="TxtSliderEnd" HorizontalAlignment="Left" Margin="330,90,0,0" Text="100" TextWrapping="Wrap" VerticalAlignment="Top" Width="87" TextAlignment="Right"/>
-        <TextBox x:Name="TxtSliderDefault" HorizontalAlignment="Left" Margin="330,125,0,0" Text="50" TextWrapping="Wrap" VerticalAlignment="Top" Width="87" TextAlignment="Right"/>
-        <TextBox x:Name="TxtSliderTick" HorizontalAlignment="Left" Margin="330,160,0,0" Text="10" TextWrapping="Wrap" VerticalAlignment="Top" Width="87" TextAlignment="Right"/>
-        <TextBox x:Name="TxtSliderUnit" HorizontalAlignment="Left" Margin="330,195,0,0" Text="m" TextWrapping="Wrap" VerticalAlignment="Top" Width="87" TextAlignment="Right"/>
+        <TextBox x:Name="TxtSliderStart" HorizontalAlignment="Left" Background="#FF212225" Margin="330,55,0,0" Text="0" TextWrapping="Wrap" VerticalAlignment="Top" Width="87" TextAlignment="Right"/>
+        <TextBox x:Name="TxtSliderEnd" HorizontalAlignment="Left" Background="#FF212225" Margin="330,90,0,0" Text="100" TextWrapping="Wrap" VerticalAlignment="Top" Width="87" TextAlignment="Right"/>
+        <TextBox x:Name="TxtSliderDefault" HorizontalAlignment="Left" Background="#FF212225" Margin="330,125,0,0" Text="50" TextWrapping="Wrap" VerticalAlignment="Top" Width="87" TextAlignment="Right"/>
+        <TextBox x:Name="TxtSliderTick" HorizontalAlignment="Left" Background="#FF212225" Margin="330,160,0,0" Text="10" TextWrapping="Wrap" VerticalAlignment="Top" Width="87" TextAlignment="Right"/>
+        <TextBox x:Name="TxtSliderUnit" HorizontalAlignment="Left" Background="#FF212225" Margin="330,195,0,0" Text="m" TextWrapping="Wrap" VerticalAlignment="Top" Width="87" TextAlignment="Right"/>
 
         <Rectangle HorizontalAlignment="Left" Height="242" Margin="460,10,0,0" Stroke="White" VerticalAlignment="Top" Width="218"/>
         <TextBlock HorizontalAlignment="Left" Margin="480,30,0,0" Text="Dropdown entries" TextWrapping="Wrap" VerticalAlignment="Top"/>
-        <TextBox x:Name="TxtDropdownEntries" HorizontalAlignment="Left" Margin="480,55,0,0" Text="" TextWrapping="Wrap" VerticalAlignment="Top" Width="174" Height="172" AcceptsReturn="True"/>
+        <TextBox x:Name="TxtDropdownEntries" HorizontalAlignment="Left" Background="#FF212225" Margin="480,55,0,0" Text="" TextWrapping="Wrap" VerticalAlignment="Top" Width="174" Height="172" AcceptsReturn="True"/>
 
         <Rectangle HorizontalAlignment="Left" Height="242" Margin="685,10,0,0" Stroke="White" VerticalAlignment="Top" Width="186"/>
         <TextBlock HorizontalAlignment="Left" Height="20" Margin="705,30,0,0" Text="Output types" TextWrapping="Wrap" VerticalAlignment="Top" Width="70"/>
@@ -46,6 +46,6 @@
         <Button x:Name="BtOkay" Content="Okay" Margin="822,307,0,0" VerticalAlignment="Top" Click="BtOkay_Click"/>
         <Button x:Name="BtCancel" Content="Cancel" Margin="758,307,0,0" VerticalAlignment="Top" Click="BtCancel_Click"/>
         <TextBlock HorizontalAlignment="Left" Margin="42,278,0,0" Text="Row name:" TextWrapping="Wrap" VerticalAlignment="Top"/>
-        <TextBox x:Name="TxtRowName" HorizontalAlignment="Left" Margin="122,270,0,0" Text="RowName" TextWrapping="Wrap" VerticalAlignment="Top" Width="120"/>
+        <TextBox x:Name="TxtRowName" HorizontalAlignment="Left" Background="#FF212225" Margin="122,270,0,0" Text="RowName" TextWrapping="Wrap" VerticalAlignment="Top" Width="120"/>
     </Grid>
 </Window>
