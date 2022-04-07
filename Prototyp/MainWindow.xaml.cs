@@ -5,6 +5,7 @@ using Prototyp.Elements;
 using Prototyp.Modules;
 using System;
 using System.IO;
+using System.Linq;
 using System.Windows;
 
 /* -------------------------------
@@ -145,6 +146,7 @@ namespace Prototyp
         private void TerminateServer(Node_Module module)
         {
             module.Process.Kill();
+            bool Loop = NodeNetwork.Toolkit.GraphAlgorithms.FindLoops(network).Any();
         }
 
         private void TerminateAllServers()
@@ -517,6 +519,13 @@ namespace Prototyp
             System.Collections.Generic.List<NodeConnection> modules = new System.Collections.Generic.List<NodeConnection>();
             System.Collections.Generic.List<NodeConnection> imports = new System.Collections.Generic.List<NodeConnection>();
             System.Collections.Generic.List<Node_Module> marked = new System.Collections.Generic.List<Node_Module>();
+
+            if (NodeNetwork.Toolkit.GraphAlgorithms.FindLoops(network).Any())
+            {
+                MessageBox.Show("Network contains loop(s). Please revert and try again.", "Loop detected", MessageBoxButton.OK, MessageBoxImage.Exclamation);
+                return;
+            }
+
             // Collect all current node-channel-connections
             foreach (ConnectionViewModel conn in network.Connections.Items)
             {
