@@ -75,7 +75,7 @@ namespace Prototyp.Modules
         }
 
         // Used for actually adding something to the main window node editor.
-        public Node_Module(string pathXML, GrpcClient.ControlConnector.ControlConnectorClient grpcConnection, string url)
+        public Node_Module(string pathXML, GrpcClient.ControlConnector.ControlConnectorClient grpcConnection, string url, System.Diagnostics.Process process)
         {
             VorteXML newModule = new VorteXML(pathXML);
             Name = newModule.NodeTitle;

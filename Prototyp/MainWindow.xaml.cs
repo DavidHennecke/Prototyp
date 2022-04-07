@@ -33,7 +33,8 @@ namespace Prototyp
         public Node_Module OutputNode { get; set; }
     }
 
-    public class NodeProgressReport{
+    public class NodeProgressReport
+    {
         public Node_Module node { get; set; }
         public int progress { get; set; }
         public NodeProgress stage { get; set; }
@@ -51,7 +52,8 @@ namespace Prototyp
     public partial class MainWindow : Window
     {
         private const int BASEPORT = 5000;
-        
+        private const int MAX_UNSIGNED_SHORT = 65536;
+
         private const string COMBOMSG = "Select your tool here...";
         private const string ALPHABET = "ABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890";
         private bool Typing = false;
@@ -318,7 +320,7 @@ namespace Prototyp
             //Find lowest available port
             int port = BASEPORT;
             while (!Node_Module.PortAvailable(port)) port++;
-            if (port > 65535) throw new System.Exception("Could not find any free port.");
+            if (port >= MAX_UNSIGNED_SHORT) throw new System.Exception("Could not find any free port.");
 
             GrpcClient.ControlConnector.ControlConnectorClient grpcConnection;
 
@@ -350,7 +352,7 @@ namespace Prototyp
                 string url = "https://localhost:" + port.ToString();
                 Grpc.Net.Client.GrpcChannel channel = Grpc.Net.Client.GrpcChannel.ForAddress(url);
                 grpcConnection = new GrpcClient.ControlConnector.ControlConnectorClient(channel);
-                Node_Module nodeModule = new Node_Module(ComboItems[Index].BinaryPath + ".xml", grpcConnection, url);
+                Node_Module nodeModule = new Node_Module(ComboItems[Index].BinaryPath + ".xml", grpcConnection, url, moduleProcess);
                 network.Nodes.Add(nodeModule);
             }
             ToolsComboBox.SelectedIndex = 0;
@@ -536,7 +538,7 @@ namespace Prototyp
                 string layer = vectorData[(int)nc.ImportNodeOutput].ToString(ToStringParams.ByteString);
                 //Split into chunks of 65536 bytes (64 KiB)
                 System.Collections.Generic.List<string> chunks = new System.Collections.Generic.List<string>();
-                int maxChunkSize = 65536 / sizeof(Char);
+                int maxChunkSize = MAX_UNSIGNED_SHORT / sizeof(Char);
                 for (int i = 0; i < layer.Length; i += maxChunkSize)
                 {
                     chunks.Add(layer.Substring(i, Math.Min(maxChunkSize, layer.Length - i)));
