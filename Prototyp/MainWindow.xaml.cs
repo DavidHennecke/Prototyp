@@ -525,13 +525,14 @@ namespace Prototyp
                 }
             }
 
-            //STEP 2: remove imports that already happened (TODO)
-            //STEP 4: Update module configs (TODO)
-            //STEP 3: Load inputs into the correct modules and mark starting modules of graph
+            //STEP 2: Traverse graph, check for possible changes in outputs (TODO)
+            //STEP 3: Update module configs (TODO)
+            //STEP 4: Load inputs into the correct modules and mark starting modules of graph
             //
             foreach (NodeConnection nc in imports)
             {
                 //Get data
+                //TODO: vectorData as <int> dictionary
                 string layer = vectorData[(int)nc.ImportNodeOutput].ToString(ToStringParams.ByteString);
                 //Split into chunks of 65536 bytes (64 KiB)
                 System.Collections.Generic.List<string> chunks = new System.Collections.Generic.List<string>();
@@ -560,7 +561,7 @@ namespace Prototyp
                     }
                 }
             }
-            //STEP 4: Run modules (TODO - WIP)
+            //STEP 5: Run modules (TODO - WIP)
             //
             //Initialize Progress object to report module progress
             var progressIndicator = new Progress<NodeProgressReport>(ReportProgress);
