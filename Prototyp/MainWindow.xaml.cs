@@ -142,15 +142,25 @@ namespace Prototyp
             ToolsComboBox.SelectedIndex = 0;
         }
 
+        private void TerminateServer(Node_Module module)
+        {
+            module.Process.Kill();
+        }
+
         private void TerminateAllServers()
         {
             foreach (NodeViewModel node in network.Nodes.Items)
             {
                 if (node is Node_Module module)
                 {
-                    module.Process.Kill();
+                    TerminateServer(module);
                 }
             }
+        }
+
+        private void AppClosing(object sender, System.ComponentModel.CancelEventArgs e)
+        {
+            TerminateAllServers();
         }
 
         // Public methods ---------------------------------------------------------------------------
@@ -638,15 +648,15 @@ namespace Prototyp
             switch (report.stage)
             {
                 case NodeProgress.Waiting:
-                    System.Diagnostics.Trace.WriteLine("Node " + report.node.url + " waiting for input.");
+                    System.Diagnostics.Trace.WriteLine("Node " + report.node.Url + " waiting for input.");
                     break;
                 case NodeProgress.Marked:
                     break;
                 case NodeProgress.Processing:
-                    System.Diagnostics.Trace.WriteLine("Node " + report.node.url + " progress: " + report.progress);
+                    System.Diagnostics.Trace.WriteLine("Node " + report.node.Url + " progress: " + report.progress);
                     break;
                 case NodeProgress.Finished:
-                    System.Diagnostics.Trace.WriteLine("Node " + report.node.url + " finished!");
+                    System.Diagnostics.Trace.WriteLine("Node " + report.node.Url + " finished!");
                     break;
                 case NodeProgress.Interrupted:
                     break;
@@ -671,11 +681,6 @@ namespace Prototyp
             File.WriteAllText(di.FullName + "\\" + vorteXML.NodeTitle + ".xml", XMLStr);
             ComboItems.Clear();
             ParseModules(ModulesPath);
-        }
-
-        private void AppClosing(object sender, System.ComponentModel.CancelEventArgs e)
-        {
-            TerminateAllServers();
         }
     }
 }

@@ -59,7 +59,7 @@ namespace Prototyp.Modules
         
         private GrpcClient.ControlConnector.ControlConnectorClient IntGrpcConnection;
         private System.Diagnostics.Process IntProcess;
-        public string url;
+        private string IntUrl;
         
         // Getters and setters -------------------------------------------------------------
 
@@ -71,6 +71,12 @@ namespace Prototyp.Modules
         public System.Diagnostics.Process Process
         {
             get { return (IntProcess); }
+        }
+
+        public string Url
+        {
+            get { return (IntUrl); }
+            set { IntUrl = value; }
         }
 
         // Constructors --------------------------------------------------------------------
@@ -85,10 +91,11 @@ namespace Prototyp.Modules
         public Node_Module(string pathXML, GrpcClient.ControlConnector.ControlConnectorClient grpcConnection, string url, System.Diagnostics.Process process)
         {
             VorteXML newModule = new VorteXML(pathXML);
+
             Name = newModule.NodeTitle;
-            this.url = url;
-            this.IntProcess = process;
-            
+
+            IntUrl = url;
+            IntProcess = process;            
             IntGrpcConnection = grpcConnection;
 
             ParseXML(newModule, true);
