@@ -58,7 +58,6 @@ namespace Prototyp
 
         private System.Collections.Generic.List<VectorData> vectorData = new System.Collections.Generic.List<VectorData>();
         private System.Collections.Generic.List<RasterData> rasterData = new System.Collections.Generic.List<RasterData>();
-        private System.Collections.Generic.List<int> UsedPorts = new System.Collections.Generic.List<int>();
         private System.Collections.Generic.List<ComboItem> ComboItems = new System.Collections.Generic.List<ComboItem>();
         private System.Collections.Generic.List<ComboItem> ComboSearchItems = new System.Collections.Generic.List<ComboItem>();
 
@@ -318,13 +317,6 @@ namespace Prototyp
 
             //Find lowest available port
             int port = BASEPORT;
-            for (int i = 0; i < UsedPorts.Count; i++)
-            {
-                if (port == UsedPorts[i])
-                {
-                    port++;
-                }
-            }
             while (!Node_Module.PortAvailable(port)) port++;
             if (port > 65535) throw new System.Exception("Could not find any free port.");
 
@@ -359,7 +351,6 @@ namespace Prototyp
                 Grpc.Net.Client.GrpcChannel channel = Grpc.Net.Client.GrpcChannel.ForAddress(url);
                 grpcConnection = new GrpcClient.ControlConnector.ControlConnectorClient(channel);
                 Node_Module nodeModule = new Node_Module(ComboItems[Index].BinaryPath + ".xml", grpcConnection, url);
-                UsedPorts.Add(port);
                 network.Nodes.Add(nodeModule);
             }
             ToolsComboBox.SelectedIndex = 0;
