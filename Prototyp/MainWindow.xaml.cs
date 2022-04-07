@@ -356,6 +356,20 @@ namespace Prototyp
             ToolsComboBox.SelectedIndex = 0;
         }
 
+        private void ComboLostFocus(object sender, RoutedEventArgs e)
+        {
+            if (ToolsComboBox.IsDropDownOpen == false)
+            {
+                System.Diagnostics.Debug.WriteLine("Hallo");
+                ComboSearchItems.Clear();
+                ComboItems[0].ToolName = COMBOMSG;
+                ToolsComboBox.ItemsSource = null;
+                ToolsComboBox.ItemsSource = ComboItems;
+                ToolsComboBox.SelectedIndex = 0;
+                Typing = false;
+            }
+        }
+
         private void ComboKeyUp(object sender, System.Windows.Input.KeyEventArgs e)
         {
             ToolsComboBox.IsDropDownOpen = true;

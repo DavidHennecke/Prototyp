@@ -93,7 +93,7 @@
                 </DockPanel>
             </Border>
 
-            <ComboBox x:Name="ToolsComboBox" Grid.Column="1" Margin="10" MinWidth="250" SelectionChanged="ComboSelectionChanged" KeyUp="ComboKeyUp">
+            <ComboBox x:Name="ToolsComboBox" Grid.Column="1" Margin="10" MinWidth="250" SelectionChanged="ComboSelectionChanged" KeyUp="ComboKeyUp" LostFocus="ComboLostFocus">
                 <ComboBox.ItemTemplate>
                     <DataTemplate>
                         <StackPanel Orientation="Horizontal">
