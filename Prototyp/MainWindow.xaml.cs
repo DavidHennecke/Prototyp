@@ -142,6 +142,17 @@ namespace Prototyp
             ToolsComboBox.SelectedIndex = 0;
         }
 
+        private void TerminateAllServers()
+        {
+            foreach (NodeViewModel node in network.Nodes.Items)
+            {
+                if (node is Node_Module module)
+                {
+                    module.Process.Kill();
+                }
+            }
+        }
+
         // Public methods ---------------------------------------------------------------------------
 
         public void RemoveVectorData(string Uid)
@@ -324,37 +335,37 @@ namespace Prototyp
 
             GrpcClient.ControlConnector.ControlConnectorClient grpcConnection;
 
-            using (System.Diagnostics.Process moduleProcess = new System.Diagnostics.Process())
+            System.Diagnostics.Process moduleProcess = new System.Diagnostics.Process();
+            
+            System.Diagnostics.ProcessStartInfo moduleProcessInfo = new System.Diagnostics.ProcessStartInfo(ComboItems[Index].BinaryPath + ".exe", port.ToString());
+            //myProcessStartInfo.CreateNoWindow = true; //Ja, dies macht das Server-Window wirklich unsichtbar. Sicherstellen, dass der Krempel terminiert wird.
+            moduleProcessInfo.UseShellExecute = false; //Muss für .NETCore tatsächlich false sein, weil ShellExecute wirklich nur auf der Windows-Plattform verfügbar ist.
+            moduleProcess.StartInfo = moduleProcessInfo;
+            try
             {
-                System.Diagnostics.ProcessStartInfo moduleProcessInfo = new System.Diagnostics.ProcessStartInfo(ComboItems[Index].BinaryPath + ".exe", port.ToString());
-
-                //myProcessStartInfo.CreateNoWindow = true; //Ja, dies macht das Server-Window wirklich unsichtbar. Sicherstellen, dass der Krempel terminiert wird.
-                moduleProcessInfo.UseShellExecute = false; //Muss für .NETCore tatsächlich false sein, weil ShellExecute wirklich nur auf der Windows-Plattform verfügbar ist.
-                moduleProcess.StartInfo = moduleProcessInfo;
-                try
-                {
-                    moduleProcess.Start();
-                }
-                catch
-                {
-                    //if (!System.IO.File.Exists(ComboItems[Index].BinaryPath + ".exe"))
-                    //{
-                    //    throw new System.Exception("Could not start binary: No executable file present.");
-                    //}
-                    //else
-                    //{
-                    //    throw new System.Exception("Could not start binary: Reason unknown.");
-                    //}
-                }
+                moduleProcess.Start();
 
                 // Establish GRPC connection
                 // TODO: nicht nur localhost
                 string url = "https://localhost:" + port.ToString();
                 Grpc.Net.Client.GrpcChannel channel = Grpc.Net.Client.GrpcChannel.ForAddress(url);
                 grpcConnection = new GrpcClient.ControlConnector.ControlConnectorClient(channel);
+
                 Node_Module nodeModule = new Node_Module(ComboItems[Index].BinaryPath + ".xml", grpcConnection, url, moduleProcess);
                 network.Nodes.Add(nodeModule);
             }
+            catch
+            {
+                //if (!System.IO.File.Exists(ComboItems[Index].BinaryPath + ".exe"))
+                //{
+                //    throw new System.Exception("Could not start binary: No executable file present.");
+                //}
+                //else
+                //{
+                //    throw new System.Exception("Could not start binary: Reason unknown.");
+                //}
+            }
+
             ToolsComboBox.SelectedIndex = 0;
         }
 
@@ -660,6 +671,11 @@ namespace Prototyp
             File.WriteAllText(di.FullName + "\\" + vorteXML.NodeTitle + ".xml", XMLStr);
             ComboItems.Clear();
             ParseModules(ModulesPath);
+        }
+
+        private void AppClosing(object sender, System.ComponentModel.CancelEventArgs e)
+        {
+            TerminateAllServers();
         }
     }
 }

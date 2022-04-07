@@ -56,14 +56,21 @@ namespace Prototyp.Modules
         public ValueNodeInputViewModel<string> valueStringInput { get; set; }
         public ValueNodeOutputViewModel<Prototyp.Elements.VectorData> vectorOutput { get; set; }
         public ValueNodeOutputViewModel<Prototyp.Elements.RasterData> rasterOutput { get; set; }
+        
         private GrpcClient.ControlConnector.ControlConnectorClient IntGrpcConnection;
+        private System.Diagnostics.Process IntProcess;
         public string url;
-       
+        
         // Getters and setters -------------------------------------------------------------
 
         public GrpcClient.ControlConnector.ControlConnectorClient grpcConnection
         {
             get { return (IntGrpcConnection); }
+        }
+
+        public System.Diagnostics.Process Process
+        {
+            get { return (IntProcess); }
         }
 
         // Constructors --------------------------------------------------------------------
@@ -80,6 +87,7 @@ namespace Prototyp.Modules
             VorteXML newModule = new VorteXML(pathXML);
             Name = newModule.NodeTitle;
             this.url = url;
+            this.IntProcess = process;
             
             IntGrpcConnection = grpcConnection;
 
