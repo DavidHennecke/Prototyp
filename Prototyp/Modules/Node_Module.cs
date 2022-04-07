@@ -242,11 +242,11 @@ namespace Prototyp.Modules
         public static bool PortAvailable(int Port) // Source: https://stackoverflow.com/questions/570098/in-c-how-to-check-if-a-tcp-port-is-available
         {
             System.Net.NetworkInformation.IPGlobalProperties ipGlobalProperties = System.Net.NetworkInformation.IPGlobalProperties.GetIPGlobalProperties();
-            System.Net.NetworkInformation.TcpConnectionInformation[] tcpConnInfoArray = ipGlobalProperties.GetActiveTcpConnections();
-
-            foreach (System.Net.NetworkInformation.TcpConnectionInformation tcpi in tcpConnInfoArray)
+            System.Net.IPEndPoint[] listeners = ipGlobalProperties.GetActiveTcpListeners();
+                        
+            foreach (System.Net.IPEndPoint l in listeners)
             {
-                if (tcpi.LocalEndPoint.Port == Port)
+                if (l.Port == Port)
                 {
                     return (false);
                 }

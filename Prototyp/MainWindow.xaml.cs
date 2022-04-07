@@ -316,7 +316,7 @@ namespace Prototyp
             if (Index <= 0) return;
             if (Typing) return;
 
-            //Find lowest available node ID
+            //Find lowest available port
             int port = BASEPORT;
             for (int i = 0; i < UsedPorts.Count; i++)
             {
@@ -325,7 +325,8 @@ namespace Prototyp
                     port++;
                 }
             }
-            if (!Node_Module.PortAvailable(port)) throw new System.Exception("This port is not available."); //TODO: Besseres Handling. Nächsten Kandidaten holen?
+            while (!Node_Module.PortAvailable(port)) port++;
+            if (port > 65535) throw new System.Exception("Could not find any free port.");
 
             GrpcClient.ControlConnector.ControlConnectorClient grpcConnection;
 
