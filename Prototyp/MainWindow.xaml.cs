@@ -691,6 +691,13 @@ namespace Prototyp
             ComboItems.Clear();
             ParseModules(ModulesPath);
         }
+
+        private void ConnectionsButton_Click(object sender, RoutedEventArgs e)
+        {
+            // Startet ein automatisches Network-Arragement, mehr oder weniger gut. Vielleicht irgendwann mal nützlich.
+            NodeNetwork.Toolkit.Layout.ForceDirected.ForceDirectedLayouter layout = new NodeNetwork.Toolkit.Layout.ForceDirected.ForceDirectedLayouter();
+            layout.Layout(new NodeNetwork.Toolkit.Layout.ForceDirected.Configuration { Network = network }, 10000);
+        }
     }
 }
 
