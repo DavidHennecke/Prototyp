@@ -666,6 +666,7 @@ namespace Prototyp
                     break;
                 case NodeProgress.Finished:
                     System.Diagnostics.Trace.WriteLine("Node " + report.node.Url + " finished!");
+                    
                     break;
                 case NodeProgress.Interrupted:
                     break;

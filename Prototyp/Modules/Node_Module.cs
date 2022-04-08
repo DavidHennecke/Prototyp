@@ -272,7 +272,7 @@ namespace Prototyp.Modules
 
         static Node_Module()
         {
-            Splat.Locator.CurrentMutable.Register(() => new NodeView(), typeof(IViewFor<Node_Module>));
+            Splat.Locator.CurrentMutable.Register(() => new Views.NodeModuleView(), typeof(IViewFor<Node_Module>));
         }
     }
 }

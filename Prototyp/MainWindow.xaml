@@ -193,7 +193,7 @@
                         </Style>
                     </TabControl.Resources>
                     <TabItem Header="Node Editor" Foreground="White">
-                        <nodenetwork:NetworkView x:Name="networkView" Drop="DropTargetEventNodeEditor" Cursor="Hand" />
+                        <nodenetwork:NetworkView x:Name="networkView" Drop="DropTargetEventNodeEditor" Cursor="Hand" Background="#FF52555C"/>
                     </TabItem>
                 </TabControl>
             </Border>
