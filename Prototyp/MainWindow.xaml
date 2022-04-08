@@ -86,7 +86,7 @@
                                 <Button x:Name="ImportButton" Content="upload" Grid.Column="0" Grid.Row="0" Background="#FF212225" FontFamily="{StaticResource FontAwesomeSolid}" VerticalAlignment="Center" HorizontalAlignment="Center" Width="35" Height="35" FontSize="16" Foreground="#FFD8A14E" Click="ImportButton_Click"/>
                                 <Button x:Name="ExportButton" Content="download" Background="#FF212225" Grid.Column="1" Grid.Row="0" FontFamily="{StaticResource FontAwesomeSolid}" VerticalAlignment="Center" HorizontalAlignment="Center"  Width="35" Height="35" FontSize="16" Foreground="#FFD8A14E"/>
                                 <Button x:Name="ConnectionsButton" Content="database" Background="#FF212225" Grid.Column="0" Grid.Row="1" FontFamily="{StaticResource FontAwesomeSolid}" VerticalAlignment="Center" HorizontalAlignment="Center"  Width="35" Height="35" FontSize="16" Click="ConnectionsButton_Click"/>
-                                <Button x:Name="ToolboxButton" Content="toolbox" Background="#FF252221" Grid.Column="1" Grid.Row="1" FontFamily="{StaticResource FontAwesomeSolid}" VerticalAlignment="Center" HorizontalAlignment="Center"  Width="35" Height="35" FontSize="16" Foreground="#FFCD4715"/>
+                                <Button x:Name="ToolboxButton" Content="toolbox" Background="#FF252221" Grid.Column="1" Grid.Row="1" FontFamily="{StaticResource FontAwesomeSolid}" VerticalAlignment="Center" HorizontalAlignment="Center"  Width="35" Height="35" FontSize="16" Foreground="#FFCD4715" Click="ToolboxButton_Click"/>
                             </Grid>
                         </DockPanel>
                     </Border>

@@ -350,7 +350,7 @@ namespace Prototyp
             System.Diagnostics.Process moduleProcess = new System.Diagnostics.Process();
             
             System.Diagnostics.ProcessStartInfo moduleProcessInfo = new System.Diagnostics.ProcessStartInfo(ComboItems[Index].BinaryPath + ".exe", port.ToString());
-            //myProcessStartInfo.CreateNoWindow = true; //Ja, dies macht das Server-Window wirklich unsichtbar. Sicherstellen, dass der Krempel terminiert wird.
+            moduleProcessInfo.CreateNoWindow = true; //Ja, dies macht das Server-Window wirklich unsichtbar. Sicherstellen, dass der Krempel terminiert wird.
             moduleProcessInfo.UseShellExecute = false; //Muss für .NETCore tatsächlich false sein, weil ShellExecute wirklich nur auf der Windows-Plattform verfügbar ist.
             moduleProcess.StartInfo = moduleProcessInfo;
             try
@@ -698,6 +698,21 @@ namespace Prototyp
             // Startet ein automatisches Network-Arragement, mehr oder weniger gut. Vielleicht irgendwann mal nützlich.
             NodeNetwork.Toolkit.Layout.ForceDirected.ForceDirectedLayouter layout = new NodeNetwork.Toolkit.Layout.ForceDirected.ForceDirectedLayouter();
             layout.Layout(new NodeNetwork.Toolkit.Layout.ForceDirected.Configuration { Network = network }, 10000);
+        }
+
+        private void ToolboxButton_Click(object sender, RoutedEventArgs e)
+        {
+            foreach (NodeViewModel node in network.Nodes.Items)
+            {
+                if (node is Node_Module module)
+                {
+                    if (node.IsSelected)
+                    {
+                        TerminateServer(module);
+                        network.Nodes.Remove(node);
+                    }
+                }
+            }
         }
     }
 }
