@@ -39,6 +39,7 @@
         private double[] IntGeoTransform;
         private double IntID = 0.0;
         private string IntName;
+        private string IntFilename;
 
         // Getters and setters -------------------------------------------------------------
 
@@ -112,6 +113,12 @@
             set { IntName = value; }
         }
 
+        public string FileName
+        {
+            get { return (IntFilename); }
+            set { IntFilename = value; }
+        }
+
         // Constructors --------------------------------------------------------------------
 
         // Parameterless constructor.
@@ -136,6 +143,7 @@
                 ImportDataset(DS, 0, 0, DS.RasterXSize, DS.RasterYSize);
                 MakeID();
                 IntName = GetName(MyString);
+                IntFilename = MyString;
                 IntBusy = false;
             }
             else
@@ -160,6 +168,7 @@
                 ImportDataset(DS, xOff, yOff, xSize, ySize);
                 MakeID();
                 IntName = GetName(RasterFileName);
+                IntFilename = RasterFileName;
             }
             else
             {

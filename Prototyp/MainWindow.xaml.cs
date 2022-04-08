@@ -300,6 +300,7 @@ namespace Prototyp
                         TempPoint.Y = (TempPoint.Y - networkView.ViewModel.DragOffset.Y) / networkView.ViewModel.ZoomFactor;
                         importNode.Position = TempPoint;
 
+                        //MessageBox.Show(vectorData[i].FileName);
                         network.Nodes.Add(importNode);
                         break;
                     }

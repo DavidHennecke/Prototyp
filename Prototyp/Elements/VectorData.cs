@@ -46,6 +46,7 @@ namespace Prototyp.Elements
         private bool IntBusy;
         private OSGeo.OSR.SpatialReference IntSRS;
         private string IntName;
+        private string IntFilename;
         private string IntDescription;
         private double IntID = 0.0;
 
@@ -77,6 +78,12 @@ namespace Prototyp.Elements
         {
             get { return (IntName); }
             set { IntName = value; }
+        }
+
+        public string FileName
+        {
+            get { return (IntFilename); }
+            set { IntFilename = value; }
         }
 
         public string Description
@@ -169,13 +176,13 @@ namespace Prototyp.Elements
                     IntBusy = true;
                     using (System.IO.Stream SourceFile = System.IO.File.OpenRead(MyString))
                     {
+                        IntFilename = MyString;
+
                         byte[] FileBuffer = new byte[8];
                         SourceFile.Read(FileBuffer, 0, FileBuffer.Length);
                         if (ByteArrValid(FileBuffer)) // Detected an fgb file.
                         {
                             IntVecData = System.IO.File.ReadAllBytes(MyString);
-                            HandleNameAndCRS();
-                            MakeID();
                         }
                         else // No fgb. Try GDAL, then.
                         {
@@ -185,10 +192,11 @@ namespace Prototyp.Elements
                             if (MyDS != null)
                             {
                                 IntVecData = ImportLayer(MyDS.GetLayerByIndex(0));
-                                HandleNameAndCRS();
-                                MakeID();
                             }
                         }
+                        HandleNameAndCRS();
+                        MakeID();
+
                     }
                     IntBusy = false;
                 }
@@ -217,6 +225,8 @@ namespace Prototyp.Elements
                         throw new System.Exception("File is not in valid FlatGeobuf format.");
                     }
                 }
+
+                IntFilename = FlatGeobufFileName;
 
                 using (System.IO.Stream SourceFile = System.IO.File.OpenRead(FlatGeobufFileName))
                 {
