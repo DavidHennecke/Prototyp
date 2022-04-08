@@ -87,7 +87,7 @@ namespace Prototyp
             System.IO.DirectoryInfo ParentDir = System.IO.Directory.GetParent(ModulesPath);
             ParentDir = System.IO.Directory.GetParent(ParentDir.FullName);
             ParentDir = System.IO.Directory.GetParent(ParentDir.FullName);
-            ParentDir = System.IO.Directory.GetParent(ParentDir.FullName);
+            if (ParentDir.ToString().EndsWith("bin")) ParentDir = System.IO.Directory.GetParent(ParentDir.FullName);
             ModulesPath = ParentDir.FullName + "\\Custom modules";
             
             ParseModules(ModulesPath);
