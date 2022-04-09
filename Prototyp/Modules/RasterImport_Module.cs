@@ -10,10 +10,12 @@ namespace Prototyp.Modules
     {
         public ValueNodeInputViewModel<string> importNodeInput { get; }
         public ValueNodeOutputViewModel<Prototyp.Elements.RasterData> importNodeOutput { get; }
+        public double IntID { get; }
 
         public RasterImport_Module(string dataName, string dataType, double dataID)
         {
             Name = dataName;
+            IntID = dataID;
             importNodeOutput = new ValueNodeOutputViewModel<Prototyp.Elements.RasterData>();
             Outputs.Add(importNodeOutput);
             Prototyp.Elements.RasterData placeholder = new Prototyp.Elements.RasterData();

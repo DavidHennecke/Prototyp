@@ -34,8 +34,8 @@
             <Menu Grid.Column="1" Height="32" WindowChrome.IsHitTestVisibleInChrome="True">
                 <MenuItem Header="File" Height="32" FontSize="13" Background="Transparent">
                     <MenuItem Header="New" FontSize="13"/>
-                    <MenuItem Header="Open..." FontSize="13"/>
-                    <MenuItem Header="Save" FontSize="13"/>
+                    <MenuItem Header="Open..." FontSize="13" Click="OpenClick"/>
+                    <MenuItem Header="Save..." FontSize="13" Click="SaveClick"/>
                     <MenuItem Header="Exit" FontSize="13"/>
                 </MenuItem>
 

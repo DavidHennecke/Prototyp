@@ -56,12 +56,18 @@ namespace Prototyp.Modules
         public ValueNodeInputViewModel<string> valueStringInput { get; set; }
         public ValueNodeOutputViewModel<Prototyp.Elements.VectorData> vectorOutput { get; set; }
         public ValueNodeOutputViewModel<Prototyp.Elements.RasterData> rasterOutput { get; set; }
-        
+
+        private string IntPathXML;
         private GrpcClient.ControlConnector.ControlConnectorClient IntGrpcConnection;
         private System.Diagnostics.Process IntProcess;
         private string IntUrl;
-        
+
         // Getters and setters -------------------------------------------------------------
+
+        public string PathXML
+        {
+            get { return (IntPathXML); }
+        }
 
         public GrpcClient.ControlConnector.ControlConnectorClient grpcConnection
         {
@@ -90,6 +96,8 @@ namespace Prototyp.Modules
         // Used for actually adding something to the main window node editor.
         public Node_Module(string pathXML, GrpcClient.ControlConnector.ControlConnectorClient grpcConnection, string url, System.Diagnostics.Process process)
         {
+            IntPathXML = pathXML;
+
             VorteXML newModule = new VorteXML(pathXML);
 
             Name = newModule.NodeTitle;

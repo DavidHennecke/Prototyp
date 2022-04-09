@@ -60,7 +60,7 @@ namespace Prototyp
         private bool Typing = false;
 
         private System.Collections.Generic.List<VectorData> vectorData = new System.Collections.Generic.List<VectorData>();
-        private System.Collections.Generic.List<RasterData> rasterData = new System.Collections.Generic.List<RasterData>();
+        private System.Collections.Generic.List<RasterData> rasterData = new System.Collections.Generic.List<RasterData>();        
         private System.Collections.Generic.List<ComboItem> ComboItems = new System.Collections.Generic.List<ComboItem>();
         private System.Collections.Generic.List<ComboItem> ComboSearchItems = new System.Collections.Generic.List<ComboItem>();
 
@@ -68,6 +68,20 @@ namespace Prototyp
         private NetworkViewModel network = new NetworkViewModel();
 
         public static MainWindow AppWindow;
+
+        // Getters and setters -------------------------------------------------------------
+
+        public System.Collections.Generic.List<VectorData> VecList
+        {
+            get { return (vectorData); }
+            set { vectorData = value; }
+        }
+
+        public System.Collections.Generic.List<RasterData> RasList
+        {
+            get { return (rasterData); }
+            set { rasterData = value; }
+        }
 
         // Constructors --------------------------------------------------------------------
 
@@ -714,6 +728,16 @@ namespace Prototyp
                     }
                 }
             }
+        }
+
+        private void OpenClick(object sender, RoutedEventArgs e)
+        {
+            
+        }
+
+        private void SaveClick(object sender, RoutedEventArgs e)
+        {
+            Prototyp.Elements.NetworkLoadAndSave save = new NetworkLoadAndSave(network, vectorData, rasterData);
         }
     }
 }
