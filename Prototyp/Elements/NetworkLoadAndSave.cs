@@ -5,6 +5,7 @@ using System.Text;
 
 namespace Prototyp.Elements
 {
+    [Serializable]
     class ModuleNodeProperties
     {
         public string Name { get; set; }
@@ -12,6 +13,7 @@ namespace Prototyp.Elements
         public System.Windows.Point Position { get; set; }
     }
 
+    [Serializable]
     class VecImportNodeProperties
     {
         public string Name { get; set; }
@@ -20,6 +22,7 @@ namespace Prototyp.Elements
         public byte[] RawData;
     }
 
+    [Serializable]
     class RasImportNodeProperties
     {
         public string Name { get; set; }
@@ -29,11 +32,13 @@ namespace Prototyp.Elements
 
     }
 
+    [Serializable]
     class ConnectionProperties
     {
 
     }
 
+    [Serializable]
     public class NetworkLoadAndSave
     {
         /***********************************************************************************

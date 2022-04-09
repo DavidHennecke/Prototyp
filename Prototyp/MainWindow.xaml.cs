@@ -738,6 +738,24 @@ namespace Prototyp
         private void SaveClick(object sender, RoutedEventArgs e)
         {
             Prototyp.Elements.NetworkLoadAndSave save = new NetworkLoadAndSave(network, vectorData, rasterData);
+
+            //  example roundtrip begin --------------------
+            if (System.IO.File.Exists("C:\\Temp\\Test.tst")) System.IO.File.Delete("C:\\Temp\\Test.tst");
+
+            System.Runtime.Serialization.Formatters.Binary.BinaryFormatter b = new System.Runtime.Serialization.Formatters.Binary.BinaryFormatter();            
+            using (FileStream f = System.IO.File.Create("C:\\Temp\\Test.tst"))
+            {
+                b.Serialize(f, save);
+            }
+
+            System.Runtime.Serialization.Formatters.Binary.BinaryFormatter b2 = new System.Runtime.Serialization.Formatters.Binary.BinaryFormatter();
+            Prototyp.Elements.NetworkLoadAndSave Read = new NetworkLoadAndSave();
+            using (FileStream f = System.IO.File.Open("C:\\Temp\\Test.tst", FileMode.Open))
+            {
+                Read = (Prototyp.Elements.NetworkLoadAndSave)b2.Deserialize(f);
+            }
+            //  example roundtrip end ----------------------
+
         }
     }
 }
