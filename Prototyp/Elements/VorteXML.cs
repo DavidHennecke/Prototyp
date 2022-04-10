@@ -149,17 +149,17 @@
             // Nothing useful to do here...
         }
 
-        public VorteXML(string FileName)
+        public VorteXML(string MyString)
         {
             System.Xml.Linq.XDocument MyXML;
 
-            if (System.IO.File.Exists(FileName)) // Assume that the given string is a file name.
+            if (System.IO.File.Exists(MyString)) // Assume that the given string is a file name.
             {
-                MyXML = System.Xml.Linq.XDocument.Load(FileName);
+                MyXML = System.Xml.Linq.XDocument.Load(MyString);
             }
             else // Assume that the given string is an actual XML string.
             {
-                 MyXML = System.Xml.Linq.XDocument.Parse(FileName);
+                 MyXML = System.Xml.Linq.XDocument.Parse(MyString);
             }
                         
             ImportXML(MyXML);

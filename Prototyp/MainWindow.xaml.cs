@@ -52,8 +52,8 @@ namespace Prototyp
 
     public partial class MainWindow : Window
     {
-        private const int BASEPORT = 5000;
-        private const int MAX_UNSIGNED_SHORT = 65536;
+        public const int BASEPORT = 5000;
+        public const int MAX_UNSIGNED_SHORT = 65536;
 
         private const string COMBOMSG = "Select your tool here...";
         private const string ALPHABET = "ABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890";
@@ -367,9 +367,7 @@ namespace Prototyp
             if (Typing) return;
 
             //Find lowest available port
-            int port = BASEPORT;
-            while (!Node_Module.PortAvailable(port)) port++;
-            if (port >= MAX_UNSIGNED_SHORT) throw new System.Exception("Could not find any free port.");
+            int port = Node_Module.GetNextPort();
 
             GrpcClient.ControlConnector.ControlConnectorClient grpcConnection;
 
@@ -760,39 +758,120 @@ namespace Prototyp
             Nullable<bool> result = openFileDialog.ShowDialog();
             if (result == true)
             {
+                Cursor = System.Windows.Input.Cursors.Wait;
+
+                // Here we go. First, stop all active servers.
                 TerminateAllServers();
 
                 Prototyp.Elements.NetworkLoadAndSave open = new Prototyp.Elements.NetworkLoadAndSave(openFileDialog.FileName);
 
+                // Tidy up all lists.
+                vectorData.Clear();
+                rasterData.Clear();
+                TableOfContentsVector.Items.Clear();
+                TableOfContentsRaster.Items.Clear();
                 network = null;
                 network = new NetworkViewModel();
                 AppWindow = this;
                 networkView.ViewModel = network;
 
+                // Set up elementary stuff.
                 network.ZoomFactor = open.ZoomFactor;
                 network.DragOffset = open.DragOffset;
 
+                // Okay, add the module nodes, start the corresponding servers.
                 foreach (ModuleNodeProperties m in open.ModNodeProps)
                 {
                     VorteXML constructXML = new VorteXML(m.XML);
-                    Node_Module newModule = new Node_Module(constructXML); // Später muss hier der andere Konstruktor verwendet werden.
-                    newModule.Position = m.Position;
+                    int port = Node_Module.GetNextPort();
+
+                    GrpcClient.ControlConnector.ControlConnectorClient grpcConnection;
+
+                    System.Diagnostics.Process moduleProcess = new System.Diagnostics.Process();
+
+                    System.Diagnostics.ProcessStartInfo moduleProcessInfo = new System.Diagnostics.ProcessStartInfo(m.Path.Replace(".xml", ".exe"), port.ToString());
+                    //moduleProcessInfo.CreateNoWindow = true;
+                    moduleProcessInfo.UseShellExecute = false;
+                    moduleProcess.StartInfo = moduleProcessInfo;
+                    try
+                    {
+                        moduleProcess.Start();
+                        System.Threading.Thread.Sleep(1000); // Keine sehr gute Lösung. Wie besser machen?
+                    }
+                    catch
+                    {
+                        if (!System.IO.File.Exists(m.Path.Replace(".xml", ".exe")))
+                        {
+                            // Maybe this user doesn't have that module installed? Go ahead and grab it, pal!
+                            throw new System.Exception("Could not start binary: No executable file present.");
+                        }
+                        else
+                        {
+                            throw new System.Exception("Could not start binary: Reason unknown.");
+                        }
+                    }
+
+                    // Establish GRPC connection
+                    // TODO: nicht nur localhost
+                    string url = "https://localhost:" + port.ToString();
+                    Grpc.Net.Client.GrpcChannel channel = Grpc.Net.Client.GrpcChannel.ForAddress(url);
+                    grpcConnection = new GrpcClient.ControlConnector.ControlConnectorClient(channel);
+
+                    Node_Module nodeModule = new Node_Module(constructXML, m.Name, grpcConnection, url, moduleProcess);
+
+                    nodeModule.Position = m.Position;
                     //newModule.Size = m.Size; // Damn, write protected.
-                    newModule.PathXML = m.Path;
-                    newModule.Name = m.Name;
-                    network.Nodes.Add(newModule);
+                    nodeModule.PathXML = m.Path;
+                    network.Nodes.Add(nodeModule);
                 }
 
+                // Next, add the vector data/list entry/node.
                 foreach (VecImportNodeProperties v in open.VecImportNodeProps)
                 {
+                    if (v.RawData == null)
+                    {
+                        vectorData.Add(new VectorData(v.FileName));
+                    }
+                    else
+                    {
+                        vectorData.Add(new VectorData(v.RawData));
+                    }
+                    MainWindowHelpers mainWindowHelpers = new MainWindowHelpers();
+                    mainWindowHelpers.AddTreeViewChild(vectorData.Last());
 
-                    //VectorImport_Module importNode = new VectorImport_Module(vectorData[i].Name, vectorData[i].FeatureCollection[0].Geometry.GeometryType, vectorData[i].ID);
-
-                    //network.Nodes.Add(importNode);
+                    VectorImport_Module importNode = new VectorImport_Module(v.Name, vectorData.Last().FeatureCollection[0].Geometry.GeometryType, vectorData.Last().ID);
+                    importNode.Position = v.Position;
+                    network.Nodes.Add(importNode);
                 }
 
+                // Then, add the raster data/list entry/node.
+                foreach (RasImportNodeProperties r in open.RasImportNodeProps)
+                {
+                    if (r.RawData == null)
+                    {
+                        rasterData.Add(new RasterData(r.FileName));
+                    }
+                    else
+                    {
+                        rasterData.Add(new RasterData(r.RawData));
+                    }
+                    MainWindowHelpers mainWindowHelpers = new MainWindowHelpers();
+                    mainWindowHelpers.AddTreeViewChild(rasterData.Last());
 
-                // ...
+                    RasterImport_Module importNode = new RasterImport_Module(r.Name, rasterData.Last().FileType, rasterData.Last().ID);
+                    importNode.Position = r.Position;
+                    network.Nodes.Add(importNode);
+                }
+
+                // Finally, add the connections.
+                foreach (ConnectionProperties c in open.ConnectionProps)
+                {
+                    
+                    //ConnectionViewModel cvm = new ConnectionViewModel(network,
+                }
+
+                // Done.
+                Cursor = System.Windows.Input.Cursors.Arrow;
             }
         }
 
@@ -816,9 +895,11 @@ namespace Prototyp
                 bool includeData = false;
                 if (MessageBox.Show("Include data sets? This will increase data size and processing time but will make the user of the workflow independent from the data files.", "Include data?", MessageBoxButton.YesNo, MessageBoxImage.Question) == MessageBoxResult.Yes) includeData = true; else includeData = false;
 
+                Cursor = System.Windows.Input.Cursors.Wait;
                 if (System.IO.File.Exists(saveFileDialog.FileName)) System.IO.File.Delete(saveFileDialog.FileName);
 
                 Prototyp.Elements.NetworkLoadAndSave save = new Prototyp.Elements.NetworkLoadAndSave(network, vectorData, rasterData, saveFileDialog.FileName, includeData);
+                Cursor = System.Windows.Input.Cursors.Arrow;
             }
         }
     }

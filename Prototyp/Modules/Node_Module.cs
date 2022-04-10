@@ -111,6 +111,18 @@ namespace Prototyp.Modules
             ParseXML(newModule, true);
         }
 
+        // Used for workflow loading procedure.
+        public Node_Module(VorteXML XML, string Title, GrpcClient.ControlConnector.ControlConnectorClient grpcConnection, string url, System.Diagnostics.Process process)
+        {
+            Name = Title;
+
+            IntUrl = url;
+            IntProcess = process;
+            IntGrpcConnection = grpcConnection;
+
+            ParseXML(XML, true);
+        }
+
         // Used for the module designer preview.
         public Node_Module(VorteXML newModule)
         {
@@ -278,6 +290,15 @@ namespace Prototyp.Modules
             }
 
             return (true);
+        }
+
+        public static int GetNextPort()
+        {
+            int port = MainWindow.BASEPORT;
+            while (!Node_Module.PortAvailable(port)) port++;
+            if (port >= MainWindow.MAX_UNSIGNED_SHORT) throw new System.Exception("Could not find any free port.");
+
+            return (port);
         }
 
         static Node_Module()
