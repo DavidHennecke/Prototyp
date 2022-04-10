@@ -4,7 +4,7 @@ using System;
 namespace Prototyp.Elements
 {
     [Serializable]
-    class ModuleNodeProperties
+    public class ModuleNodeProperties
     {
         public string Name { get; set; }
         public string Path { get; set; }
@@ -13,7 +13,7 @@ namespace Prototyp.Elements
     }
 
     [Serializable]
-    class VecImportNodeProperties
+    public class VecImportNodeProperties
     {
         public string Name { get; set; }
         public string FileName { get; set; }
@@ -23,7 +23,7 @@ namespace Prototyp.Elements
     }
 
     [Serializable]
-    class RasImportNodeProperties
+    public class RasImportNodeProperties
     {
         public string Name { get; set; }
         public string FileName { get; set; }
@@ -34,7 +34,7 @@ namespace Prototyp.Elements
     }
 
     [Serializable]
-    class ConnectionProperties
+    public class ConnectionProperties
     {
         public int InputIndex { get; set; }
         public int InputPort { get; set; }
@@ -63,12 +63,45 @@ namespace Prototyp.Elements
         *///////////////////////////////////////////////////////////////////////////////////
 
         // Internal variables --------------------------------------------------------------
-        
-        double IntZoomFactor { get; set; }
-        System.Collections.Generic.List<ModuleNodeProperties> IntModuleNodeProperties { get; set; }
-        System.Collections.Generic.List<VecImportNodeProperties> IntVecImportNodeProperties { get; set; }
-        System.Collections.Generic.List<RasImportNodeProperties> IntRasImportNodeProperties { get; set; }
-        System.Collections.Generic.List<ConnectionProperties> IntConnectionProperties { get; set; }
+
+        private double IntZoomFactor;
+        private System.Windows.Point IntDragOffset;
+        private System.Collections.Generic.List<ModuleNodeProperties> IntModuleNodeProperties;
+        private System.Collections.Generic.List<VecImportNodeProperties> IntVecImportNodeProperties;
+        private System.Collections.Generic.List<RasImportNodeProperties> IntRasImportNodeProperties;
+        private System.Collections.Generic.List<ConnectionProperties> IntConnectionProperties;
+
+        // Getters and setters -------------------------------------------------------------
+
+        public double ZoomFactor
+        {
+            get { return (IntZoomFactor); }
+        }
+
+        public System.Windows.Point DragOffset
+        {
+            get { return (IntDragOffset); }
+        }
+
+        public System.Collections.Generic.List<ModuleNodeProperties> ModNodeProps
+        {
+            get { return (IntModuleNodeProperties); }
+        }
+
+        public System.Collections.Generic.List<VecImportNodeProperties> VecImportNodeProps
+        {
+            get { return (IntVecImportNodeProperties); }
+        }
+
+        public System.Collections.Generic.List<RasImportNodeProperties> RasImportNodeProps
+        {
+            get { return (IntRasImportNodeProperties); }
+        }
+
+        public System.Collections.Generic.List<ConnectionProperties> ConnectionProps
+        {
+            get { return (IntConnectionProperties); }
+        }
 
         // Constructors --------------------------------------------------------------------
 
@@ -111,10 +144,13 @@ namespace Prototyp.Elements
             {
                 Read = (Prototyp.Elements.NetworkLoadAndSave)binForm.Deserialize(fs);
 
-                IntVecImportNodeProperties = Read.IntVecImportNodeProperties;
-                IntRasImportNodeProperties = Read.IntRasImportNodeProperties;
-                IntModuleNodeProperties = Read.IntModuleNodeProperties;
-                IntConnectionProperties = Read.IntConnectionProperties;
+                IntZoomFactor = Read.ZoomFactor;
+                IntDragOffset = Read.DragOffset;
+
+                IntModuleNodeProperties = Read.ModNodeProps;
+                IntVecImportNodeProperties = Read.VecImportNodeProps;
+                IntRasImportNodeProperties = Read.RasImportNodeProps;
+                IntConnectionProperties = Read.ConnectionProps;
             }
         }
 
@@ -130,6 +166,7 @@ namespace Prototyp.Elements
 
             // First, save some basic infos.
             IntZoomFactor = network.ZoomFactor;
+            IntDragOffset = network.DragOffset;
 
             // Second, look into the nodes.
             foreach (NodeNetwork.ViewModels.NodeViewModel node in network.Nodes.Items)

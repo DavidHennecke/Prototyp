@@ -734,7 +734,10 @@ namespace Prototyp
         {
             // Note: Make sure to stop ongoing computations first.
 
-            if (MessageBox.Show("Are you sure? Current progress will be lost.", "Open a workflow?", MessageBoxButton.YesNo, MessageBoxImage.Question) == MessageBoxResult.No) return;
+            if (network.Nodes.Count > 0)
+            {
+                if (MessageBox.Show("Are you sure? Current progress will be lost.", "Open a workflow?", MessageBoxButton.YesNo, MessageBoxImage.Question) == MessageBoxResult.No) return;
+            }
 
             OpenFileDialog openFileDialog = new OpenFileDialog();
             openFileDialog.Filter = "Workflow files (*.wff)|*.wff|" +
@@ -746,7 +749,14 @@ namespace Prototyp
             Nullable<bool> result = openFileDialog.ShowDialog();
             if (result == true)
             {
-                Prototyp.Elements.NetworkLoadAndSave open = new NetworkLoadAndSave(openFileDialog.FileName);
+                TerminateAllServers();
+
+                Prototyp.Elements.NetworkLoadAndSave open = new Prototyp.Elements.NetworkLoadAndSave(openFileDialog.FileName);
+
+                network.ZoomFactor = open.ZoomFactor;
+                network.DragOffset = open.DragOffset;
+
+                // ...
             }
         }
 
@@ -772,7 +782,7 @@ namespace Prototyp
 
                 if (System.IO.File.Exists(saveFileDialog.FileName)) System.IO.File.Delete(saveFileDialog.FileName);
 
-                Prototyp.Elements.NetworkLoadAndSave save = new NetworkLoadAndSave(network, vectorData, rasterData, saveFileDialog.FileName, includeData);
+                Prototyp.Elements.NetworkLoadAndSave save = new Prototyp.Elements.NetworkLoadAndSave(network, vectorData, rasterData, saveFileDialog.FileName, includeData);
             }
         }
     }
