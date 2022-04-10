@@ -365,8 +365,8 @@ namespace Prototyp
             System.Diagnostics.Process moduleProcess = new System.Diagnostics.Process();
             
             System.Diagnostics.ProcessStartInfo moduleProcessInfo = new System.Diagnostics.ProcessStartInfo(ComboItems[Index].BinaryPath + ".exe", port.ToString());
-            //moduleProcessInfo.CreateNoWindow = true; //Ja, dies macht das Server-Window wirklich unsichtbar. Sicherstellen, dass der Krempel terminiert wird.
-            moduleProcessInfo.UseShellExecute = false; //Muss für .NETCore tatsächlich false sein, weil ShellExecute wirklich nur auf der Windows-Plattform verfügbar ist.
+            //moduleProcessInfo.CreateNoWindow = true; //Ja, dies macht das Server-Window wirklich unsichtbar. Sichtbarkeit nur für Debugging-Zwecke.
+            moduleProcessInfo.UseShellExecute = false; //'UseShellExecute = true' would be available only on the Windows platform.
             moduleProcess.StartInfo = moduleProcessInfo;
             try
             {
@@ -732,7 +732,22 @@ namespace Prototyp
 
         private void OpenClick(object sender, RoutedEventArgs e)
         {
-            
+            // Note: Make sure to stop ongoing computations first.
+
+            if (MessageBox.Show("Are you sure? Current progress will be lost.", "Open a workflow?", MessageBoxButton.YesNo, MessageBoxImage.Question) == MessageBoxResult.No) return;
+
+            OpenFileDialog openFileDialog = new OpenFileDialog();
+            openFileDialog.Filter = "Workflow files (*.wff)|*.wff|" +
+                                    "All files (*.*)|*.*";
+            openFileDialog.FilterIndex = 0;
+            openFileDialog.RestoreDirectory = true;
+            openFileDialog.Title = "Open a workflow file...";
+
+            Nullable<bool> result = openFileDialog.ShowDialog();
+            if (result == true)
+            {
+                Prototyp.Elements.NetworkLoadAndSave open = new NetworkLoadAndSave(openFileDialog.FileName);
+            }
         }
 
         private void SaveClick(object sender, RoutedEventArgs e)
@@ -752,24 +767,12 @@ namespace Prototyp
                     if (MessageBox.Show("File exists. Overwrite?", "Overwrite file?", MessageBoxButton.YesNo, MessageBoxImage.Question) == MessageBoxResult.No) return;
                 }
 
-                Prototyp.Elements.NetworkLoadAndSave save = new NetworkLoadAndSave(network, vectorData, rasterData);
+                bool includeData = false;
+                if (MessageBox.Show("Include data sets? This will increase data size and processing time but will make the user of the workflow independent from the data files.", "Include data?", MessageBoxButton.YesNo, MessageBoxImage.Question) == MessageBoxResult.Yes) includeData = true; else includeData = false;
 
-                //  example roundtrip begin --------------------
                 if (System.IO.File.Exists(saveFileDialog.FileName)) System.IO.File.Delete(saveFileDialog.FileName);
 
-                System.Runtime.Serialization.Formatters.Binary.BinaryFormatter b = new System.Runtime.Serialization.Formatters.Binary.BinaryFormatter();
-                using (FileStream f = System.IO.File.Create(saveFileDialog.FileName))
-                {
-                    b.Serialize(f, save);
-                }
-
-                System.Runtime.Serialization.Formatters.Binary.BinaryFormatter b2 = new System.Runtime.Serialization.Formatters.Binary.BinaryFormatter();
-                Prototyp.Elements.NetworkLoadAndSave Read = new NetworkLoadAndSave();
-                using (FileStream f = System.IO.File.Open(saveFileDialog.FileName, FileMode.Open))
-                {
-                    Read = (Prototyp.Elements.NetworkLoadAndSave)b2.Deserialize(f);
-                }
-                //  example roundtrip end ----------------------
+                Prototyp.Elements.NetworkLoadAndSave save = new NetworkLoadAndSave(network, vectorData, rasterData, saveFileDialog.FileName, includeData);
             }
         }
     }

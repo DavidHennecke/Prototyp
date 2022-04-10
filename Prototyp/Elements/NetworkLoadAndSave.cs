@@ -1,7 +1,5 @@
-﻿using DynamicData;
+﻿using Prototyp.Modules;
 using System;
-using System.Collections.Generic;
-using System.Text;
 
 namespace Prototyp.Elements
 {
@@ -11,6 +9,7 @@ namespace Prototyp.Elements
         public string Name { get; set; }
         public string Path { get; set; }
         public System.Windows.Point Position { get; set; }
+        public System.Windows.Size Size { get; set; }
     }
 
     [Serializable]
@@ -19,7 +18,8 @@ namespace Prototyp.Elements
         public string Name { get; set; }
         public string FileName { get; set; }
         public System.Windows.Point Position { get; set; }
-        public byte[] RawData;
+        public System.Windows.Size Size { get; set; }
+        public byte[] RawData { get; set; }
     }
 
     [Serializable]
@@ -28,14 +28,20 @@ namespace Prototyp.Elements
         public string Name { get; set; }
         public string FileName { get; set; }
         public System.Windows.Point Position { get; set; }
-        public byte[] RawData;
+        public System.Windows.Size Size { get; set; }
+        public byte[] RawData { get; set; }
 
     }
 
     [Serializable]
     class ConnectionProperties
     {
-
+        public int InputIndex { get; set; }
+        public int InputPort { get; set; }
+        public int InputID { get; set; }
+        public int OutputIndex { get; set; }
+        public int OutputPort { get; set; }
+        public int OutputID { get; set; }
     }
 
     [Serializable]
@@ -59,11 +65,10 @@ namespace Prototyp.Elements
         // Internal variables --------------------------------------------------------------
         
         double IntZoomFactor { get; set; }
-
-        List<VecImportNodeProperties> IntVecImportNodeProperties { get; set; }
-        List<RasImportNodeProperties> IntRasImportNodeProperties { get; set; }
-        List<ModuleNodeProperties> IntModuleNodeProperties { get; set; }
-        List<ConnectionProperties> IntConnectionProperties { get; set; }
+        System.Collections.Generic.List<ModuleNodeProperties> IntModuleNodeProperties { get; set; }
+        System.Collections.Generic.List<VecImportNodeProperties> IntVecImportNodeProperties { get; set; }
+        System.Collections.Generic.List<RasImportNodeProperties> IntRasImportNodeProperties { get; set; }
+        System.Collections.Generic.List<ConnectionProperties> IntConnectionProperties { get; set; }
 
         // Constructors --------------------------------------------------------------------
 
@@ -73,15 +78,55 @@ namespace Prototyp.Elements
             // Nothing much to do here...
         }
 
-        // Constructor that accepts a pointer to a network instance and extracts the necessary
+        // Constructor that accepts pointers to the required data structures and extracts the necessary
         // information.
-        public NetworkLoadAndSave(NodeNetwork.ViewModels.NetworkViewModel network, System.Collections.Generic.List<VectorData> vec, System.Collections.Generic.List<RasterData> ras)
+        public NetworkLoadAndSave(NodeNetwork.ViewModels.NetworkViewModel network,
+                                  System.Collections.Generic.List<VectorData> vec,
+                                  System.Collections.Generic.List<RasterData> ras,
+                                  bool IncludeDataSets = true)
+        {
+            MakeInternalLists(network, vec, ras, IncludeDataSets);
+        }
+
+        // Constructor that accepts pointers to the required data structures, extracts the necessary
+        // information, and saves the serialized result as a file.
+        public NetworkLoadAndSave(NodeNetwork.ViewModels.NetworkViewModel network,
+                                  System.Collections.Generic.List<VectorData> vec,
+                                  System.Collections.Generic.List<RasterData> ras,
+                                  string FileName,
+                                  bool IncludeDataSets = true)
+        {
+            MakeInternalLists(network, vec, ras, IncludeDataSets);
+
+            System.Runtime.Serialization.Formatters.Binary.BinaryFormatter binForm = new System.Runtime.Serialization.Formatters.Binary.BinaryFormatter();
+            using (System.IO.FileStream fs = System.IO.File.Create(FileName)) { binForm.Serialize(fs, this); }
+        }
+
+        // Constructor that accepts a filename and deserializes its content.
+        public NetworkLoadAndSave(string FileName)
+        {
+            System.Runtime.Serialization.Formatters.Binary.BinaryFormatter binForm = new System.Runtime.Serialization.Formatters.Binary.BinaryFormatter();
+            Prototyp.Elements.NetworkLoadAndSave Read = new NetworkLoadAndSave();
+            using (System.IO.FileStream fs = System.IO.File.Open(FileName, System.IO.FileMode.Open))
+            {
+                Read = (Prototyp.Elements.NetworkLoadAndSave)binForm.Deserialize(fs);
+
+                IntVecImportNodeProperties = Read.IntVecImportNodeProperties;
+                IntRasImportNodeProperties = Read.IntRasImportNodeProperties;
+                IntModuleNodeProperties = Read.IntModuleNodeProperties;
+                IntConnectionProperties = Read.IntConnectionProperties;
+            }
+        }
+
+        // Private methods --------------------------------------------------------------------
+
+        private void MakeInternalLists(NodeNetwork.ViewModels.NetworkViewModel network, System.Collections.Generic.List<VectorData> vec, System.Collections.Generic.List<RasterData> ras, bool IncludeDataSets)
         {
             // Init lists.
-            IntVecImportNodeProperties = new List<VecImportNodeProperties>();
-            IntRasImportNodeProperties = new List<RasImportNodeProperties>();
-            IntModuleNodeProperties = new List<ModuleNodeProperties>();
-            IntConnectionProperties = new List<ConnectionProperties>();
+            IntVecImportNodeProperties = new System.Collections.Generic.List<VecImportNodeProperties>();
+            IntRasImportNodeProperties = new System.Collections.Generic.List<RasImportNodeProperties>();
+            IntModuleNodeProperties = new System.Collections.Generic.List<ModuleNodeProperties>();
+            IntConnectionProperties = new System.Collections.Generic.List<ConnectionProperties>();
 
             // First, save some basic infos.
             IntZoomFactor = network.ZoomFactor;
@@ -89,46 +134,49 @@ namespace Prototyp.Elements
             // Second, look into the nodes.
             foreach (NodeNetwork.ViewModels.NodeViewModel node in network.Nodes.Items)
             {
-                if (node is Modules.Node_Module module)
+                if (node is Node_Module module)
                 {
                     ModuleNodeProperties modProp = new ModuleNodeProperties();
                     modProp.Name = module.Name;
                     modProp.Path = module.PathXML;
                     modProp.Position = module.Position;
+                    modProp.Size = module.Size;
 
                     // Eigentlich müssten auch noch die Settings aller Controls in dem Modul gespeichert werden... :-(
 
                     IntModuleNodeProperties.Add(modProp);
                 }
-                else if (node is Modules.VectorImport_Module vecImp)
+                else if (node is VectorImport_Module vecImp)
                 {
                     VecImportNodeProperties impProp = new VecImportNodeProperties();
                     impProp.Name = vecImp.Name;
                     impProp.Position = vecImp.Position;
+                    impProp.Size = vecImp.Size;
 
                     foreach (VectorData v in vec)
                     {
                         if (v.ID == vecImp.IntID)
                         {
                             impProp.FileName = v.FileName;
-                            impProp.RawData = v.VecData;
+                            if (IncludeDataSets) impProp.RawData = v.VecData;
                         }
                     }
 
                     IntVecImportNodeProperties.Add(impProp);
                 }
-                else if (node is Modules.RasterImport_Module rasImp)
+                else if (node is RasterImport_Module rasImp)
                 {
                     RasImportNodeProperties impProp = new RasImportNodeProperties();
                     impProp.Name = rasImp.Name;
                     impProp.Position = rasImp.Position;
+                    impProp.Size = rasImp.Size;
 
                     foreach (RasterData r in ras)
                     {
                         if (r.ID == rasImp.IntID)
                         {
                             impProp.FileName = r.FileName;
-                            impProp.RawData = r.Serialize();
+                            if (IncludeDataSets) impProp.RawData = r.Serialize();
                         }
                     }
 
@@ -145,9 +193,70 @@ namespace Prototyp.Elements
             {
                 ConnectionProperties connProp = new ConnectionProperties();
 
-                //...
+                connProp.InputID = conn.Input.GetID();
+                connProp.OutputID = conn.Output.GetID();
+                // Auch noch speichern, welche Ports an Input und Output gemeint sind. Wie? Ggf. IDs vergeben?
 
-                IntConnectionProperties.Add(connProp); 
+                // Find the attached input node (*TO* which this connection feeds).
+                foreach (NodeNetwork.ViewModels.NodeViewModel node in network.Nodes.Items)
+                {
+                    if (conn.Input.Parent is Node_Module module)
+                    {
+                        // Find the corresponding entry in the modules list.
+                        for (int i = 0; i < IntModuleNodeProperties.Count; i++)
+                        {
+                            if (IntModuleNodeProperties[i].Position == node.Position & IntModuleNodeProperties[i].Size == node.Size)
+                            {
+                                connProp.InputIndex = i;
+                                break;
+                            }
+                        }
+                    }
+                    // else if (...?) Input can't be an importer, as these only have outputs. Maybe something for the future.
+                }
+
+                // Find the attached output node (*FROM* which this connection feeds).
+                foreach (NodeNetwork.ViewModels.NodeViewModel node in network.Nodes.Items)
+                {
+                    if (conn.Output.Parent is Node_Module module)
+                    {
+                        // Find the corresponding entry in the modules list.
+                        for (int i = 0; i < IntModuleNodeProperties.Count; i++)
+                        {
+                            if (IntModuleNodeProperties[i].Position == node.Position & IntModuleNodeProperties[i].Size == node.Size)
+                            {
+                                connProp.OutputIndex = i;
+                                break;
+                            }
+                        }
+                    }
+                    else if (conn.Output.Parent is VectorImport_Module vecImp)
+                    {
+                        // Find the corresponding entry in the vector imports list.
+                        for (int i = 0; i < IntVecImportNodeProperties.Count; i++)
+                        {
+                            if (IntVecImportNodeProperties[i].Position == node.Position & IntVecImportNodeProperties[i].Size == node.Size)
+                            {
+                                connProp.OutputIndex = i;
+                                break;
+                            }
+                        }
+                    }
+                    else if (conn.Output.Parent is RasterImport_Module rasImp)
+                    {
+                        // Find the corresponding entry in the vector imports list.
+                        for (int i = 0; i < IntRasImportNodeProperties.Count; i++)
+                        {
+                            if (IntRasImportNodeProperties[i].Position == node.Position & IntRasImportNodeProperties[i].Size == node.Size)
+                            {
+                                connProp.OutputIndex = i;
+                                break;
+                            }
+                        }
+                    }
+                }
+
+                IntConnectionProperties.Add(connProp);
             }
         }
     }
