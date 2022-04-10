@@ -249,7 +249,7 @@ namespace Prototyp.Elements
                         {
                             if (IntModuleNodeProperties[i].Position == node.Position & IntModuleNodeProperties[i].Size == node.Size)
                             {
-                                connProp.InputIndex = i;
+                                connProp.InputIndex = i; // Auch noch speichern, WAS es ist (Node_Input, Vector/Raster), damit ich beim Laden weiß, worauf der Index sich bezieht.
                                 break;
                             }
                         }
