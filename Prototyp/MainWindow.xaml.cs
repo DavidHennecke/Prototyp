@@ -737,25 +737,40 @@ namespace Prototyp
 
         private void SaveClick(object sender, RoutedEventArgs e)
         {
-            Prototyp.Elements.NetworkLoadAndSave save = new NetworkLoadAndSave(network, vectorData, rasterData);
+            SaveFileDialog saveFileDialog = new SaveFileDialog();
+            saveFileDialog.Filter = "Workflow files (*.wff)|*.wff|" +
+                                    "All files (*.*)|*.*";
+            saveFileDialog.FilterIndex = 0;
+            saveFileDialog.RestoreDirectory = true;
+            saveFileDialog.Title = "Save a workflow file...";
 
-            //  example roundtrip begin --------------------
-            if (System.IO.File.Exists("C:\\Temp\\Test.tst")) System.IO.File.Delete("C:\\Temp\\Test.tst");
-
-            System.Runtime.Serialization.Formatters.Binary.BinaryFormatter b = new System.Runtime.Serialization.Formatters.Binary.BinaryFormatter();            
-            using (FileStream f = System.IO.File.Create("C:\\Temp\\Test.tst"))
+            Nullable<bool> result = saveFileDialog.ShowDialog();
+            if (result == true)
             {
-                b.Serialize(f, save);
-            }
+                if (System.IO.File.Exists(saveFileDialog.FileName))
+                {
+                    if (MessageBox.Show("File exists. Overwrite?", "Overwrite file?", MessageBoxButton.YesNo, MessageBoxImage.Question) == MessageBoxResult.No) return;
+                }
 
-            System.Runtime.Serialization.Formatters.Binary.BinaryFormatter b2 = new System.Runtime.Serialization.Formatters.Binary.BinaryFormatter();
-            Prototyp.Elements.NetworkLoadAndSave Read = new NetworkLoadAndSave();
-            using (FileStream f = System.IO.File.Open("C:\\Temp\\Test.tst", FileMode.Open))
-            {
-                Read = (Prototyp.Elements.NetworkLoadAndSave)b2.Deserialize(f);
-            }
-            //  example roundtrip end ----------------------
+                Prototyp.Elements.NetworkLoadAndSave save = new NetworkLoadAndSave(network, vectorData, rasterData);
 
+                //  example roundtrip begin --------------------
+                if (System.IO.File.Exists(saveFileDialog.FileName)) System.IO.File.Delete(saveFileDialog.FileName);
+
+                System.Runtime.Serialization.Formatters.Binary.BinaryFormatter b = new System.Runtime.Serialization.Formatters.Binary.BinaryFormatter();
+                using (FileStream f = System.IO.File.Create(saveFileDialog.FileName))
+                {
+                    b.Serialize(f, save);
+                }
+
+                System.Runtime.Serialization.Formatters.Binary.BinaryFormatter b2 = new System.Runtime.Serialization.Formatters.Binary.BinaryFormatter();
+                Prototyp.Elements.NetworkLoadAndSave Read = new NetworkLoadAndSave();
+                using (FileStream f = System.IO.File.Open(saveFileDialog.FileName, FileMode.Open))
+                {
+                    Read = (Prototyp.Elements.NetworkLoadAndSave)b2.Deserialize(f);
+                }
+                //  example roundtrip end ----------------------
+            }
         }
     }
 }
