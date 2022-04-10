@@ -151,9 +151,17 @@
 
         public VorteXML(string FileName)
         {
-            if (!System.IO.File.Exists(FileName)) throw new System.Exception("File not found.");
+            System.Xml.Linq.XDocument MyXML;
 
-            System.Xml.Linq.XDocument MyXML = System.Xml.Linq.XDocument.Load(FileName);
+            if (System.IO.File.Exists(FileName)) // Assume that the given string is a file name.
+            {
+                MyXML = System.Xml.Linq.XDocument.Load(FileName);
+            }
+            else // Assume that the given string is an actual XML string.
+            {
+                 MyXML = System.Xml.Linq.XDocument.Parse(FileName);
+            }
+                        
             ImportXML(MyXML);
         }
 

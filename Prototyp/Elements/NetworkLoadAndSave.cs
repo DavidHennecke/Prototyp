@@ -10,6 +10,7 @@ namespace Prototyp.Elements
         public string Path { get; set; }
         public System.Windows.Point Position { get; set; }
         public System.Windows.Size Size { get; set; }
+        public string XML { get; set; }
     }
 
     [Serializable]
@@ -156,7 +157,10 @@ namespace Prototyp.Elements
 
         // Private methods --------------------------------------------------------------------
 
-        private void MakeInternalLists(NodeNetwork.ViewModels.NetworkViewModel network, System.Collections.Generic.List<VectorData> vec, System.Collections.Generic.List<RasterData> ras, bool IncludeDataSets)
+        private void MakeInternalLists(NodeNetwork.ViewModels.NetworkViewModel network,
+                                       System.Collections.Generic.List<VectorData> vec,
+                                       System.Collections.Generic.List<RasterData> ras,
+                                       bool IncludeDataSets)
         {
             // Init lists.
             IntVecImportNodeProperties = new System.Collections.Generic.List<VecImportNodeProperties>();
@@ -178,7 +182,8 @@ namespace Prototyp.Elements
                     modProp.Path = module.PathXML;
                     modProp.Position = module.Position;
                     modProp.Size = module.Size;
-
+                    modProp.XML = System.IO.File.ReadAllText(module.PathXML);
+                    
                     // Eigentlich müssten auch noch die Settings aller Controls in dem Modul gespeichert werden... :-(
 
                     IntModuleNodeProperties.Add(modProp);

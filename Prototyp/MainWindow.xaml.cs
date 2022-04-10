@@ -83,6 +83,11 @@ namespace Prototyp
             set { rasterData = value; }
         }
 
+        public System.Collections.Generic.List<ComboItem> ComboBoxItems
+        {
+            get { return (ComboItems); }
+        }
+
         // Constructors --------------------------------------------------------------------
 
         // Parameterless constructor: Initialize.
@@ -159,8 +164,14 @@ namespace Prototyp
 
         private void TerminateServer(Node_Module module)
         {
-            module.Process.Kill();
-            bool Loop = NodeNetwork.Toolkit.GraphAlgorithms.FindLoops(network).Any();
+            try
+            {
+                if (module.Process != null) module.Process.Kill();
+            }
+            catch
+            {
+                // No harm done.
+            }
         }
 
         private void TerminateAllServers()
@@ -753,8 +764,33 @@ namespace Prototyp
 
                 Prototyp.Elements.NetworkLoadAndSave open = new Prototyp.Elements.NetworkLoadAndSave(openFileDialog.FileName);
 
+                network = null;
+                network = new NetworkViewModel();
+                AppWindow = this;
+                networkView.ViewModel = network;
+
                 network.ZoomFactor = open.ZoomFactor;
                 network.DragOffset = open.DragOffset;
+
+                foreach (ModuleNodeProperties m in open.ModNodeProps)
+                {
+                    VorteXML constructXML = new VorteXML(m.XML);
+                    Node_Module newModule = new Node_Module(constructXML); // Später muss hier der andere Konstruktor verwendet werden.
+                    newModule.Position = m.Position;
+                    //newModule.Size = m.Size; // Damn, write protected.
+                    newModule.PathXML = m.Path;
+                    newModule.Name = m.Name;
+                    network.Nodes.Add(newModule);
+                }
+
+                foreach (VecImportNodeProperties v in open.VecImportNodeProps)
+                {
+
+                    //VectorImport_Module importNode = new VectorImport_Module(vectorData[i].Name, vectorData[i].FeatureCollection[0].Geometry.GeometryType, vectorData[i].ID);
+
+                    //network.Nodes.Add(importNode);
+                }
+
 
                 // ...
             }

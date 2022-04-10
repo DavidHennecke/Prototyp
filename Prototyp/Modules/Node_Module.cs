@@ -67,11 +67,13 @@ namespace Prototyp.Modules
         public string PathXML
         {
             get { return (IntPathXML); }
+            set { IntPathXML = value; }
         }
 
         public GrpcClient.ControlConnector.ControlConnectorClient grpcConnection
         {
             get { return (IntGrpcConnection); }
+            set { IntGrpcConnection = value; }
         }
 
         public System.Diagnostics.Process Process
