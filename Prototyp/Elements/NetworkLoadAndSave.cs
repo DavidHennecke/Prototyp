@@ -3,6 +3,13 @@ using System;
 
 namespace Prototyp.Elements
 {
+    public enum ConnectionType
+    {
+        Module,
+        Vector,
+        Raster
+    }
+
     [Serializable]
     public class ModuleNodeProperties
     {
@@ -40,9 +47,11 @@ namespace Prototyp.Elements
         public int InputIndex { get; set; }
         public int InputPort { get; set; }
         public int InputID { get; set; }
+        public ConnectionType InputType { get; set; }
         public int OutputIndex { get; set; }
         public int OutputPort { get; set; }
         public int OutputID { get; set; }
+        public ConnectionType OutputType { get; set; }
     }
 
     [Serializable]
@@ -249,7 +258,8 @@ namespace Prototyp.Elements
                         {
                             if (IntModuleNodeProperties[i].Position == node.Position & IntModuleNodeProperties[i].Size == node.Size)
                             {
-                                connProp.InputIndex = i; // Auch noch speichern, WAS es ist (Node_Input, Vector/Raster), damit ich beim Laden weiß, worauf der Index sich bezieht.
+                                connProp.InputType = ConnectionType.Module;
+                                connProp.InputIndex = i;
                                 break;
                             }
                         }
@@ -267,6 +277,7 @@ namespace Prototyp.Elements
                         {
                             if (IntModuleNodeProperties[i].Position == node.Position & IntModuleNodeProperties[i].Size == node.Size)
                             {
+                                connProp.InputType = ConnectionType.Module;
                                 connProp.OutputIndex = i;
                                 break;
                             }
@@ -279,6 +290,7 @@ namespace Prototyp.Elements
                         {
                             if (IntVecImportNodeProperties[i].Position == node.Position & IntVecImportNodeProperties[i].Size == node.Size)
                             {
+                                connProp.InputType = ConnectionType.Vector;
                                 connProp.OutputIndex = i;
                                 break;
                             }
@@ -291,6 +303,7 @@ namespace Prototyp.Elements
                         {
                             if (IntRasImportNodeProperties[i].Position == node.Position & IntRasImportNodeProperties[i].Size == node.Size)
                             {
+                                connProp.InputType = ConnectionType.Raster;
                                 connProp.OutputIndex = i;
                                 break;
                             }
