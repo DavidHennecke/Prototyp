@@ -17,7 +17,7 @@ namespace Prototyp.Modules
     {
         static readonly System.Runtime.CompilerServices.ConditionalWeakTable<NodeOutputViewModel, IntObject> IDs = new System.Runtime.CompilerServices.ConditionalWeakTable<NodeOutputViewModel, IntObject>();
         static readonly System.Runtime.CompilerServices.ConditionalWeakTable<NodeOutputViewModel, DoubleObject> DataIDs = new System.Runtime.CompilerServices.ConditionalWeakTable<NodeOutputViewModel, DoubleObject>();
-      public static int GetID(this NodeOutputViewModel ID) { return IDs.GetOrCreateValue(ID).iValue; }
+        public static int GetID(this NodeOutputViewModel ID) { return IDs.GetOrCreateValue(ID).iValue; }
         public static void SetID(this NodeOutputViewModel ID, int newID) { IDs.GetOrCreateValue(ID).iValue = newID; }
         public static double GetDataID(this NodeOutputViewModel DataID) { return DataIDs.GetOrCreateValue(DataID).dValue; }
         public static void SetDataID(this NodeOutputViewModel DataID, double newDataID) { DataIDs.GetOrCreateValue(DataID).dValue = newDataID; }
@@ -65,7 +65,7 @@ namespace Prototyp.Modules
         private string IntUrl;
         public int Status;
 
-        public void ChangeStatus( int statusNumber)
+        public void ChangeStatus(int statusNumber)
         {
             Status = statusNumber;
             ProcessStatusChanged?.Invoke(Status, EventArgs.Empty);
@@ -117,7 +117,7 @@ namespace Prototyp.Modules
             IntProcess = process;            
             IntGrpcConnection = grpcConnection;
             
-            this.Status =0;
+            this.Status = 0;
 
             ParseXML(newModule, true);
         }
@@ -245,7 +245,6 @@ namespace Prototyp.Modules
                                 //rasterOutput.Editor = outNameEditor;
                                 //outNameEditor.ValueChanged.Subscribe(v => { result.Name = v; });
                                 //rasterOutput.Value = this.WhenAnyObservable(vm => vm.outNameEditor.ValueChanged).Select(value => result);
-
                                 placeholder.Name = toolRow.outputRow.outputTypes[i].ToString();
                                 rasterOutput.Name = toolRow.outputRow.outputTypes[i].ToString();
                                 rasterOutput.Value = System.Reactive.Linq.Observable.Return(placeholder);

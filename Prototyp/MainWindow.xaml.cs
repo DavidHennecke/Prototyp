@@ -10,6 +10,17 @@ using System.Windows;
 
 /* -------------------------------
 
+Infos:
+
+
+// https://github.com/Wouterdek/NodeNetwork/blob/master/NodeNetworkTests/NetworkViewModelTests.cs
+// ^ Nützliche Beispielimplementierungen zum Node-Network.
+
+------------------------------- */
+
+
+/* -------------------------------
+
 TODO:
 
 
@@ -820,8 +831,6 @@ namespace Prototyp
 
                     System.Diagnostics.Process moduleProcess = new System.Diagnostics.Process();
 
-                    // Achtung, hier besser den Modul-Basispfad der lokalen Maschine ermitteln und alles auf dieser Basis zusammenbauen.
-                    //System.Diagnostics.ProcessStartInfo moduleProcessInfo = new System.Diagnostics.ProcessStartInfo(m.Path.Replace(".xml", ".exe"), port.ToString());
                     System.Diagnostics.ProcessStartInfo moduleProcessInfo = new System.Diagnostics.ProcessStartInfo(ModulesPath + "\\" + m.Name + "\\" + m.Name + ".exe", port.ToString());
                     //moduleProcessInfo.CreateNoWindow = true;
                     moduleProcessInfo.UseShellExecute = false;
@@ -833,8 +842,6 @@ namespace Prototyp
                     }
                     catch
                     {
-                        // Achtung, hier besser den Modul-Basispfad der lokalen Maschine ermitteln und alles auf dieser Basis zusammenbauen.
-                        //if (!System.IO.File.Exists(m.Path.Replace(".xml", ".exe")))
                         if (!System.IO.File.Exists(ModulesPath + "\\" + m.Name + "\\" + m.Name + ".exe"))
                         {
                             // Maybe this user doesn't have that module installed? Go ahead and grab it, pal!
@@ -856,8 +863,6 @@ namespace Prototyp
 
                     nodeModule.Position = m.Position;
                     //newModule.Size = m.Size; // Damn, write protected.
-                    // Achtung, hier besser den Modul-Basispfad der lokalen Maschine ermitteln und alles auf dieser Basis zusammenbauen.
-                    //nodeModule.PathXML = m.Path;
                     nodeModule.PathXML = ModulesPath + "\\" + m.Name + "\\" + m.Name + ".xml";
                     network.Nodes.Add(nodeModule);
                 }
@@ -903,11 +908,12 @@ namespace Prototyp
                 // Finally, add the connections.
                 NodeViewModel inpNode = null;
                 NodeViewModel outpNode = null;
+                int i = 0;
 
                 foreach (ConnectionProperties c in open.ConnectionProps)
                 {
                     // First, find the input node.
-                    int i = 0;
+                    i = 0;
                     if (c.InputType == ConnectionType.Module)
                     {
                         foreach (NodeViewModel node in network.Nodes.Items)
@@ -926,19 +932,19 @@ namespace Prototyp
                     // ... Can't be anything other that Module right now. Maybe in the future?
 
                     // Then, find the output node.
-                    int j = 0;
+                    i = 0;
                     if (c.OutputType == ConnectionType.Module)
                     {
                         foreach (NodeViewModel node in network.Nodes.Items)
                         {
                             if (node is Node_Module m)
                             {
-                                if (j == c.OutputIndex)
+                                if (i == c.OutputIndex)
                                 {
                                     outpNode = node;
                                     break;
                                 }
-                                j++;
+                                i++;
                             }
                         }
                     }
@@ -948,12 +954,12 @@ namespace Prototyp
                         {
                             if (node is VectorImport_Module v)
                             {
-                                if (j == c.OutputIndex)
+                                if (i == c.OutputIndex)
                                 {
                                     outpNode = node;
                                     break;
                                 }
-                                j++;
+                                i++;
                             }
                         }
                     }
@@ -963,12 +969,12 @@ namespace Prototyp
                         {
                             if (node is RasterImport_Module r)
                             {
-                                if (j == c.OutputIndex)
+                                if (i == c.OutputIndex)
                                 {
                                     outpNode = node;
                                     break;
                                 }
-                                j++;
+                                i++;
                             }
                         }
                     }
@@ -977,6 +983,7 @@ namespace Prototyp
                     NodeInputViewModel nInp = null;
                     NodeOutputViewModel nOutp = null;
 
+                    // Find the ports, input and output.
                     i = 0;
                     foreach (NodeInputViewModel ni in inpNode.Inputs.Items)
                     {
