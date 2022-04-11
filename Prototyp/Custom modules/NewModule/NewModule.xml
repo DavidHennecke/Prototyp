@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<root xmlns:Element="Element" xmlns:Raster="Raster" xmlns:Vector="Vector" xmlns:Control="Control" xmlns:Value="Value">
+<Node style="default" editorVersion="0.1">
+	<NodeTitle>NewModule</NodeTitle>
+	<NodeElements>
+		<Element:Input rowNr="1" name="RowName">
+			<InputTypes>
+				<Vector:Point />
+				<Vector:Line />
+				<Vector:Polygon />
+			</InputTypes>
+		</Element:Input>
+		<Element:Input rowNr="2" name="RowName">
+			<InputTypes>
+				<Vector:Point />
+				<Vector:Line />
+				<Vector:Polygon />
+			</InputTypes>
+		</Element:Input>
+		<Element:Input rowNr="3" name="RowName">
+			<InputTypes>
+				<Vector:Point />
+				<Vector:Line />
+				<Vector:Polygon />
+			</InputTypes>
+		</Element:Input>
+		<Element:Output rowNr="4" name="RowName">
+			<OutputTypes>
+				<Raster:Raster />
+			</OutputTypes>
+		</Element:Output>
+		<Element:Output rowNr="5" name="RowName">
+			<OutputTypes>
+				<Raster:Raster />
+			</OutputTypes>
+		</Element:Output>
+		<Element:Output rowNr="6" name="RowName">
+			<OutputTypes>
+				<Raster:Raster />
+			</OutputTypes>
+		</Element:Output>
+	</NodeElements>
+</Node>
+</root>

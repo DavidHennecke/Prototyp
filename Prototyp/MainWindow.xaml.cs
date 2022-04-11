@@ -691,6 +691,7 @@ namespace Prototyp
         private void ReportProgress(NodeProgressReport report)
         {
             //TODO: Update the UI to reflect all the progress values that is passed back.
+            //TODO: Für 'ChangeStatus'-Nachrichten besser Enum verwenden.
             switch (report.stage)
             {
                 case NodeProgress.Waiting:
@@ -757,6 +758,8 @@ namespace Prototyp
                         {
                             if (((Prototyp.Custom_Controls.VectorListViewItem)t).Uid == v.IntID.ToString())
                             {
+                                // TODO: Erst beim Löschen der LETZTEN Node-Instanz dieser Daten die Daten auch wirklich entfernen.
+                                // Dazu: Erst die Nodes durchgehen und prüfen, ob jemand anderes auch noch diese Daten nutzt. Falls ja, Abbruch.
                                 RemoveVectorData(((Prototyp.Custom_Controls.VectorListViewItem)t).Uid);
                                 TableOfContentsVector.Items.Remove(t);
                                 break;
@@ -769,6 +772,8 @@ namespace Prototyp
                         {
                             if (((Prototyp.Custom_Controls.RasterListViewItem)t).Uid == r.IntID.ToString())
                             {
+                                // TODO: Erst beim Löschen der LETZTEN Node-Instanz dieser Daten die Daten auch wirklich entfernen.
+                                // Dazu: Erst die Nodes durchgehen und prüfen, ob jemand anderes auch noch diese Daten nutzt. Falls ja, Abbruch.
                                 RemoveRasterData(((Prototyp.Custom_Controls.RasterListViewItem)t).Uid);
                                 TableOfContentsRaster.Items.Remove(t);
                                 break;

@@ -443,12 +443,17 @@ namespace Prototyp.Elements
             {
                 if (v.RawData == null)
                 {
+                    // TODO: Abgleichen der ID. Falls schon vorhanden, nicht nochmal hinzufügen.
+                    // TODO2: Vorher prüfen, ob die Datei existiert. Falls nicht, geeignet reagieren (überlegen, was dann am besten zu tun ist).
                     vectorData.Add(new VectorData(v.FileName));
                 }
                 else
                 {
+                    // TODO: Abgleichen der ID. Falls schon vorhanden, nicht nochmal hinzufügen.
+                    // TODO2: Vorher prüfen, ob die Datei existiert. Falls nicht, geeignet reagieren (überlegen, was dann am besten zu tun ist).
                     vectorData.Add(new VectorData(v.RawData));
                 }
+                // TODO: Abgleichen der ID. Falls schon vorhanden, nicht nochmal hinzufügen.
                 MainWindowHelpers mainWindowHelpers = new MainWindowHelpers();
                 mainWindowHelpers.AddTreeViewChild(vectorData.Last());
 
@@ -462,12 +467,17 @@ namespace Prototyp.Elements
             {
                 if (r.RawData == null)
                 {
+                    // TODO: Abgleichen der ID. Falls schon vorhanden, nicht nochmal hinzufügen.
+                    // TODO2: Vorher prüfen, ob die Datei existiert. Falls nicht, geeignet reagieren (überlegen, was dann am besten zu tun ist).
                     rasterData.Add(new RasterData(r.FileName));
                 }
                 else
                 {
+                    // TODO: Abgleichen der ID. Falls schon vorhanden, nicht nochmal hinzufügen.
+                    // TODO2: Vorher prüfen, ob die Datei existiert. Falls nicht, geeignet reagieren (überlegen, was dann am besten zu tun ist).
                     rasterData.Add(new RasterData(r.RawData));
                 }
+                // TODO: Abgleichen der ID. Falls schon vorhanden, nicht nochmal hinzufügen.
                 MainWindowHelpers mainWindowHelpers = new MainWindowHelpers();
                 mainWindowHelpers.AddTreeViewChild(rasterData.Last());
 

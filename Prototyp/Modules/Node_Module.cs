@@ -47,7 +47,6 @@ namespace Prototyp.Modules
 
     public class Node_Module : NodeViewModel
     {
-
         public event EventHandler ProcessStatusChanged;
         public Modules.ViewModels.FloatSliderViewModel sliderEditor { get; set; }
         public Modules.ViewModels.OutputNameViewModel outNameEditor { get; set; }
@@ -159,10 +158,14 @@ namespace Prototyp.Modules
                             if (inMain)
                             {
                                 vectorInput.SetID(i);
+                                vectorInput.Name = toolRow.inputRow.inputTypes[i].ToString();
+                                // Alternativ: vectorInput.Name = toolRow.inputRow.inputTypes.Last().ToString();
+                                // Grundsätzlich: Was tun bei mehreren validen Inputtypen?
                                 vectorInput.ValueChanged.Subscribe(vectorInputSource =>
                                 {
                                     if (vectorInputSource != null)
                                     {
+                                        // TODO: Hier muss noch nach den Ports differenziert werden, falls mehrere vorhanden sind.
                                         vectorInput.Name = vectorInputSource.Name;
                                     }
                                 });
@@ -181,10 +184,14 @@ namespace Prototyp.Modules
                             {
 
                                 rasterInput.SetID(i);
+                                rasterInput.Name = toolRow.inputRow.inputTypes[i].ToString();
+                                // Alternativ: rasterInput.Name = toolRow.inputRow.inputTypes.Last().ToString();
+                                // Grundsätzlich: Was tun bei mehreren validen Inputtypen?
                                 rasterInput.ValueChanged.Subscribe(rasterInputSource =>
                                 {
                                     if (rasterInputSource != null)
                                     {
+                                        // TODO: Hier muss noch nach den Ports differenziert werden, falls mehrere vorhanden sind.
                                         rasterInput.Name = rasterInputSource.Name;
                                     }
                                 });
@@ -220,6 +227,9 @@ namespace Prototyp.Modules
                                 //vectorOutput.Editor = outNameEditor;
                                 //outNameEditor.ValueChanged.Subscribe (v => { result.Name = v; });
                                 //vectorOutput.Value = this.WhenAnyObservable(vm => vm.outNameEditor.ValueChanged).Select(value => result);
+
+                                // Alternativ: ...outputTypes.Last().ToString();
+                                // Grundsätzlich: Was tun bei mehreren validen Outputtypen?
                                 placeholder.Name = toolRow.outputRow.outputTypes[i].ToString();
                                 vectorOutput.Name = toolRow.outputRow.outputTypes[i].ToString();
                                 vectorOutput.Value = System.Reactive.Linq.Observable.Return(placeholder);
@@ -245,6 +255,9 @@ namespace Prototyp.Modules
                                 //rasterOutput.Editor = outNameEditor;
                                 //outNameEditor.ValueChanged.Subscribe(v => { result.Name = v; });
                                 //rasterOutput.Value = this.WhenAnyObservable(vm => vm.outNameEditor.ValueChanged).Select(value => result);
+
+                                // Alternativ: ...outputTypes.Last().ToString();
+                                // Grundsätzlich: Was tun bei mehreren validen Outputtypen?
                                 placeholder.Name = toolRow.outputRow.outputTypes[i].ToString();
                                 rasterOutput.Name = toolRow.outputRow.outputTypes[i].ToString();
                                 rasterOutput.Value = System.Reactive.Linq.Observable.Return(placeholder);

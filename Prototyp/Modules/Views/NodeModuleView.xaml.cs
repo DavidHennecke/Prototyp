@@ -49,6 +49,8 @@ namespace Prototyp.Modules.Views
 
         private void ViewModel_ProcessStatusChanged(object sender, EventArgs e)
         {
+            // TODO: Für Status besser Enum verwenden.
+
             if (this.ViewModel.Status == 0)
             {
                 this.NodeView.Background = (System.Windows.Media.SolidColorBrush)new System.Windows.Media.BrushConverter().ConvertFromString("#FF212225");
