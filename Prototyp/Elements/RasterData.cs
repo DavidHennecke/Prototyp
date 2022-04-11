@@ -11,7 +11,7 @@
         and receiving vector data via gRPC.
             ???
 
-        (c) 2022 by Carsten Croonenbroeck, Markus Berger and David Hennecke. Contact us at
+        (c) 2022 by Carsten Croonenbroeck, Markus Berger, and David Hennecke. Contact us at
         carsten.croonenbroeck@uni-rostock.de.
 
             Add license information here.

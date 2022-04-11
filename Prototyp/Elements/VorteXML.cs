@@ -7,7 +7,7 @@
         Class VorteXML
         Contains properties and methods for Vortex module XML config file handling.
                 
-        (c) 2022 by Carsten Croonenbroeck, Markus Berger and David Hennecke. Contact us at
+        (c) 2022 by Carsten Croonenbroeck, Markus Berger, and David Hennecke. Contact us at
         carsten.croonenbroeck@uni-rostock.de.
 
             Add license information here.

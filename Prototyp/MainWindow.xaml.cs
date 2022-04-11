@@ -70,13 +70,13 @@ namespace Prototyp
         private const string ALPHABET = "ABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890";
         private bool Typing = false;
 
-        private System.Collections.Generic.List<VectorData> vectorData = new System.Collections.Generic.List<VectorData>();
-        private System.Collections.Generic.List<RasterData> rasterData = new System.Collections.Generic.List<RasterData>();        
+        public System.Collections.Generic.List<VectorData> vectorData = new System.Collections.Generic.List<VectorData>();
+        public System.Collections.Generic.List<RasterData> rasterData = new System.Collections.Generic.List<RasterData>();        
         private System.Collections.Generic.List<ComboItem> ComboItems = new System.Collections.Generic.List<ComboItem>();
         private System.Collections.Generic.List<ComboItem> ComboSearchItems = new System.Collections.Generic.List<ComboItem>();
 
-        private string ModulesPath;
-        private NetworkViewModel network = new NetworkViewModel();
+        public string ModulesPath;
+        public NetworkViewModel network = new NetworkViewModel();
 
         public static MainWindow AppWindow;
 
@@ -807,211 +807,8 @@ namespace Prototyp
 
                 Prototyp.Elements.NetworkLoadAndSave open = new Prototyp.Elements.NetworkLoadAndSave(openFileDialog.FileName);
 
-                // Tidy up all lists.
-                vectorData.Clear();
-                rasterData.Clear();
-                TableOfContentsVector.Items.Clear();
-                TableOfContentsRaster.Items.Clear();
-                network = null;
-                network = new NetworkViewModel();
-                AppWindow = this;
-                networkView.ViewModel = network;
+                network = open.ImportWorkflow(vectorData, rasterData, network, ModulesPath);
 
-                // Set up elementary stuff.
-                network.ZoomFactor = open.ZoomFactor;
-                network.DragOffset = open.DragOffset;
-
-                // Okay, add the module nodes, start the corresponding servers.
-                foreach (ModuleNodeProperties m in open.ModNodeProps)
-                {
-                    VorteXML constructXML = new VorteXML(m.XML);
-                    int port = Node_Module.GetNextPort();
-
-                    GrpcClient.ControlConnector.ControlConnectorClient grpcConnection;
-
-                    System.Diagnostics.Process moduleProcess = new System.Diagnostics.Process();
-
-                    System.Diagnostics.ProcessStartInfo moduleProcessInfo = new System.Diagnostics.ProcessStartInfo(ModulesPath + "\\" + m.Name + "\\" + m.Name + ".exe", port.ToString());
-                    //moduleProcessInfo.CreateNoWindow = true;
-                    moduleProcessInfo.UseShellExecute = false;
-                    moduleProcess.StartInfo = moduleProcessInfo;
-                    try
-                    {
-                        moduleProcess.Start();
-                        System.Threading.Thread.Sleep(1000); // Keine sehr gute Lösung. Wie besser machen?
-                    }
-                    catch
-                    {
-                        if (!System.IO.File.Exists(ModulesPath + "\\" + m.Name + "\\" + m.Name + ".exe"))
-                        {
-                            // Maybe this user doesn't have that module installed? Go ahead and grab it, pal!
-                            throw new System.Exception("Could not start binary: No executable file present.");
-                        }
-                        else
-                        {
-                            throw new System.Exception("Could not start binary: Reason unknown.");
-                        }
-                    }
-
-                    // Establish GRPC connection
-                    // TODO: nicht nur localhost
-                    string url = "https://localhost:" + port.ToString();
-                    Grpc.Net.Client.GrpcChannel channel = Grpc.Net.Client.GrpcChannel.ForAddress(url);
-                    grpcConnection = new GrpcClient.ControlConnector.ControlConnectorClient(channel);
-
-                    Node_Module nodeModule = new Node_Module(constructXML, m.Name, grpcConnection, url, moduleProcess);
-
-                    nodeModule.Position = m.Position;
-                    //newModule.Size = m.Size; // Damn, write protected.
-                    nodeModule.PathXML = ModulesPath + "\\" + m.Name + "\\" + m.Name + ".xml";
-                    network.Nodes.Add(nodeModule);
-                }
-
-                // Next, add the vector data/list entry/node.
-                foreach (VecImportNodeProperties v in open.VecImportNodeProps)
-                {
-                    if (v.RawData == null)
-                    {
-                        vectorData.Add(new VectorData(v.FileName));
-                    }
-                    else
-                    {
-                        vectorData.Add(new VectorData(v.RawData));
-                    }
-                    MainWindowHelpers mainWindowHelpers = new MainWindowHelpers();
-                    mainWindowHelpers.AddTreeViewChild(vectorData.Last());
-
-                    VectorImport_Module importNode = new VectorImport_Module(v.Name, vectorData.Last().FeatureCollection[0].Geometry.GeometryType, vectorData.Last().ID);
-                    importNode.Position = v.Position;
-                    network.Nodes.Add(importNode);
-                }
-
-                // Then, add the raster data/list entry/node.
-                foreach (RasImportNodeProperties r in open.RasImportNodeProps)
-                {
-                    if (r.RawData == null)
-                    {
-                        rasterData.Add(new RasterData(r.FileName));
-                    }
-                    else
-                    {
-                        rasterData.Add(new RasterData(r.RawData));
-                    }
-                    MainWindowHelpers mainWindowHelpers = new MainWindowHelpers();
-                    mainWindowHelpers.AddTreeViewChild(rasterData.Last());
-
-                    RasterImport_Module importNode = new RasterImport_Module(r.Name, rasterData.Last().FileType, rasterData.Last().ID);
-                    importNode.Position = r.Position;
-                    network.Nodes.Add(importNode);
-                }
-
-                // Finally, add the connections.
-                NodeViewModel inpNode = null;
-                NodeViewModel outpNode = null;
-                int i = 0;
-
-                foreach (ConnectionProperties c in open.ConnectionProps)
-                {
-                    // First, find the input node.
-                    i = 0;
-                    if (c.InputType == ConnectionType.Module)
-                    {
-                        foreach (NodeViewModel node in network.Nodes.Items)
-                        {
-                            if (node is Node_Module m)
-                            {
-                                if (i == c.InputIndex)
-                                {
-                                    inpNode = node;
-                                    break;
-                                }
-                                i++;
-                            }
-                        }
-                    }
-                    // ... Can't be anything other that Module right now. Maybe in the future?
-
-                    // Then, find the output node.
-                    i = 0;
-                    if (c.OutputType == ConnectionType.Module)
-                    {
-                        foreach (NodeViewModel node in network.Nodes.Items)
-                        {
-                            if (node is Node_Module m)
-                            {
-                                if (i == c.OutputIndex)
-                                {
-                                    outpNode = node;
-                                    break;
-                                }
-                                i++;
-                            }
-                        }
-                    }
-                    else if (c.OutputType == ConnectionType.Vector)
-                    {
-                        foreach (NodeViewModel node in network.Nodes.Items)
-                        {
-                            if (node is VectorImport_Module v)
-                            {
-                                if (i == c.OutputIndex)
-                                {
-                                    outpNode = node;
-                                    break;
-                                }
-                                i++;
-                            }
-                        }
-                    }
-                    else if (c.OutputType == ConnectionType.Raster)
-                    {
-                        foreach (NodeViewModel node in network.Nodes.Items)
-                        {
-                            if (node is RasterImport_Module r)
-                            {
-                                if (i == c.OutputIndex)
-                                {
-                                    outpNode = node;
-                                    break;
-                                }
-                                i++;
-                            }
-                        }
-                    }
-
-                    // Create the connection (input and output).
-                    NodeInputViewModel nInp = null;
-                    NodeOutputViewModel nOutp = null;
-
-                    // Find the ports, input and output.
-                    i = 0;
-                    foreach (NodeInputViewModel ni in inpNode.Inputs.Items)
-                    {
-                        if (i == c.InputPort)
-                        {
-                            nInp = ni;
-                            break;
-                        }
-                        i++;
-                    }
-                    i = 0;
-                    foreach (NodeOutputViewModel no in outpNode.Outputs.Items)
-                    {
-                        if (i == c.OutputPort)
-                        {
-                            nOutp = no;
-                            break;
-                        }
-                        i++;
-                    }
-
-                    nInp.SetID(c.InputID);
-                    nOutp.SetID(c.OutputID);
-
-                    network.Connections.Add(network.ConnectionFactory(nInp, nOutp));
-                }
-
-                // Done.
                 Cursor = System.Windows.Input.Cursors.Arrow;
             }
         }
@@ -1037,21 +834,20 @@ namespace Prototyp
                 if (MessageBox.Show("Include data sets? This will increase data size and processing time but will make the user of the workflow independent from the data files.", "Include data?", MessageBoxButton.YesNo, MessageBoxImage.Question) == MessageBoxResult.Yes) includeData = true; else includeData = false;
 
                 Cursor = System.Windows.Input.Cursors.Wait;
+                
                 if (System.IO.File.Exists(saveFileDialog.FileName)) System.IO.File.Delete(saveFileDialog.FileName);
 
                 Prototyp.Elements.NetworkLoadAndSave save = new Prototyp.Elements.NetworkLoadAndSave(network, vectorData, rasterData, saveFileDialog.FileName, includeData);
+                
                 Cursor = System.Windows.Input.Cursors.Arrow;
             }
         }
 
         private void RedoButton_Click(object sender, RoutedEventArgs e)
-        {
-            
+        {            
             foreach (Node_Module nodeTest in network.Nodes.Items)
             {
-
                 nodeTest.ChangeStatus(1);
-                
             }
         }
     }
