@@ -901,10 +901,12 @@ namespace Prototyp
                 }
 
                 // Finally, add the connections.
+                NodeViewModel inpNode = null;
+                NodeViewModel outpNode = null;
+
                 foreach (ConnectionProperties c in open.ConnectionProps)
                 {
-                    // First, find the input.
-                    NodeViewModel inpNode;
+                    // First, find the input node.
                     int i = 0;
                     if (c.InputType == ConnectionType.Module)
                     {
@@ -923,8 +925,7 @@ namespace Prototyp
                     }
                     // ... Can't be anything other that Module right now. Maybe in the future?
 
-                    // Then, find the output.
-                    NodeViewModel outpNode;
+                    // Then, find the output node.
                     int j = 0;
                     if (c.OutputType == ConnectionType.Module)
                     {
@@ -956,7 +957,7 @@ namespace Prototyp
                             }
                         }
                     }
-                    else if(c.OutputType == ConnectionType.Raster)
+                    else if (c.OutputType == ConnectionType.Raster)
                     {
                         foreach (NodeViewModel node in network.Nodes.Items)
                         {
@@ -972,9 +973,35 @@ namespace Prototyp
                         }
                     }
 
-                    NodeInputViewModel nodeInput = new NodeInputViewModel();
-                    //nodeInput.
-                    //ConnectionViewModel cvm = new ConnectionViewModel(network, inpNode, outpNode);
+                    // Create the connection (input and output).
+                    NodeInputViewModel nInp = null;
+                    NodeOutputViewModel nOutp = null;
+
+                    i = 0;
+                    foreach (NodeInputViewModel ni in inpNode.Inputs.Items)
+                    {
+                        if (i == c.InputPort)
+                        {
+                            nInp = ni;
+                            break;
+                        }
+                        i++;
+                    }
+                    i = 0;
+                    foreach (NodeOutputViewModel no in outpNode.Outputs.Items)
+                    {
+                        if (i == c.OutputPort)
+                        {
+                            nOutp = no;
+                            break;
+                        }
+                        i++;
+                    }
+
+                    nInp.SetID(c.InputID);
+                    nOutp.SetID(c.OutputID);
+
+                    network.Connections.Add(network.ConnectionFactory(nInp, nOutp));
                 }
 
                 // Done.

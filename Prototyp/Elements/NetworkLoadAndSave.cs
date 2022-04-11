@@ -192,7 +192,7 @@ namespace Prototyp.Elements
                     modProp.Position = module.Position;
                     modProp.Size = module.Size;
                     modProp.XML = System.IO.File.ReadAllText(module.PathXML);
-                    
+
                     // Eigentlich müssten auch noch die Settings aller Controls in dem Modul gespeichert werden... :-(
 
                     IntModuleNodeProperties.Add(modProp);
@@ -246,67 +246,126 @@ namespace Prototyp.Elements
 
                 connProp.InputID = conn.Input.GetID();
                 connProp.OutputID = conn.Output.GetID();
-                // Auch noch speichern, welche Ports an Input und Output gemeint sind. Wie? Ggf. IDs vergeben?
 
                 // Find the attached input node (*TO* which this connection feeds).
-                foreach (NodeNetwork.ViewModels.NodeViewModel node in network.Nodes.Items)
+                //foreach (NodeNetwork.ViewModels.NodeViewModel node in network.Nodes.Items)
                 {
                     if (conn.Input.Parent is Node_Module module)
                     {
+                        int i = 0;
+
                         // Find the corresponding entry in the modules list.
-                        for (int i = 0; i < IntModuleNodeProperties.Count; i++)
+                        for (i = 0; i < IntModuleNodeProperties.Count; i++)
                         {
-                            if (IntModuleNodeProperties[i].Position == node.Position & IntModuleNodeProperties[i].Size == node.Size)
+                            //if (IntModuleNodeProperties[i].Position == node.Position & IntModuleNodeProperties[i].Size == node.Size)
+                            if (IntModuleNodeProperties[i].Position == conn.Input.Parent.Position & IntModuleNodeProperties[i].Size == conn.Input.Parent.Size)
                             {
                                 connProp.InputType = ConnectionType.Module;
                                 connProp.InputIndex = i;
                                 break;
                             }
                         }
+
+                        // Find the attached port.
+                        i = 0;
+                        foreach (NodeNetwork.ViewModels.NodeInputViewModel p in module.VisibleInputs.Items)
+                        {
+                            if (p.Port == conn.Input.Port)
+                            {
+                                connProp.InputPort = i;
+                                break;
+                            }
+                            i++;
+                        }
                     }
                     // else if (...?) Input can't be an importer, as these only have outputs. Maybe something for the future.
                 }
 
                 // Find the attached output node (*FROM* which this connection feeds).
-                foreach (NodeNetwork.ViewModels.NodeViewModel node in network.Nodes.Items)
+                //foreach (NodeNetwork.ViewModels.NodeViewModel node in network.Nodes.Items)
                 {
                     if (conn.Output.Parent is Node_Module module)
                     {
+                        int i = 0;
+
                         // Find the corresponding entry in the modules list.
-                        for (int i = 0; i < IntModuleNodeProperties.Count; i++)
+                        for (i = 0; i < IntModuleNodeProperties.Count; i++)
                         {
-                            if (IntModuleNodeProperties[i].Position == node.Position & IntModuleNodeProperties[i].Size == node.Size)
+                            //if (IntModuleNodeProperties[i].Position == node.Position & IntModuleNodeProperties[i].Size == node.Size)
+                            if (IntModuleNodeProperties[i].Position == conn.Output.Parent.Position & IntModuleNodeProperties[i].Size == conn.Output.Parent.Size)
                             {
-                                connProp.InputType = ConnectionType.Module;
+                                connProp.OutputType = ConnectionType.Module;
                                 connProp.OutputIndex = i;
                                 break;
                             }
+                        }
+
+                        // Find the attached port.
+                        i = 0;
+                        foreach (NodeNetwork.ViewModels.NodeOutputViewModel p in module.VisibleOutputs.Items)
+                        {
+                            if (p.Port == conn.Output.Port)
+                            {
+                                connProp.OutputPort = i;
+                                break;
+                            }
+                            i++;
                         }
                     }
                     else if (conn.Output.Parent is VectorImport_Module vecImp)
                     {
+                        int i = 0;
+
                         // Find the corresponding entry in the vector imports list.
-                        for (int i = 0; i < IntVecImportNodeProperties.Count; i++)
+                        for (i = 0; i < IntVecImportNodeProperties.Count; i++)
                         {
-                            if (IntVecImportNodeProperties[i].Position == node.Position & IntVecImportNodeProperties[i].Size == node.Size)
+                            //if (IntVecImportNodeProperties[i].Position == node.Position & IntVecImportNodeProperties[i].Size == node.Size)
+                            if (IntVecImportNodeProperties[i].Position == conn.Output.Parent.Position & IntVecImportNodeProperties[i].Size == conn.Output.Parent.Size)
                             {
-                                connProp.InputType = ConnectionType.Vector;
+                                connProp.OutputType = ConnectionType.Vector;
                                 connProp.OutputIndex = i;
                                 break;
                             }
                         }
+
+                        // Find the attached port.
+                        i = 0;
+                        foreach (NodeNetwork.ViewModels.NodeOutputViewModel p in vecImp.VisibleOutputs.Items)
+                        {
+                            if (p.Port == conn.Output.Port)
+                            {
+                                connProp.OutputPort = i;
+                                break;
+                            }
+                            i++;
+                        }
                     }
                     else if (conn.Output.Parent is RasterImport_Module rasImp)
                     {
+                        int i = 0;
+
                         // Find the corresponding entry in the vector imports list.
-                        for (int i = 0; i < IntRasImportNodeProperties.Count; i++)
+                        for (i = 0; i < IntRasImportNodeProperties.Count; i++)
                         {
-                            if (IntRasImportNodeProperties[i].Position == node.Position & IntRasImportNodeProperties[i].Size == node.Size)
+                            //if (IntRasImportNodeProperties[i].Position == node.Position & IntRasImportNodeProperties[i].Size == node.Size)
+                            if (IntRasImportNodeProperties[i].Position == conn.Output.Parent.Position & IntRasImportNodeProperties[i].Size == conn.Output.Parent.Size)
                             {
-                                connProp.InputType = ConnectionType.Raster;
+                                connProp.OutputType = ConnectionType.Raster;
                                 connProp.OutputIndex = i;
                                 break;
                             }
+                        }
+
+                        // Find the attached port.
+                        i = 0;
+                        foreach (NodeNetwork.ViewModels.NodeOutputViewModel p in rasImp.VisibleOutputs.Items)
+                        {
+                            if (p.Port == conn.Output.Port)
+                            {
+                                connProp.OutputPort = i;
+                                break;
+                            }
+                            i++;
                         }
                     }
                 }
