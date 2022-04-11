@@ -389,6 +389,7 @@ namespace Prototyp
 
                 Node_Module nodeModule = new Node_Module(ComboItems[Index].BinaryPath + ".xml", grpcConnection, url, moduleProcess);
                 network.Nodes.Add(nodeModule);
+                
             }
             catch
             {
@@ -564,6 +565,7 @@ namespace Prototyp
                     nc.InputNode = (Node_Module)conn.Input.Parent;
                     nc.InputChannel = conn.Input.GetID();
 
+
                     modules.Add(nc);
                     //MessageBox.Show(nc.OutputNode + "_" + nc.OutputChannel + " -> " + nc.InputNode + "_" + nc.InputChannel);
                 }
@@ -682,17 +684,21 @@ namespace Prototyp
             {
                 case NodeProgress.Waiting:
                     System.Diagnostics.Trace.WriteLine("Node " + report.node.Url + " waiting for input.");
+                    report.node.ChangeStatus(3);
                     break;
                 case NodeProgress.Marked:
+                    report.node.ChangeStatus(4);
                     break;
                 case NodeProgress.Processing:
                     System.Diagnostics.Trace.WriteLine("Node " + report.node.Url + " progress: " + report.progress);
+                    report.node.ChangeStatus(5);
                     break;
                 case NodeProgress.Finished:
                     System.Diagnostics.Trace.WriteLine("Node " + report.node.Url + " finished!");
-                    
+                    report.node.ChangeStatus(1);
                     break;
                 case NodeProgress.Interrupted:
+                    report.node.ChangeStatus(2);
                     break;
                 default:
                     break;
@@ -1001,6 +1007,17 @@ namespace Prototyp
 
                 Prototyp.Elements.NetworkLoadAndSave save = new Prototyp.Elements.NetworkLoadAndSave(network, vectorData, rasterData, saveFileDialog.FileName, includeData);
                 Cursor = System.Windows.Input.Cursors.Arrow;
+            }
+        }
+
+        private void RedoButton_Click(object sender, RoutedEventArgs e)
+        {
+            
+            foreach (Node_Module nodeTest in network.Nodes.Items)
+            {
+
+                nodeTest.ChangeStatus(1);
+                
             }
         }
     }
