@@ -17,7 +17,7 @@ namespace Prototyp.Modules
     {
         static readonly System.Runtime.CompilerServices.ConditionalWeakTable<NodeOutputViewModel, IntObject> IDs = new System.Runtime.CompilerServices.ConditionalWeakTable<NodeOutputViewModel, IntObject>();
         static readonly System.Runtime.CompilerServices.ConditionalWeakTable<NodeOutputViewModel, DoubleObject> DataIDs = new System.Runtime.CompilerServices.ConditionalWeakTable<NodeOutputViewModel, DoubleObject>();
-        public static int GetID(this NodeOutputViewModel ID) { return IDs.GetOrCreateValue(ID).iValue; }
+      public static int GetID(this NodeOutputViewModel ID) { return IDs.GetOrCreateValue(ID).iValue; }
         public static void SetID(this NodeOutputViewModel ID, int newID) { IDs.GetOrCreateValue(ID).iValue = newID; }
         public static double GetDataID(this NodeOutputViewModel DataID) { return DataIDs.GetOrCreateValue(DataID).dValue; }
         public static void SetDataID(this NodeOutputViewModel DataID, double newDataID) { DataIDs.GetOrCreateValue(DataID).dValue = newDataID; }
@@ -47,6 +47,8 @@ namespace Prototyp.Modules
 
     public class Node_Module : NodeViewModel
     {
+
+        public event EventHandler ProcessStatusChanged;
         public Modules.ViewModels.FloatSliderViewModel sliderEditor { get; set; }
         public Modules.ViewModels.OutputNameViewModel outNameEditor { get; set; }
         public Modules.ViewModels.DropDownMenuViewModel dropDownEditor { get; set; }
@@ -61,6 +63,13 @@ namespace Prototyp.Modules
         private GrpcClient.ControlConnector.ControlConnectorClient IntGrpcConnection;
         private System.Diagnostics.Process IntProcess;
         private string IntUrl;
+        public int Status;
+
+        public void ChangeStatus( int statusNumber)
+        {
+            Status = statusNumber;
+            ProcessStatusChanged?.Invoke(Status, EventArgs.Empty);
+        }
 
         // Getters and setters -------------------------------------------------------------
 
@@ -107,6 +116,8 @@ namespace Prototyp.Modules
             IntUrl = url;
             IntProcess = process;            
             IntGrpcConnection = grpcConnection;
+            
+            this.Status =0;
 
             ParseXML(newModule, true);
         }
@@ -119,6 +130,7 @@ namespace Prototyp.Modules
             IntUrl = url;
             IntProcess = process;
             IntGrpcConnection = grpcConnection;
+            this.Status = 0;
 
             ParseXML(XML, true);
         }

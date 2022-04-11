@@ -67,7 +67,7 @@
                             <Button x:Name="OpenFileButton" Content="folder-open" Background="#FF212225" FontFamily="{StaticResource FontAwesomeRegular}" VerticalAlignment="Top" DockPanel.Dock="Left" Width="35" Height="35" FontSize="16"/>
                             <Button x:Name="SaveButton" Content="save" Background="#FF212225" FontFamily="{StaticResource FontAwesomeRegular}" VerticalAlignment="Top" DockPanel.Dock="Left" Width="35" Height="35" FontSize="16"/>
                             <Button x:Name="UndoButton" Content="undo" Background="#FF212225" FontFamily="{StaticResource FontAwesomeSolid}" VerticalAlignment="Top" DockPanel.Dock="Left" Width="35" Height="35" FontSize="16"/>
-                            <Button x:Name="RedoButton" Content="redo" Background="#FF212225" FontFamily="{StaticResource FontAwesomeSolid}" VerticalAlignment="Top" DockPanel.Dock="Left" Width="35" Height="35" FontSize="16"/>
+                            <Button x:Name="RedoButton" Content="redo" Background="#FF212225" FontFamily="{StaticResource FontAwesomeSolid}" VerticalAlignment="Top" DockPanel.Dock="Left" Width="35" Height="35" FontSize="16" Click="RedoButton_Click"/>
                         </DockPanel>
                     </Border>
                     <Border BorderBrush="#FF212225" BorderThickness="3" CornerRadius="2" DockPanel.Dock="Top" Margin="2">
