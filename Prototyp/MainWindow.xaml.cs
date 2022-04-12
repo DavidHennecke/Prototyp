@@ -4,6 +4,7 @@ using NodeNetwork.ViewModels;
 using Prototyp.Elements;
 using Prototyp.Modules;
 using System;
+using System.Configuration;
 using System.IO;
 using System.Linq;
 using System.Windows;
@@ -108,7 +109,7 @@ namespace Prototyp
             InitializeComponent();
 
             //Load Config-File
-            var appSettings = System.Configuration.ConfigurationManager.AppSettings;
+            var appSettings = ConfigurationManager.AppSettings;
             // Startup NetworkView.
             AppWindow = this;
             networkView.ViewModel = network;
@@ -849,6 +850,8 @@ namespace Prototyp
                 buttonContextmenu.Items.Add(removeBtn);
                 ModuleBtn.ContextMenu = buttonContextmenu;
                 dockPanel.Children.Add(ModuleBtn);
+                var config = ConfigurationManager.AppSettings;
+                //config.Add()
             }
         }
 
@@ -897,6 +900,11 @@ namespace Prototyp
             }
 
             ToolsComboBox.SelectedIndex = 0;
+        }
+
+        private void Window_Closed(object sender, EventArgs e)
+        {
+
         }
     }
 }
