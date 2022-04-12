@@ -107,6 +107,8 @@ namespace Prototyp
             // Init WPF.
             InitializeComponent();
 
+            //Load Config-File
+            var appSettings = System.Configuration.ConfigurationManager.AppSettings;
             // Startup NetworkView.
             AppWindow = this;
             networkView.ViewModel = network;
@@ -132,6 +134,7 @@ namespace Prototyp
             string XMLName;
             VorteXML ThisXML;
             System.Collections.Generic.List<ComboItem> LocalList = new System.Collections.Generic.List<ComboItem>();
+
 
             foreach (string Dir in SubDirs)
             {
@@ -377,42 +380,7 @@ namespace Prototyp
             if (Index <= 0) return;
             if (Typing) return;
 
-            //Find lowest available port
-            int port = Node_Module.GetNextPort();
-
-            GrpcClient.ControlConnector.ControlConnectorClient grpcConnection;
-
-            System.Diagnostics.Process moduleProcess = new System.Diagnostics.Process();
-            
-            System.Diagnostics.ProcessStartInfo moduleProcessInfo = new System.Diagnostics.ProcessStartInfo(ComboItems[Index].BinaryPath + ".exe", port.ToString());
-            //moduleProcessInfo.CreateNoWindow = true; //Ja, dies macht das Server-Window wirklich unsichtbar. Sichtbarkeit nur für Debugging-Zwecke.
-            moduleProcessInfo.UseShellExecute = false; //'UseShellExecute = true' would be available only on the Windows platform.
-            moduleProcess.StartInfo = moduleProcessInfo;
-            try
-            {
-                moduleProcess.Start();
-
-                // Establish GRPC connection
-                // TODO: nicht nur localhost
-                string url = "https://localhost:" + port.ToString();
-                Grpc.Net.Client.GrpcChannel channel = Grpc.Net.Client.GrpcChannel.ForAddress(url);
-                grpcConnection = new GrpcClient.ControlConnector.ControlConnectorClient(channel);
-
-                Node_Module nodeModule = new Node_Module(ComboItems[Index].BinaryPath + ".xml", grpcConnection, url, moduleProcess);
-                network.Nodes.Add(nodeModule);
-                
-            }
-            catch
-            {
-                //if (!System.IO.File.Exists(ComboItems[Index].BinaryPath + ".exe"))
-                //{
-                //    throw new System.Exception("Could not start binary: No executable file present.");
-                //}
-                //else
-                //{
-                //    throw new System.Exception("Could not start binary: Reason unknown.");
-                //}
-            }
+            importModule(ComboItems[Index]);
 
             ToolsComboBox.SelectedIndex = 0;
         }
@@ -854,6 +822,81 @@ namespace Prototyp
             {
                 nodeTest.ChangeStatus(1);
             }
+        }
+
+        private void OpenModuleList(object sender, RoutedEventArgs e)
+        {
+            System.Windows.Controls.MenuItem menuItem = sender as System.Windows.Controls.MenuItem;
+            System.Windows.Controls.ContextMenu contextMenu = menuItem.Parent as System.Windows.Controls.ContextMenu;
+            System.Windows.Controls.DockPanel dockPanel = contextMenu.PlacementTarget as System.Windows.Controls.DockPanel;
+            ModuleListButtonSelection chooseModuleWindow = new ModuleListButtonSelection();
+            chooseModuleWindow.Owner = this;
+            chooseModuleWindow.ShowDialog();
+            if (chooseModuleWindow.selectedModule.ToolName != null)
+            {
+                System.Windows.Controls.Button ModuleBtn = new System.Windows.Controls.Button();
+                ModuleBtn.Content = new System.Windows.Controls.Image
+                {
+                    Source = new System.Windows.Media.Imaging.BitmapImage(new Uri(chooseModuleWindow.selectedModule.IconPath)),
+                    VerticalAlignment = VerticalAlignment.Center
+                };
+                ModuleBtn.Background = (System.Windows.Media.SolidColorBrush)new System.Windows.Media.BrushConverter().ConvertFromString("#FF212225");
+                ModuleBtn.Click += new RoutedEventHandler((sender, e) => importModule(chooseModuleWindow.selectedModule));
+                System.Windows.Controls.ContextMenu buttonContextmenu = new System.Windows.Controls.ContextMenu();
+                System.Windows.Controls.MenuItem removeBtn = new System.Windows.Controls.MenuItem();
+                removeBtn.Header = "Remove";
+                removeBtn.Click += new RoutedEventHandler((sender, e) => removeBtn_Click(ModuleBtn, dockPanel));
+                buttonContextmenu.Items.Add(removeBtn);
+                ModuleBtn.ContextMenu = buttonContextmenu;
+                dockPanel.Children.Add(ModuleBtn);
+            }
+        }
+
+        private void removeBtn_Click(System.Windows.Controls.Button ModuleBtn, System.Windows.Controls.DockPanel dockPanel)
+        {
+            dockPanel.Children.Remove(ModuleBtn);
+        }
+
+        private void importModule(ComboItem module)
+        {
+            //Find lowest available port
+            int port = Node_Module.GetNextPort();
+
+            GrpcClient.ControlConnector.ControlConnectorClient grpcConnection;
+
+            System.Diagnostics.Process moduleProcess = new System.Diagnostics.Process();
+
+            System.Diagnostics.ProcessStartInfo moduleProcessInfo = new System.Diagnostics.ProcessStartInfo(module.BinaryPath + ".exe", port.ToString());
+            //moduleProcessInfo.CreateNoWindow = true; //Ja, dies macht das Server-Window wirklich unsichtbar. Sichtbarkeit nur für Debugging-Zwecke.
+            moduleProcessInfo.UseShellExecute = false; //'UseShellExecute = true' would be available only on the Windows platform.
+            moduleProcess.StartInfo = moduleProcessInfo;
+            try
+            {
+                moduleProcess.Start();
+
+                // Establish GRPC connection
+                // TODO: nicht nur localhost
+                string url = "https://localhost:" + port.ToString();
+                Grpc.Net.Client.GrpcChannel channel = Grpc.Net.Client.GrpcChannel.ForAddress(url);
+                grpcConnection = new GrpcClient.ControlConnector.ControlConnectorClient(channel);
+
+                Node_Module nodeModule = new Node_Module(module.BinaryPath + ".xml", grpcConnection, url, moduleProcess);
+                network.Nodes.Add(nodeModule);
+
+            }
+            catch
+            {
+                //if (!System.IO.File.Exists(ComboItems[Index].BinaryPath + ".exe"))
+                //{
+                //    throw new System.Exception("Could not start binary: No executable file present.");
+                //}
+                //else
+                //{
+                //    throw new System.Exception("Could not start binary: Reason unknown.");
+                //}
+            }
+
+            ToolsComboBox.SelectedIndex = 0;
         }
     }
 }

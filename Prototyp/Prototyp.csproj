@@ -56,6 +56,9 @@
   </ItemGroup>
 
   <ItemGroup>
+    <Page Update="ModuleListButtonSelection.xaml">
+      <XamlRuntime>$(DefaultXamlRuntime)</XamlRuntime>
+    </Page>
     <Page Update="Modules\Views\DropDownMenuView.xaml">
       <XamlRuntime>$(DefaultXamlRuntime)</XamlRuntime>
       <SubType>Designer</SubType>
