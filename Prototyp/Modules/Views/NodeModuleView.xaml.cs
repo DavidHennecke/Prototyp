@@ -57,23 +57,23 @@ namespace Prototyp.Modules.Views
             }
             else if (this.ViewModel.Status == 1)
             {
-                this.NodeView.Background = System.Windows.Media.Brushes.Green;
+                this.NodeView.Background = (System.Windows.Media.SolidColorBrush)new System.Windows.Media.BrushConverter().ConvertFromString("#3b794e");
             }
             else if (this.ViewModel.Status == 2)
             {
-                this.NodeView.Background = System.Windows.Media.Brushes.Red;
+                this.NodeView.Background = (System.Windows.Media.SolidColorBrush)new System.Windows.Media.BrushConverter().ConvertFromString("#793b3b");
             }
             else if (this.ViewModel.Status == 3)
             {
-                this.NodeView.Background = System.Windows.Media.Brushes.Green;
+                this.NodeView.Background = (System.Windows.Media.SolidColorBrush)new System.Windows.Media.BrushConverter().ConvertFromString("#e6f0ef");
             }
             else if (this.ViewModel.Status == 4)
             {
-                this.NodeView.Background = System.Windows.Media.Brushes.Green;
+                this.NodeView.Background = (System.Windows.Media.SolidColorBrush)new System.Windows.Media.BrushConverter().ConvertFromString("#e5a31f");
             }
             else if (this.ViewModel.Status == 5)
             {
-                this.NodeView.Background = System.Windows.Media.Brushes.Green;
+                this.NodeView.Background = (System.Windows.Media.SolidColorBrush)new System.Windows.Media.BrushConverter().ConvertFromString("#345282");
             }
         }
     }

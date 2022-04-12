@@ -28,7 +28,7 @@ namespace Prototyp.Modules
 
         static RasterImport_Module()
         {
-            Splat.Locator.CurrentMutable.Register(() => new NodeView(), typeof(IViewFor<RasterImport_Module>));
+            Splat.Locator.CurrentMutable.Register(() => new Views.RasterImportModuleView(), typeof(IViewFor<RasterImport_Module>));
         }
     }
 }

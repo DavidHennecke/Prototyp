@@ -28,7 +28,7 @@ namespace Prototyp.Modules
 
         static VectorImport_Module()
         {
-            Splat.Locator.CurrentMutable.Register(() => new NodeView(), typeof(IViewFor<VectorImport_Module>));
+            Splat.Locator.CurrentMutable.Register(() => new Views.VectorImportModuleView(), typeof(IViewFor<VectorImport_Module>));
         }
     }
 }
