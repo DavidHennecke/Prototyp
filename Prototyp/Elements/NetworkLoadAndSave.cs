@@ -429,20 +429,32 @@ namespace Prototyp.Elements
             // Next, add the vector data/list entry/node.
             foreach (VecImportNodeProperties v in VecImportNodeProps)
             {
-                if (v.RawData == null)
+                // Is data already present? If so, do not load again.
+                bool AlreadyPresent = false;
+                foreach (VectorData vec in vectorData)
                 {
-                    // If data is not embedded and the file cannot be found at the specified location, we have a problem.
-                    // TODO: Ask the user to specify location?
-                    if (!System.IO.File.Exists(v.FileName)) throw new Exception("File not found. Invalid path?");
-                    vectorData.Add(new VectorData(v.FileName));
+                    if (vec.Name == v.Name) // Maybe 'Name' is not the best criterion for uniqueness, but it's better than nothing. TODO.
+                    {
+                        AlreadyPresent = true;
+                        break;
+                    }
                 }
-                else
+                if (!AlreadyPresent)
                 {
-                    vectorData.Add(new VectorData(v.RawData));
+                    if (v.RawData == null)
+                    {
+                        // If data is not embedded and the file cannot be found at the specified location, we have a problem.
+                        // TODO: Ask the user to specify location?
+                        if (!System.IO.File.Exists(v.FileName)) throw new Exception("File not found. Invalid path?");
+                        vectorData.Add(new VectorData(v.FileName));
+                    }
+                    else
+                    {
+                        vectorData.Add(new VectorData(v.RawData));
+                    }
+                    MainWindowHelpers mainWindowHelpers = new MainWindowHelpers();
+                    mainWindowHelpers.AddTreeViewChild(vectorData.Last());
                 }
-                // TODO: Abgleichen der ID. Falls schon vorhanden, nicht nochmal hinzufügen.
-                MainWindowHelpers mainWindowHelpers = new MainWindowHelpers();
-                mainWindowHelpers.AddTreeViewChild(vectorData.Last());
 
                 VectorImport_Module importNode = new VectorImport_Module(v.Name, vectorData.Last().FeatureCollection[0].Geometry.GeometryType, vectorData.Last().ID);
                 importNode.Position = v.Position;
@@ -452,20 +464,32 @@ namespace Prototyp.Elements
             // Then, add the raster data/list entry/node.
             foreach (RasImportNodeProperties r in RasImportNodeProps)
             {
-                if (r.RawData == null)
+                // Is data already present? If so, do not load again.
+                bool AlreadyPresent = false;
+                foreach (RasterData ras in rasterData)
                 {
-                    // If data is not embedded and the file cannot be found at the specified location, we have a problem.
-                    // TODO: Ask the user to specify location?
-                    if (!System.IO.File.Exists(r.FileName)) throw new Exception("File not found. Invalid path?");
-                    rasterData.Add(new RasterData(r.FileName));
+                    if (ras.Name == r.Name) // Maybe 'Name' is not the best criterion for uniqueness, but it's better than nothing. TODO.
+                    {
+                        AlreadyPresent = true;
+                        break;
+                    }
                 }
-                else
+                if (!AlreadyPresent)
                 {
-                    rasterData.Add(new RasterData(r.RawData));
+                    if (r.RawData == null)
+                    {
+                        // If data is not embedded and the file cannot be found at the specified location, we have a problem.
+                        // TODO: Ask the user to specify location?
+                        if (!System.IO.File.Exists(r.FileName)) throw new Exception("File not found. Invalid path?");
+                        rasterData.Add(new RasterData(r.FileName));
+                    }
+                    else
+                    {
+                        rasterData.Add(new RasterData(r.RawData));
+                    }
+                    MainWindowHelpers mainWindowHelpers = new MainWindowHelpers();
+                    mainWindowHelpers.AddTreeViewChild(rasterData.Last());
                 }
-                // TODO: Abgleichen der ID. Falls schon vorhanden, nicht nochmal hinzufügen.
-                MainWindowHelpers mainWindowHelpers = new MainWindowHelpers();
-                mainWindowHelpers.AddTreeViewChild(rasterData.Last());
 
                 RasterImport_Module importNode = new RasterImport_Module(r.Name, rasterData.Last().FileType, rasterData.Last().ID);
                 importNode.Position = r.Position;
