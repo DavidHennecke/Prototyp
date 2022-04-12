@@ -55,12 +55,14 @@
         </Grid>
         <Grid x:Name="ToolBarMain" Grid.Row="1" Margin="0,0,0,5">
             <Grid.ColumnDefinitions>
-                <ColumnDefinition Width="200"/>
+                <ColumnDefinition Width="Auto"/>
+                <ColumnDefinition Width="*"/>
+                <ColumnDefinition Width="*"/>
                 <ColumnDefinition Width="*"/>
 
             </Grid.ColumnDefinitions>
-            <Border BorderBrush="#35363A" Grid.Column="0" BorderThickness="3" Margin="0,5,5,5" CornerRadius="2" DockPanel.Dock="Top">
-                <DockPanel x:Name="ToolBar0" Background="#35363A" LastChildFill="True">
+            <Border BorderBrush="#35363A" Grid.Column="0" BorderThickness="3" Margin="5,5,5,0" CornerRadius="2" DockPanel.Dock="Top">
+                <DockPanel x:Name="ToolBar0" Background="#35363A" LastChildFill="True" MinWidth="195">
                     <Border BorderBrush="#FF212225" BorderThickness="3" CornerRadius="2" DockPanel.Dock="Top" Margin="2">
                         <DockPanel  Background="#FF212225" LastChildFill="False" >
                             <Button x:Name="NewFileButton" Content="file" Background="#FF212225" FontFamily="{StaticResource FontAwesomeRegular}" VerticalAlignment="Top" DockPanel.Dock="Left" Width="35" Height="35" FontSize="16"/>
@@ -70,7 +72,7 @@
                             <Button x:Name="RedoButton" Content="redo" Background="#FF212225" FontFamily="{StaticResource FontAwesomeSolid}" VerticalAlignment="Top" DockPanel.Dock="Left" Width="35" Height="35" FontSize="16" Click="RedoButton_Click"/>
                         </DockPanel>
                     </Border>
-                    <Border BorderBrush="#FF212225" BorderThickness="3" CornerRadius="2" DockPanel.Dock="Top" Margin="2">
+                    <Border BorderBrush="#FF212225" BorderThickness="3px" CornerRadius="2" DockPanel.Dock="Top" Margin="2">
                         <DockPanel  Background="#FF212225" LastChildFill="True" >
                             <Button x:Name="PlayButton" Content="play" Background="#FF212225" FontFamily="{StaticResource FontAwesomeSolid}" VerticalAlignment="Center"  DockPanel.Dock="Left" Width="50" Height="50" FontSize="30" Foreground="#FF009107" Click="PlayButton_Click"/>
                             <Button x:Name="StopButton" Content="stop" Background="#FF212225" FontFamily="{StaticResource FontAwesomeSolid}" VerticalAlignment="Center" DockPanel.Dock="Left" Width="50" Height="50" FontSize="30" Foreground="#FFAC0000" Click="StopButton_Click"/>
@@ -92,8 +94,101 @@
                     </Border>
                 </DockPanel>
             </Border>
+            <Border BorderBrush="#35363A" Grid.Column="1" BorderThickness="3" Margin="5,5,5,0" CornerRadius="2" DockPanel.Dock="Top">
+                <DockPanel Background="#35363A" LastChildFill="True">
+                    <Border BorderBrush="#FF212225" BorderThickness="3" CornerRadius="2" DockPanel.Dock="Top" Margin="2">
+                        <DockPanel x:Name="ToolBar1"  Background="#FF212225" LastChildFill="False" >
+                            <Button x:Name="Tool1_0" Content="upload" Grid.Column="0" Background="#FF212225" FontFamily="{StaticResource FontAwesomeSolid}" VerticalAlignment="Center" HorizontalAlignment="Center" Width="35" Height="35" FontSize="16" Foreground="#FFD8A14E" Click="ImportButton_Click"/>
+                            <Button x:Name="Tool1_1" Content="download" Background="#FF212225" Grid.Column="1" FontFamily="{StaticResource FontAwesomeSolid}" VerticalAlignment="Center" HorizontalAlignment="Center"  Width="35" Height="35" FontSize="16" Foreground="#FFD8A14E"/>
+                            <Button x:Name="Tool1_2" Content="database" Background="#FF212225" Grid.Column="2" FontFamily="{StaticResource FontAwesomeSolid}" VerticalAlignment="Top" HorizontalAlignment="Center"  Width="35" Height="35" FontSize="16" Click="ConnectionsButton_Click" Margin="0,1,0,0"/>
+                            <Button x:Name="Tool1_3" Content="toolbox" Background="#FF252221" Grid.Column="3" FontFamily="{StaticResource FontAwesomeSolid}" VerticalAlignment="Center" HorizontalAlignment="Center"  Width="35" Height="35" FontSize="16" Foreground="#FFCD4715" Click="ToolboxButton_Click"/>
+                            <Button x:Name="Tool1_4" Content="toolbox" Background="#FF252221" Grid.Column="4" FontFamily="{StaticResource FontAwesomeSolid}" VerticalAlignment="Center" HorizontalAlignment="Center"  Width="35" Height="35" FontSize="16" Foreground="#FFCD4715" Click="ToolboxButton_Click"/>
+                        </DockPanel>
+                    </Border>
+                    <Border BorderBrush="#FF212225" BorderThickness="3" CornerRadius="2" DockPanel.Dock="Top" Margin="2">
+                        <DockPanel x:Name="ToolBar2" Background="#FF212225" LastChildFill="False" >
+                            <Grid DockPanel.Dock="Left">
+                                <Grid.RowDefinitions>
+                                    <RowDefinition Height="*"/>
+                                    <RowDefinition Height="*"/>
+                                </Grid.RowDefinitions>
+                                    <DockPanel Grid.Row="0">
+                                        <Button x:Name="Tool2_0" Content="upload" Background="#FF212225" FontFamily="{StaticResource FontAwesomeSolid}" VerticalAlignment="Center" HorizontalAlignment="Center" Width="35" Height="35" FontSize="16" Foreground="#FFD8A14E" Click="ImportButton_Click"/>
+                                        <Button x:Name="Tool2_1" Content="download" Background="#FF212225" FontFamily="{StaticResource FontAwesomeSolid}" VerticalAlignment="Center" HorizontalAlignment="Center"  Width="35" Height="35" FontSize="16" Foreground="#FFD8A14E"/>
+                                </DockPanel>
+                                <DockPanel Grid.Row="1">
+                                        <Button x:Name="Tool2_3" Content="database" Background="#FF212225" FontFamily="{StaticResource FontAwesomeSolid}" VerticalAlignment="Top" HorizontalAlignment="Center"  Width="35" Height="35" FontSize="16" Click="ConnectionsButton_Click" Margin="0,1,0,0"/>
+                                        <Button x:Name="Tool2_4" Content="toolbox" Background="#FF252221"  FontFamily="{StaticResource FontAwesomeSolid}" VerticalAlignment="Center" HorizontalAlignment="Center" Width="35" Height="35" FontSize="16" Foreground="#FFCD4715" Click="ToolboxButton_Click"/>
+                                    </DockPanel>
+                                </Grid>
+                        </DockPanel>
+                    </Border>
+                </DockPanel>
+            </Border>
 
-            
+            <Border BorderBrush="#35363A" Grid.Column="2" BorderThickness="3" Margin="5,5,5,0" CornerRadius="2" DockPanel.Dock="Top">
+                <DockPanel Background="#35363A" LastChildFill="True">
+                    <Border BorderBrush="#FF212225" BorderThickness="3" CornerRadius="2" DockPanel.Dock="Top" Margin="2">
+                        <DockPanel x:Name="ToolBar3"  Background="#FF212225" LastChildFill="False" >
+                            <Button x:Name="Tool3_0" Content="upload" Grid.Column="0" Background="#FF212225" FontFamily="{StaticResource FontAwesomeSolid}" VerticalAlignment="Center" HorizontalAlignment="Center" Width="35" Height="35" FontSize="16" Foreground="#FFD8A14E" Click="ImportButton_Click"/>
+                            <Button x:Name="Tool3_1" Content="download" Background="#FF212225" Grid.Column="1" FontFamily="{StaticResource FontAwesomeSolid}" VerticalAlignment="Center" HorizontalAlignment="Center"  Width="35" Height="35" FontSize="16" Foreground="#FFD8A14E"/>
+                            <Button x:Name="Tool3_2" Content="database" Background="#FF212225" Grid.Column="2" FontFamily="{StaticResource FontAwesomeSolid}" VerticalAlignment="Top" HorizontalAlignment="Center"  Width="35" Height="35" FontSize="16" Click="ConnectionsButton_Click" Margin="0,1,0,0"/>
+                            <Button x:Name="Tool3_3" Content="toolbox" Background="#FF252221" Grid.Column="3" FontFamily="{StaticResource FontAwesomeSolid}" VerticalAlignment="Center" HorizontalAlignment="Center"  Width="35" Height="35" FontSize="16" Foreground="#FFCD4715" Click="ToolboxButton_Click"/>
+                            <Button x:Name="Tool3_4" Content="toolbox" Background="#FF252221" Grid.Column="4" FontFamily="{StaticResource FontAwesomeSolid}" VerticalAlignment="Center" HorizontalAlignment="Center"  Width="35" Height="35" FontSize="16" Foreground="#FFCD4715" Click="ToolboxButton_Click"/>
+                        </DockPanel>
+                    </Border>
+                    <Border BorderBrush="#FF212225" BorderThickness="3" CornerRadius="2" DockPanel.Dock="Top" Margin="2">
+                        <DockPanel x:Name="ToolBar4" Background="#FF212225" LastChildFill="False" >
+                            <Grid DockPanel.Dock="Left">
+                                <Grid.RowDefinitions>
+                                    <RowDefinition Height="*"/>
+                                    <RowDefinition Height="*"/>
+                                </Grid.RowDefinitions>
+                                <DockPanel Grid.Row="0">
+                                    <Button x:Name="Tool4_1" Content="upload" Background="#FF212225" FontFamily="{StaticResource FontAwesomeSolid}" VerticalAlignment="Center" HorizontalAlignment="Center" Width="35" Height="35" FontSize="16" Foreground="#FFD8A14E" Click="ImportButton_Click"/>
+                                    <Button x:Name="Tool4_2" Content="download" Background="#FF212225" FontFamily="{StaticResource FontAwesomeSolid}" VerticalAlignment="Center" HorizontalAlignment="Center"  Width="35" Height="35" FontSize="16" Foreground="#FFD8A14E"/>
+                                </DockPanel>
+                                <DockPanel Grid.Row="1">
+                                    <Button x:Name="Tool4_3" Content="database" Background="#FF212225" FontFamily="{StaticResource FontAwesomeSolid}" VerticalAlignment="Top" HorizontalAlignment="Center"  Width="35" Height="35" FontSize="16" Click="ConnectionsButton_Click" Margin="0,1,0,0"/>
+                                    <Button x:Name="Tool4_4" Content="toolbox" Background="#FF252221"  FontFamily="{StaticResource FontAwesomeSolid}" VerticalAlignment="Center" HorizontalAlignment="Center" Width="35" Height="35" FontSize="16" Foreground="#FFCD4715" Click="ToolboxButton_Click"/>
+                                </DockPanel>
+                            </Grid>
+                        </DockPanel>
+                    </Border>
+                </DockPanel>
+            </Border>
+
+            <Border BorderBrush="#35363A" Grid.Column="3" BorderThickness="3" Margin="5,5,5,0" CornerRadius="2" DockPanel.Dock="Top">
+                <DockPanel Background="#35363A" LastChildFill="True">
+                    <Border BorderBrush="#FF212225" BorderThickness="3" CornerRadius="2" DockPanel.Dock="Top" Margin="2">
+                        <DockPanel x:Name="ToolBar5"  Background="#FF212225" LastChildFill="False" >
+                            <Button x:Name="Tool5_0" Content="upload" Grid.Column="0" Background="#FF212225" FontFamily="{StaticResource FontAwesomeSolid}" VerticalAlignment="Center" HorizontalAlignment="Center" Width="35" Height="35" FontSize="16" Foreground="#FFD8A14E" Click="ImportButton_Click"/>
+                            <Button x:Name="Tool5_1" Content="download" Background="#FF212225" Grid.Column="1" FontFamily="{StaticResource FontAwesomeSolid}" VerticalAlignment="Center" HorizontalAlignment="Center"  Width="35" Height="35" FontSize="16" Foreground="#FFD8A14E"/>
+                            <Button x:Name="Tool5_2" Content="database" Background="#FF212225" Grid.Column="2" FontFamily="{StaticResource FontAwesomeSolid}" VerticalAlignment="Top" HorizontalAlignment="Center"  Width="35" Height="35" FontSize="16" Click="ConnectionsButton_Click" Margin="0,1,0,0"/>
+                            <Button x:Name="Tool5_3" Content="toolbox" Background="#FF252221" Grid.Column="3" FontFamily="{StaticResource FontAwesomeSolid}" VerticalAlignment="Center" HorizontalAlignment="Center"  Width="35" Height="35" FontSize="16" Foreground="#FFCD4715" Click="ToolboxButton_Click"/>
+                            <Button x:Name="Tool5_4" Content="toolbox" Background="#FF252221" Grid.Column="4" FontFamily="{StaticResource FontAwesomeSolid}" VerticalAlignment="Center" HorizontalAlignment="Center"  Width="35" Height="35" FontSize="16" Foreground="#FFCD4715" Click="ToolboxButton_Click"/>
+                        </DockPanel>
+                    </Border>
+                    <Border BorderBrush="#FF212225" BorderThickness="3" CornerRadius="2" DockPanel.Dock="Top" Margin="2">
+                        <DockPanel x:Name="ToolBar6" Background="#FF212225" LastChildFill="False" >
+                            <Grid DockPanel.Dock="Left">
+                                <Grid.RowDefinitions>
+                                    <RowDefinition Height="*"/>
+                                    <RowDefinition Height="*"/>
+                                </Grid.RowDefinitions>
+                                <DockPanel Grid.Row="0">
+                                    <Button x:Name="Tool6_0" Content="upload" Background="#FF212225" FontFamily="{StaticResource FontAwesomeSolid}" VerticalAlignment="Center" HorizontalAlignment="Center" Width="35" Height="35" FontSize="16" Foreground="#FFD8A14E" Click="ImportButton_Click"/>
+                                    <Button x:Name="Tool6_1" Content="download" Background="#FF212225" FontFamily="{StaticResource FontAwesomeSolid}" VerticalAlignment="Center" HorizontalAlignment="Center"  Width="35" Height="35" FontSize="16" Foreground="#FFD8A14E"/>
+                                </DockPanel>
+                                <DockPanel Grid.Row="1">
+                                    <Button x:Name="Tool6_2" Content="database" Background="#FF212225" FontFamily="{StaticResource FontAwesomeSolid}" VerticalAlignment="Top" HorizontalAlignment="Center"  Width="35" Height="35" FontSize="16" Click="ConnectionsButton_Click" Margin="0,1,0,0"/>
+                                    <Button x:Name="Tool6_3" Content="toolbox" Background="#FF252221"  FontFamily="{StaticResource FontAwesomeSolid}" VerticalAlignment="Center" HorizontalAlignment="Center" Width="35" Height="35" FontSize="16" Foreground="#FFCD4715" Click="ToolboxButton_Click"/>
+                                </DockPanel>
+                            </Grid>
+                        </DockPanel>
+                    </Border>
+                </DockPanel>
+            </Border>
         </Grid>
 
         <Grid Grid.Row="2">

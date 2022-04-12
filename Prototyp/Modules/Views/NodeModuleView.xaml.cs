@@ -37,13 +37,8 @@ namespace Prototyp.Modules.Views
 
             this.WhenActivated(d =>
             {
-                
-                
                 this.WhenAnyValue(v => v.ViewModel).BindTo(this, v => v.NodeView.ViewModel).DisposeWith(d);
                 this.ViewModel.ProcessStatusChanged += ViewModel_ProcessStatusChanged;
-
-                    
-
             });  
         }
 
