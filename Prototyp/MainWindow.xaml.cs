@@ -667,21 +667,21 @@ namespace Prototyp
             {
                 case NodeProgress.Waiting:
                     System.Diagnostics.Trace.WriteLine("Node " + report.node.Url + " waiting for input.");
-                    report.node.ChangeStatus(3);
+                    report.node.ChangeStatus(NodeProgress.Waiting);
                     break;
                 case NodeProgress.Marked:
-                    report.node.ChangeStatus(4);
+                    report.node.ChangeStatus(NodeProgress.Marked);
                     break;
                 case NodeProgress.Processing:
                     System.Diagnostics.Trace.WriteLine("Node " + report.node.Url + " progress: " + report.progress);
-                    report.node.ChangeStatus(5);
+                    report.node.ChangeStatus(NodeProgress.Processing);
                     break;
                 case NodeProgress.Finished:
                     System.Diagnostics.Trace.WriteLine("Node " + report.node.Url + " finished!");
-                    report.node.ChangeStatus(1);
+                    report.node.ChangeStatus(NodeProgress.Finished);
                     break;
                 case NodeProgress.Interrupted:
-                    report.node.ChangeStatus(2);
+                    report.node.ChangeStatus(NodeProgress.Interrupted);
                     break;
                 default:
                     break;
@@ -823,7 +823,7 @@ namespace Prototyp
         {            
             foreach (Node_Module nodeTest in network.Nodes.Items)
             {
-                nodeTest.ChangeStatus(1);
+                nodeTest.ChangeStatus(NodeProgress.Finished);
             }
         }
 
@@ -902,11 +902,6 @@ namespace Prototyp
             }
 
             ToolsComboBox.SelectedIndex = 0;
-        }
-
-        private void Window_Closed(object sender, EventArgs e)
-        {
-
         }
     }
 }
