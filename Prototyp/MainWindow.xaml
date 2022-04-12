@@ -33,7 +33,7 @@
             <Image Grid.Column="0" Height="25" Source="/Images/VortexIcon.ico" Margin="5,0,0,0"/>
             <Menu Grid.Column="1" Height="32" WindowChrome.IsHitTestVisibleInChrome="True">
                 <MenuItem Header="File" Height="32" FontSize="13" Background="Transparent">
-                    <MenuItem Header="New" FontSize="13"/>
+                    <MenuItem Header="New" FontSize="13" Click="NewClick"/>
                     <MenuItem Header="Open workflow..." FontSize="13" Click="OpenClick"/>
                     <MenuItem Header="Save workflow..." FontSize="13" Click="SaveClick"/>
                     <MenuItem Header="Exit" FontSize="13"/>

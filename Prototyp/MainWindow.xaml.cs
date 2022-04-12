@@ -715,8 +715,12 @@ namespace Prototyp
 
         private void ToolboxButton_Click(object sender, RoutedEventArgs e)
         {
+            bool DeleteData;
+
             foreach (NodeViewModel node in network.Nodes.Items)
             {
+                DeleteData = true;
+
                 if (node.IsSelected)
                 {
                     if (node is Node_Module module)
@@ -725,29 +729,65 @@ namespace Prototyp
                     }
                     else if (node is VectorImport_Module v)
                     {
-                        foreach (object t in TableOfContentsVector.Items)
+                        // First check whether there is another importer that also employs the same data source. If yes, data must not be deleted.
+                        foreach (NodeViewModel node2 in network.Nodes.Items)
                         {
-                            if (((Prototyp.Custom_Controls.VectorListViewItem)t).Uid == v.IntID.ToString())
+                            if (node2 is VectorImport_Module v2)
                             {
-                                // TODO: Erst beim Löschen der LETZTEN Node-Instanz dieser Daten die Daten auch wirklich entfernen.
-                                // Dazu: Erst die Nodes durchgehen und prüfen, ob jemand anderes auch noch diese Daten nutzt. Falls ja, Abbruch.
-                                RemoveVectorData(((Prototyp.Custom_Controls.VectorListViewItem)t).Uid);
-                                TableOfContentsVector.Items.Remove(t);
-                                break;
+                                if (v2 != v)
+                                {
+                                    if (v2.IntID == v.IntID)
+                                    {
+                                        // Found one. Don't delete data.
+                                        DeleteData = false;
+                                    }
+                                }
+                            }
+                        }
+
+                        if (DeleteData)
+                        {
+                            // Okay, now it's save to delete the data. Find enties and off you go.
+                            foreach (object t in TableOfContentsVector.Items)
+                            {
+                                if (((Prototyp.Custom_Controls.VectorListViewItem)t).Uid == v.IntID.ToString())
+                                {
+                                    RemoveVectorData(((Prototyp.Custom_Controls.VectorListViewItem)t).Uid);
+                                    TableOfContentsVector.Items.Remove(t);
+                                    break;
+                                }
                             }
                         }
                     }
                     else if (node is RasterImport_Module r)
                     {
-                        foreach (object t in TableOfContentsRaster.Items)
+                        // First check whether there is another importer that also employs the same data source. If yes, data must not be deleted.
+                        foreach (NodeViewModel node2 in network.Nodes.Items)
                         {
-                            if (((Prototyp.Custom_Controls.RasterListViewItem)t).Uid == r.IntID.ToString())
+                            if (node2 is RasterImport_Module r2)
                             {
-                                // TODO: Erst beim Löschen der LETZTEN Node-Instanz dieser Daten die Daten auch wirklich entfernen.
-                                // Dazu: Erst die Nodes durchgehen und prüfen, ob jemand anderes auch noch diese Daten nutzt. Falls ja, Abbruch.
-                                RemoveRasterData(((Prototyp.Custom_Controls.RasterListViewItem)t).Uid);
-                                TableOfContentsRaster.Items.Remove(t);
-                                break;
+                                if (r2 != r)
+                                {
+                                    if (r2.IntID == r.IntID)
+                                    {
+                                        // Found one. Don't delete data.
+                                        DeleteData = false;
+                                    }
+                                }
+                            }
+                        }
+
+                        if (DeleteData)
+                        {
+                            // Okay, now it's save to delete the data. Find enties and off you go.
+                            foreach (object t in TableOfContentsRaster.Items)
+                            {
+                                if (((Prototyp.Custom_Controls.RasterListViewItem)t).Uid == r.IntID.ToString())
+                                {
+                                    RemoveRasterData(((Prototyp.Custom_Controls.RasterListViewItem)t).Uid);
+                                    TableOfContentsRaster.Items.Remove(t);
+                                    break;
+                                }
                             }
                         }
                     }
@@ -787,6 +827,22 @@ namespace Prototyp
 
                 Cursor = System.Windows.Input.Cursors.Arrow;
             }
+        }
+
+        private void NewClick(object sender, RoutedEventArgs e)
+        {
+            // Note: Make sure to stop ongoing computations first.
+
+            if (network.Nodes.Count > 0)
+            {
+                if (MessageBox.Show("Are you sure? Current progress will be lost.", "Open a workflow?", MessageBoxButton.YesNo, MessageBoxImage.Question) == MessageBoxResult.No) return;
+            }
+
+            TerminateAllServers();
+
+            network = null;
+            network = new NodeNetwork.ViewModels.NetworkViewModel();
+            AppWindow.networkView.ViewModel = network;
         }
 
         private void SaveClick(object sender, RoutedEventArgs e)

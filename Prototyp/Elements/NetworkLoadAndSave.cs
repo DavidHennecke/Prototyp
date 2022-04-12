@@ -246,125 +246,113 @@ namespace Prototyp.Elements
             {
                 ConnectionProperties connProp = new ConnectionProperties();
 
+                int i = 0;
+
                 connProp.InputID = conn.Input.GetID();
                 connProp.OutputID = conn.Output.GetID();
 
                 // Find the attached input node (*TO* which this connection feeds).
-                //foreach (NodeNetwork.ViewModels.NodeViewModel node in network.Nodes.Items)
+                if (conn.Input.Parent is Node_Module moduleIn)
                 {
-                    if (conn.Input.Parent is Node_Module module)
+                    // Find the corresponding entry in the modules list.
+                    for (i = 0; i < IntModuleNodeProperties.Count; i++)
                     {
-                        int i = 0;
-
-                        // Find the corresponding entry in the modules list.
-                        for (i = 0; i < IntModuleNodeProperties.Count; i++)
+                        if (IntModuleNodeProperties[i].Position == conn.Input.Parent.Position && IntModuleNodeProperties[i].Size == conn.Input.Parent.Size)
                         {
-                            if (IntModuleNodeProperties[i].Position == conn.Input.Parent.Position && IntModuleNodeProperties[i].Size == conn.Input.Parent.Size)
-                            {
-                                connProp.InputType = ConnectionType.Module;
-                                connProp.InputIndex = i;
-                                break;
-                            }
-                        }
-
-                        // Find the attached port.
-                        i = 0;
-                        foreach (NodeNetwork.ViewModels.NodeInputViewModel p in module.VisibleInputs.Items)
-                        {
-                            if (p.Port == conn.Input.Port)
-                            {
-                                connProp.InputPort = i;
-                                break;
-                            }
-                            i++;
+                            connProp.InputType = ConnectionType.Module;
+                            connProp.InputIndex = i;
+                            break;
                         }
                     }
-                    // else if (...?) Input can't be an importer, as these only have outputs. Maybe something for the future.
+
+                    // Find the attached port.
+                    i = 0;
+                    foreach (NodeNetwork.ViewModels.NodeInputViewModel p in moduleIn.VisibleInputs.Items)
+                    {
+                        if (p.Port == conn.Input.Port)
+                        {
+                            connProp.InputPort = i;
+                            break;
+                        }
+                        i++;
+                    }
                 }
+                // else if (...?) Input can't be an importer, as these only have outputs. Maybe something for the future.
 
                 // Find the attached output node (*FROM* which this connection feeds).
-                //foreach (NodeNetwork.ViewModels.NodeViewModel node in network.Nodes.Items)
+                if (conn.Output.Parent is Node_Module moduleOut)
                 {
-                    if (conn.Output.Parent is Node_Module module)
+                    // Find the corresponding entry in the modules list.
+                    for (i = 0; i < IntModuleNodeProperties.Count; i++)
                     {
-                        int i = 0;
-
-                        // Find the corresponding entry in the modules list.
-                        for (i = 0; i < IntModuleNodeProperties.Count; i++)
+                        if (IntModuleNodeProperties[i].Position == conn.Output.Parent.Position && IntModuleNodeProperties[i].Size == conn.Output.Parent.Size)
                         {
-                            if (IntModuleNodeProperties[i].Position == conn.Output.Parent.Position && IntModuleNodeProperties[i].Size == conn.Output.Parent.Size)
-                            {
-                                connProp.OutputType = ConnectionType.Module;
-                                connProp.OutputIndex = i;
-                                break;
-                            }
-                        }
-
-                        // Find the attached port.
-                        i = 0;
-                        foreach (NodeNetwork.ViewModels.NodeOutputViewModel p in module.VisibleOutputs.Items)
-                        {
-                            if (p.Port == conn.Output.Port)
-                            {
-                                connProp.OutputPort = i;
-                                break;
-                            }
-                            i++;
+                            connProp.OutputType = ConnectionType.Module;
+                            connProp.OutputIndex = i;
+                            break;
                         }
                     }
-                    else if (conn.Output.Parent is VectorImport_Module vecImp)
+
+                    // Find the attached port.
+                    i = 0;
+                    foreach (NodeNetwork.ViewModels.NodeOutputViewModel p in moduleOut.VisibleOutputs.Items)
                     {
-                        int i = 0;
-
-                        // Find the corresponding entry in the vector imports list.
-                        for (i = 0; i < IntVecImportNodeProperties.Count; i++)
+                        if (p.Port == conn.Output.Port)
                         {
-                            if (IntVecImportNodeProperties[i].Position == conn.Output.Parent.Position && IntVecImportNodeProperties[i].Size == conn.Output.Parent.Size)
-                            {
-                                connProp.OutputType = ConnectionType.Vector;
-                                connProp.OutputIndex = i;
-                                break;
-                            }
+                            connProp.OutputPort = i;
+                            break;
                         }
-
-                        // Find the attached port.
-                        i = 0;
-                        foreach (NodeNetwork.ViewModels.NodeOutputViewModel p in vecImp.VisibleOutputs.Items)
+                        i++;
+                    }
+                }
+                else if (conn.Output.Parent is VectorImport_Module vecImp)
+                {
+                    // Find the corresponding entry in the vector imports list.
+                    for (i = 0; i < IntVecImportNodeProperties.Count; i++)
+                    {
+                        if (IntVecImportNodeProperties[i].Position == conn.Output.Parent.Position && IntVecImportNodeProperties[i].Size == conn.Output.Parent.Size)
                         {
-                            if (p.Port == conn.Output.Port)
-                            {
-                                connProp.OutputPort = i;
-                                break;
-                            }
-                            i++;
+                            connProp.OutputType = ConnectionType.Vector;
+                            connProp.OutputIndex = i;
+                            break;
                         }
                     }
-                    else if (conn.Output.Parent is RasterImport_Module rasImp)
+
+                    // Find the attached port.
+                    i = 0;
+                    foreach (NodeNetwork.ViewModels.NodeOutputViewModel p in vecImp.VisibleOutputs.Items)
                     {
-                        int i = 0;
-
-                        // Find the corresponding entry in the vector imports list.
-                        for (i = 0; i < IntRasImportNodeProperties.Count; i++)
+                        if (p.Port == conn.Output.Port)
                         {
-                            if (IntRasImportNodeProperties[i].Position == conn.Output.Parent.Position && IntRasImportNodeProperties[i].Size == conn.Output.Parent.Size)
-                            {
-                                connProp.OutputType = ConnectionType.Raster;
-                                connProp.OutputIndex = i;
-                                break;
-                            }
+                            connProp.OutputPort = i;
+                            break;
                         }
-
-                        // Find the attached port.
-                        i = 0;
-                        foreach (NodeNetwork.ViewModels.NodeOutputViewModel p in rasImp.VisibleOutputs.Items)
+                        i++;
+                    }
+                }
+                else if (conn.Output.Parent is RasterImport_Module rasImp)
+                {
+                    // Find the corresponding entry in the raster imports list.
+                    for (i = 0; i < IntRasImportNodeProperties.Count; i++)
+                    {
+                        if (IntRasImportNodeProperties[i].Position == conn.Output.Parent.Position && IntRasImportNodeProperties[i].Size == conn.Output.Parent.Size)
                         {
-                            if (p.Port == conn.Output.Port)
-                            {
-                                connProp.OutputPort = i;
-                                break;
-                            }
-                            i++;
+                            connProp.OutputType = ConnectionType.Raster;
+                            connProp.OutputIndex = i;
+                            break;
                         }
+                    }
+
+                    // Find the attached port.
+                    i = 0;
+                    foreach (NodeNetwork.ViewModels.NodeOutputViewModel p in rasImp.VisibleOutputs.Items)
+                    {
+                        if (p.Port == conn.Output.Port)
+                        {
+                            connProp.OutputPort = i;
+                            break;
+                        }
+                        i++;
                     }
                 }
 
