@@ -15,7 +15,9 @@ namespace Prototyp
         {
             public string SlotType { get; set; }
             public string RowName;
-            
+
+            public bool Invalid = true;
+
             public System.Collections.Generic.List<string> InputTypes = new System.Collections.Generic.List<string>();
 
             public string ControlType;
@@ -64,6 +66,21 @@ namespace Prototyp
             previewNetwork.Nodes.Add(nodeModule);
         }
 
+        private void CheckValidity()
+        {
+            int si = MyListBox.SelectedIndex;
+
+            foreach (ListViewEntry l in ListViewEntries)
+            {
+                l.SlotType = l.SlotType.Replace(" (invalid)", "");
+                if (l.Invalid) l.SlotType = l.SlotType + " (invalid)";
+            }
+            MyListBox.ItemsSource = null;
+            MyListBox.ItemsSource = ListViewEntries;
+
+            MyListBox.SelectedIndex = si;
+        }
+
         // Event handlers -------------------------------------------------------------------------
 
         private void CmdAddInput_Click(object sender, RoutedEventArgs e)
@@ -72,6 +89,7 @@ namespace Prototyp
             MyListBox.ItemsSource = null;
             MyListBox.ItemsSource = ListViewEntries;
             MyListBox.SelectedIndex = ListViewEntries.Count - 1;
+            CheckValidity();
         }
 
         private void CmdAddControl_Click(object sender, RoutedEventArgs e)
@@ -94,6 +112,7 @@ namespace Prototyp
             MyListBox.ItemsSource = null;
             MyListBox.ItemsSource = ListViewEntries;
             MyListBox.SelectedIndex = ListViewEntries.Count - 1;
+            CheckValidity();
         }
 
         private void CmdAddOutput_Click(object sender, RoutedEventArgs e)
@@ -102,6 +121,7 @@ namespace Prototyp
             MyListBox.ItemsSource = null;
             MyListBox.ItemsSource = ListViewEntries;
             MyListBox.SelectedIndex = ListViewEntries.Count - 1;
+            CheckValidity();
         }
 
         private void CmdEditProperties_Click(object sender, RoutedEventArgs e)
@@ -113,7 +133,7 @@ namespace Prototyp
 
             if (ListViewEntries[MyListBox.SelectedIndex].RowName != null) moduleProperties.TxtRowName.Text = ListViewEntries[MyListBox.SelectedIndex].RowName;
 
-            if (ListViewEntries[MyListBox.SelectedIndex].SlotType == "Input")
+            if (ListViewEntries[MyListBox.SelectedIndex].SlotType.Contains("Input"))
             {
                 moduleProperties.TxtSliderStart.IsEnabled = false;
                 moduleProperties.TxtSliderEnd.IsEnabled = false;
@@ -136,6 +156,7 @@ namespace Prototyp
 
                 ListViewEntries[MyListBox.SelectedIndex].RowName = moduleProperties.TxtRowName.Text;
 
+                ListViewEntries[MyListBox.SelectedIndex].InputTypes.Clear();
                 if ((bool)moduleProperties.ChkInVectorPoint.IsChecked) ListViewEntries[MyListBox.SelectedIndex].InputTypes.Add("VectorPoint");
                 if ((bool)moduleProperties.ChkInVectorLine.IsChecked) ListViewEntries[MyListBox.SelectedIndex].InputTypes.Add("VectorLine");
                 if ((bool)moduleProperties.ChkInVectorPolygon.IsChecked) ListViewEntries[MyListBox.SelectedIndex].InputTypes.Add("VectorPolygon");
@@ -199,10 +220,11 @@ namespace Prototyp
                     ListViewEntries[MyListBox.SelectedIndex].RowName = moduleProperties.TxtRowName.Text;
 
                     string[] DropDownList = moduleProperties.TxtDropdownEntries.Text.Split(System.Environment.NewLine);
+                    ListViewEntries[MyListBox.SelectedIndex].DropDownEntries.Clear();
                     foreach (string LstStr in DropDownList) ListViewEntries[MyListBox.SelectedIndex].DropDownEntries.Add(LstStr);
                 }
             }
-            else if (ListViewEntries[MyListBox.SelectedIndex].SlotType == "Output")
+            else if (ListViewEntries[MyListBox.SelectedIndex].SlotType.Contains("Output"))
             {
                 moduleProperties.ChkInVectorPoint.IsEnabled = false;
                 moduleProperties.ChkInVectorLine.IsEnabled = false;
@@ -225,6 +247,7 @@ namespace Prototyp
 
                 ListViewEntries[MyListBox.SelectedIndex].RowName = moduleProperties.TxtRowName.Text;
 
+                ListViewEntries[MyListBox.SelectedIndex].OutputTypes.Clear();
                 if ((bool)moduleProperties.ChkOutVectorPoint.IsChecked) ListViewEntries[MyListBox.SelectedIndex].OutputTypes.Add("VectorPoint");
                 if ((bool)moduleProperties.ChkOutVectorLine.IsChecked) ListViewEntries[MyListBox.SelectedIndex].OutputTypes.Add("VectorLine");
                 if ((bool)moduleProperties.ChkOutVectorPolygon.IsChecked) ListViewEntries[MyListBox.SelectedIndex].OutputTypes.Add("VectorPolygon");
@@ -232,6 +255,7 @@ namespace Prototyp
             }
 
             MakePreview();
+            CheckValidity();
         }
 
         private void CmdDelete_Click(object sender, RoutedEventArgs e)
@@ -243,6 +267,7 @@ namespace Prototyp
             MyListBox.ItemsSource = ListViewEntries;
 
             MakePreview();
+            CheckValidity();
         }
 
         private void CmdUp_Click(object sender, RoutedEventArgs e)
@@ -261,6 +286,7 @@ namespace Prototyp
             MyListBox.SelectedIndex = SwapPos - 1;
 
             MakePreview();
+            CheckValidity();
         }
 
         private void CmdDown_Click(object sender, RoutedEventArgs e)
@@ -279,6 +305,7 @@ namespace Prototyp
             MyListBox.SelectedIndex = SwapPos + 1;
 
             MakePreview();
+            CheckValidity();
         }
 
         private void CmdClear_Click(object sender, RoutedEventArgs e)
@@ -307,6 +334,7 @@ namespace Prototyp
         private void TxtName_TextChanged(object sender, System.Windows.Controls.TextChangedEventArgs e)
         {
             MakePreview();
+            CheckValidity();
         }
 
         // Public methods -------------------------------------------------------------------------
@@ -325,12 +353,14 @@ namespace Prototyp
                 vorteXML.ToolRows[i].Index = i + 1;
                 vorteXML.ToolRows[i].Name = ListViewEntries[i].RowName;
 
-                if (ListViewEntries[i].SlotType == "Input")
+                if (ListViewEntries[i].SlotType.Contains("Input"))
                 {
                     vorteXML.ToolRows[i].rowType = Prototyp.Elements.VorteXML.RowType.Input;
                     vorteXML.ToolRows[i].inputRow.inputTypes = new Prototyp.Elements.VorteXML.ConnectorType[ListViewEntries[i].InputTypes.Count];
 
+                    ListViewEntries[i].Invalid = true;
                     if (ListViewEntries[i].InputTypes.Count == 0) return (null); // Module description corrupted: ANY input type must be allowed.
+                    ListViewEntries[i].Invalid = false;
                     int j = 0;
                     foreach (string InpTy in ListViewEntries[i].InputTypes)
                     {
@@ -356,6 +386,8 @@ namespace Prototyp
                         vorteXML.ToolRows[i].controlRow.slider.Default = ListViewEntries[i].SliderDefault;
                         vorteXML.ToolRows[i].controlRow.slider.TickFrequency = ListViewEntries[i].SliderTickFrequency;
                         vorteXML.ToolRows[i].controlRow.slider.Unit = ListViewEntries[i].SliderUnit;
+
+                        ListViewEntries[i].Invalid = false;
                     }
                     else if (ListViewEntries[i].ControlType == "Dropdown")
                     {
@@ -365,7 +397,9 @@ namespace Prototyp
 
                         vorteXML.ToolRows[i].controlRow.dropdown.Values = new string[ListViewEntries[i].DropDownEntries.Count];
 
+                        ListViewEntries[i].Invalid = true;
                         if (ListViewEntries[i].DropDownEntries.Count == 0) return (null); // Module description corrupted: ANY dropdown entry must be present.
+                        ListViewEntries[i].Invalid = false;
                         int j = 0;
                         foreach (string DD in ListViewEntries[i].DropDownEntries)
                         {
@@ -374,12 +408,14 @@ namespace Prototyp
                         }
                     }
                 }
-                else if (ListViewEntries[i].SlotType == "Output")
+                else if (ListViewEntries[i].SlotType.Contains("Output"))
                 {
                     vorteXML.ToolRows[i].rowType = Prototyp.Elements.VorteXML.RowType.Output;
                     vorteXML.ToolRows[i].outputRow.outputTypes = new Prototyp.Elements.VorteXML.ConnectorType[ListViewEntries[i].OutputTypes.Count];
 
+                    ListViewEntries[i].Invalid = true;
                     if (ListViewEntries[i].OutputTypes.Count == 0) return (null); // Module description corrupted: ANY output type must be allowed.
+                    ListViewEntries[i].Invalid = false;
                     int j = 0;
                     foreach (string OutTy in ListViewEntries[i].OutputTypes)
                     {
