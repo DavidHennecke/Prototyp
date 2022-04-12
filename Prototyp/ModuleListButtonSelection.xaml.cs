@@ -23,15 +23,12 @@ namespace Prototyp
             ParseModules(ModulesPath);
         }
 
-
         private void ParseModules(string Path)
         {
             string[] SubDirs = System.IO.Directory.GetDirectories(Path);
             string[] FileNames;
             string XMLName;
             Elements.VorteXML ThisXML;
-            
-
 
             foreach (string Dir in SubDirs)
             {

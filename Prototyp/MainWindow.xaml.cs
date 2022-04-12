@@ -13,7 +13,6 @@ using System.Windows;
 
 Infos:
 
-
 // https://github.com/Wouterdek/NodeNetwork/blob/master/NodeNetworkTests/NetworkViewModelTests.cs
 // ^ Nützliche Beispielimplementierungen zum Node-Network.
 
@@ -24,6 +23,7 @@ Infos:
 
 TODO:
 
+// Mouse select in ComboBox after typing does not work.
 
 ------------------------------- */
 
