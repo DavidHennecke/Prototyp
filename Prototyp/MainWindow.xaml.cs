@@ -55,11 +55,11 @@ namespace Prototyp
 
     public enum NodeProgress
     {
-        Waiting,        //Not all inputs ready, node is waiting for inputs
-        Marked,         //All required inputs are ready
-        Processing,     //Currently running the process
-        Finished,       //Process finished successfully
-        Interrupted     //Process ended unsuccessfully
+        Waiting,        // Not all inputs ready, node is waiting for inputs
+        Marked,         // All required inputs are ready
+        Processing,     // Currently running the process
+        Finished,       // Process finished successfully
+        Interrupted     // Process ended unsuccessfully
     }
 
     public partial class MainWindow : Window
@@ -340,7 +340,6 @@ namespace Prototyp
                         TempPoint.Y = (TempPoint.Y - networkView.ViewModel.DragOffset.Y) / networkView.ViewModel.ZoomFactor;
                         importNode.Position = TempPoint;
 
-                        //MessageBox.Show(vectorData[i].FileName);
                         network.Nodes.Add(importNode);
                         break;
                     }
@@ -661,8 +660,7 @@ namespace Prototyp
         //Method to report node state from async tasks
         private void ReportProgress(NodeProgressReport report)
         {
-            //TODO: Update the UI to reflect all the progress values that is passed back.
-            //TODO: Für 'ChangeStatus'-Nachrichten besser Enum verwenden.
+            //TODO: Update the UI to reflect all the progress values that are passed back.
             switch (report.stage)
             {
                 case NodeProgress.Waiting:
@@ -747,7 +745,7 @@ namespace Prototyp
 
                         if (DeleteData)
                         {
-                            // Okay, now it's save to delete the data. Find enties and off you go.
+                            // Okay, now it's save to delete the data. Find entries and off you go.
                             foreach (object t in TableOfContentsVector.Items)
                             {
                                 if (((Prototyp.Custom_Controls.VectorListViewItem)t).Uid == v.IntID.ToString())
@@ -779,7 +777,7 @@ namespace Prototyp
 
                         if (DeleteData)
                         {
-                            // Okay, now it's save to delete the data. Find enties and off you go.
+                            // Okay, now it's save to delete the data. Find entries and off you go.
                             foreach (object t in TableOfContentsRaster.Items)
                             {
                                 if (((Prototyp.Custom_Controls.RasterListViewItem)t).Uid == r.IntID.ToString())
