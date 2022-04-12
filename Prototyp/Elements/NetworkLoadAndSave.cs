@@ -431,14 +431,13 @@ namespace Prototyp.Elements
             {
                 if (v.RawData == null)
                 {
-                    // TODO: Abgleichen der ID. Falls schon vorhanden, nicht nochmal hinzufügen.
-                    // TODO2: Vorher prüfen, ob die Datei existiert. Falls nicht, geeignet reagieren (überlegen, was dann am besten zu tun ist).
+                    // If data is not embedded and the file cannot be found at the specified location, we have a problem.
+                    // TODO: Ask the user to specify location?
+                    if (!System.IO.File.Exists(v.FileName)) throw new Exception("File not found. Invalid path?");
                     vectorData.Add(new VectorData(v.FileName));
                 }
                 else
                 {
-                    // TODO: Abgleichen der ID. Falls schon vorhanden, nicht nochmal hinzufügen.
-                    // TODO2: Vorher prüfen, ob die Datei existiert. Falls nicht, geeignet reagieren (überlegen, was dann am besten zu tun ist).
                     vectorData.Add(new VectorData(v.RawData));
                 }
                 // TODO: Abgleichen der ID. Falls schon vorhanden, nicht nochmal hinzufügen.
@@ -455,14 +454,13 @@ namespace Prototyp.Elements
             {
                 if (r.RawData == null)
                 {
-                    // TODO: Abgleichen der ID. Falls schon vorhanden, nicht nochmal hinzufügen.
-                    // TODO2: Vorher prüfen, ob die Datei existiert. Falls nicht, geeignet reagieren (überlegen, was dann am besten zu tun ist).
+                    // If data is not embedded and the file cannot be found at the specified location, we have a problem.
+                    // TODO: Ask the user to specify location?
+                    if (!System.IO.File.Exists(r.FileName)) throw new Exception("File not found. Invalid path?");
                     rasterData.Add(new RasterData(r.FileName));
                 }
                 else
                 {
-                    // TODO: Abgleichen der ID. Falls schon vorhanden, nicht nochmal hinzufügen.
-                    // TODO2: Vorher prüfen, ob die Datei existiert. Falls nicht, geeignet reagieren (überlegen, was dann am besten zu tun ist).
                     rasterData.Add(new RasterData(r.RawData));
                 }
                 // TODO: Abgleichen der ID. Falls schon vorhanden, nicht nochmal hinzufügen.
