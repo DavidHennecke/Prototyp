@@ -253,7 +253,7 @@
             int SubCounter;
             int SubCounter2;
 
-            if (ThisElement.Parent.Name.NamespaceName == "Element" & ThisElement.Parent.Name.LocalName == "Input")
+            if (ThisElement.Parent.Name.NamespaceName == "Element" && ThisElement.Parent.Name.LocalName == "Input")
             {
                 ToolRows[Counter].rowType = RowType.Input;
                 ToolRows[Counter].Index = Counter + 1;
@@ -351,7 +351,7 @@
                 }
             }
 
-            if (ThisElement.Parent.Name.NamespaceName == "Element" & ThisElement.Parent.Name.LocalName == "Output")
+            if (ThisElement.Parent.Name.NamespaceName == "Element" && ThisElement.Parent.Name.LocalName == "Output")
             {
                 ToolRows[Counter].rowType = RowType.Output;
                 ToolRows[Counter].Index = Counter + 1;
@@ -390,7 +390,7 @@
                 }
             }
 
-            if (ThisElement.Parent.Name.NamespaceName == "Element" & ThisElement.Parent.Name.LocalName == "Control")
+            if (ThisElement.Parent.Name.NamespaceName == "Element" && ThisElement.Parent.Name.LocalName == "Control")
             {
                 ToolRows[Counter].rowType = RowType.Control;
                 ToolRows[Counter].Index = Counter + 1;

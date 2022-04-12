@@ -259,7 +259,7 @@ namespace Prototyp.Elements
                         // Find the corresponding entry in the modules list.
                         for (i = 0; i < IntModuleNodeProperties.Count; i++)
                         {
-                            if (IntModuleNodeProperties[i].Position == conn.Input.Parent.Position & IntModuleNodeProperties[i].Size == conn.Input.Parent.Size)
+                            if (IntModuleNodeProperties[i].Position == conn.Input.Parent.Position && IntModuleNodeProperties[i].Size == conn.Input.Parent.Size)
                             {
                                 connProp.InputType = ConnectionType.Module;
                                 connProp.InputIndex = i;
@@ -292,7 +292,7 @@ namespace Prototyp.Elements
                         // Find the corresponding entry in the modules list.
                         for (i = 0; i < IntModuleNodeProperties.Count; i++)
                         {
-                            if (IntModuleNodeProperties[i].Position == conn.Output.Parent.Position & IntModuleNodeProperties[i].Size == conn.Output.Parent.Size)
+                            if (IntModuleNodeProperties[i].Position == conn.Output.Parent.Position && IntModuleNodeProperties[i].Size == conn.Output.Parent.Size)
                             {
                                 connProp.OutputType = ConnectionType.Module;
                                 connProp.OutputIndex = i;
@@ -319,7 +319,7 @@ namespace Prototyp.Elements
                         // Find the corresponding entry in the vector imports list.
                         for (i = 0; i < IntVecImportNodeProperties.Count; i++)
                         {
-                            if (IntVecImportNodeProperties[i].Position == conn.Output.Parent.Position & IntVecImportNodeProperties[i].Size == conn.Output.Parent.Size)
+                            if (IntVecImportNodeProperties[i].Position == conn.Output.Parent.Position && IntVecImportNodeProperties[i].Size == conn.Output.Parent.Size)
                             {
                                 connProp.OutputType = ConnectionType.Vector;
                                 connProp.OutputIndex = i;
@@ -346,7 +346,7 @@ namespace Prototyp.Elements
                         // Find the corresponding entry in the vector imports list.
                         for (i = 0; i < IntRasImportNodeProperties.Count; i++)
                         {
-                            if (IntRasImportNodeProperties[i].Position == conn.Output.Parent.Position & IntRasImportNodeProperties[i].Size == conn.Output.Parent.Size)
+                            if (IntRasImportNodeProperties[i].Position == conn.Output.Parent.Position && IntRasImportNodeProperties[i].Size == conn.Output.Parent.Size)
                             {
                                 connProp.OutputType = ConnectionType.Raster;
                                 connProp.OutputIndex = i;

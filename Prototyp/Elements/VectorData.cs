@@ -293,7 +293,7 @@ namespace Prototyp.Elements
         {
             if (TestData.Length >= 8)
             {
-                if (TestData[0] == 0x66 & TestData[1] == 0x67 & TestData[2] == 0x62 & TestData[4] == 0x66 & TestData[5] == 0x67 & TestData[6] == 0x62)
+                if (TestData[0] == 0x66 && TestData[1] == 0x67 && TestData[2] == 0x62 && TestData[4] == 0x66 && TestData[5] == 0x67 && TestData[6] == 0x62)
                 {
                     return (true);
                 }
