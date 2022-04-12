@@ -93,13 +93,13 @@
                 </DockPanel>
             </Border>
 
-            <ComboBox x:Name="ToolsComboBox" Grid.Column="1" Margin="10" MinWidth="250" SelectionChanged="ComboSelectionChanged" KeyUp="ComboKeyUp" LostFocus="ComboLostFocus">
+            <ComboBox x:Name="ToolsComboBox" Visibility="Visible" Grid.Column="1" Margin="216,360,0,0" MinWidth="250" SelectionChanged="ComboSelectionChanged" KeyUp="ComboKeyUp" LostFocus="ComboLostFocus">
                 <ComboBox.ItemTemplate>
                     <DataTemplate>
                         <StackPanel Orientation="Horizontal">
-                            <Image MaxHeight="48" MaxWidth="48" Source="{Binding IconPath}" RenderOptions.BitmapScalingMode="HighQuality" />
+                            <Image MaxHeight="25" MaxWidth="25" Source="{Binding IconPath}" RenderOptions.BitmapScalingMode="HighQuality" />
                             <TextBlock Text="   " VerticalAlignment="Center" HorizontalAlignment="Center" />
-                            <TextBlock Text="{Binding ToolName}" VerticalAlignment="Center" HorizontalAlignment="Center" FontSize="18" />
+                            <TextBlock Text="{Binding ToolName}" VerticalAlignment="Center" HorizontalAlignment="Center" FontSize="14" />
                         </StackPanel>
                     </DataTemplate>
                 </ComboBox.ItemTemplate>
@@ -193,7 +193,7 @@
                         </Style>
                     </TabControl.Resources>
                     <TabItem Header="Node Editor" Foreground="White">
-                        <nodenetwork:NetworkView x:Name="networkView" Drop="DropTargetEventNodeEditor" Cursor="Hand" Background="#FF52555C"/>
+                        <nodenetwork:NetworkView x:Name="networkView" Drop="DropTargetEventNodeEditor" Cursor="Hand" Background="#FF52555C" KeyUp="ComboKeyUp"/>
                     </TabItem>
                 </TabControl>
             </Border>
