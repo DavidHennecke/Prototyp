@@ -405,6 +405,8 @@ namespace Prototyp
             ToolsComboBox.IsDropDownOpen = true;
             Typing = true;
 
+            if (e.Key == System.Windows.Input.Key.Down | e.Key == System.Windows.Input.Key.Up) return;
+
             string KeyPress = "";
             if (e.Key == System.Windows.Input.Key.Back) KeyPress = "Back";
             if (e.Key == System.Windows.Input.Key.Escape) KeyPress = "Esc";
