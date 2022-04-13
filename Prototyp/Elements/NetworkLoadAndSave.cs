@@ -368,10 +368,10 @@ namespace Prototyp.Elements
                                                                       string ModulesPath)
         {
             // Tidy up all lists.
-            vectorData.Clear();
-            rasterData.Clear();
-            MainWindow.AppWindow.TableOfContentsVector.Items.Clear();
-            MainWindow.AppWindow.TableOfContentsRaster.Items.Clear();
+            //vectorData.Clear();                                           // Do
+            //rasterData.Clear();                                           // we
+            //MainWindow.AppWindow.TableOfContentsVector.Items.Clear();     // really
+            //MainWindow.AppWindow.TableOfContentsRaster.Items.Clear();     // want this?
             network = null;
             network = new NodeNetwork.ViewModels.NetworkViewModel();
             MainWindow.AppWindow.networkView.ViewModel = network;
