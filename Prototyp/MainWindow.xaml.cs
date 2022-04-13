@@ -29,6 +29,8 @@ TODO:
 4.) Do we want to delete data if a new workflow is loaded?
 5.) Make connection to a multi-input module node, placeholder name will always be the last port, even if
     connection is made to, e.g., the first port.
+6.) What to do if a module port supports several types? E.g. for 'NewModule', inputs can be Vector Point/Line and Polygon,
+    but only Point (the first) is shown.
 
 ------------------------------- */
 
@@ -406,10 +408,13 @@ namespace Prototyp
 
         private void ComboKeyUp(object sender, System.Windows.Input.KeyEventArgs e)
         {
+            if (e.Key == System.Windows.Input.Key.Down |
+                e.Key == System.Windows.Input.Key.Up |
+                e.Key == System.Windows.Input.Key.LeftCtrl |
+                e.Key == System.Windows.Input.Key.RightCtrl) return;
+
             ToolsComboBox.IsDropDownOpen = true;
             Typing = true;
-
-            if (e.Key == System.Windows.Input.Key.Down | e.Key == System.Windows.Input.Key.Up) return;
 
             string KeyPress = "";
             if (e.Key == System.Windows.Input.Key.Back) KeyPress = "Back";
