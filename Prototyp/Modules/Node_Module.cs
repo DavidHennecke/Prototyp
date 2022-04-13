@@ -316,9 +316,9 @@ namespace Prototyp.Modules
             return (true);
         }
 
-        public static int GetNextPort()
+        public static int GetNextPort(int StartPort)
         {
-            int port = MainWindow.BASEPORT;
+            int port = StartPort;
             while (!Node_Module.PortAvailable(port)) port++;
             if (port >= MainWindow.MAX_UNSIGNED_SHORT) throw new System.Exception("Could not find any free port.");
 

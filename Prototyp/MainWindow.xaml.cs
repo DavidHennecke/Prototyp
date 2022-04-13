@@ -25,12 +25,13 @@ TODO:
 
 1.) Mouse select in ComboBox after typing does not work.
 2.) Please make an event for node deletion.
-3.) Do we want to delete the corresponding data (and TOC entry) if an importer node is deleted?
-4.) Do we want to delete data if a new workflow is loaded?
-5.) Make connection to a multi-input module node, placeholder name will always be the last port, even if
+3.) Make connection to a multi-input module node, placeholder name will always be the last port, even if
     connection is made to, e.g., the first port.
-6.) What to do if a module port supports several types? E.g. for 'NewModule', inputs can be Vector Point/Line and Polygon,
+4.) What to do if a module port supports several types? E.g. for 'NewModule', inputs can be Vector Point/Line and Polygon,
     but only Point (the first) is shown.
+5.) Low priority: Add multi-select in toolbar modules selection.
+6.) Check: Make child classes for vector-point, vector-line and so on that inherit from the vector import node class.
+    If that works it also needs to be addressed everywhere else, esp. in the VorteXML processor.
 
 ------------------------------- */
 
@@ -115,18 +116,6 @@ namespace Prototyp
             // Init WPF.S
             InitializeComponent();
 
-            //AppSettings
-            var config = new ConfigurationBuilder().SetBasePath(AppDomain.CurrentDomain.BaseDirectory).AddJsonFile("appsettings.json").Build();
-
-
-            var section = config.GetSection("ToolBar1");
-            var ToolBar1 = section.GetChildren();
-
-
-            // Startup NetworkView.
-            AppWindow = this;
-            networkView.ViewModel = network;
-
             // Init modules path and start parsing.
             //TODO: Besseren Weg finden, um das parent directory zu bestimmen.
             ModulesPath = System.IO.Directory.GetCurrentDirectory();
@@ -134,6 +123,17 @@ namespace Prototyp
             ParentDir = System.IO.Directory.GetParent(ParentDir.FullName);
             ParentDir = System.IO.Directory.GetParent(ParentDir.FullName);
             if (ParentDir.ToString().EndsWith("bin")) ParentDir = System.IO.Directory.GetParent(ParentDir.FullName);
+
+            //AppSettings
+            IConfigurationRoot config = new ConfigurationBuilder().SetBasePath(ParentDir.FullName).AddJsonFile("appsettings.json").Build();
+            IConfigurationSection section = config.GetSection("ToolBar1");
+            System.Collections.Generic.IEnumerable<IConfigurationSection> ToolBar1 = section.GetChildren();
+
+            // Startup NetworkView.
+            AppWindow = this;
+            networkView.ViewModel = network;
+
+            // Init modules path.
             ModulesPath = ParentDir.FullName + "\\Custom modules";
             
             ParseModules(ModulesPath);
@@ -939,9 +939,10 @@ namespace Prototyp
         private void importModule(string BinaryPath)
         {
             //Find lowest available port
-            AppContext.SetSwitch("System.Net.Http.SocketsHttpHandler.Http2UnencryptedSupport", true);
-            int port = Node_Module.GetNextPort();
-            //int port = 5000;
+            AppContext.SetSwitch("System.Net.Http.SocketsHttpHandler.Http2UnencryptedSupport", true); // Wozu ist das?
+            
+            int port = Node_Module.GetNextPort(BASEPORT);
+
             GrpcClient.ControlConnector.ControlConnectorClient grpcConnection;
 
             System.Diagnostics.Process moduleProcess = new System.Diagnostics.Process();

@@ -380,24 +380,33 @@ namespace Prototyp.Elements
             network.ZoomFactor = ZoomFactor;
             network.DragOffset = DragOffset;
 
+            // Pre-populate the ports to be used.
+            int i = 0;
+            int[] PrepPorts = null;
+            if (ModNodeProps.Count > 0)
+            {
+                PrepPorts = new int[ModNodeProps.Count];
+                PrepPorts[0] = Node_Module.GetNextPort(MainWindow.BASEPORT);
+                for (i = 1; i < PrepPorts.Count(); i++) PrepPorts[i] = Node_Module.GetNextPort(PrepPorts[i - 1] + 1);
+            }
+
             // Okay, add the module nodes, start the corresponding servers.
+            i = 0;
             foreach (ModuleNodeProperties m in ModNodeProps)
             {
                 VorteXML constructXML = new VorteXML(m.XML);
-                int port = Node_Module.GetNextPort();
 
                 GrpcClient.ControlConnector.ControlConnectorClient grpcConnection;
 
                 System.Diagnostics.Process moduleProcess = new System.Diagnostics.Process();
 
-                System.Diagnostics.ProcessStartInfo moduleProcessInfo = new System.Diagnostics.ProcessStartInfo(ModulesPath + "\\" + m.Name + "\\" + m.Name + ".exe", port.ToString());
+                System.Diagnostics.ProcessStartInfo moduleProcessInfo = new System.Diagnostics.ProcessStartInfo(ModulesPath + "\\" + m.Name + "\\" + m.Name + ".exe", PrepPorts[i].ToString());
                 //moduleProcessInfo.CreateNoWindow = true;
                 moduleProcessInfo.UseShellExecute = false;
                 moduleProcess.StartInfo = moduleProcessInfo;
                 try
                 {
                     moduleProcess.Start();
-                    System.Threading.Thread.Sleep(1000); // Keine sehr gute Lösung. Wie besser machen?
                 }
                 catch
                 {
@@ -414,7 +423,7 @@ namespace Prototyp.Elements
 
                 // Establish GRPC connection
                 // TODO: nicht nur localhost
-                string url = "https://localhost:" + port.ToString();
+                string url = "https://localhost:" + PrepPorts[i].ToString();
                 Grpc.Net.Client.GrpcChannel channel = Grpc.Net.Client.GrpcChannel.ForAddress(url);
                 grpcConnection = new GrpcClient.ControlConnector.ControlConnectorClient(channel);
 
@@ -424,6 +433,8 @@ namespace Prototyp.Elements
                 //newModule.Size = m.Size; // Damn, write protected.
                 nodeModule.PathXML = ModulesPath + "\\" + m.Name + "\\" + m.Name + ".xml";
                 network.Nodes.Add(nodeModule);
+
+                i++;
             }
 
             // Next, add the vector data/list entry/node.
@@ -499,7 +510,7 @@ namespace Prototyp.Elements
             // Finally, add the connections.
             NodeNetwork.ViewModels.NodeViewModel inpNode = null;
             NodeNetwork.ViewModels.NodeViewModel outpNode = null;
-            int i = 0;
+            i = 0;
 
             foreach (ConnectionProperties c in ConnectionProps)
             {
