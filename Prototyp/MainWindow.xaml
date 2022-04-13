@@ -97,7 +97,7 @@
             <Border BorderBrush="#35363A" Grid.Column="1" BorderThickness="3" Margin="5,5,5,0" CornerRadius="2" DockPanel.Dock="Top">
                 <DockPanel Background="#35363A" LastChildFill="True">
                     <Border BorderBrush="#FF212225" BorderThickness="3" CornerRadius="2" DockPanel.Dock="Top" Margin="2">
-                        <DockPanel x:Name="ToolBar1"  Background="#FF212225" LastChildFill="False" Height="35">
+                        <DockPanel x:Name="ToolBar1" Background="#FF212225" LastChildFill="False" Height="35" RenderOptions.BitmapScalingMode="HighQuality">
                             <DockPanel.ContextMenu>
                                 <ContextMenu>
                                     <MenuItem Header="Add Module" Click="OpenModuleList"/>
@@ -107,7 +107,7 @@
                         </DockPanel>
                     </Border>
                     <Border BorderBrush="#FF212225" BorderThickness="3" CornerRadius="2" DockPanel.Dock="Top" Margin="2">
-                        <DockPanel x:Name="ToolBar2" Background="#FF212225" LastChildFill="False" Height="80">
+                        <DockPanel x:Name="ToolBar2" Background="#FF212225" LastChildFill="False" Height="80" RenderOptions.BitmapScalingMode="HighQuality">
                             <Grid DockPanel.Dock="Left">
                                 <Grid.RowDefinitions>
                                     <RowDefinition Height="*"/>
@@ -128,12 +128,12 @@
             <Border BorderBrush="#35363A" Grid.Column="2" BorderThickness="3" Margin="5,5,5,0" CornerRadius="2" DockPanel.Dock="Top">
                 <DockPanel Background="#35363A" LastChildFill="True">
                     <Border BorderBrush="#FF212225" BorderThickness="3" CornerRadius="2" DockPanel.Dock="Top" Margin="2">
-                        <DockPanel x:Name="ToolBar3"  Background="#FF212225" LastChildFill="False" Height="35">
+                        <DockPanel x:Name="ToolBar3"  Background="#FF212225" LastChildFill="False" Height="35" RenderOptions.BitmapScalingMode="HighQuality">
 
                         </DockPanel>
                     </Border>
                     <Border BorderBrush="#FF212225" BorderThickness="3" CornerRadius="2" DockPanel.Dock="Top" Margin="2">
-                        <DockPanel x:Name="ToolBar4" Background="#FF212225" LastChildFill="False" Height="80">
+                        <DockPanel x:Name="ToolBar4" Background="#FF212225" LastChildFill="False" Height="80" RenderOptions.BitmapScalingMode="HighQuality">
                             <Grid DockPanel.Dock="Left">
                                 <Grid.RowDefinitions>
                                     <RowDefinition Height="*"/>
@@ -154,12 +154,12 @@
             <Border BorderBrush="#35363A" Grid.Column="3" BorderThickness="3" Margin="5,5,5,0" CornerRadius="2" DockPanel.Dock="Top">
                 <DockPanel Background="#35363A" LastChildFill="True">
                     <Border BorderBrush="#FF212225" BorderThickness="3" CornerRadius="2" DockPanel.Dock="Top" Margin="2">
-                        <DockPanel x:Name="ToolBar5"  Background="#FF212225" LastChildFill="False" Height="35">
+                        <DockPanel x:Name="ToolBar5"  Background="#FF212225" LastChildFill="False" Height="35" RenderOptions.BitmapScalingMode="HighQuality">
 
                         </DockPanel>
                     </Border>
                     <Border BorderBrush="#FF212225" BorderThickness="3" CornerRadius="2" DockPanel.Dock="Top" Margin="2">
-                        <DockPanel x:Name="ToolBar6" Background="#FF212225" LastChildFill="False" Height="80">
+                        <DockPanel x:Name="ToolBar6" Background="#FF212225" LastChildFill="False" Height="80" RenderOptions.BitmapScalingMode="HighQuality">
                             <Grid DockPanel.Dock="Left">
                                 <Grid.RowDefinitions>
                                     <RowDefinition Height="*"/>

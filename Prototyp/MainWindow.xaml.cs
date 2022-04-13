@@ -13,8 +13,8 @@ using System.Windows;
 
 Infos:
 
-// https://github.com/Wouterdek/NodeNetwork/blob/master/NodeNetworkTests/NetworkViewModelTests.cs
-// ^ Nützliche Beispielimplementierungen zum Node-Network.
+https://github.com/Wouterdek/NodeNetwork/blob/master/NodeNetworkTests/NetworkViewModelTests.cs
+^ Nützliche Beispielimplementierungen zum Node-Network.
 
 ------------------------------- */
 
@@ -23,7 +23,14 @@ Infos:
 
 TODO:
 
-// Mouse select in ComboBox after typing does not work.
+1.) Mouse select in ComboBox after typing does not work.
+2.) Please make an event for node deletion.
+3.) Do we want to delete the corresponding data (and TOC entry) if an importer node is deleted?
+4.) Do we want to delete data if a new workflow is loaded?
+5.) Make connection to a multi-input module node, placeholder name will always be the last port, even if
+    connection is made to, e.g., the first port.
+6.) What to do if a module port supports several types? E.g. for 'NewModule', inputs can be Vector Point/Line and Polygon,
+    but only Point (the first) is shown.
 
 ------------------------------- */
 
@@ -407,10 +414,13 @@ namespace Prototyp
 
         private void ComboKeyUp(object sender, System.Windows.Input.KeyEventArgs e)
         {
+            if (e.Key == System.Windows.Input.Key.Down |
+                e.Key == System.Windows.Input.Key.Up |
+                e.Key == System.Windows.Input.Key.LeftCtrl |
+                e.Key == System.Windows.Input.Key.RightCtrl) return;
+
             ToolsComboBox.IsDropDownOpen = true;
             Typing = true;
-
-            if (e.Key == System.Windows.Input.Key.Down | e.Key == System.Windows.Input.Key.Up) return;
 
             string KeyPress = "";
             if (e.Key == System.Windows.Input.Key.Back) KeyPress = "Back";
@@ -733,67 +743,67 @@ namespace Prototyp
                     }
                     else if (node is VectorImport_Module v)
                     {
-                        // First check whether there is another importer that also employs the same data source. If yes, data must not be deleted.
-                        foreach (NodeViewModel node2 in network.Nodes.Items)
-                        {
-                            if (node2 is VectorImport_Module v2)
-                            {
-                                if (v2 != v)
-                                {
-                                    if (v2.IntID == v.IntID)
-                                    {
-                                        // Found one. Don't delete data.
-                                        DeleteData = false;
-                                    }
-                                }
-                            }
-                        }
+                        //// First check whether there is another importer that also employs the same data source. If yes, data must not be deleted.
+                        //foreach (NodeViewModel node2 in network.Nodes.Items)
+                        //{
+                        //    if (node2 is VectorImport_Module v2)
+                        //    {
+                        //        if (v2 != v)
+                        //        {
+                        //            if (v2.IntID == v.IntID)
+                        //            {
+                        //                // Found one. Don't delete data.
+                        //                DeleteData = false;
+                        //            }
+                        //        }
+                        //    }
+                        //}
 
-                        if (DeleteData)
-                        {
-                            // Okay, now it's save to delete the data. Find entries and off you go.
-                            foreach (object t in TableOfContentsVector.Items)
-                            {
-                                if (((Prototyp.Custom_Controls.VectorListViewItem)t).Uid == v.IntID.ToString())
-                                {
-                                    RemoveVectorData(((Prototyp.Custom_Controls.VectorListViewItem)t).Uid);
-                                    TableOfContentsVector.Items.Remove(t);
-                                    break;
-                                }
-                            }
-                        }
+                        //if (DeleteData)
+                        //{
+                        //    // Okay, now it's save to delete the data. Find entries and off you go.
+                        //    foreach (object t in TableOfContentsVector.Items)
+                        //    {
+                        //        if (((Prototyp.Custom_Controls.VectorListViewItem)t).Uid == v.IntID.ToString())
+                        //        {
+                        //            RemoveVectorData(((Prototyp.Custom_Controls.VectorListViewItem)t).Uid);
+                        //            TableOfContentsVector.Items.Remove(t);
+                        //            break;
+                        //        }
+                        //    }
+                        //}
                     }
                     else if (node is RasterImport_Module r)
                     {
-                        // First check whether there is another importer that also employs the same data source. If yes, data must not be deleted.
-                        foreach (NodeViewModel node2 in network.Nodes.Items)
-                        {
-                            if (node2 is RasterImport_Module r2)
-                            {
-                                if (r2 != r)
-                                {
-                                    if (r2.IntID == r.IntID)
-                                    {
-                                        // Found one. Don't delete data.
-                                        DeleteData = false;
-                                    }
-                                }
-                            }
-                        }
+                        //// First check whether there is another importer that also employs the same data source. If yes, data must not be deleted.
+                        //foreach (NodeViewModel node2 in network.Nodes.Items)
+                        //{
+                        //    if (node2 is RasterImport_Module r2)
+                        //    {
+                        //        if (r2 != r)
+                        //        {
+                        //            if (r2.IntID == r.IntID)
+                        //            {
+                        //                // Found one. Don't delete data.
+                        //                DeleteData = false;
+                        //            }
+                        //        }
+                        //    }
+                        //}
 
-                        if (DeleteData)
-                        {
-                            // Okay, now it's save to delete the data. Find entries and off you go.
-                            foreach (object t in TableOfContentsRaster.Items)
-                            {
-                                if (((Prototyp.Custom_Controls.RasterListViewItem)t).Uid == r.IntID.ToString())
-                                {
-                                    RemoveRasterData(((Prototyp.Custom_Controls.RasterListViewItem)t).Uid);
-                                    TableOfContentsRaster.Items.Remove(t);
-                                    break;
-                                }
-                            }
-                        }
+                        //if (DeleteData)
+                        //{
+                        //    // Okay, now it's save to delete the data. Find entries and off you go.
+                        //    foreach (object t in TableOfContentsRaster.Items)
+                        //    {
+                        //        if (((Prototyp.Custom_Controls.RasterListViewItem)t).Uid == r.IntID.ToString())
+                        //        {
+                        //            RemoveRasterData(((Prototyp.Custom_Controls.RasterListViewItem)t).Uid);
+                        //            TableOfContentsRaster.Items.Remove(t);
+                        //            break;
+                        //        }
+                        //    }
+                        //}
                     }
 
                     network.Nodes.Remove(node);
