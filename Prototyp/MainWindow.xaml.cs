@@ -4,7 +4,7 @@ using NodeNetwork.ViewModels;
 using Prototyp.Elements;
 using Prototyp.Modules;
 using System;
-using System.Configuration;
+using Microsoft.Extensions.Configuration;
 using System.IO;
 using System.Linq;
 using System.Windows;
@@ -105,11 +105,17 @@ namespace Prototyp
         // Parameterless constructor: Initialize.
         public MainWindow()
         {
-            // Init WPF.
+            // Init WPF.S
             InitializeComponent();
 
-            //Load Config-File
-            var appSettings = ConfigurationManager.AppSettings;
+            //AppSettings
+            var config = new ConfigurationBuilder().SetBasePath(AppDomain.CurrentDomain.BaseDirectory).AddJsonFile("appsettings.json").Build();
+
+
+            var section = config.GetSection("ToolBar1");
+            var ToolBar1 = section.GetChildren();
+
+
             // Startup NetworkView.
             AppWindow = this;
             networkView.ViewModel = network;
@@ -380,7 +386,7 @@ namespace Prototyp
             if (Index <= 0) return;
             if (Typing) return;
 
-            importModule(ComboItems[Index]);
+            importModule(ComboItems[Index].BinaryPath);
 
             ToolsComboBox.SelectedIndex = 0;
         }
@@ -891,24 +897,28 @@ namespace Prototyp
             chooseModuleWindow.ShowDialog();
             if (chooseModuleWindow.selectedModule.ToolName != null)
             {
-                System.Windows.Controls.Button ModuleBtn = new System.Windows.Controls.Button();
-                ModuleBtn.Content = new System.Windows.Controls.Image
-                {
-                    Source = new System.Windows.Media.Imaging.BitmapImage(new Uri(chooseModuleWindow.selectedModule.IconPath)),
-                    VerticalAlignment = VerticalAlignment.Center
-                };
-                ModuleBtn.Background = (System.Windows.Media.SolidColorBrush)new System.Windows.Media.BrushConverter().ConvertFromString("#FF212225");
-                ModuleBtn.Click += new RoutedEventHandler((sender, e) => importModule(chooseModuleWindow.selectedModule));
-                System.Windows.Controls.ContextMenu buttonContextmenu = new System.Windows.Controls.ContextMenu();
-                System.Windows.Controls.MenuItem removeBtn = new System.Windows.Controls.MenuItem();
-                removeBtn.Header = "Remove";
-                removeBtn.Click += new RoutedEventHandler((sender, e) => removeBtn_Click(ModuleBtn, dockPanel));
-                buttonContextmenu.Items.Add(removeBtn);
-                ModuleBtn.ContextMenu = buttonContextmenu;
-                dockPanel.Children.Add(ModuleBtn);
-                var config = ConfigurationManager.AppSettings;
-                //config.Add()
+                createButton(chooseModuleWindow.selectedModule.IconPath, chooseModuleWindow.selectedModule.BinaryPath, dockPanel.Name);  
             }
+        }
+
+        private void createButton(string IconPath, string BinaryPath, string DockPanelName)
+        {
+            System.Windows.Controls.Button ModuleBtn = new System.Windows.Controls.Button();
+            ModuleBtn.Content = new System.Windows.Controls.Image
+            {
+                Source = new System.Windows.Media.Imaging.BitmapImage(new Uri(IconPath)),
+                VerticalAlignment = VerticalAlignment.Center
+            };
+            ModuleBtn.Background = (System.Windows.Media.SolidColorBrush)new System.Windows.Media.BrushConverter().ConvertFromString("#FF212225");
+            ModuleBtn.Click += new RoutedEventHandler((sender, e) => importModule(BinaryPath));
+            System.Windows.Controls.ContextMenu buttonContextmenu = new System.Windows.Controls.ContextMenu();
+            System.Windows.Controls.MenuItem removeBtn = new System.Windows.Controls.MenuItem();
+            removeBtn.Header = "Remove";
+            System.Windows.Controls.DockPanel dockPanel = this.FindName(DockPanelName) as System.Windows.Controls.DockPanel;
+            removeBtn.Click += new RoutedEventHandler((sender, e) => removeBtn_Click(ModuleBtn, dockPanel));
+            buttonContextmenu.Items.Add(removeBtn);
+            ModuleBtn.ContextMenu = buttonContextmenu;
+            dockPanel.Children.Add(ModuleBtn);
         }
 
         private void removeBtn_Click(System.Windows.Controls.Button ModuleBtn, System.Windows.Controls.DockPanel dockPanel)
@@ -916,16 +926,17 @@ namespace Prototyp
             dockPanel.Children.Remove(ModuleBtn);
         }
 
-        private void importModule(ComboItem module)
+        private void importModule(string BinaryPath)
         {
             //Find lowest available port
+            AppContext.SetSwitch("System.Net.Http.SocketsHttpHandler.Http2UnencryptedSupport", true);
             int port = Node_Module.GetNextPort();
-
+            //int port = 5000;
             GrpcClient.ControlConnector.ControlConnectorClient grpcConnection;
 
             System.Diagnostics.Process moduleProcess = new System.Diagnostics.Process();
 
-            System.Diagnostics.ProcessStartInfo moduleProcessInfo = new System.Diagnostics.ProcessStartInfo(module.BinaryPath + ".exe", port.ToString());
+            System.Diagnostics.ProcessStartInfo moduleProcessInfo = new System.Diagnostics.ProcessStartInfo(BinaryPath + ".exe", port.ToString());
             //moduleProcessInfo.CreateNoWindow = true; //Ja, dies macht das Server-Window wirklich unsichtbar. Sichtbarkeit nur für Debugging-Zwecke.
             moduleProcessInfo.UseShellExecute = false; //'UseShellExecute = true' would be available only on the Windows platform.
             moduleProcess.StartInfo = moduleProcessInfo;
@@ -935,11 +946,11 @@ namespace Prototyp
 
                 // Establish GRPC connection
                 // TODO: nicht nur localhost
-                string url = "https://localhost:" + port.ToString();
+                string url = "http://localhost:" + port.ToString();
                 Grpc.Net.Client.GrpcChannel channel = Grpc.Net.Client.GrpcChannel.ForAddress(url);
                 grpcConnection = new GrpcClient.ControlConnector.ControlConnectorClient(channel);
 
-                Node_Module nodeModule = new Node_Module(module.BinaryPath + ".xml", grpcConnection, url, moduleProcess);
+                Node_Module nodeModule = new Node_Module(BinaryPath + ".xml", grpcConnection, url, moduleProcess);
                 network.Nodes.Add(nodeModule);
 
             }
