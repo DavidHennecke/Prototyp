@@ -938,9 +938,9 @@ namespace Prototyp
 
         private void importModule(string BinaryPath)
         {
-            //Find lowest available port
             AppContext.SetSwitch("System.Net.Http.SocketsHttpHandler.Http2UnencryptedSupport", true); // Wozu ist das?
-            
+
+            //Find lowest available port
             int port = Node_Module.GetNextPort(BASEPORT);
 
             GrpcClient.ControlConnector.ControlConnectorClient grpcConnection;

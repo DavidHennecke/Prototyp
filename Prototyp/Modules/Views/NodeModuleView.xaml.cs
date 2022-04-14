@@ -44,8 +44,6 @@ namespace Prototyp.Modules.Views
 
         private void ViewModel_ProcessStatusChanged(object sender, EventArgs e)
         {
-            // TODO: Für Status besser Enum verwenden.
-
             // Dieser Fall hier ist gar nicht definiert.
             //if (this.ViewModel.Status == 0)
             //{

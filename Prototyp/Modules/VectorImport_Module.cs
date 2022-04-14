@@ -12,9 +12,9 @@ namespace Prototyp.Modules
         public ValueNodeInputViewModel<string> importNodeInput { get; }
         public ValueNodeOutputViewModel<Prototyp.Elements.VectorData> importNodeOutput { get; }
         public double IntID { get; }
-        public int Status;
+        public NodeProgress Status;
 
-        public void ChangeStatus(int statusNumber)
+        public void ChangeStatus(NodeProgress statusNumber)
         {
             Status = statusNumber;
             ProcessStatusChanged?.Invoke(Status, System.EventArgs.Empty);
