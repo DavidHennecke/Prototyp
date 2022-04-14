@@ -501,7 +501,7 @@ namespace Prototyp.Elements
             string Organization = MyCRS?.Org;
             IntSRS.ImportFromWkt(ref WKTString);
 
-            string Proj4;            
+            string Proj4;
             IntSRS.ExportToProj4(out Proj4);
             if (Proj4 == "")
             {
@@ -699,5 +699,43 @@ namespace Prototyp.Elements
             System.IO.File.WriteAllBytes(FileName, FGB);
             IntBusy = false;
         }
+    }
+
+    // Derived classes -------------------------------------------------------------------------
+
+    public class VectorPointData : VectorData
+    {
+        public VectorPointData() : base() { }
+        public VectorPointData(string MyString) : base(MyString) { }
+        public VectorPointData(string FlatGeobufFileName, NetTopologySuite.Geometries.Envelope FlatGeobufRect) : base(FlatGeobufFileName, FlatGeobufRect) { }
+        public VectorPointData(OSGeo.OGR.Layer LayerData) : base(LayerData) { }
+        public VectorPointData(byte[] VecArray) : base(VecArray) { }
+    }
+
+    public class VectorLineData : VectorData
+    {
+        public VectorLineData() : base() { }
+        public VectorLineData(string MyString) : base(MyString) { }
+        public VectorLineData(string FlatGeobufFileName, NetTopologySuite.Geometries.Envelope FlatGeobufRect) : base(FlatGeobufFileName, FlatGeobufRect) { }
+        public VectorLineData(OSGeo.OGR.Layer LayerData) : base(LayerData) { }
+        public VectorLineData(byte[] VecArray) : base(VecArray) { }
+    }
+
+    public class VectorPolygonData : VectorData
+    {
+        public VectorPolygonData() : base() { }
+        public VectorPolygonData(string MyString) : base(MyString) { }
+        public VectorPolygonData(string FlatGeobufFileName, NetTopologySuite.Geometries.Envelope FlatGeobufRect) : base(FlatGeobufFileName, FlatGeobufRect) { }
+        public VectorPolygonData(OSGeo.OGR.Layer LayerData) : base(LayerData) { }
+        public VectorPolygonData(byte[] VecArray) : base(VecArray) { }
+    }
+
+    public class VectorMultiPolygonData : VectorData
+    {
+        public VectorMultiPolygonData() : base() { }
+        public VectorMultiPolygonData(string MyString) : base(MyString) { }
+        public VectorMultiPolygonData(string FlatGeobufFileName, NetTopologySuite.Geometries.Envelope FlatGeobufRect) : base(FlatGeobufFileName, FlatGeobufRect) { }
+        public VectorMultiPolygonData(OSGeo.OGR.Layer LayerData) : base(LayerData) { }
+        public VectorMultiPolygonData(byte[] VecArray) : base(VecArray) { }
     }
 }

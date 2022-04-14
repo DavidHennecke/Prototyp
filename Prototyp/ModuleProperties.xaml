@@ -18,7 +18,8 @@
         <CheckBox x:Name="ChkInVectorPoint" Content="Vector point" Margin="30,55,0,0" VerticalAlignment="Top"/>
         <CheckBox x:Name="ChkInVectorLine" Content="Vector line" Margin="30,85,0,0" VerticalAlignment="Top"/>
         <CheckBox x:Name="ChkInVectorPolygon" Content="Vector polygon" Margin="30,115,0,0" VerticalAlignment="Top"/>
-        <CheckBox x:Name="ChkInRaster" Content="Raster" Margin="30,145,0,0" VerticalAlignment="Top"/>
+        <CheckBox x:Name="ChkInVectorMultiPolygon" Content="Vector multi polygon" Margin="30,145,0,0" VerticalAlignment="Top"/>
+        <CheckBox x:Name="ChkInRaster" Content="Raster" Margin="30,175,0,0" VerticalAlignment="Top"/>
 
         <Rectangle HorizontalAlignment="Left" Height="242" Margin="201,10,0,0" Stroke="White" VerticalAlignment="Top" Width="254"/>
         <TextBlock HorizontalAlignment="Left" Margin="220,30,0,0" Text="Slider properties" TextWrapping="Wrap" VerticalAlignment="Top"/>
@@ -42,7 +43,8 @@
         <CheckBox x:Name="ChkOutVectorPoint" Content="Vector point" Margin="705,55,0,0" VerticalAlignment="Top"/>
         <CheckBox x:Name="ChkOutVectorLine" Content="Vector line" Margin="705,85,0,0" VerticalAlignment="Top"/>
         <CheckBox x:Name="ChkOutVectorPolygon" Content="Vector polygon" Margin="705,115,0,0" VerticalAlignment="Top"/>
-        <CheckBox x:Name="ChkOutRaster" Content="Raster" Margin="705,145,0,0" VerticalAlignment="Top"/>
+        <CheckBox x:Name="ChkOutVectorMultiPolygon" Content="Vector multi polygon" Margin="705,145,0,0" VerticalAlignment="Top"/>
+        <CheckBox x:Name="ChkOutRaster" Content="Raster" Margin="705,175,0,0" VerticalAlignment="Top"/>
         <Button x:Name="BtOkay" Content="Okay" Margin="822,307,0,0" VerticalAlignment="Top" Click="BtOkay_Click"/>
         <Button x:Name="BtCancel" Content="Cancel" Margin="758,307,0,0" VerticalAlignment="Top" Click="BtCancel_Click"/>
         <TextBlock HorizontalAlignment="Left" Margin="42,278,0,0" Text="Row name:" TextWrapping="Wrap" VerticalAlignment="Top"/>

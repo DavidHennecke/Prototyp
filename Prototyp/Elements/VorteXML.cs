@@ -48,6 +48,7 @@
             VectorPoint,
             VectorLine,
             VectorPolygon,
+            VectorMultiPolygon,
 
             // Raster types
             Raster
@@ -159,9 +160,9 @@
             }
             else // Assume that the given string is an actual XML string.
             {
-                 MyXML = System.Xml.Linq.XDocument.Parse(MyString);
+                MyXML = System.Xml.Linq.XDocument.Parse(MyString);
             }
-                        
+
             ImportXML(MyXML);
         }
 
@@ -284,6 +285,7 @@
                         if (SubElement.Name == "{Vector}Point") ToolRows[Counter].inputRow.inputTypes[SubCounter] = ConnectorType.VectorPoint;
                         if (SubElement.Name == "{Vector}Line") ToolRows[Counter].inputRow.inputTypes[SubCounter] = ConnectorType.VectorLine;
                         if (SubElement.Name == "{Vector}Polygon") ToolRows[Counter].inputRow.inputTypes[SubCounter] = ConnectorType.VectorPolygon;
+                        if (SubElement.Name == "{Vector}MultiPolygon") ToolRows[Counter].inputRow.inputTypes[SubCounter] = ConnectorType.VectorMultiPolygon;
 
                         if (SubElement.Name == "{Raster}Raster") ToolRows[Counter].inputRow.inputTypes[SubCounter] = ConnectorType.Raster;
 
@@ -317,6 +319,7 @@
                         if (SubElement.Name == "{Vector}Point") ToolRows[Counter].inputRow.altControls[SubCounter].inputType = ConnectorType.VectorPoint;
                         if (SubElement.Name == "{Vector}Line") ToolRows[Counter].inputRow.altControls[SubCounter].inputType = ConnectorType.VectorLine;
                         if (SubElement.Name == "{Vector}Polygon") ToolRows[Counter].inputRow.altControls[SubCounter].inputType = ConnectorType.VectorPolygon;
+                        if (SubElement.Name == "{Vector}MultiPolygon") ToolRows[Counter].inputRow.altControls[SubCounter].inputType = ConnectorType.VectorMultiPolygon;
 
                         if (SubElement.Name == "{Raster}Raster") ToolRows[Counter].inputRow.altControls[SubCounter].inputType = ConnectorType.Raster;
 
@@ -382,6 +385,7 @@
                         if (SubElement.Name == "{Vector}Point") ToolRows[Counter].outputRow.outputTypes[SubCounter] = ConnectorType.VectorPoint;
                         if (SubElement.Name == "{Vector}Line") ToolRows[Counter].outputRow.outputTypes[SubCounter] = ConnectorType.VectorLine;
                         if (SubElement.Name == "{Vector}Polygon") ToolRows[Counter].outputRow.outputTypes[SubCounter] = ConnectorType.VectorPolygon;
+                        if (SubElement.Name == "{Vector}MultiPolygon") ToolRows[Counter].outputRow.outputTypes[SubCounter] = ConnectorType.VectorMultiPolygon;
 
                         if (SubElement.Name == "{Raster}Raster") ToolRows[Counter].outputRow.outputTypes[SubCounter] = ConnectorType.Raster;
 
@@ -624,6 +628,7 @@
                     if (ToolRows[Row].inputRow.inputTypes[i] == ConnectorType.VectorPoint) Line = "\t\t\t\t" + "<Vector:Point />" + "\n";
                     if (ToolRows[Row].inputRow.inputTypes[i] == ConnectorType.VectorLine) Line = "\t\t\t\t" + "<Vector:Line />" + "\n";
                     if (ToolRows[Row].inputRow.inputTypes[i] == ConnectorType.VectorPolygon) Line = "\t\t\t\t" + "<Vector:Polygon />" + "\n";
+                    if (ToolRows[Row].inputRow.inputTypes[i] == ConnectorType.VectorMultiPolygon) Line = "\t\t\t\t" + "<Vector:MultiPolygon />" + "\n";
 
                     if (ToolRows[Row].inputRow.inputTypes[i] == ConnectorType.Raster) Line = "\t\t\t\t" + "<Raster:Raster />" + "\n";
 
@@ -645,6 +650,7 @@
                     if (ToolRows[Row].inputRow.altControls[i].inputType == ConnectorType.VectorPoint) AltTypeStr = "Vector:Point";
                     if (ToolRows[Row].inputRow.altControls[i].inputType == ConnectorType.VectorLine) AltTypeStr = "Vector:Line";
                     if (ToolRows[Row].inputRow.altControls[i].inputType == ConnectorType.VectorPolygon) AltTypeStr = "Vector:Polygon";
+                    if (ToolRows[Row].inputRow.altControls[i].inputType == ConnectorType.VectorMultiPolygon) AltTypeStr = "Vector:MultiPolygon";
 
                     if (ToolRows[Row].inputRow.altControls[i].inputType == ConnectorType.Raster) AltTypeStr = "Raster:Raster";
 
@@ -793,6 +799,7 @@
                 if (ToolRows[Row].outputRow.outputTypes[i] == ConnectorType.VectorPoint) OutTypeStr = "Vector:Point";
                 if (ToolRows[Row].outputRow.outputTypes[i] == ConnectorType.VectorLine) OutTypeStr = "Vector:Line";
                 if (ToolRows[Row].outputRow.outputTypes[i] == ConnectorType.VectorPolygon) OutTypeStr = "Vector:Polygon";
+                if (ToolRows[Row].outputRow.outputTypes[i] == ConnectorType.VectorMultiPolygon) OutTypeStr = "Vector:MultiPolygon";
 
                 if (ToolRows[Row].outputRow.outputTypes[i] == ConnectorType.Raster) OutTypeStr = "Raster:Raster";
 

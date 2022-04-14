@@ -51,11 +51,17 @@ namespace Prototyp.Modules
         public Modules.ViewModels.FloatSliderViewModel sliderEditor { get; set; }
         public Modules.ViewModels.OutputNameViewModel outNameEditor { get; set; }
         public Modules.ViewModels.DropDownMenuViewModel dropDownEditor { get; set; }
-        public ValueNodeInputViewModel<Prototyp.Elements.VectorData> vectorInput { get; set; }
+        public ValueNodeInputViewModel<Prototyp.Elements.VectorPointData> vectorInputPoint { get; set; }
+        public ValueNodeInputViewModel<Prototyp.Elements.VectorLineData> vectorInputLine { get; set; }
+        public ValueNodeInputViewModel<Prototyp.Elements.VectorPolygonData> vectorInputPolygon { get; set; }
+        public ValueNodeInputViewModel<Prototyp.Elements.VectorMultiPolygonData> vectorInputMultiPolygon { get; set; }
         public ValueNodeInputViewModel<Prototyp.Elements.RasterData> rasterInput { get; set; }
         public ValueNodeInputViewModel<float> valueFloatInput { get; set; }
         public ValueNodeInputViewModel<string> valueStringInput { get; set; }
-        public ValueNodeOutputViewModel<Prototyp.Elements.VectorData> vectorOutput { get; set; }
+        public ValueNodeOutputViewModel<Prototyp.Elements.VectorPointData> vectorOutputPoint { get; set; }
+        public ValueNodeOutputViewModel<Prototyp.Elements.VectorLineData> vectorOutputLine { get; set; }
+        public ValueNodeOutputViewModel<Prototyp.Elements.VectorPolygonData> vectorOutputPolygon { get; set; }
+        public ValueNodeOutputViewModel<Prototyp.Elements.VectorMultiPolygonData> vectorOutputMultiPolygon { get; set; }
         public ValueNodeOutputViewModel<Prototyp.Elements.RasterData> rasterOutput { get; set; }
 
         private string IntPathXML;
@@ -152,29 +158,104 @@ namespace Prototyp.Modules
                 {
                     for (int i = 0; i < toolRow.inputRow.inputTypes.Length; i++)
                     {
-                        if (toolRow.inputRow.inputTypes[i] == VorteXML.ConnectorType.VectorLine | toolRow.inputRow.inputTypes[i] == VorteXML.ConnectorType.VectorPoint | toolRow.inputRow.inputTypes[i] == VorteXML.ConnectorType.VectorPolygon)
+                        if (toolRow.inputRow.inputTypes[i] == VorteXML.ConnectorType.VectorPoint)
                         {
-                            vectorInput = new ValueNodeInputViewModel<Prototyp.Elements.VectorData>();
+                            vectorInputPoint = new ValueNodeInputViewModel<Prototyp.Elements.VectorPointData>();
                             if (inMain)
                             {
-                                vectorInput.SetID(i);
-                                vectorInput.Name = toolRow.inputRow.inputTypes[i].ToString();
+                                vectorInputPoint.SetID(i);
+                                vectorInputPoint.Name = toolRow.inputRow.inputTypes[i].ToString();
                                 // Alternativ: vectorInput.Name = toolRow.inputRow.inputTypes.Last().ToString();
                                 // Grundsätzlich: Was tun bei mehreren validen Inputtypen?
-                                vectorInput.ValueChanged.Subscribe(vectorInputSource =>
+                                vectorInputPoint.ValueChanged.Subscribe(vectorInputSource =>
                                 {
                                     if (vectorInputSource != null)
                                     {
                                         // TODO: Hier muss noch nach den Ports differenziert werden, falls mehrere vorhanden sind.
-                                        vectorInput.Name = vectorInputSource.Name;
+                                        vectorInputPoint.Name = vectorInputSource.Name;
                                     }
                                 });
                             }
                             else
                             {
-                                vectorInput.Name = toolRow.Name;
+                                vectorInputPoint.Name = toolRow.Name;
                             }
-                            Inputs.Add(vectorInput);
+                            Inputs.Add(vectorInputPoint);
+                            break;
+                        }
+                        else if (toolRow.inputRow.inputTypes[i] == VorteXML.ConnectorType.VectorLine)
+                        {
+                            vectorInputLine = new ValueNodeInputViewModel<Prototyp.Elements.VectorLineData>();
+                            if (inMain)
+                            {
+                                vectorInputLine.SetID(i);
+                                vectorInputLine.Name = toolRow.inputRow.inputTypes[i].ToString();
+                                // Alternativ: vectorInput.Name = toolRow.inputRow.inputTypes.Last().ToString();
+                                // Grundsätzlich: Was tun bei mehreren validen Inputtypen?
+                                vectorInputLine.ValueChanged.Subscribe(vectorInputSource =>
+                                {
+                                    if (vectorInputSource != null)
+                                    {
+                                        // TODO: Hier muss noch nach den Ports differenziert werden, falls mehrere vorhanden sind.
+                                        vectorInputLine.Name = vectorInputSource.Name;
+                                    }
+                                });
+                            }
+                            else
+                            {
+                                vectorInputLine.Name = toolRow.Name;
+                            }
+                            Inputs.Add(vectorInputLine);
+                            break;
+                        }
+                        else if (toolRow.inputRow.inputTypes[i] == VorteXML.ConnectorType.VectorPolygon)
+                        {
+                            vectorInputPolygon = new ValueNodeInputViewModel<Prototyp.Elements.VectorPolygonData>();
+                            if (inMain)
+                            {
+                                vectorInputPolygon.SetID(i);
+                                vectorInputPolygon.Name = toolRow.inputRow.inputTypes[i].ToString();
+                                // Alternativ: vectorInput.Name = toolRow.inputRow.inputTypes.Last().ToString();
+                                // Grundsätzlich: Was tun bei mehreren validen Inputtypen?
+                                vectorInputPolygon.ValueChanged.Subscribe(vectorInputSource =>
+                                {
+                                    if (vectorInputSource != null)
+                                    {
+                                        // TODO: Hier muss noch nach den Ports differenziert werden, falls mehrere vorhanden sind.
+                                        vectorInputPolygon.Name = vectorInputSource.Name;
+                                    }
+                                });
+                            }
+                            else
+                            {
+                                vectorInputPolygon.Name = toolRow.Name;
+                            }
+                            Inputs.Add(vectorInputPolygon);
+                            break;
+                        }
+                        else if (toolRow.inputRow.inputTypes[i] == VorteXML.ConnectorType.VectorMultiPolygon)
+                        {
+                            vectorInputMultiPolygon = new ValueNodeInputViewModel<Prototyp.Elements.VectorMultiPolygonData>();
+                            if (inMain)
+                            {
+                                vectorInputMultiPolygon.SetID(i);
+                                vectorInputMultiPolygon.Name = toolRow.inputRow.inputTypes[i].ToString();
+                                // Alternativ: vectorInput.Name = toolRow.inputRow.inputTypes.Last().ToString();
+                                // Grundsätzlich: Was tun bei mehreren validen Inputtypen?
+                                vectorInputMultiPolygon.ValueChanged.Subscribe(vectorInputSource =>
+                                {
+                                    if (vectorInputSource != null)
+                                    {
+                                        // TODO: Hier muss noch nach den Ports differenziert werden, falls mehrere vorhanden sind.
+                                        vectorInputMultiPolygon.Name = vectorInputSource.Name;
+                                    }
+                                });
+                            }
+                            else
+                            {
+                                vectorInputMultiPolygon.Name = toolRow.Name;
+                            }
+                            Inputs.Add(vectorInputMultiPolygon);
                             break;
                         }
                         else if (toolRow.inputRow.inputTypes[i] == VorteXML.ConnectorType.Raster)
@@ -214,13 +295,13 @@ namespace Prototyp.Modules
                 {
                     for (int i = 0; i < toolRow.outputRow.outputTypes.Length; i++)
                     {
-                        if (toolRow.outputRow.outputTypes[i] == VorteXML.ConnectorType.VectorLine | toolRow.outputRow.outputTypes[i] == VorteXML.ConnectorType.VectorPoint | toolRow.outputRow.outputTypes[i] == VorteXML.ConnectorType.VectorPolygon)
+                        if (toolRow.outputRow.outputTypes[i] == VorteXML.ConnectorType.VectorPoint)
                         {
-                            vectorOutput = new ValueNodeOutputViewModel<Elements.VectorData>();
+                            vectorOutputPoint = new ValueNodeOutputViewModel<Elements.VectorPointData>();
                             if (inMain)
                             {
-                                vectorOutput.SetID(i);
-                                VectorData placeholder = new VectorData();
+                                vectorOutputPoint.SetID(i);
+                                VectorPointData placeholder = new VectorPointData();
                                 // Name-Editor Implementation
                                 //outNameEditor = new Modules.ViewModels.OutputNameViewModel(vectorOutput.Name);
                                 //outNameEditor.Value = "Vector output";
@@ -231,15 +312,95 @@ namespace Prototyp.Modules
                                 // Alternativ: ...outputTypes.Last().ToString();
                                 // Grundsätzlich: Was tun bei mehreren validen Outputtypen?
                                 placeholder.Name = toolRow.outputRow.outputTypes[i].ToString();
-                                vectorOutput.Name = toolRow.outputRow.outputTypes[i].ToString();
-                                vectorOutput.Value = System.Reactive.Linq.Observable.Return(placeholder);
+                                vectorOutputPoint.Name = toolRow.outputRow.outputTypes[i].ToString();
+                                vectorOutputPoint.Value = System.Reactive.Linq.Observable.Return(placeholder);
                             }
                             else
                             {
-                                vectorOutput.Name = toolRow.Name;
+                                vectorOutputPoint.Name = toolRow.Name;
                             }
-                            Outputs.Add(vectorOutput);
+                            Outputs.Add(vectorOutputPoint);
+                            break;
+                        }
+                        else if (toolRow.outputRow.outputTypes[i] == VorteXML.ConnectorType.VectorLine)
+                        {
+                            vectorOutputLine = new ValueNodeOutputViewModel<Elements.VectorLineData>();
+                            if (inMain)
+                            {
+                                vectorOutputLine.SetID(i);
+                                VectorLineData placeholder = new VectorLineData();
+                                // Name-Editor Implementation
+                                //outNameEditor = new Modules.ViewModels.OutputNameViewModel(vectorOutput.Name);
+                                //outNameEditor.Value = "Vector output";
+                                //vectorOutput.Editor = outNameEditor;
+                                //outNameEditor.ValueChanged.Subscribe (v => { result.Name = v; });
+                                //vectorOutput.Value = this.WhenAnyObservable(vm => vm.outNameEditor.ValueChanged).Select(value => result);
 
+                                // Alternativ: ...outputTypes.Last().ToString();
+                                // Grundsätzlich: Was tun bei mehreren validen Outputtypen?
+                                placeholder.Name = toolRow.outputRow.outputTypes[i].ToString();
+                                vectorOutputLine.Name = toolRow.outputRow.outputTypes[i].ToString();
+                                vectorOutputLine.Value = System.Reactive.Linq.Observable.Return(placeholder);
+                            }
+                            else
+                            {
+                                vectorOutputLine.Name = toolRow.Name;
+                            }
+                            Outputs.Add(vectorOutputLine);
+                            break;
+                        }
+                        else if (toolRow.outputRow.outputTypes[i] == VorteXML.ConnectorType.VectorPolygon)
+                        {
+                            vectorOutputPolygon = new ValueNodeOutputViewModel<Elements.VectorPolygonData>();
+                            if (inMain)
+                            {
+                                vectorOutputPolygon.SetID(i);
+                                VectorPolygonData placeholder = new VectorPolygonData();
+                                // Name-Editor Implementation
+                                //outNameEditor = new Modules.ViewModels.OutputNameViewModel(vectorOutput.Name);
+                                //outNameEditor.Value = "Vector output";
+                                //vectorOutput.Editor = outNameEditor;
+                                //outNameEditor.ValueChanged.Subscribe (v => { result.Name = v; });
+                                //vectorOutput.Value = this.WhenAnyObservable(vm => vm.outNameEditor.ValueChanged).Select(value => result);
+
+                                // Alternativ: ...outputTypes.Last().ToString();
+                                // Grundsätzlich: Was tun bei mehreren validen Outputtypen?
+                                placeholder.Name = toolRow.outputRow.outputTypes[i].ToString();
+                                vectorOutputPolygon.Name = toolRow.outputRow.outputTypes[i].ToString();
+                                vectorOutputPolygon.Value = System.Reactive.Linq.Observable.Return(placeholder);
+                            }
+                            else
+                            {
+                                vectorOutputPolygon.Name = toolRow.Name;
+                            }
+                            Outputs.Add(vectorOutputPolygon);
+                            break;
+                        }
+                        else if (toolRow.outputRow.outputTypes[i] == VorteXML.ConnectorType.VectorMultiPolygon)
+                        {
+                            vectorOutputMultiPolygon = new ValueNodeOutputViewModel<Elements.VectorMultiPolygonData>();
+                            if (inMain)
+                            {
+                                vectorOutputMultiPolygon.SetID(i);
+                                VectorMultiPolygonData placeholder = new VectorMultiPolygonData();
+                                // Name-Editor Implementation
+                                //outNameEditor = new Modules.ViewModels.OutputNameViewModel(vectorOutput.Name);
+                                //outNameEditor.Value = "Vector output";
+                                //vectorOutput.Editor = outNameEditor;
+                                //outNameEditor.ValueChanged.Subscribe (v => { result.Name = v; });
+                                //vectorOutput.Value = this.WhenAnyObservable(vm => vm.outNameEditor.ValueChanged).Select(value => result);
+
+                                // Alternativ: ...outputTypes.Last().ToString();
+                                // Grundsätzlich: Was tun bei mehreren validen Outputtypen?
+                                placeholder.Name = toolRow.outputRow.outputTypes[i].ToString();
+                                vectorOutputMultiPolygon.Name = toolRow.outputRow.outputTypes[i].ToString();
+                                vectorOutputMultiPolygon.Value = System.Reactive.Linq.Observable.Return(placeholder);
+                            }
+                            else
+                            {
+                                vectorOutputMultiPolygon.Name = toolRow.Name;
+                            }
+                            Outputs.Add(vectorOutputMultiPolygon);
                             break;
                         }
                         else if (toolRow.outputRow.outputTypes[i] == VorteXML.ConnectorType.Raster)

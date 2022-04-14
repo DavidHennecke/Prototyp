@@ -23,15 +23,12 @@ https://github.com/Wouterdek/NodeNetwork/blob/master/NodeNetworkTests/NetworkVie
 
 TODO:
 
-1.) Mouse select in ComboBox after typing does not work.
-2.) Please make an event for node deletion.
-3.) Make connection to a multi-input module node, placeholder name will always be the last port, even if
-    connection is made to, e.g., the first port.
-4.) What to do if a module port supports several types? E.g. for 'NewModule', inputs can be Vector Point/Line and Polygon,
-    but only Point (the first) is shown.
-5.) Low priority: Add multi-select in toolbar modules selection.
-6.) Check: Make child classes for vector-point, vector-line and so on that inherit from the vector import node class.
-    If that works it also needs to be addressed everywhere else, esp. in the VorteXML processor.
+o Mouse select in ComboBox after typing does not work.
+o Please make an event for node deletion.
+o Do we still want multi-vector ports?
+o Is yes, is this problem still relevant: Make connection to a multi-input module node, placeholder name will always
+  be the last port, even if connection is made to, e.g., the first port.
+o Low priority: Add multi-select in toolbar modules selection.
 
 ------------------------------- */
 
@@ -297,7 +294,27 @@ namespace Prototyp
                         }
                     }
 
-                    vectorData.Add(new VectorData(openFileDialog.FileName));
+                    VectorData peek = (new VectorData(openFileDialog.FileName));
+                    string geometryType = peek.FeatureCollection[0].Geometry.GeometryType;
+                    peek = null;
+                    switch (geometryType)
+                    {
+                        case "Point":
+                            vectorData.Add(new VectorPointData(openFileDialog.FileName));
+                            break;
+                        case "Line":
+                            vectorData.Add(new VectorLineData(openFileDialog.FileName));
+                            break;
+                        case "Polygon":
+                            vectorData.Add(new VectorPolygonData(openFileDialog.FileName));
+                            break;
+                        case "MultiPolygon":
+                            vectorData.Add(new VectorMultiPolygonData(openFileDialog.FileName));
+                            break;
+                        default:
+                            // There should be nothing here.
+                            break;
+                    }
                     //// Testcode start
                     //// Bitte noch nicht löschen!
                     //string Test1 = vectorData[vectorData.Count - 1].ToString(ToStringParams.ByteString);
@@ -365,8 +382,26 @@ namespace Prototyp
                 {
                     if (vectorData[i].ID.ToString() == (string)e.Data.GetData("ID"))
                     {
-                        VectorImport_Module importNode = new VectorImport_Module(vectorData[i].Name, vectorData[i].FeatureCollection[0].Geometry.GeometryType, vectorData[i].ID);
-                        
+                        VectorImport_Module importNode = null;
+
+                        Type vecType = vectorData[i].GetType();
+                        if (vecType.Name == "VectorPointData")
+                        {
+                            importNode = new VectorImport_ModulePoint(vectorData[i].Name, vectorData[i].FeatureCollection[0].Geometry.GeometryType, vectorData[i].ID);
+                        }
+                        else if (vecType.Name == "VectorLineData")
+                        {
+                            importNode = new VectorImport_ModuleLine(vectorData[i].Name, vectorData[i].FeatureCollection[0].Geometry.GeometryType, vectorData[i].ID);
+                        }
+                        else if (vecType.Name == "VectorPolygonData")
+                        {
+                            importNode = new VectorImport_ModulePolygon(vectorData[i].Name, vectorData[i].FeatureCollection[0].Geometry.GeometryType, vectorData[i].ID);
+                        }
+                        else if (vecType.Name == "VectorMultiPolygonData")
+                        {
+                            importNode = new VectorImport_ModuleMultiPolygon(vectorData[i].Name, vectorData[i].FeatureCollection[0].Geometry.GeometryType, vectorData[i].ID);
+                        }
+
                         Point TempPoint;
                         TempPoint = e.GetPosition(networkView);
                         TempPoint.X = (TempPoint.X - networkView.ViewModel.DragOffset.X) / networkView.ViewModel.ZoomFactor;
@@ -1007,4 +1042,5 @@ namespace Prototyp
         }
     }
 }
+
 

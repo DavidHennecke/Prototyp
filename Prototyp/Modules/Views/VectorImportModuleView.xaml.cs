@@ -28,7 +28,7 @@ namespace Prototyp.Modules.Views
             get => ViewModel;
             set => ViewModel = (VectorImport_Module)value;
         }
-        
+
 
         #endregion
         public VectorImportModuleView()
@@ -36,7 +36,7 @@ namespace Prototyp.Modules.Views
             InitializeComponent();
 
             this.WhenActivated(d =>
-            {           
+            {
                 this.WhenAnyValue(v => v.ViewModel).BindTo(this, v => v.NodeView.ViewModel).DisposeWith(d);
                 this.ViewModel.ProcessStatusChanged += ViewModel_ProcessStatusChanged;
             });
@@ -71,4 +71,9 @@ namespace Prototyp.Modules.Views
             }
         }
     }
+
+    public class VectorPointImportModuleView : VectorImportModuleView, IViewFor<VectorImport_Module> { }
+    public class VectorLineImportModuleView : VectorImportModuleView, IViewFor<VectorImport_Module> { }
+    public class VectorPolygonImportModuleView : VectorImportModuleView, IViewFor<VectorImport_Module> { }
+    public class VectorMultiPolygonImportModuleView : VectorImportModuleView, IViewFor<VectorImport_Module> { }
 }

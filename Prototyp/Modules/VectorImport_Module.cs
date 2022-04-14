@@ -11,13 +11,18 @@ namespace Prototyp.Modules
         public event System.EventHandler ProcessStatusChanged;
         public ValueNodeInputViewModel<string> importNodeInput { get; }
         public ValueNodeOutputViewModel<Prototyp.Elements.VectorData> importNodeOutput { get; }
-        public double IntID { get; }
+        public virtual double IntID { get; }
         public NodeProgress Status;
 
         public void ChangeStatus(NodeProgress statusNumber)
         {
             Status = statusNumber;
             ProcessStatusChanged?.Invoke(Status, System.EventArgs.Empty);
+        }
+
+        public VectorImport_Module()
+        {
+            // Nothing much to do here...
         }
 
         public VectorImport_Module(string dataName, string geomType, double dataID)
@@ -37,6 +42,109 @@ namespace Prototyp.Modules
         static VectorImport_Module()
         {
             Splat.Locator.CurrentMutable.Register(() => new Views.VectorImportModuleView(), typeof(IViewFor<VectorImport_Module>));
+        }
+    }
+
+
+    // Derived classes -------------------------------------------------------------------------
+
+    public class VectorImport_ModulePoint : VectorImport_Module
+    {
+        public new ValueNodeOutputViewModel<Prototyp.Elements.VectorPointData> importNodeOutput { get; }
+        public override double IntID { get; }
+
+        public VectorImport_ModulePoint(string dataName, string geomType, double dataID)
+        {
+            Name = dataName;
+            IntID = dataID;
+            importNodeOutput = new ValueNodeOutputViewModel<Prototyp.Elements.VectorPointData>();
+            Outputs.Add(importNodeOutput);
+            Prototyp.Elements.VectorPointData placeholder = new Prototyp.Elements.VectorPointData();
+            placeholder.Name = geomType;
+
+            importNodeOutput.Name = geomType;
+            importNodeOutput.Value = System.Reactive.Linq.Observable.Return(placeholder);
+            importNodeOutput.SetDataID(dataID);
+        }
+
+        static VectorImport_ModulePoint()
+        {
+            Splat.Locator.CurrentMutable.Register(() => new Views.VectorPointImportModuleView(), typeof(IViewFor<VectorImport_ModulePoint>));
+        }
+    }
+
+    public class VectorImport_ModuleLine : VectorImport_Module
+    {
+        public new ValueNodeOutputViewModel<Prototyp.Elements.VectorLineData> importNodeOutput { get; }
+        public override double IntID { get; }
+
+        public VectorImport_ModuleLine(string dataName, string geomType, double dataID)
+        {
+            Name = dataName;
+            IntID = dataID;
+            importNodeOutput = new ValueNodeOutputViewModel<Prototyp.Elements.VectorLineData>();
+            Outputs.Add(importNodeOutput);
+            Prototyp.Elements.VectorLineData placeholder = new Prototyp.Elements.VectorLineData();
+            placeholder.Name = geomType;
+
+            importNodeOutput.Name = geomType;
+            importNodeOutput.Value = System.Reactive.Linq.Observable.Return(placeholder);
+            importNodeOutput.SetDataID(dataID);
+        }
+
+        static VectorImport_ModuleLine()
+        {
+            Splat.Locator.CurrentMutable.Register(() => new Views.VectorLineImportModuleView(), typeof(IViewFor<VectorImport_ModuleLine>));
+        }
+    }
+
+    public class VectorImport_ModulePolygon : VectorImport_Module
+    {
+        public new ValueNodeOutputViewModel<Prototyp.Elements.VectorPolygonData> importNodeOutput { get; }
+        public override double IntID { get; }
+
+        public VectorImport_ModulePolygon(string dataName, string geomType, double dataID)
+        {
+            Name = dataName;
+            IntID = dataID;
+            importNodeOutput = new ValueNodeOutputViewModel<Prototyp.Elements.VectorPolygonData>();
+            Outputs.Add(importNodeOutput);
+            Prototyp.Elements.VectorPolygonData placeholder = new Prototyp.Elements.VectorPolygonData();
+            placeholder.Name = geomType;
+
+            importNodeOutput.Name = geomType;
+            importNodeOutput.Value = System.Reactive.Linq.Observable.Return(placeholder);
+            importNodeOutput.SetDataID(dataID);
+        }
+
+        static VectorImport_ModulePolygon()
+        {
+            Splat.Locator.CurrentMutable.Register(() => new Views.VectorPolygonImportModuleView(), typeof(IViewFor<VectorImport_ModulePolygon>));
+        }
+    }
+
+    public class VectorImport_ModuleMultiPolygon : VectorImport_Module
+    {
+        public new ValueNodeOutputViewModel<Prototyp.Elements.VectorMultiPolygonData> importNodeOutput { get; }
+        public override double IntID { get; }
+
+        public VectorImport_ModuleMultiPolygon(string dataName, string geomType, double dataID)
+        {
+            Name = dataName;
+            IntID = dataID;
+            importNodeOutput = new ValueNodeOutputViewModel<Prototyp.Elements.VectorMultiPolygonData>();
+            Outputs.Add(importNodeOutput);
+            Prototyp.Elements.VectorMultiPolygonData placeholder = new Prototyp.Elements.VectorMultiPolygonData();
+            placeholder.Name = geomType;
+
+            importNodeOutput.Name = geomType;
+            importNodeOutput.Value = System.Reactive.Linq.Observable.Return(placeholder);
+            importNodeOutput.SetDataID(dataID);
+        }
+
+        static VectorImport_ModuleMultiPolygon()
+        {
+            Splat.Locator.CurrentMutable.Register(() => new Views.VectorMultiPolygonImportModuleView(), typeof(IViewFor<VectorImport_ModuleMultiPolygon>));
         }
     }
 }

@@ -54,10 +54,10 @@ namespace Prototyp
 
             Prototyp.Elements.VorteXML vorteXML = MakeXML();
             if (vorteXML == null) return;
-            
+
             Prototyp.Modules.Node_Module nodeModule = new Prototyp.Modules.Node_Module(vorteXML);
             previewNetwork.ZoomFactor = 2.0 / 3.0;
-            
+
             System.Windows.Point TempPoint;
             TempPoint.X = 119.0 / 3.0;
             TempPoint.Y = 275.0 / 6.0;
@@ -144,11 +144,13 @@ namespace Prototyp
                 moduleProperties.ChkOutVectorPoint.IsEnabled = false;
                 moduleProperties.ChkOutVectorLine.IsEnabled = false;
                 moduleProperties.ChkOutVectorPolygon.IsEnabled = false;
+                moduleProperties.ChkOutVectorMultiPolygon.IsEnabled = false;
                 moduleProperties.ChkOutRaster.IsEnabled = false;
 
                 foreach (string InpTy in ListViewEntries[MyListBox.SelectedIndex].InputTypes) { if (InpTy == "VectorPoint") moduleProperties.ChkInVectorPoint.IsChecked = true; }
                 foreach (string InpTy in ListViewEntries[MyListBox.SelectedIndex].InputTypes) { if (InpTy == "VectorLine") moduleProperties.ChkInVectorLine.IsChecked = true; }
                 foreach (string InpTy in ListViewEntries[MyListBox.SelectedIndex].InputTypes) { if (InpTy == "VectorPolygon") moduleProperties.ChkInVectorPolygon.IsChecked = true; }
+                foreach (string InpTy in ListViewEntries[MyListBox.SelectedIndex].InputTypes) { if (InpTy == "VectorMultiPolygon") moduleProperties.ChkInVectorMultiPolygon.IsChecked = true; }
                 foreach (string InpTy in ListViewEntries[MyListBox.SelectedIndex].InputTypes) { if (InpTy == "Raster") moduleProperties.ChkInRaster.IsChecked = true; }
 
                 moduleProperties.ShowDialog();
@@ -160,6 +162,7 @@ namespace Prototyp
                 if ((bool)moduleProperties.ChkInVectorPoint.IsChecked) ListViewEntries[MyListBox.SelectedIndex].InputTypes.Add("VectorPoint");
                 if ((bool)moduleProperties.ChkInVectorLine.IsChecked) ListViewEntries[MyListBox.SelectedIndex].InputTypes.Add("VectorLine");
                 if ((bool)moduleProperties.ChkInVectorPolygon.IsChecked) ListViewEntries[MyListBox.SelectedIndex].InputTypes.Add("VectorPolygon");
+                if ((bool)moduleProperties.ChkInVectorMultiPolygon.IsChecked) ListViewEntries[MyListBox.SelectedIndex].InputTypes.Add("VectorMultiPolygon");
                 if ((bool)moduleProperties.ChkInRaster.IsChecked) ListViewEntries[MyListBox.SelectedIndex].InputTypes.Add("Raster");
             }
             else if (ListViewEntries[MyListBox.SelectedIndex].SlotType.Contains("Control"))
@@ -169,11 +172,13 @@ namespace Prototyp
                     moduleProperties.ChkInVectorPoint.IsEnabled = false;
                     moduleProperties.ChkInVectorLine.IsEnabled = false;
                     moduleProperties.ChkInVectorPolygon.IsEnabled = false;
+                    moduleProperties.ChkInVectorMultiPolygon.IsEnabled = false;
                     moduleProperties.ChkInRaster.IsEnabled = false;
                     moduleProperties.TxtDropdownEntries.IsEnabled = false;
                     moduleProperties.ChkOutVectorPoint.IsEnabled = false;
                     moduleProperties.ChkOutVectorLine.IsEnabled = false;
                     moduleProperties.ChkOutVectorPolygon.IsEnabled = false;
+                    moduleProperties.ChkOutVectorMultiPolygon.IsEnabled = false;
                     moduleProperties.ChkOutRaster.IsEnabled = false;
 
                     if (ListViewEntries[MyListBox.SelectedIndex].SliderUnit != null)
@@ -201,6 +206,7 @@ namespace Prototyp
                     moduleProperties.ChkInVectorPoint.IsEnabled = false;
                     moduleProperties.ChkInVectorLine.IsEnabled = false;
                     moduleProperties.ChkInVectorPolygon.IsEnabled = false;
+                    moduleProperties.ChkInVectorMultiPolygon.IsEnabled = false;
                     moduleProperties.ChkInRaster.IsEnabled = false;
                     moduleProperties.TxtSliderStart.IsEnabled = false;
                     moduleProperties.TxtSliderEnd.IsEnabled = false;
@@ -210,6 +216,7 @@ namespace Prototyp
                     moduleProperties.ChkOutVectorPoint.IsEnabled = false;
                     moduleProperties.ChkOutVectorLine.IsEnabled = false;
                     moduleProperties.ChkOutVectorPolygon.IsEnabled = false;
+                    moduleProperties.ChkOutVectorMultiPolygon.IsEnabled = false;
                     moduleProperties.ChkOutRaster.IsEnabled = false;
 
                     moduleProperties.TxtDropdownEntries.Text = string.Join(System.Environment.NewLine, ListViewEntries[MyListBox.SelectedIndex].DropDownEntries);
@@ -229,6 +236,7 @@ namespace Prototyp
                 moduleProperties.ChkInVectorPoint.IsEnabled = false;
                 moduleProperties.ChkInVectorLine.IsEnabled = false;
                 moduleProperties.ChkInVectorPolygon.IsEnabled = false;
+                moduleProperties.ChkInVectorMultiPolygon.IsEnabled = false;
                 moduleProperties.ChkInRaster.IsEnabled = false;
                 moduleProperties.TxtSliderStart.IsEnabled = false;
                 moduleProperties.TxtSliderEnd.IsEnabled = false;
@@ -240,6 +248,7 @@ namespace Prototyp
                 foreach (string OutTy in ListViewEntries[MyListBox.SelectedIndex].OutputTypes) { if (OutTy == "VectorPoint") moduleProperties.ChkOutVectorPoint.IsChecked = true; }
                 foreach (string OutTy in ListViewEntries[MyListBox.SelectedIndex].OutputTypes) { if (OutTy == "VectorLine") moduleProperties.ChkOutVectorLine.IsChecked = true; }
                 foreach (string OutTy in ListViewEntries[MyListBox.SelectedIndex].OutputTypes) { if (OutTy == "VectorPolygon") moduleProperties.ChkOutVectorPolygon.IsChecked = true; }
+                foreach (string OutTy in ListViewEntries[MyListBox.SelectedIndex].OutputTypes) { if (OutTy == "VectorMultiPolygon") moduleProperties.ChkOutVectorMultiPolygon.IsChecked = true; }
                 foreach (string OutTy in ListViewEntries[MyListBox.SelectedIndex].OutputTypes) { if (OutTy == "Raster") moduleProperties.ChkOutRaster.IsChecked = true; }
 
                 moduleProperties.ShowDialog();
@@ -251,6 +260,7 @@ namespace Prototyp
                 if ((bool)moduleProperties.ChkOutVectorPoint.IsChecked) ListViewEntries[MyListBox.SelectedIndex].OutputTypes.Add("VectorPoint");
                 if ((bool)moduleProperties.ChkOutVectorLine.IsChecked) ListViewEntries[MyListBox.SelectedIndex].OutputTypes.Add("VectorLine");
                 if ((bool)moduleProperties.ChkOutVectorPolygon.IsChecked) ListViewEntries[MyListBox.SelectedIndex].OutputTypes.Add("VectorPolygon");
+                if ((bool)moduleProperties.ChkOutVectorMultiPolygon.IsChecked) ListViewEntries[MyListBox.SelectedIndex].OutputTypes.Add("VectorMultiPolygon");
                 if ((bool)moduleProperties.ChkOutRaster.IsChecked) ListViewEntries[MyListBox.SelectedIndex].OutputTypes.Add("Raster");
             }
 
@@ -367,6 +377,7 @@ namespace Prototyp
                         if (InpTy == "VectorPoint") vorteXML.ToolRows[i].inputRow.inputTypes[j] = Prototyp.Elements.VorteXML.ConnectorType.VectorPoint;
                         if (InpTy == "VectorLine") vorteXML.ToolRows[i].inputRow.inputTypes[j] = Prototyp.Elements.VorteXML.ConnectorType.VectorLine;
                         if (InpTy == "VectorPolygon") vorteXML.ToolRows[i].inputRow.inputTypes[j] = Prototyp.Elements.VorteXML.ConnectorType.VectorPolygon;
+                        if (InpTy == "VectorMultiPolygon") vorteXML.ToolRows[i].inputRow.inputTypes[j] = Prototyp.Elements.VorteXML.ConnectorType.VectorMultiPolygon;
                         if (InpTy == "Raster") vorteXML.ToolRows[i].inputRow.inputTypes[j] = Prototyp.Elements.VorteXML.ConnectorType.Raster;
                         j++;
                     }
@@ -422,6 +433,7 @@ namespace Prototyp
                         if (OutTy == "VectorPoint") vorteXML.ToolRows[i].outputRow.outputTypes[j] = Prototyp.Elements.VorteXML.ConnectorType.VectorPoint;
                         if (OutTy == "VectorLine") vorteXML.ToolRows[i].outputRow.outputTypes[j] = Prototyp.Elements.VorteXML.ConnectorType.VectorLine;
                         if (OutTy == "VectorPolygon") vorteXML.ToolRows[i].outputRow.outputTypes[j] = Prototyp.Elements.VorteXML.ConnectorType.VectorPolygon;
+                        if (OutTy == "VectorMultiPolygon") vorteXML.ToolRows[i].outputRow.outputTypes[j] = Prototyp.Elements.VorteXML.ConnectorType.VectorMultiPolygon;
                         if (OutTy == "Raster") vorteXML.ToolRows[i].outputRow.outputTypes[j] = Prototyp.Elements.VorteXML.ConnectorType.Raster;
                         j++;
                     }

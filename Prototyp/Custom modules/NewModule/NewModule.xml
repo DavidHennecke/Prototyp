@@ -6,35 +6,24 @@
 		<Element:Input rowNr="1" name="RowName">
 			<InputTypes>
 				<Vector:Point />
-				<Vector:Line />
-				<Vector:Polygon />
 			</InputTypes>
 		</Element:Input>
 		<Element:Input rowNr="2" name="RowName">
 			<InputTypes>
-				<Vector:Point />
 				<Vector:Line />
-				<Vector:Polygon />
 			</InputTypes>
 		</Element:Input>
 		<Element:Input rowNr="3" name="RowName">
 			<InputTypes>
-				<Vector:Point />
-				<Vector:Line />
 				<Vector:Polygon />
 			</InputTypes>
 		</Element:Input>
-		<Element:Output rowNr="4" name="RowName">
-			<OutputTypes>
-				<Raster:Raster />
-			</OutputTypes>
-		</Element:Output>
+		<Element:Input rowNr="4" name="RowName">
+			<InputTypes>
+				<Vector:MultiPolygon />
+			</InputTypes>
+		</Element:Input>
 		<Element:Output rowNr="5" name="RowName">
-			<OutputTypes>
-				<Raster:Raster />
-			</OutputTypes>
-		</Element:Output>
-		<Element:Output rowNr="6" name="RowName">
 			<OutputTypes>
 				<Raster:Raster />
 			</OutputTypes>
