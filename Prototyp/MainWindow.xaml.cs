@@ -973,6 +973,7 @@ namespace Prototyp
             ModuleBtn.Content = new System.Windows.Controls.Image
             {
                 Source = new System.Windows.Media.Imaging.BitmapImage(new Uri(ModulesPath + "/" + ToolName + "/" + "Icon.png")),
+                ToolTip = ToolName,
                 VerticalAlignment = VerticalAlignment.Center
             };
             ModuleBtn.Background = (System.Windows.Media.SolidColorBrush)new System.Windows.Media.BrushConverter().ConvertFromString("#FF212225");
