@@ -28,18 +28,18 @@
         {
             public double[] RasterValues;
         }
-        private sBand[] IntBands;
-        private bool IntBusy;
-        private string IntFileType;
-        private string IntWKT_SRS;
-        private int IntRasterXSize;
-        private int IntRasterYSize;
-        private int IntRasterCount;
-        private double IntNA;
-        private double[] IntGeoTransform;
-        private double IntID = 0.0;
-        private string IntName;
-        private string IntFilename;
+        private sBand[] _bands;
+        private bool _busy;
+        private string _fileType;
+        private string _WKT_SRS;
+        private int _rasterXSize;
+        private int _rasterYSize;
+        private int _rasterCount;
+        private double _NA;
+        private double[] _geoTransform;
+        private double _ID = 0.0;
+        private string _name;
+        private string _filename;
 
         // Getters and setters -------------------------------------------------------------
 
@@ -51,72 +51,72 @@
 
         public sBand[] RasterBands
         {
-            get { return (IntBands); }
-            set { IntBands = value; }
+            get { return (_bands); }
+            set { _bands = value; }
         }
 
         public bool Busy
         {
-            get { return (IntBusy); }
+            get { return (_busy); }
         }
 
         public string FileType
         {
-            get { return (IntFileType); }
-            set { IntFileType = value; }
+            get { return (_fileType); }
+            set { _fileType = value; }
         }
 
         public string SpatialReference_WKT
         {
-            get { return (IntWKT_SRS); }
-            set { IntWKT_SRS = value; }
+            get { return (_WKT_SRS); }
+            set { _WKT_SRS = value; }
         }
 
         public int RasterXSize
         {
-            get { return (IntRasterXSize); }
-            set { IntRasterXSize = value; }
+            get { return (_rasterXSize); }
+            set { _rasterXSize = value; }
         }
 
         public int RasterYSize
         {
-            get { return (IntRasterYSize); }
-            set { IntRasterYSize = value; }
+            get { return (_rasterYSize); }
+            set { _rasterYSize = value; }
         }
 
         public int RasterCount
         {
-            get { return (IntRasterCount); }
-            set { IntRasterCount = value; }
+            get { return (_rasterCount); }
+            set { _rasterCount = value; }
         }
 
         public double NACode
         {
-            get { return (IntNA); }
-            set { IntNA = value; }
+            get { return (_NA); }
+            set { _NA = value; }
         }
 
         public double[] GeoTransform
         {
-            get { return (IntGeoTransform); }
-            set { if (value.Length == 6) IntGeoTransform = value; }
+            get { return (_geoTransform); }
+            set { if (value.Length == 6) _geoTransform = value; }
         }
 
         public double ID
         {
-            get { return (IntID); }
+            get { return (_ID); }
         }
 
         public string Name
         {
-            get { return (IntName); }
-            set { IntName = value; }
+            get { return (_name); }
+            set { _name = value; }
         }
 
         public string FileName
         {
-            get { return (IntFilename); }
-            set { IntFilename = value; }
+            get { return (_filename); }
+            set { _filename = value; }
         }
 
         // Constructors --------------------------------------------------------------------
@@ -137,21 +137,21 @@
         {
             if (System.IO.File.Exists(MyString))
             {
-                IntBusy = true;
+                _busy = true;
                 InitGDAL();
                 OSGeo.GDAL.Dataset DS = OSGeo.GDAL.Gdal.Open(MyString, OSGeo.GDAL.Access.GA_ReadOnly);
                 ImportDataset(DS, 0, 0, DS.RasterXSize, DS.RasterYSize);
                 MakeID();
-                IntName = GetName(MyString);
-                IntFilename = MyString;
-                IntBusy = false;
+                _name = GetName(MyString);
+                _filename = MyString;
+                _busy = false;
             }
             else
             {
-                IntBusy = true;
+                _busy = true;
                 Deserialize(System.Convert.FromBase64String(MyString));
                 MakeID();
-                IntBusy = false;
+                _busy = false;
             }
         }
 
@@ -162,29 +162,29 @@
         {
             if (System.IO.File.Exists(RasterFileName))
             {
-                IntBusy = true;
+                _busy = true;
                 InitGDAL();
                 OSGeo.GDAL.Dataset DS = OSGeo.GDAL.Gdal.Open(RasterFileName, OSGeo.GDAL.Access.GA_ReadOnly);
                 ImportDataset(DS, xOff, yOff, xSize, ySize);
                 MakeID();
-                IntName = GetName(RasterFileName);
-                IntFilename = RasterFileName;
+                _name = GetName(RasterFileName);
+                _filename = RasterFileName;
             }
             else
             {
-                IntBusy = false;
+                _busy = false;
                 throw new System.Exception("File does not exist.");
             }
-            IntBusy = false;
+            _busy = false;
         }
 
         // Constructor that accepts a pre-loaded GDAL dataset object.
         public RasterData(OSGeo.GDAL.Dataset DS)
         {
-            IntBusy = true;
+            _busy = true;
             ImportDataset(DS, 0, 0, DS.RasterXSize, DS.RasterYSize);
             MakeID();
-            IntBusy = false;
+            _busy = false;
         }
 
         // Constructor that deserializes a byte array representation of raster data.
@@ -202,7 +202,7 @@
         private void MakeID()
         {
             System.Random rnd = new System.Random();
-            IntID = rnd.NextDouble();
+            _ID = rnd.NextDouble();
         }
 
         private string GetName(string FileName)
@@ -217,29 +217,29 @@
 
         private OSGeo.GDAL.Dataset ExportDataset()
         {
-            IntBusy = true;
+            _busy = true;
 
             OSGeo.GDAL.Driver MyDriver;
-            if (CreateCapByFileType()) MyDriver = OSGeo.GDAL.Gdal.GetDriverByName(IntFileType); else MyDriver = OSGeo.GDAL.Gdal.GetDriverByName("GTiff");
+            if (CreateCapByFileType()) MyDriver = OSGeo.GDAL.Gdal.GetDriverByName(_fileType); else MyDriver = OSGeo.GDAL.Gdal.GetDriverByName("GTiff");
 
             OSGeo.GDAL.Dataset MyDataSet;
-            MyDataSet = MyDriver.Create("/vsimem/Temporary", IntRasterXSize, IntRasterYSize, IntRasterCount, OSGeo.GDAL.DataType.GDT_Float64, null);
+            MyDataSet = MyDriver.Create("/vsimem/Temporary", _rasterXSize, _rasterYSize, _rasterCount, OSGeo.GDAL.DataType.GDT_Float64, null);
             MyDataSet = PutData(MyDataSet);
 
-            IntBusy = false;
+            _busy = false;
             return (MyDataSet);
         }
 
         private OSGeo.GDAL.Dataset PutData(OSGeo.GDAL.Dataset MyDataSet)
         {
-            MyDataSet.SetProjection(IntWKT_SRS);
-            for (int i = 0; i < IntRasterCount; i++)
+            MyDataSet.SetProjection(_WKT_SRS);
+            for (int i = 0; i < _rasterCount; i++)
             {
-                MyDataSet.GetRasterBand(i + 1).WriteRaster(0, 0, IntRasterXSize, IntRasterYSize, IntBands[i].RasterValues, IntRasterXSize, IntRasterYSize, 0, 0);
-                MyDataSet.GetRasterBand(i + 1).SetNoDataValue(IntNA);
+                MyDataSet.GetRasterBand(i + 1).WriteRaster(0, 0, _rasterXSize, _rasterYSize, _bands[i].RasterValues, _rasterXSize, _rasterYSize, 0, 0);
+                MyDataSet.GetRasterBand(i + 1).SetNoDataValue(_NA);
             }
-            MyDataSet.GetDriver().SetDescription(IntFileType);
-            MyDataSet.SetGeoTransform(IntGeoTransform);
+            MyDataSet.GetDriver().SetDescription(_fileType);
+            MyDataSet.SetGeoTransform(_geoTransform);
 
             return (MyDataSet);
         }
@@ -323,7 +323,7 @@
 
         public void Deserialize(byte[] SerializedData)
         {
-            IntBusy = true;
+            _busy = true;
             int HeaderSize = (6 * sizeof(int)) + sizeof(double);
             int BandSize;
 
@@ -345,49 +345,49 @@
             if (XSize <= 0) throw new System.ArgumentException("Data seem to be inconsistent.");
             if (YSize <= 0) throw new System.ArgumentException("Data seem to be inconsistent.");
 
-            IntFileType = FileType;
-            IntWKT_SRS = WKT;
-            IntName = Name;
-            IntRasterXSize = XSize;
-            IntRasterYSize = YSize;
-            IntRasterCount = NumBands;
-            IntNA = NA;
-            IntBands = new sBand[NumBands];
+            _fileType = FileType;
+            _WKT_SRS = WKT;
+            _name = Name;
+            _rasterXSize = XSize;
+            _rasterYSize = YSize;
+            _rasterCount = NumBands;
+            _NA = NA;
+            _bands = new sBand[NumBands];
 
             BandSize = XSize * YSize;
             HeaderSize = HeaderSize + NumBytesFileType + NumBytesWKT + NumBytesName;
             byte[] TempArr;
             TempArr = new byte[6 * sizeof(double)];
             for (int i = 0; i < TempArr.Length; i++) TempArr[i] = SerializedData[HeaderSize + i];
-            IntGeoTransform = ByteArr2DoubleArr(TempArr);
+            _geoTransform = ByteArr2DoubleArr(TempArr);
 
             HeaderSize = HeaderSize + 6 * (sizeof(double));
             for (int Band = 0; Band < NumBands; Band++)
             {
                 TempArr = new byte[BandSize * sizeof(double)];
                 for (int i = 0; i < TempArr.Length; i++) TempArr[i] = SerializedData[HeaderSize + (Band * TempArr.Length) + i];
-                IntBands[Band].RasterValues = ByteArr2DoubleArr(TempArr);
+                _bands[Band].RasterValues = ByteArr2DoubleArr(TempArr);
             }
 
-            IntBusy = false;
+            _busy = false;
         }
 
         public byte[] Serialize()
         {
-            IntBusy = true;
+            _busy = true;
 
             int Offset = 0;
             byte[] TempArr;
             int j = 0;
-            int BandSize = IntRasterXSize * IntRasterYSize;
+            int BandSize = _rasterXSize * _rasterYSize;
 
-            byte[] FileTypeBytes = System.Text.Encoding.UTF8.GetBytes(IntFileType);
-            byte[] WKTStringBytes = System.Text.Encoding.UTF8.GetBytes(IntWKT_SRS);
-            byte[] NameBytes = System.Text.Encoding.UTF8.GetBytes(IntName);
+            byte[] FileTypeBytes = System.Text.Encoding.UTF8.GetBytes(_fileType);
+            byte[] WKTStringBytes = System.Text.Encoding.UTF8.GetBytes(_WKT_SRS);
+            byte[] NameBytes = System.Text.Encoding.UTF8.GetBytes(_name);
             byte[] GeoTransformBytes;
-            byte[] Result = new byte[(6 * sizeof(int)) + (7 * sizeof(double)) + FileTypeBytes.Length + WKTStringBytes.Length + NameBytes.Length + (sizeof(double) * BandSize * IntRasterCount)];
+            byte[] Result = new byte[(6 * sizeof(int)) + (7 * sizeof(double)) + FileTypeBytes.Length + WKTStringBytes.Length + NameBytes.Length + (sizeof(double) * BandSize * _rasterCount)];
 
-            TempArr = System.BitConverter.GetBytes(IntRasterCount);
+            TempArr = System.BitConverter.GetBytes(_rasterCount);
             for (int i = 0; i < TempArr.Length; i++) Result[(Offset * sizeof(int)) + i] = TempArr[i];
             Offset++;
 
@@ -403,15 +403,15 @@
             for (int i = 0; i < TempArr.Length; i++) Result[(Offset * sizeof(int)) + i] = TempArr[i];
             Offset++;
 
-            TempArr = System.BitConverter.GetBytes(IntRasterXSize);
+            TempArr = System.BitConverter.GetBytes(_rasterXSize);
             for (int i = 0; i < TempArr.Length; i++) Result[(Offset * sizeof(int)) + i] = TempArr[i];
             Offset++;
 
-            TempArr = System.BitConverter.GetBytes(IntRasterYSize);
+            TempArr = System.BitConverter.GetBytes(_rasterYSize);
             for (int i = 0; i < TempArr.Length; i++) Result[(Offset * sizeof(int)) + i] = TempArr[i];
             Offset++;
 
-            TempArr = System.BitConverter.GetBytes(IntNA);
+            TempArr = System.BitConverter.GetBytes(_NA);
             for (int i = 0; i < TempArr.Length; i++) Result[(Offset * sizeof(int)) + i] = TempArr[i];
 
             Offset = (6 * sizeof(int)) + sizeof(double);
@@ -436,7 +436,7 @@
             }
             Offset = Offset + NameBytes.Length;
 
-            GeoTransformBytes = DoubleArr2ByteArr(IntGeoTransform);
+            GeoTransformBytes = DoubleArr2ByteArr(_geoTransform);
             j = 0;
             for (int i = Offset; i < Offset + (6 * sizeof(double)); i++)
             {
@@ -445,22 +445,22 @@
             }
 
             Offset = Offset + (6 * sizeof(double));
-            for (int i = 0; i < IntRasterCount; i++)
+            for (int i = 0; i < _rasterCount; i++)
             {
-                TempArr = DoubleArr2ByteArr(IntBands[i].RasterValues);
+                TempArr = DoubleArr2ByteArr(_bands[i].RasterValues);
                 for (j = 0; j < TempArr.Length; j++) Result[Offset + (i * TempArr.Length) + j] = TempArr[j];
             }
 
-            IntBusy = false;
+            _busy = false;
             return (Result);
         }
 
         // Imports a GDAL raster dataset.
         public void ImportDataset(OSGeo.GDAL.Dataset DataSet)
         {
-            IntBusy = true;
+            _busy = true;
             ImportDataset(DataSet, 0, 0, DataSet.RasterXSize, DataSet.RasterYSize);
-            IntBusy = false;
+            _busy = false;
         }
 
         // Imports a rectangle of data from a GDAL raster dataset.
@@ -468,85 +468,85 @@
         {
             int HasVal;
 
-            IntBusy = true;
+            _busy = true;
 
-            IntFileType = DataSet.GetDriver().GetDescription();
-            IntBands = new sBand[DataSet.RasterCount];
-            IntWKT_SRS = DataSet.GetProjection();
-            IntRasterXSize = xSize;
-            IntRasterYSize = ySize;
-            IntRasterCount = DataSet.RasterCount;
-            IntGeoTransform = new double[6];
-            DataSet.GetGeoTransform(IntGeoTransform);
+            _fileType = DataSet.GetDriver().GetDescription();
+            _bands = new sBand[DataSet.RasterCount];
+            _WKT_SRS = DataSet.GetProjection();
+            _rasterXSize = xSize;
+            _rasterYSize = ySize;
+            _rasterCount = DataSet.RasterCount;
+            _geoTransform = new double[6];
+            DataSet.GetGeoTransform(_geoTransform);
 
-            for (int i = 1; i <= IntBands.Length; i++)
+            for (int i = 1; i <= _bands.Length; i++)
             {
-                DataSet.GetRasterBand(i).GetNoDataValue(out IntNA, out HasVal);
-                IntBands[i - 1].RasterValues = new double[IntRasterXSize * IntRasterYSize];
+                DataSet.GetRasterBand(i).GetNoDataValue(out _NA, out HasVal);
+                _bands[i - 1].RasterValues = new double[_rasterXSize * _rasterYSize];
                 DataSet.GetRasterBand(i).ReadRaster(xOff,
                                                     yOff,
-                                                    IntRasterXSize,
-                                                    IntRasterYSize,
-                                                    IntBands[i - 1].RasterValues,
-                                                    IntRasterXSize,
-                                                    IntRasterYSize,
+                                                    _rasterXSize,
+                                                    _rasterYSize,
+                                                    _bands[i - 1].RasterValues,
+                                                    _rasterXSize,
+                                                    _rasterYSize,
                                                     0,
                                                     0);
             }
 
-            IntBusy = false;
+            _busy = false;
         }
 
         public bool CreateCapByFileType()
         {
-            return (CreateCapByFileType(IntFileType));
+            return (CreateCapByFileType(_fileType));
         }
 
         public bool SaveToDisk(string FileName)
         {
-            return (SaveToDisk(FileName, IntFileType));
+            return (SaveToDisk(FileName, _fileType));
         }
 
         public bool SaveToDisk(string FileName, string Driver)
         {
             if (!CreateCapByFileType(Driver)) return (false);
 
-            IntBusy = true;
+            _busy = true;
 
             InitGDAL();
 
             OSGeo.GDAL.Driver MyDriver = OSGeo.GDAL.Gdal.GetDriverByName(Driver);
             OSGeo.GDAL.Dataset MyDataSet;
 
-            MyDataSet = MyDriver.Create(FileName, IntRasterXSize, IntRasterYSize, IntRasterCount, OSGeo.GDAL.DataType.GDT_Float64, null);
+            MyDataSet = MyDriver.Create(FileName, _rasterXSize, _rasterYSize, _rasterCount, OSGeo.GDAL.DataType.GDT_Float64, null);
             MyDataSet = PutData(MyDataSet);
 
             MyDataSet.Dispose();
 
-            IntBusy = false;
+            _busy = false;
             return (true);
         }
 
         // Computes the minimum of values for a given band.
         public double Min(int BandIndex)
         {
-            if (IntBands.Length == 0) return (0);
+            if (_bands.Length == 0) return (0);
 
             double ThisMin = 0;
-            for (int i = 0; i < IntBands[BandIndex].RasterValues.Length; i++)
+            for (int i = 0; i < _bands[BandIndex].RasterValues.Length; i++)
             {
-                if (IntBands[BandIndex].RasterValues[i] != IntNA)
+                if (_bands[BandIndex].RasterValues[i] != _NA)
                 {
-                    ThisMin = IntBands[BandIndex].RasterValues[i];
+                    ThisMin = _bands[BandIndex].RasterValues[i];
                     break;
                 }
             }
 
-            for (int i = 0; i < IntBands[BandIndex].RasterValues.Length; i++)
+            for (int i = 0; i < _bands[BandIndex].RasterValues.Length; i++)
             {
-                if (IntBands[BandIndex].RasterValues[i] != IntNA)
+                if (_bands[BandIndex].RasterValues[i] != _NA)
                 {
-                    if (IntBands[BandIndex].RasterValues[i] <= ThisMin) ThisMin = IntBands[BandIndex].RasterValues[i];
+                    if (_bands[BandIndex].RasterValues[i] <= ThisMin) ThisMin = _bands[BandIndex].RasterValues[i];
                 }
             }
 
@@ -556,23 +556,23 @@
         // Computes the maximum of values for a given band.
         public double Max(int BandIndex)
         {
-            if (IntBands.Length == 0) return (0);
+            if (_bands.Length == 0) return (0);
 
             double ThisMax = 0;
-            for (int i = 0; i < IntBands[BandIndex].RasterValues.Length; i++)
+            for (int i = 0; i < _bands[BandIndex].RasterValues.Length; i++)
             {
-                if (IntBands[BandIndex].RasterValues[i] != IntNA)
+                if (_bands[BandIndex].RasterValues[i] != _NA)
                 {
-                    ThisMax = IntBands[BandIndex].RasterValues[i];
+                    ThisMax = _bands[BandIndex].RasterValues[i];
                     break;
                 }
             }
 
-            for (int i = 0; i < IntBands[BandIndex].RasterValues.Length; i++)
+            for (int i = 0; i < _bands[BandIndex].RasterValues.Length; i++)
             {
-                if (IntBands[BandIndex].RasterValues[i] != IntNA)
+                if (_bands[BandIndex].RasterValues[i] != _NA)
                 {
-                    if (IntBands[BandIndex].RasterValues[i] >= ThisMax) ThisMax = IntBands[BandIndex].RasterValues[i];
+                    if (_bands[BandIndex].RasterValues[i] >= ThisMax) ThisMax = _bands[BandIndex].RasterValues[i];
                 }
             }
 
@@ -585,13 +585,13 @@
             double Sum = 0;
             int NumVals = 0;
 
-            if (IntBands.Length == 0) return (0);
+            if (_bands.Length == 0) return (0);
 
-            for (int i = 0; i < IntBands[BandIndex].RasterValues.Length; i++)
+            for (int i = 0; i < _bands[BandIndex].RasterValues.Length; i++)
             {
-                if (IntBands[BandIndex].RasterValues[i] != IntNA)
+                if (_bands[BandIndex].RasterValues[i] != _NA)
                 {
-                    Sum = Sum + IntBands[BandIndex].RasterValues[i];
+                    Sum = Sum + _bands[BandIndex].RasterValues[i];
                     NumVals++;
                 }
             }
@@ -606,13 +606,13 @@
             int NumVals = 0;
             double MyMean = Mean(BandIndex);
 
-            if (IntBands.Length == 0) return (0);
+            if (_bands.Length == 0) return (0);
 
-            for (int i = 0; i < IntBands[BandIndex].RasterValues.Length; i++)
+            for (int i = 0; i < _bands[BandIndex].RasterValues.Length; i++)
             {
-                if (IntBands[BandIndex].RasterValues[i] != IntNA)
+                if (_bands[BandIndex].RasterValues[i] != _NA)
                 {
-                    Sum = Sum + System.Math.Pow(IntBands[BandIndex].RasterValues[i] - MyMean, 2);
+                    Sum = Sum + System.Math.Pow(_bands[BandIndex].RasterValues[i] - MyMean, 2);
                     NumVals++;
                 }
             }

@@ -42,13 +42,13 @@ namespace Prototyp.Elements
 
         // Internal variables --------------------------------------------------------------
 
-        private byte[] IntVecData;
-        private bool IntBusy;
-        private OSGeo.OSR.SpatialReference IntSRS;
-        private string IntName;
-        private string IntFilename;
-        private string IntDescription;
-        private double IntID = 0.0;
+        private byte[] _vecData;
+        private bool _busy;
+        private OSGeo.OSR.SpatialReference _SRS;
+        private string _name;
+        private string _filename;
+        private string _description;
+        private double _ID = 0.0;
 
         // Getters and setters -------------------------------------------------------------
 
@@ -59,7 +59,7 @@ namespace Prototyp.Elements
             {
                 if (ByteArrValid(value))
                 {
-                    IntVecData = value;
+                    _vecData = value;
                     HandleNameAndCRS();
                 }
                 else
@@ -71,31 +71,31 @@ namespace Prototyp.Elements
 
         public bool Busy
         {
-            get { return (IntBusy); }
+            get { return (_busy); }
         }
 
         public string Name
         {
-            get { return (IntName); }
-            set { IntName = value; }
+            get { return (_name); }
+            set { _name = value; }
         }
 
         public string FileName
         {
-            get { return (IntFilename); }
-            set { IntFilename = value; }
+            get { return (_filename); }
+            set { _filename = value; }
         }
 
         public string Description
         {
-            get { return (IntDescription); }
-            set { IntDescription = value; }
+            get { return (_description); }
+            set { _description = value; }
         }
 
         public OSGeo.OSR.SpatialReference SpatialReference
         {
-            get { return (IntSRS); }
-            set { IntSRS = value; }
+            get { return (_SRS); }
+            set { _SRS = value; }
         }
 
         public OSGeo.OGR.Layer Layer
@@ -109,7 +109,7 @@ namespace Prototyp.Elements
             get { return (GetAsGeoJSON()); }
             set
             {
-                if (value != null) IntVecData = ImportFromGeoJSON(value);
+                if (value != null) _vecData = ImportFromGeoJSON(value);
             }
         }
 
@@ -117,9 +117,9 @@ namespace Prototyp.Elements
         {
             get
             {
-                if (IntVecData != null)
+                if (_vecData != null)
                 {
-                    NetTopologySuite.Features.FeatureCollection MyFC = FlatGeobuf.NTS.FeatureCollectionConversions.Deserialize(IntVecData);
+                    NetTopologySuite.Features.FeatureCollection MyFC = FlatGeobuf.NTS.FeatureCollectionConversions.Deserialize(_vecData);
                     return (MyFC);
                 }
                 else
@@ -132,16 +132,16 @@ namespace Prototyp.Elements
             {
                 if (value != null)
                 {
-                    IntVecData = IntSerialize(value, FlatGeobuf.GeometryType.Unknown);
-                    IntSRS = null;
-                    IntName = null;
-                    IntDescription = null;
+                    _vecData = IntSerialize(value, FlatGeobuf.GeometryType.Unknown);
+                    _SRS = null;
+                    _name = null;
+                    _description = null;
                 }
             }
         }
         public double ID
         {
-            get { return (IntID); }
+            get { return (_ID); }
         }
 
         // Constructors --------------------------------------------------------------------
@@ -163,26 +163,26 @@ namespace Prototyp.Elements
         {
             if (MyString.StartsWith("ZmdiA2ZnYg")) //Base64 for fgb header
             {
-                IntBusy = true;
-                IntVecData = StringToByteArr(MyString);
+                _busy = true;
+                _vecData = StringToByteArr(MyString);
                 HandleNameAndCRS();
                 MakeID();
-                IntBusy = false;
+                _busy = false;
             }
             else
             {
                 if (System.IO.File.Exists(MyString))
                 {
-                    IntBusy = true;
+                    _busy = true;
                     using (System.IO.Stream SourceFile = System.IO.File.OpenRead(MyString))
                     {
-                        IntFilename = MyString;
+                        _filename = MyString;
 
                         byte[] FileBuffer = new byte[8];
                         SourceFile.Read(FileBuffer, 0, FileBuffer.Length);
                         if (ByteArrValid(FileBuffer)) // Detected an fgb file.
                         {
-                            IntVecData = System.IO.File.ReadAllBytes(MyString);
+                            _vecData = System.IO.File.ReadAllBytes(MyString);
                         }
                         else // No fgb. Try GDAL, then.
                         {
@@ -191,14 +191,14 @@ namespace Prototyp.Elements
                             MyDS = OSGeo.OGR.Ogr.Open(MyString, 0);
                             if (MyDS != null)
                             {
-                                IntVecData = ImportLayer(MyDS.GetLayerByIndex(0));
+                                _vecData = ImportLayer(MyDS.GetLayerByIndex(0));
                             }
                         }
                         HandleNameAndCRS();
                         MakeID();
 
                     }
-                    IntBusy = false;
+                    _busy = false;
                 }
                 else
                 {
@@ -215,7 +215,7 @@ namespace Prototyp.Elements
         {
             if (System.IO.File.Exists(FlatGeobufFileName))
             {
-                IntBusy = true;
+                _busy = true;
                 using (System.IO.Stream SourceFile = System.IO.File.OpenRead(FlatGeobufFileName))
                 {
                     byte[] FileBuffer = new byte[8];
@@ -226,7 +226,7 @@ namespace Prototyp.Elements
                     }
                 }
 
-                IntFilename = FlatGeobufFileName;
+                _filename = FlatGeobufFileName;
 
                 using (System.IO.Stream SourceFile = System.IO.File.OpenRead(FlatGeobufFileName))
                 {
@@ -239,7 +239,7 @@ namespace Prototyp.Elements
                     FlatGeobuf.Header MyHeader = FlatGeobuf.Helpers.ReadHeader(SourceFile);
                     HandleHeader(MyHeader);
 
-                    IntVecData = IntSerialize(NewCollection, FlatGeobuf.GeometryType.Unknown);
+                    _vecData = IntSerialize(NewCollection, FlatGeobuf.GeometryType.Unknown);
                     MakeID();
                 }
             }
@@ -247,7 +247,7 @@ namespace Prototyp.Elements
             {
                 throw new System.Exception("File is not in valid FlatGeobuf format.");
             }
-            IntBusy = false;
+            _busy = false;
         }
 
         // Constructor that is provided a GDAL layer as a data source (e.g. obtained from a shape file).
@@ -257,10 +257,10 @@ namespace Prototyp.Elements
         {
             if (LayerData != null)
             {
-                IntBusy = true;
-                IntVecData = ImportLayer(LayerData);
+                _busy = true;
+                _vecData = ImportLayer(LayerData);
                 MakeID();
-                IntBusy = false;
+                _busy = false;
             }
         }
 
@@ -271,11 +271,11 @@ namespace Prototyp.Elements
         {
             if (ByteArrValid(VecArray))
             {
-                IntBusy = true;
-                IntVecData = VecArray;
+                _busy = true;
+                _vecData = VecArray;
                 HandleNameAndCRS();
                 MakeID();
-                IntBusy = false;
+                _busy = false;
             }
         }
 
@@ -285,7 +285,7 @@ namespace Prototyp.Elements
         private void MakeID()
         {
             System.Random rnd = new System.Random();
-            IntID = rnd.NextDouble();
+            _ID = rnd.NextDouble();
         }
 
         // Checks the FGB-validity of a provided byte array.
@@ -355,9 +355,9 @@ namespace Prototyp.Elements
                 NTSFC.Add(NTSFeature);
             }
 
-            IntSRS = LayerData.GetSpatialRef();
-            IntName = LayerData.GetName();
-            IntDescription = null;
+            _SRS = LayerData.GetSpatialRef();
+            _name = LayerData.GetName();
+            _description = null;
 
             return (IntSerialize(NTSFC, FlatGeobuf.GeometryType.Unknown));
         }
@@ -365,18 +365,18 @@ namespace Prototyp.Elements
         // Returns the internal data representation as a GDAL layer.
         private OSGeo.OGR.Layer GetAsLayer()
         {
-            if (IntVecData == null) return (null);
+            if (_vecData == null) return (null);
 
-            IntBusy = true;
+            _busy = true;
             InitGDAL();
 
             OSGeo.OGR.Driver MyDriver = OSGeo.OGR.Ogr.GetDriverByName("ESRI Shapefile");
             OSGeo.OGR.DataSource MyDS = MyDriver.CreateDataSource("/vsimem/Temporary", new string[] { });
-            OSGeo.OGR.Layer MyLayer = MyDS.CreateLayer(IntName + MyDS.GetLayerCount().ToString(), IntSRS, OSGeo.OGR.wkbGeometryType.wkbUnknown, new string[] { });
+            OSGeo.OGR.Layer MyLayer = MyDS.CreateLayer(_name + MyDS.GetLayerCount().ToString(), _SRS, OSGeo.OGR.wkbGeometryType.wkbUnknown, new string[] { });
             OSGeo.OGR.FeatureDefn MyFeatureDefn = MyLayer.GetLayerDefn();
             OSGeo.OGR.Feature MyFeature;
             OSGeo.OGR.FieldDefn MyFieldDefn = null;
-            NetTopologySuite.Features.FeatureCollection MyFC = FlatGeobuf.NTS.FeatureCollectionConversions.Deserialize(IntVecData);
+            NetTopologySuite.Features.FeatureCollection MyFC = FlatGeobuf.NTS.FeatureCollectionConversions.Deserialize(_vecData);
             NetTopologySuite.IO.WKBWriter MyWriter;
             byte[] WKB;
             string[] AttribNames = MyFC[0].Attributes.GetNames();
@@ -451,19 +451,19 @@ namespace Prototyp.Elements
                 MyDriver.Dispose();
             }
 
-            IntBusy = false;
+            _busy = false;
             return (MyLayer);
         }
 
         // Returns the internal data representation as a GeoJSON string.
         private string GetAsGeoJSON()
         {
-            if (IntVecData == null) return (null);
+            if (_vecData == null) return (null);
 
-            IntBusy = true;
+            _busy = true;
             NetTopologySuite.IO.GeoJsonWriter MyWriter = new NetTopologySuite.IO.GeoJsonWriter();
-            string GeoJSON = MyWriter.Write(FlatGeobuf.NTS.FeatureCollectionConversions.Deserialize(IntVecData));
-            IntBusy = false;
+            string GeoJSON = MyWriter.Write(FlatGeobuf.NTS.FeatureCollectionConversions.Deserialize(_vecData));
+            _busy = false;
 
             return (GeoJSON);
         }
@@ -473,17 +473,17 @@ namespace Prototyp.Elements
         {
             if (JSONData == null) return (null);
 
-            IntBusy = true;
+            _busy = true;
             NetTopologySuite.IO.GeoJsonReader MyReader = new NetTopologySuite.IO.GeoJsonReader();
             NetTopologySuite.Features.FeatureCollection MyFC = MyReader.Read<NetTopologySuite.Features.FeatureCollection>(JSONData);
             byte[] MyData = null;
             if (MyFC != null) MyData = IntSerialize(MyFC, FlatGeobuf.GeometryType.Unknown);
             InitGDAL();
-            IntSRS = new OSGeo.OSR.SpatialReference(null);
-            IntSRS.ImportFromEPSG(4326);
-            IntName = null;
-            IntDescription = null;
-            IntBusy = false;
+            _SRS = new OSGeo.OSR.SpatialReference(null);
+            _SRS.ImportFromEPSG(4326);
+            _name = null;
+            _description = null;
+            _busy = false;
 
             return (MyData);
         }
@@ -491,27 +491,27 @@ namespace Prototyp.Elements
         private void HandleHeader(FlatGeobuf.Header MyHeader)
         {
             InitGDAL();
-            IntSRS = new OSGeo.OSR.SpatialReference(null);
+            _SRS = new OSGeo.OSR.SpatialReference(null);
 
-            IntName = MyHeader.Name;
-            IntDescription = MyHeader.Description;
+            _name = MyHeader.Name;
+            _description = MyHeader.Description;
             FlatGeobuf.Crs? MyCRS = MyHeader.Crs;
             string WKTString = MyCRS?.Wkt;
             int Code = (int)MyCRS?.Code;
             string Organization = MyCRS?.Org;
-            IntSRS.ImportFromWkt(ref WKTString);
+            _SRS.ImportFromWkt(ref WKTString);
 
             string Proj4;
-            IntSRS.ExportToProj4(out Proj4);
+            _SRS.ExportToProj4(out Proj4);
             if (Proj4 == "")
             {
-                if (Organization == "EPSG") IntSRS.ImportFromEPSG(Code);
+                if (Organization == "EPSG") _SRS.ImportFromEPSG(Code);
             }
         }
 
         private void HandleNameAndCRS()
         {
-            using (System.IO.MemoryStream MemStream = new System.IO.MemoryStream(IntVecData))
+            using (System.IO.MemoryStream MemStream = new System.IO.MemoryStream(_vecData))
             {
                 FlatGeobuf.Header MyHeader = FlatGeobuf.Helpers.ReadHeader(MemStream);
                 HandleHeader(MyHeader);
@@ -534,9 +534,9 @@ namespace Prototyp.Elements
 
         private byte[] SerializeVec()
         {
-            if (IntVecData == null) return (null);
+            if (_vecData == null) return (null);
 
-            NetTopologySuite.Features.FeatureCollection MyFC = FlatGeobuf.NTS.FeatureCollectionConversions.Deserialize(IntVecData);
+            NetTopologySuite.Features.FeatureCollection MyFC = FlatGeobuf.NTS.FeatureCollectionConversions.Deserialize(_vecData);
             byte[] retVal = IntSerialize(MyFC, FlatGeobuf.GeometryType.Unknown);
 
             return (retVal);
@@ -580,16 +580,16 @@ namespace Prototyp.Elements
         private FlatBuffers.ByteBuffer IntBuildHeader(ulong count, FlatGeobuf.GeometryType geometryType, byte dimensions, System.Collections.Generic.IList<FlatGeobuf.NTS.ColumnMeta> columns, FlatGeobuf.Index.PackedRTree index)
         {
             string WKTString;
-            IntSRS.ExportToWkt(out WKTString, null);
+            _SRS.ExportToWkt(out WKTString, null);
             string WKTStart = null;
             string CRSName = "";
             if (WKTString.Contains("["))
             {
                 WKTStart = WKTString.Substring(0, WKTString.IndexOf("["));
-                CRSName = IntSRS.GetAttrValue(WKTStart, 0);
+                CRSName = _SRS.GetAttrValue(WKTStart, 0);
             }
-            string Organization = IntSRS.GetAuthorityName(null);
-            int Code = System.Convert.ToInt32(IntSRS.GetAuthorityCode(null));
+            string Organization = _SRS.GetAuthorityName(null);
+            int Code = System.Convert.ToInt32(_SRS.GetAuthorityCode(null));
 
             FlatBuffers.FlatBufferBuilder builder = new FlatBuffers.FlatBufferBuilder(1024);
 
@@ -603,9 +603,9 @@ namespace Prototyp.Elements
                                                        builder.CreateString(Code.ToString()));
 
             FlatBuffers.StringOffset NameO = builder.CreateString("");
-            if (IntName != null) NameO = builder.CreateString(IntName);
+            if (_name != null) NameO = builder.CreateString(_name);
             FlatBuffers.StringOffset DescO = builder.CreateString("");
-            if (IntDescription != null) DescO = builder.CreateString(IntDescription);
+            if (_description != null) DescO = builder.CreateString(_description);
 
             FlatBuffers.VectorOffset? columnsOffset = null;
             if (columns != null)
@@ -620,8 +620,8 @@ namespace Prototyp.Elements
 
             FlatGeobuf.Header.AddCrs(builder, MyCRS);
             FlatGeobuf.Header.AddGeometryType(builder, geometryType);
-            if (IntName != null) FlatGeobuf.Header.AddName(builder, NameO);
-            if (IntDescription != null) FlatGeobuf.Header.AddDescription(builder, DescO);
+            if (_name != null) FlatGeobuf.Header.AddName(builder, NameO);
+            if (_description != null) FlatGeobuf.Header.AddDescription(builder, DescO);
             if (dimensions == 3) FlatGeobuf.Header.AddHasZ(builder, true);
             if (dimensions == 4) FlatGeobuf.Header.AddHasM(builder, true);
             if (columnsOffset.HasValue) FlatGeobuf.Header.AddColumns(builder, columnsOffset.Value);
@@ -671,7 +671,7 @@ namespace Prototyp.Elements
         {
             string MyString = null;
 
-            if (IntVecData != null)
+            if (_vecData != null)
             {
                 if (Params == ToStringParams.GeoJSON)
                 {
@@ -679,11 +679,11 @@ namespace Prototyp.Elements
                 }
                 else if (Params == ToStringParams.ByteString)
                 {
-                    MyString = ByteArrToString(IntVecData);
+                    MyString = ByteArrToString(_vecData);
                 }
                 else
                 {
-                    NetTopologySuite.Features.FeatureCollection MyFC = FlatGeobuf.NTS.FeatureCollectionConversions.Deserialize(IntVecData);
+                    NetTopologySuite.Features.FeatureCollection MyFC = FlatGeobuf.NTS.FeatureCollectionConversions.Deserialize(_vecData);
                     MyString = "Number of features: " + MyFC.Count + ". To obtain the data as a GeoJSON string, use \".ToString(ToStringParams.GeoJSON)\" or method \".GetAsGeoJSON()\" directly.";
                 }
             }
@@ -694,10 +694,10 @@ namespace Prototyp.Elements
         // Saves the data natively as a FlatGeobuf file.
         public void SaveAsFGB(string FileName)
         {
-            IntBusy = true;
+            _busy = true;
             byte[] FGB = SerializeVec();
             System.IO.File.WriteAllBytes(FileName, FGB);
-            IntBusy = false;
+            _busy = false;
         }
     }
 
