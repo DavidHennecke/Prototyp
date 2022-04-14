@@ -121,8 +121,7 @@ namespace Prototyp.Modules
             IntUrl = url;
             IntProcess = process;            
             IntGrpcConnection = grpcConnection;
-            
-            this.Status = 0;
+            Status = NodeProgress.Waiting; // Korrekt?
 
             ParseXML(newModule, true);
         }
@@ -135,7 +134,7 @@ namespace Prototyp.Modules
             IntUrl = url;
             IntProcess = process;
             IntGrpcConnection = grpcConnection;
-            this.Status = 0;
+            Status = NodeProgress.Waiting; // Korrekt?
 
             ParseXML(XML, true);
         }
