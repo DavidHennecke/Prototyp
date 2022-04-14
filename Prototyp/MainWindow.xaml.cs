@@ -118,7 +118,7 @@ namespace Prototyp
         // Parameterless constructor: Initialize.
         public MainWindow()
         {
-            // Init WPF.S
+            // Init WPF
             InitializeComponent();
 
             // Init modules path and start parsing.
@@ -128,34 +128,14 @@ namespace Prototyp
             ParentDir = System.IO.Directory.GetParent(ParentDir.FullName);
             ParentDir = System.IO.Directory.GetParent(ParentDir.FullName);
             if (ParentDir.ToString().EndsWith("bin")) ParentDir = System.IO.Directory.GetParent(ParentDir.FullName);
-
-            //AppSettings - Get Buttons
-            IConfigurationRoot config = new ConfigurationBuilder().SetBasePath(Directory.GetCurrentDirectory()).AddJsonFile("appsettings.json").Build();
-            var ToolBarsSection = config.GetSection("ToolBars");
-            var ToolBars = ToolBarsSection.GetChildren();
-            foreach(var ToolBar in ToolBars) { 
-                var ToolBar0Buttons = ToolBar.GetChildren();
-                foreach (var Button in ToolBar0Buttons)
-                {
-                    var ButtonProps = Button.GetChildren();
-                    System.Collections.ArrayList buttonPropsArray = new System.Collections.ArrayList();
-                    foreach (var ButtonProp in ButtonProps)
-                    {
-                        buttonPropsArray.Add(ButtonProp.Value);
-  
-                    }
-                    createButton(buttonPropsArray[1].ToString(), buttonPropsArray[0].ToString(), ToolBar.Key);
-                }
-            }
+            ModulesPath = ParentDir.FullName + "\\Custom modules";
 
             // Startup NetworkView.
             AppWindow = this;
             networkView.ViewModel = network;
 
-            // Init modules path.
-            ModulesPath = ParentDir.FullName + "\\Custom modules";
-            
             ParseModules(ModulesPath);
+            LoadButtons(ParentDir);
         }
 
         // Private methods --------------------------------------------------------------------
@@ -207,6 +187,27 @@ namespace Prototyp
             ToolsComboBox.ItemsSource = null;
             ToolsComboBox.ItemsSource = ComboItems;
             ToolsComboBox.SelectedIndex = 0;
+        }
+
+        private void LoadButtons(System.IO.DirectoryInfo LocalDir)
+        {
+            IConfigurationRoot config = new ConfigurationBuilder().SetBasePath(LocalDir.FullName).AddJsonFile("appsettings.json").Build();
+            IConfigurationSection ToolBarsSection = config.GetSection("ToolBars");
+            System.Collections.Generic.IEnumerable<IConfigurationSection> ToolBars = ToolBarsSection.GetChildren();
+            foreach (IConfigurationSection ToolBar in ToolBars)
+            {
+                System.Collections.Generic.IEnumerable<IConfigurationSection> ToolBar0Buttons = ToolBar.GetChildren();
+                foreach (IConfigurationSection Button in ToolBar0Buttons)
+                {
+                    System.Collections.Generic.IEnumerable<IConfigurationSection> ButtonProps = Button.GetChildren();
+                    System.Collections.ArrayList buttonPropsArray = new System.Collections.ArrayList();
+                    foreach (IConfigurationSection ButtonProp in ButtonProps)
+                    {
+                        buttonPropsArray.Add(ButtonProp.Value); // "C:\Users\games\source\repos\CodingGeoInfo\Prototyp\Prototyp\Custom modules\Buffer/Buffer"? Was soll der Scheiß?
+                    }
+                    createButton(buttonPropsArray[0].ToString(), ToolBar.Key);
+                }
+            }
         }
 
         private void TerminateServer(Node_Module module)
@@ -926,21 +927,21 @@ namespace Prototyp
             chooseModuleWindow.ShowDialog();
             if (chooseModuleWindow.selectedModule.ToolName != null)
             {
-                createButton(chooseModuleWindow.selectedModule.IconPath, chooseModuleWindow.selectedModule.BinaryPath, dockPanel.Name);
-                writeNewAppsettings(chooseModuleWindow.selectedModule.BinaryPath, chooseModuleWindow.selectedModule.IconPath, dockPanel.Name);
+                createButton(chooseModuleWindow.selectedModule.ToolName, dockPanel.Name);
+                writeNewAppsettings(chooseModuleWindow.selectedModule.ToolName, dockPanel.Name);
             }
         }
 
-        private void createButton(string IconPath, string BinaryPath, string DockPanelName)
+        private void createButton(string ToolName, string DockPanelName)
         {
             System.Windows.Controls.Button ModuleBtn = new System.Windows.Controls.Button();
             ModuleBtn.Content = new System.Windows.Controls.Image
             {
-                Source = new System.Windows.Media.Imaging.BitmapImage(new Uri(IconPath)),
+                Source = new System.Windows.Media.Imaging.BitmapImage(new Uri(ModulesPath + "/" + ToolName + "/" + "Icon.png")),
                 VerticalAlignment = VerticalAlignment.Center
             };
             ModuleBtn.Background = (System.Windows.Media.SolidColorBrush)new System.Windows.Media.BrushConverter().ConvertFromString("#FF212225");
-            ModuleBtn.Click += new RoutedEventHandler((sender, e) => importModule(BinaryPath));
+            ModuleBtn.Click += new RoutedEventHandler((sender, e) => importModule(ModulesPath + "/" + ToolName + "/" + ToolName));
             System.Windows.Controls.ContextMenu buttonContextmenu = new System.Windows.Controls.ContextMenu();
             System.Windows.Controls.MenuItem removeBtn = new System.Windows.Controls.MenuItem();
             removeBtn.Header = "Remove";
@@ -1000,11 +1001,10 @@ namespace Prototyp
             ToolsComboBox.SelectedIndex = 0;
         }
 
-        private void writeNewAppsettings(string BinaryPath, string IconPath, string ToolBar)
+        private void writeNewAppsettings(string ToolName, string ToolBar)
         {
 
         }
-
     }
 }
 
