@@ -1,10 +1,10 @@
 ﻿using DynamicData;
+using Microsoft.Extensions.Configuration;
 using Microsoft.Win32;
 using NodeNetwork.ViewModels;
 using Prototyp.Elements;
 using Prototyp.Modules;
 using System;
-using Microsoft.Extensions.Configuration;
 using System.IO;
 using System.Linq;
 using System.Windows;
@@ -37,6 +37,11 @@ TODO:
 
 namespace Prototyp
 {
+    class Button
+    {
+        public string Binary { get; set; }
+        public string Icon { get; set; }
+    }
     public class ComboItem
     {
         public string IconPath { get; set; }
@@ -124,10 +129,24 @@ namespace Prototyp
             ParentDir = System.IO.Directory.GetParent(ParentDir.FullName);
             if (ParentDir.ToString().EndsWith("bin")) ParentDir = System.IO.Directory.GetParent(ParentDir.FullName);
 
-            //AppSettings
-            IConfigurationRoot config = new ConfigurationBuilder().SetBasePath(ParentDir.FullName).AddJsonFile("appsettings.json").Build();
-            IConfigurationSection section = config.GetSection("ToolBar1");
-            System.Collections.Generic.IEnumerable<IConfigurationSection> ToolBar1 = section.GetChildren();
+            //AppSettings - Get Buttons
+            IConfigurationRoot config = new ConfigurationBuilder().SetBasePath(Directory.GetCurrentDirectory()).AddJsonFile("appsettings.json").Build();
+            var ToolBarsSection = config.GetSection("ToolBars");
+            var ToolBars = ToolBarsSection.GetChildren();
+            foreach(var ToolBar in ToolBars) { 
+                var ToolBar0Buttons = ToolBar.GetChildren();
+                foreach (var Button in ToolBar0Buttons)
+                {
+                    var ButtonProps = Button.GetChildren();
+                    System.Collections.ArrayList buttonPropsArray = new System.Collections.ArrayList();
+                    foreach (var ButtonProp in ButtonProps)
+                    {
+                        buttonPropsArray.Add(ButtonProp.Value);
+  
+                    }
+                    createButton(buttonPropsArray[1].ToString(), buttonPropsArray[0].ToString(), ToolBar.Key);
+                }
+            }
 
             // Startup NetworkView.
             AppWindow = this;
@@ -907,7 +926,8 @@ namespace Prototyp
             chooseModuleWindow.ShowDialog();
             if (chooseModuleWindow.selectedModule.ToolName != null)
             {
-                createButton(chooseModuleWindow.selectedModule.IconPath, chooseModuleWindow.selectedModule.BinaryPath, dockPanel.Name);  
+                createButton(chooseModuleWindow.selectedModule.IconPath, chooseModuleWindow.selectedModule.BinaryPath, dockPanel.Name);
+                writeNewAppsettings(chooseModuleWindow.selectedModule.BinaryPath, chooseModuleWindow.selectedModule.IconPath, dockPanel.Name);
             }
         }
 
@@ -979,6 +999,12 @@ namespace Prototyp
 
             ToolsComboBox.SelectedIndex = 0;
         }
+
+        private void writeNewAppsettings(string BinaryPath, string IconPath, string ToolBar)
+        {
+
+        }
+
     }
 }
 
