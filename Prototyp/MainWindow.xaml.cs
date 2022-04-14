@@ -28,6 +28,8 @@ o Please make an event for node deletion.
 o Do we still want multi-vector ports?
 o Is yes, is this problem still relevant: Make connection to a multi-input module node, placeholder name will always
   be the last port, even if connection is made to, e.g., the first port.
+  Suggestion: Let's strictly allow just one vector type per port. If several vector types are desired,
+  use several ports. Note: If that's okay, replace checkboxes in module designer by radio buttons.
 o Low priority: Add multi-select in toolbar modules selection.
 
 ------------------------------- */
