@@ -270,7 +270,7 @@ namespace Prototyp
 
         private void importModule(string BinaryPath)
         {
-            AppContext.SetSwitch("System.Net.Http.SocketsHttpHandler.Http2UnencryptedSupport", true); // Wozu ist das?
+            //AppContext.SetSwitch("System.Net.Http.SocketsHttpHandler.Http2UnencryptedSupport", true); // Wozu ist das? Habe unten url von http auf https geändert.
 
             //Find lowest available port
             int port = Node_Module.GetNextPort(BASEPORT);
@@ -289,7 +289,7 @@ namespace Prototyp
 
                 // Establish GRPC connection
                 // TODO: nicht nur localhost
-                string url = "http://localhost:" + port.ToString();
+                string url = "https://localhost:" + port.ToString();
                 Grpc.Net.Client.GrpcChannel channel = Grpc.Net.Client.GrpcChannel.ForAddress(url);
                 grpcConnection = new GrpcClient.ControlConnector.ControlConnectorClient(channel);
 
@@ -769,7 +769,7 @@ namespace Prototyp
             //Initialize Progress object to report module progress
             var progressIndicator = new Progress<NodeProgressReport>(ReportProgress);
             //Start module handling process
-            if(await RunGraphAsync(modules, marked, progressIndicator))
+            if (await RunGraphAsync(modules, marked, progressIndicator))
             {
                 System.Diagnostics.Trace.WriteLine("All nodes processed");
             } 
@@ -1039,9 +1039,9 @@ namespace Prototyp
 
         private void RedoButton_Click(object sender, RoutedEventArgs e)
         {            
-            foreach (Node_Module nodeTest in network.Nodes.Items)
+            foreach (NodeViewModel nodeTest in network.Nodes.Items)
             {
-                nodeTest.ChangeStatus(NodeProgress.Finished);
+                if (nodeTest is Node_Module m) m.ChangeStatus(NodeProgress.Finished);
             }
         }
 
