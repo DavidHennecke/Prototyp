@@ -337,16 +337,12 @@ namespace Prototyp
 
         private void LoadWorkflowFinally(string FileName)
         {
-            Cursor = System.Windows.Input.Cursors.Wait;
-
             // Here we go. First, stop all active servers.
             TerminateAllServers();
 
             Prototyp.Elements.NetworkLoadAndSave open = new Prototyp.Elements.NetworkLoadAndSave(FileName);
 
             network = open.ImportWorkflow(vectorData, rasterData, network, ModulesPath);
-
-            Cursor = System.Windows.Input.Cursors.Arrow;
         }
 
         private void TerminateServer(Node_Module module)
@@ -1218,5 +1214,3 @@ namespace Prototyp
         }
     }
 }
-
-
