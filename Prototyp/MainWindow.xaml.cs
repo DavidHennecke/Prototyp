@@ -89,6 +89,7 @@ namespace Prototyp
         private System.Collections.Generic.List<ComboItem> ComboSearchItems = new System.Collections.Generic.List<ComboItem>();
 
         public string ModulesPath;
+        System.IO.DirectoryInfo ParentDir;
         public NetworkViewModel network = new NetworkViewModel();
 
         public static MainWindow AppWindow;
@@ -123,7 +124,7 @@ namespace Prototyp
             // Init modules path and start parsing.
             //TODO: Besseren Weg finden, um das parent directory zu bestimmen.
             ModulesPath = System.IO.Directory.GetCurrentDirectory();
-            System.IO.DirectoryInfo ParentDir = System.IO.Directory.GetParent(ModulesPath);
+            ParentDir = System.IO.Directory.GetParent(ModulesPath);
             ParentDir = System.IO.Directory.GetParent(ParentDir.FullName);
             ParentDir = System.IO.Directory.GetParent(ParentDir.FullName);
             if (ParentDir.ToString().EndsWith("bin")) ParentDir = System.IO.Directory.GetParent(ParentDir.FullName);
@@ -146,7 +147,6 @@ namespace Prototyp
             string XMLName;
             VorteXML ThisXML;
             System.Collections.Generic.List<ComboItem> LocalList = new System.Collections.Generic.List<ComboItem>();
-
 
             foreach (string Dir in SubDirs)
             {
@@ -209,9 +209,38 @@ namespace Prototyp
             }
         }
 
-        private void SaveButtons(string ToolName, string ToolBar)
+        private void SaveButtons() // Warning, this works only for tools right now, not for workflows!
         {
+            string Child = null;
+            string JSON = "{\"ToolBars\": {" + Environment.NewLine;
 
+            for (int i = 1; ; i++)
+            {
+                Child = "ToolBar" + i;
+                System.Windows.Controls.DockPanel toolbar = FindName(Child) as System.Windows.Controls.DockPanel;
+                
+                if (toolbar == null) break;
+                if (toolbar.Children.Count == 0) break;
+                if (toolbar.Children[0].GetType().FullName != "System.Windows.Controls.Button") break;
+
+                JSON = JSON + "  \"" + Child + "\": {" + Environment.NewLine;
+
+                for (int j = 0; j < toolbar.Children.Count; j++)
+                {
+                    System.Windows.Controls.Button button = toolbar.Children[j] as System.Windows.Controls.Button;
+
+                    if (j > 0) JSON = JSON + "," + Environment.NewLine;
+
+                    JSON = JSON + "    \"" + j + "\": {" + Environment.NewLine
+                                + "      \"Name\": \"" + ((System.Windows.FrameworkElement)button.Content).ToolTip + "\"" + Environment.NewLine
+                                + "    }";
+                }
+                JSON = JSON + Environment.NewLine + "  }" + Environment.NewLine;
+            }
+            JSON = JSON + "  }" + Environment.NewLine;
+            JSON = JSON + "}";
+
+            File.WriteAllText(ParentDir.FullName + "/appsettings.json", JSON);
         }
 
         private void TerminateServer(Node_Module module)
@@ -1029,7 +1058,7 @@ namespace Prototyp
             if (chooseModuleWindow.selectedModule.ToolName != null)
             {
                 createButton(chooseModuleWindow.selectedModule.ToolName, dockPanel.Name);
-                SaveButtons(chooseModuleWindow.selectedModule.ToolName, dockPanel.Name);
+                SaveButtons();
             }
         }
 
@@ -1061,6 +1090,7 @@ namespace Prototyp
         private void removeBtn_Click(System.Windows.Controls.Button ModuleBtn, System.Windows.Controls.DockPanel dockPanel)
         {
             dockPanel.Children.Remove(ModuleBtn);
+            SaveButtons();
         }
     }
 }
