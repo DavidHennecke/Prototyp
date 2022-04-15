@@ -33,11 +33,11 @@ erlaubt sein sollen, muss man für jeden einen eigenen Anschluss machen. Siehe n
 
 namespace Prototyp
 {
-    public class Button
-    {
-        public string Binary { get; set; }
-        public string Icon { get; set; }
-    }
+    //public class Button
+    //{
+    //    public string Binary { get; set; }
+    //    public string Icon { get; set; }
+    //}
     public class ComboItem
     {
         public string IconPath { get; set; }
@@ -325,6 +325,18 @@ namespace Prototyp
 
         private void LoadWorkflow(string FileName)
         {
+            // Note: Make sure to stop ongoing computations first.
+
+            if (network.Nodes.Count > 0)
+            {
+                if (MessageBox.Show("Are you sure? Current progress will be lost.", "Open a workflow?", MessageBoxButton.YesNo, MessageBoxImage.Question) == MessageBoxResult.No) return;
+            }
+
+            LoadWorkflowFinally(FileName);
+        }
+
+        private void LoadWorkflowFinally(string FileName)
+        {
             Cursor = System.Windows.Input.Cursors.Wait;
 
             // Here we go. First, stop all active servers.
@@ -577,6 +589,10 @@ namespace Prototyp
                         else if (vecType.Name == "VectorMultiPolygonData")
                         {
                             importNode = new VectorImport_ModuleMultiPolygon(vectorData[i].Name, vectorData[i].FeatureCollection[0].Geometry.GeometryType, vectorData[i].ID);
+                        }
+                        else
+                        {
+                            // There should be nothing here.
                         }
 
                         Point TempPoint;
@@ -1073,7 +1089,7 @@ namespace Prototyp
             Nullable<bool> result = openFileDialog.ShowDialog();
             if (result == true)
             {
-                LoadWorkflow(openFileDialog.FileName);
+                LoadWorkflowFinally(openFileDialog.FileName);
             }
         }
 
@@ -1091,6 +1107,13 @@ namespace Prototyp
             network = null;
             network = new NodeNetwork.ViewModels.NetworkViewModel();
             AppWindow.networkView.ViewModel = network;
+
+            Point TempPoint;
+            TempPoint.X = 0;
+            TempPoint.Y = 0;
+
+            networkView.ViewModel.DragOffset = TempPoint;
+            networkView.ViewModel.ZoomFactor = 1;
         }
 
         private void SaveClick(object sender, RoutedEventArgs e)

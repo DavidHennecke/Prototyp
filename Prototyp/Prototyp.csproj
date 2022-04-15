@@ -24,8 +24,6 @@
     <PackageReference Include="FlatGeobuf" Version="3.22.2" />
     <PackageReference Include="MaxRev.Gdal.Core" Version="3.3.3.120" />
     <PackageReference Include="MaxRev.Gdal.WindowsRuntime.Minimal" Version="3.3.3.110" />
-    <PackageReference Include="Microsoft.Extensions.Configuration.Binder" Version="6.0.0" />
-    <PackageReference Include="Microsoft.Extensions.Configuration.Json" Version="6.0.0" />
     <PackageReference Include="Microsoft.Toolkit.Wpf.UI.Controls" Version="6.1.2" />
     <PackageReference Include="ModernWpfUI" Version="0.9.4" />
     <PackageReference Include="NetTopologySuite" Version="2.4.0" />
@@ -65,7 +63,7 @@
       <XamlRuntime>$(DefaultXamlRuntime)</XamlRuntime>
       <SubType>Designer</SubType>
     </Page>
-    <Page Update="Modules\Views\RasterImportModuleView .xaml">
+    <Page Update="Modules\Views\RasterImportModuleView.xaml">
       <XamlRuntime>$(DefaultXamlRuntime)</XamlRuntime>
       <SubType>Designer</SubType>
     </Page>
