@@ -209,11 +209,20 @@ namespace Prototyp
             }
         }
 
+        private void SaveButtons(string ToolName, string ToolBar)
+        {
+
+        }
+
         private void TerminateServer(Node_Module module)
         {
             try
             {
-                if (module.Process != null) module.Process.Kill();
+                if (module.Process != null)
+                {
+                    module.Process.Kill();
+                    module.grpcConnection = null;
+                }
             }
             catch
             {
@@ -230,6 +239,50 @@ namespace Prototyp
                     TerminateServer(module);
                 }
             }
+        }
+
+        private void importModule(string BinaryPath)
+        {
+            AppContext.SetSwitch("System.Net.Http.SocketsHttpHandler.Http2UnencryptedSupport", true); // Wozu ist das?
+
+            //Find lowest available port
+            int port = Node_Module.GetNextPort(BASEPORT);
+
+            GrpcClient.ControlConnector.ControlConnectorClient grpcConnection;
+
+            System.Diagnostics.Process moduleProcess = new System.Diagnostics.Process();
+
+            System.Diagnostics.ProcessStartInfo moduleProcessInfo = new System.Diagnostics.ProcessStartInfo(BinaryPath + ".exe", port.ToString());
+            //moduleProcessInfo.CreateNoWindow = true; //Ja, dies macht das Server-Window wirklich unsichtbar. Sichtbarkeit nur für Debugging-Zwecke.
+            moduleProcessInfo.UseShellExecute = false; //'UseShellExecute = true' would be available only on the Windows platform.
+            moduleProcess.StartInfo = moduleProcessInfo;
+            try
+            {
+                moduleProcess.Start();
+
+                // Establish GRPC connection
+                // TODO: nicht nur localhost
+                string url = "http://localhost:" + port.ToString();
+                Grpc.Net.Client.GrpcChannel channel = Grpc.Net.Client.GrpcChannel.ForAddress(url);
+                grpcConnection = new GrpcClient.ControlConnector.ControlConnectorClient(channel);
+
+                Node_Module nodeModule = new Node_Module(BinaryPath + ".xml", grpcConnection, url, moduleProcess);
+                network.Nodes.Add(nodeModule);
+
+            }
+            catch
+            {
+                //if (!System.IO.File.Exists(ComboItems[Index].BinaryPath + ".exe"))
+                //{
+                //    throw new System.Exception("Could not start binary: No executable file present.");
+                //}
+                //else
+                //{
+                //    throw new System.Exception("Could not start binary: Reason unknown.");
+                //}
+            }
+
+            ToolsComboBox.SelectedIndex = 0;
         }
 
         private void AppClosing(object sender, System.ComponentModel.CancelEventArgs e)
@@ -641,11 +694,21 @@ namespace Prototyp
             //STEP 3: Update module configs (TODO)
             //STEP 4: Load inputs into the correct modules and mark starting modules of graph
             //
+
+            
             foreach (NodeConnection nc in imports)
             {
                 //Get data
                 //TODO: vectorData as <int> dictionary
-                string layer = vectorData[(int)nc.ImportNodeOutput].ToString(ToStringParams.ByteString);
+                //string layer = vectorData[(int)nc.ImportNodeOutput].ToString(ToStringParams.ByteString);
+                string layer = null;
+                foreach (VectorData v in vectorData)
+                {
+                    if (v.ID == nc.ImportNodeOutput)
+                    {
+                        layer = v.ToString(ToStringParams.ByteString);
+                    }
+                }
                 //Split into chunks of 65536 bytes (64 KiB)
                 System.Collections.Generic.List<string> chunks = new System.Collections.Generic.List<string>();
                 int maxChunkSize = MAX_UNSIGNED_SHORT / sizeof(Char);
@@ -959,13 +1022,14 @@ namespace Prototyp
             System.Windows.Controls.MenuItem menuItem = sender as System.Windows.Controls.MenuItem;
             System.Windows.Controls.ContextMenu contextMenu = menuItem.Parent as System.Windows.Controls.ContextMenu;
             System.Windows.Controls.DockPanel dockPanel = contextMenu.PlacementTarget as System.Windows.Controls.DockPanel;
+
             ModuleListButtonSelection chooseModuleWindow = new ModuleListButtonSelection();
             chooseModuleWindow.Owner = this;
             chooseModuleWindow.ShowDialog();
             if (chooseModuleWindow.selectedModule.ToolName != null)
             {
                 createButton(chooseModuleWindow.selectedModule.ToolName, dockPanel.Name);
-                writeNewAppsettings(chooseModuleWindow.selectedModule.ToolName, dockPanel.Name);
+                SaveButtons(chooseModuleWindow.selectedModule.ToolName, dockPanel.Name);
             }
         }
 
@@ -980,68 +1044,23 @@ namespace Prototyp
             };
             ModuleBtn.Background = (System.Windows.Media.SolidColorBrush)new System.Windows.Media.BrushConverter().ConvertFromString("#FF212225");
             ModuleBtn.Click += new RoutedEventHandler((sender, e) => importModule(ModulesPath + "/" + ToolName + "/" + ToolName));
+
             System.Windows.Controls.ContextMenu buttonContextmenu = new System.Windows.Controls.ContextMenu();
+
             System.Windows.Controls.MenuItem removeBtn = new System.Windows.Controls.MenuItem();
             removeBtn.Header = "Remove";
+
             System.Windows.Controls.DockPanel dockPanel = this.FindName(DockPanelName) as System.Windows.Controls.DockPanel;
             removeBtn.Click += new RoutedEventHandler((sender, e) => removeBtn_Click(ModuleBtn, dockPanel));
             buttonContextmenu.Items.Add(removeBtn);
             ModuleBtn.ContextMenu = buttonContextmenu;
+
             dockPanel.Children.Add(ModuleBtn);
         }
 
         private void removeBtn_Click(System.Windows.Controls.Button ModuleBtn, System.Windows.Controls.DockPanel dockPanel)
         {
             dockPanel.Children.Remove(ModuleBtn);
-        }
-
-        private void importModule(string BinaryPath)
-        {
-            AppContext.SetSwitch("System.Net.Http.SocketsHttpHandler.Http2UnencryptedSupport", true); // Wozu ist das?
-
-            //Find lowest available port
-            int port = Node_Module.GetNextPort(BASEPORT);
-
-            GrpcClient.ControlConnector.ControlConnectorClient grpcConnection;
-
-            System.Diagnostics.Process moduleProcess = new System.Diagnostics.Process();
-
-            System.Diagnostics.ProcessStartInfo moduleProcessInfo = new System.Diagnostics.ProcessStartInfo(BinaryPath + ".exe", port.ToString());
-            //moduleProcessInfo.CreateNoWindow = true; //Ja, dies macht das Server-Window wirklich unsichtbar. Sichtbarkeit nur für Debugging-Zwecke.
-            moduleProcessInfo.UseShellExecute = false; //'UseShellExecute = true' would be available only on the Windows platform.
-            moduleProcess.StartInfo = moduleProcessInfo;
-            try
-            {
-                moduleProcess.Start();
-
-                // Establish GRPC connection
-                // TODO: nicht nur localhost
-                string url = "http://localhost:" + port.ToString();
-                Grpc.Net.Client.GrpcChannel channel = Grpc.Net.Client.GrpcChannel.ForAddress(url);
-                grpcConnection = new GrpcClient.ControlConnector.ControlConnectorClient(channel);
-
-                Node_Module nodeModule = new Node_Module(BinaryPath + ".xml", grpcConnection, url, moduleProcess);
-                network.Nodes.Add(nodeModule);
-
-            }
-            catch
-            {
-                //if (!System.IO.File.Exists(ComboItems[Index].BinaryPath + ".exe"))
-                //{
-                //    throw new System.Exception("Could not start binary: No executable file present.");
-                //}
-                //else
-                //{
-                //    throw new System.Exception("Could not start binary: Reason unknown.");
-                //}
-            }
-
-            ToolsComboBox.SelectedIndex = 0;
-        }
-
-        private void writeNewAppsettings(string ToolName, string ToolBar)
-        {
-
         }
     }
 }
