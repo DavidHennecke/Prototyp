@@ -736,6 +736,7 @@ namespace Prototyp
                     if (v.ID == nc.ImportNodeOutput)
                     {
                         layer = v.ToString(ToStringParams.ByteString);
+                        break;
                     }
                 }
                 //Split into chunks of 65536 bytes (64 KiB)
