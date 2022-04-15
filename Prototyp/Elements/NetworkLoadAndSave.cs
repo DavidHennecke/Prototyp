@@ -467,7 +467,26 @@ namespace Prototyp.Elements
                     mainWindowHelpers.AddTreeViewChild(vectorData.Last());
                 }
 
-                VectorImport_Module importNode = new VectorImport_Module(v.Name, vectorData.Last().FeatureCollection[0].Geometry.GeometryType, vectorData.Last().ID);
+                VectorImport_Module importNode = null;
+
+                string geometryType = vectorData.Last().FeatureCollection[0].Geometry.GeometryType;
+                if (geometryType == "Point")
+                {
+                    importNode = new VectorImport_ModulePoint(vectorData.Last().Name, vectorData.Last().FeatureCollection[0].Geometry.GeometryType, vectorData.Last().ID);
+                }
+                else if (geometryType == "Line")
+                {
+                    importNode = new VectorImport_ModuleLine(vectorData.Last().Name, vectorData.Last().FeatureCollection[0].Geometry.GeometryType, vectorData.Last().ID);
+                }
+                else if (geometryType == "Polygon")
+                {
+                    importNode = new VectorImport_ModulePolygon(vectorData.Last().Name, vectorData.Last().FeatureCollection[0].Geometry.GeometryType, vectorData.Last().ID);
+                }
+                else if (geometryType == "MultiPolygon")
+                {
+                    importNode = new VectorImport_ModuleMultiPolygon(vectorData.Last().Name, vectorData.Last().FeatureCollection[0].Geometry.GeometryType, vectorData.Last().ID);
+                }
+
                 importNode.Position = v.Position;
                 network.Nodes.Add(importNode);
             }
@@ -613,7 +632,7 @@ namespace Prototyp.Elements
                 network.Connections.Add(network.ConnectionFactory(nInp, nOutp));
             }
 
-            return(network);
+            return (network);
         }
     }
 }
