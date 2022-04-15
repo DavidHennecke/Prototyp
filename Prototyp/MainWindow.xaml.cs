@@ -74,7 +74,7 @@ namespace Prototyp
     public partial class MainWindow : Window
     {
         public const int BASEPORT = 5000;
-        public const int MAX_UNSIGNED_SHORT = 65536;
+        public const int MAX_UNSIGNED_SHORT = 65535;
 
         private const string COMBOMSG = "Select your tool here...";
         private const string ALPHABET = "ABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890";

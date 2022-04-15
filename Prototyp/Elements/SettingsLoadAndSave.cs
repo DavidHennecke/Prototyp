@@ -1,6 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Text;
 
 namespace Prototyp.Elements
 {
@@ -32,11 +30,11 @@ namespace Prototyp.Elements
     {
         // Internal fields ------------------------------------------
 
-        private List<PSetting> _settings = new List<PSetting>();
+        private System.Collections.Generic.List<PSetting> _settings = new System.Collections.Generic.List<PSetting>();
 
         // Getters and setters --------------------------------------
 
-        public List<PSetting> PSettings
+        public System.Collections.Generic.List<PSetting> PSettings
         {
             get { return (_settings); }
             set { _settings = value; }
@@ -73,7 +71,7 @@ namespace Prototyp.Elements
         {
             string JSON = System.IO.File.ReadAllText(FileName);
 
-            _settings = System.Text.Json.JsonSerializer.Deserialize<List<PSetting>>(JSON);
+            _settings = System.Text.Json.JsonSerializer.Deserialize<System.Collections.Generic.List<PSetting>>(JSON);
         }
     }
 }
