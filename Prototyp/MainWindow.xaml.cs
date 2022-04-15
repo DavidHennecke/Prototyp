@@ -1,5 +1,4 @@
 ﻿using DynamicData;
-using Microsoft.Extensions.Configuration;
 using Microsoft.Win32;
 using NodeNetwork.ViewModels;
 using Prototyp.Elements;
@@ -82,7 +81,7 @@ namespace Prototyp
         private bool Typing = false;
 
         public System.Collections.Generic.List<VectorData> vectorData = new System.Collections.Generic.List<VectorData>();
-        public System.Collections.Generic.List<RasterData> rasterData = new System.Collections.Generic.List<RasterData>();        
+        public System.Collections.Generic.List<RasterData> rasterData = new System.Collections.Generic.List<RasterData>();
         private System.Collections.Generic.List<ComboItem> ComboItems = new System.Collections.Generic.List<ComboItem>();
         private System.Collections.Generic.List<ComboItem> ComboSearchItems = new System.Collections.Generic.List<ComboItem>();
 
@@ -188,57 +187,154 @@ namespace Prototyp
 
         private void LoadButtons(System.IO.DirectoryInfo LocalDir)
         {
-            IConfigurationRoot config = new ConfigurationBuilder().SetBasePath(LocalDir.FullName).AddJsonFile("appsettings.json").Build();
-            IConfigurationSection ToolBarsSection = config.GetSection("ToolBars");
-            System.Collections.Generic.IEnumerable<IConfigurationSection> ToolBars = ToolBarsSection.GetChildren();
-            foreach (IConfigurationSection ToolBar in ToolBars)
+            ProgSettings progSettings = new ProgSettings(LocalDir.FullName + "/appsettings.json");
+
+            // Process toolbars
+            foreach (PSetting s in progSettings.PSettings)
             {
-                System.Collections.Generic.IEnumerable<IConfigurationSection> ToolBar0Buttons = ToolBar.GetChildren();
-                foreach (IConfigurationSection Button in ToolBar0Buttons)
+                if (s.tButton != null)
                 {
-                    System.Collections.Generic.IEnumerable<IConfigurationSection> ButtonProps = Button.GetChildren();
-                    System.Collections.ArrayList buttonPropsArray = new System.Collections.ArrayList();
-                    foreach (IConfigurationSection ButtonProp in ButtonProps)
-                    {
-                        buttonPropsArray.Add(ButtonProp.Value); // "C:\Users\games\source\repos\CodingGeoInfo\Prototyp\Prototyp\Custom modules\Buffer/Buffer"? Was soll der Scheiß?
-                    }
-                    createButton(buttonPropsArray[0].ToString(), ToolBar.Key);
+                    createButton(s.tButton.ToolName, s.tButton.TargetControl);
                 }
+                else if (s.wfButton != null)
+                {
+                    createButton(s.wfButton.WFPath, s.wfButton.IconPath, s.wfButton.TargetControl);
+                }
+                // else if ... Any other settings here.
             }
+
+            // Process anything else at will
         }
 
-        private void SaveButtons() // Warning, this works only for tools right now, not for workflows!
+        private void SaveButtons()
         {
+            ProgSettings ps = new ProgSettings();
+
             string Child = null;
-            string JSON = "{\"ToolBars\": {" + Environment.NewLine;
 
             for (int i = 1; ; i++)
             {
                 Child = "ToolBar" + i;
                 System.Windows.Controls.DockPanel toolbar = FindName(Child) as System.Windows.Controls.DockPanel;
-                
+
                 if (toolbar == null) break;
                 if (toolbar.Children.Count == 0) break;
                 if (toolbar.Children[0].GetType().FullName != "System.Windows.Controls.Button") break;
-
-                JSON = JSON + "  \"" + Child + "\": {" + Environment.NewLine;
 
                 for (int j = 0; j < toolbar.Children.Count; j++)
                 {
                     System.Windows.Controls.Button button = toolbar.Children[j] as System.Windows.Controls.Button;
 
-                    if (j > 0) JSON = JSON + "," + Environment.NewLine;
+                    System.Windows.Controls.Image cont = (System.Windows.Controls.Image)button.Content;
+                    string TT = cont.ToolTip.ToString();
 
-                    JSON = JSON + "    \"" + j + "\": {" + Environment.NewLine
-                                + "      \"Name\": \"" + ((System.Windows.FrameworkElement)button.Content).ToolTip + "\"" + Environment.NewLine
-                                + "    }";
+                    if (TT.EndsWith(".wff")) // Indicates a workflow.
+                    {
+                        if (System.IO.File.Exists(TT))
+                        {
+                            WorkflowButton wf = new WorkflowButton();
+                            wf.WFPath = TT;
+                            wf.IconPath = cont.Source.ToString().Replace("file:///", "");
+                            wf.TargetControl = Child;
+
+                            PSetting ProgSetting = new PSetting();
+                            ProgSetting.wfButton = wf;
+                            ps.PSettings.Add(ProgSetting);
+                        }
+                    }
+                    // Extend with else ifs for additional purposes.
+                    else
+                    {
+                        ToolButton tb = new ToolButton();
+                        tb.ToolName = TT;
+                        tb.TargetControl = Child;
+
+                        PSetting ProgSetting = new PSetting();
+                        ProgSetting.tButton = tb;
+                        ps.PSettings.Add(ProgSetting);
+                    }
                 }
-                JSON = JSON + Environment.NewLine + "  }" + Environment.NewLine;
             }
-            JSON = JSON + "  }" + Environment.NewLine;
-            JSON = JSON + "}";
 
-            File.WriteAllText(ParentDir.FullName + "/appsettings.json", JSON);
+            ps.SaveProgSettings(ParentDir.FullName + "/appsettings.json");
+        }
+
+        //Overload that creates tool buttons.
+        private void createButton(string ToolName, string DockPanelName)
+        {
+            System.Windows.Controls.Button ModuleBtn = new System.Windows.Controls.Button();
+            ModuleBtn.Content = new System.Windows.Controls.Image
+            {
+                Source = new System.Windows.Media.Imaging.BitmapImage(new Uri(ModulesPath + "/" + ToolName + "/" + "Icon.png")),
+                ToolTip = ToolName,
+                VerticalAlignment = VerticalAlignment.Center
+            };
+            ModuleBtn.Background = (System.Windows.Media.SolidColorBrush)new System.Windows.Media.BrushConverter().ConvertFromString("#FF212225");
+            ModuleBtn.Click += new RoutedEventHandler((sender, e) => importModule(ModulesPath + "/" + ToolName + "/" + ToolName));
+
+            System.Windows.Controls.ContextMenu buttonContextmenu = new System.Windows.Controls.ContextMenu();
+
+            System.Windows.Controls.MenuItem removeBtn = new System.Windows.Controls.MenuItem();
+            removeBtn.Header = "Remove";
+
+            System.Windows.Controls.DockPanel dockPanel = this.FindName(DockPanelName) as System.Windows.Controls.DockPanel;
+            removeBtn.Click += new RoutedEventHandler((sender, e) => removeBtn_Click(ModuleBtn, dockPanel));
+            buttonContextmenu.Items.Add(removeBtn);
+            ModuleBtn.ContextMenu = buttonContextmenu;
+
+            dockPanel.Children.Add(ModuleBtn);
+        }
+
+        // Overload that creates workflow buttons.
+        private void createButton(string WFFile, string IconPath, string DockPanelName)
+        {
+            System.Windows.Controls.Button ModuleBtn = new System.Windows.Controls.Button();
+            if (System.IO.File.Exists(IconPath))
+            {
+                ModuleBtn.Content = new System.Windows.Controls.Image
+                {
+                    Source = new System.Windows.Media.Imaging.BitmapImage(new Uri(IconPath)),
+                    ToolTip = WFFile,
+                    VerticalAlignment = VerticalAlignment.Center
+                };
+            }
+            else
+            {
+                ModuleBtn.Content = new System.Windows.Controls.Image
+                {
+                    Source = new System.Windows.Media.Imaging.BitmapImage(new Uri(ParentDir.FullName + "/Images/VortexIcon.png")),
+                    ToolTip = WFFile,
+                    VerticalAlignment = VerticalAlignment.Center
+                };
+            }
+            ModuleBtn.Background = (System.Windows.Media.SolidColorBrush)new System.Windows.Media.BrushConverter().ConvertFromString("#FF212225");
+            ModuleBtn.Click += new RoutedEventHandler((sender, e) => LoadWorkflow(WFFile));
+
+            System.Windows.Controls.ContextMenu buttonContextmenu = new System.Windows.Controls.ContextMenu();
+
+            System.Windows.Controls.MenuItem removeBtn = new System.Windows.Controls.MenuItem();
+            removeBtn.Header = "Remove";
+
+            System.Windows.Controls.DockPanel dockPanel = this.FindName(DockPanelName) as System.Windows.Controls.DockPanel;
+            removeBtn.Click += new RoutedEventHandler((sender, e) => removeBtn_Click(ModuleBtn, dockPanel));
+            buttonContextmenu.Items.Add(removeBtn);
+            ModuleBtn.ContextMenu = buttonContextmenu;
+
+            dockPanel.Children.Add(ModuleBtn);
+        }
+
+        private void LoadWorkflow(string FileName)
+        {
+            Cursor = System.Windows.Input.Cursors.Wait;
+
+            // Here we go. First, stop all active servers.
+            TerminateAllServers();
+
+            Prototyp.Elements.NetworkLoadAndSave open = new Prototyp.Elements.NetworkLoadAndSave(FileName);
+
+            network = open.ImportWorkflow(vectorData, rasterData, network, ModulesPath);
+
+            Cursor = System.Windows.Input.Cursors.Arrow;
         }
 
         private void TerminateServer(Node_Module module)
@@ -295,7 +391,6 @@ namespace Prototyp
 
                 Node_Module nodeModule = new Node_Module(BinaryPath + ".xml", grpcConnection, url, moduleProcess);
                 network.Nodes.Add(nodeModule);
-
             }
             catch
             {
@@ -459,7 +554,7 @@ namespace Prototyp
         public void DropTargetEventNodeEditor(object sender, DragEventArgs e)
         {
             if (((string)e.Data.GetData("Type")).ToLower() == "vector")
-            {             
+            {
                 for (int i = 0; i < vectorData.Count; i++)
                 {
                     if (vectorData[i].ID.ToString() == (string)e.Data.GetData("ID"))
@@ -496,7 +591,7 @@ namespace Prototyp
                 }
             }
             else if (((string)e.Data.GetData("Type")).ToLower() == "raster")
-            {              
+            {
                 for (int i = 0; i < rasterData.Count; i++)
                 {
                     if (rasterData[i].ID.ToString() == (string)e.Data.GetData("ID"))
@@ -722,7 +817,7 @@ namespace Prototyp
             //STEP 4: Load inputs into the correct modules and mark starting modules of graph
             //
 
-            
+
             foreach (NodeConnection nc in imports)
             {
                 //Get data
@@ -747,7 +842,7 @@ namespace Prototyp
                 //Upload data to module through GRPC call (TODO: multitasking?)
                 using (var call = nc.InputNode.grpcConnection.SetLayer())
                 {
-                    foreach(string chunk in chunks)
+                    foreach (string chunk in chunks)
                     {
                         await call.RequestStream.WriteAsync(new GrpcClient.ByteStream { Chunk = Google.Protobuf.ByteString.FromBase64(chunk) });
                     }
@@ -772,7 +867,7 @@ namespace Prototyp
             if (await RunGraphAsync(modules, marked, progressIndicator))
             {
                 System.Diagnostics.Trace.WriteLine("All nodes processed");
-            } 
+            }
             else
             {
                 System.Diagnostics.Trace.WriteLine("Node processing interrupted");
@@ -978,16 +1073,7 @@ namespace Prototyp
             Nullable<bool> result = openFileDialog.ShowDialog();
             if (result == true)
             {
-                Cursor = System.Windows.Input.Cursors.Wait;
-
-                // Here we go. First, stop all active servers.
-                TerminateAllServers();
-
-                Prototyp.Elements.NetworkLoadAndSave open = new Prototyp.Elements.NetworkLoadAndSave(openFileDialog.FileName);
-
-                network = open.ImportWorkflow(vectorData, rasterData, network, ModulesPath);
-
-                Cursor = System.Windows.Input.Cursors.Arrow;
+                LoadWorkflow(openFileDialog.FileName);
             }
         }
 
@@ -1028,17 +1114,17 @@ namespace Prototyp
                 if (MessageBox.Show("Include data sets? This will increase data size and processing time but will make the user of the workflow independent from the data files.", "Include data?", MessageBoxButton.YesNo, MessageBoxImage.Question) == MessageBoxResult.Yes) includeData = true; else includeData = false;
 
                 Cursor = System.Windows.Input.Cursors.Wait;
-                
+
                 if (System.IO.File.Exists(saveFileDialog.FileName)) System.IO.File.Delete(saveFileDialog.FileName);
 
                 Prototyp.Elements.NetworkLoadAndSave save = new Prototyp.Elements.NetworkLoadAndSave(network, vectorData, rasterData, saveFileDialog.FileName, includeData);
-                
+
                 Cursor = System.Windows.Input.Cursors.Arrow;
             }
         }
 
         private void RedoButton_Click(object sender, RoutedEventArgs e)
-        {            
+        {
             foreach (NodeViewModel nodeTest in network.Nodes.Items)
             {
                 if (nodeTest is Node_Module m) m.ChangeStatus(NodeProgress.Finished);
@@ -1059,31 +1145,6 @@ namespace Prototyp
                 createButton(chooseModuleWindow.selectedModule.ToolName, dockPanel.Name);
                 SaveButtons();
             }
-        }
-
-        private void createButton(string ToolName, string DockPanelName)
-        {
-            System.Windows.Controls.Button ModuleBtn = new System.Windows.Controls.Button();
-            ModuleBtn.Content = new System.Windows.Controls.Image
-            {
-                Source = new System.Windows.Media.Imaging.BitmapImage(new Uri(ModulesPath + "/" + ToolName + "/" + "Icon.png")),
-                ToolTip = ToolName,
-                VerticalAlignment = VerticalAlignment.Center
-            };
-            ModuleBtn.Background = (System.Windows.Media.SolidColorBrush)new System.Windows.Media.BrushConverter().ConvertFromString("#FF212225");
-            ModuleBtn.Click += new RoutedEventHandler((sender, e) => importModule(ModulesPath + "/" + ToolName + "/" + ToolName));
-
-            System.Windows.Controls.ContextMenu buttonContextmenu = new System.Windows.Controls.ContextMenu();
-
-            System.Windows.Controls.MenuItem removeBtn = new System.Windows.Controls.MenuItem();
-            removeBtn.Header = "Remove";
-
-            System.Windows.Controls.DockPanel dockPanel = this.FindName(DockPanelName) as System.Windows.Controls.DockPanel;
-            removeBtn.Click += new RoutedEventHandler((sender, e) => removeBtn_Click(ModuleBtn, dockPanel));
-            buttonContextmenu.Items.Add(removeBtn);
-            ModuleBtn.ContextMenu = buttonContextmenu;
-
-            dockPanel.Children.Add(ModuleBtn);
         }
 
         private void removeBtn_Click(System.Windows.Controls.Button ModuleBtn, System.Windows.Controls.DockPanel dockPanel)
