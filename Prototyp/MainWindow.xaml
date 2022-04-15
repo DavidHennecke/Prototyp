@@ -101,7 +101,7 @@
                             <DockPanel.ContextMenu>
                                 <ContextMenu>
                                     <MenuItem Header="Add Module" Click="OpenModuleList"/>
-                                    <MenuItem Header="Add Workflow" />
+                                    <MenuItem Header="Add Workflow" Click="AddWorkflowClick" />
                                 </ContextMenu>
                             </DockPanel.ContextMenu>
                         </DockPanel>

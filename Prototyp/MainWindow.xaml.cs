@@ -1152,6 +1152,47 @@ namespace Prototyp
             dockPanel.Children.Remove(ModuleBtn);
             SaveButtons();
         }
+
+        private void AddWorkflowClick(object sender, RoutedEventArgs e)
+        {
+            System.Windows.Controls.MenuItem menuItem = sender as System.Windows.Controls.MenuItem;
+            System.Windows.Controls.ContextMenu contextMenu = menuItem.Parent as System.Windows.Controls.ContextMenu;
+            System.Windows.Controls.DockPanel dockPanel = contextMenu.PlacementTarget as System.Windows.Controls.DockPanel;
+
+            OpenFileDialog openFileDialog = new OpenFileDialog();
+            openFileDialog.Filter = "Workflow files (*.wff)|*.wff|" +
+                                    "All files (*.*)|*.*";
+            openFileDialog.FilterIndex = 0;
+            openFileDialog.RestoreDirectory = true;
+            openFileDialog.Title = "Open a workflow file...";
+
+            Nullable<bool> result = openFileDialog.ShowDialog();
+            if (result == true)
+            {
+                string WFFile = openFileDialog.FileName;
+                string IconPath;
+
+                openFileDialog = new OpenFileDialog();
+                openFileDialog.Filter = "Image files (*.png)|*.png|" +
+                                        "All files (*.*)|*.*";
+                openFileDialog.FilterIndex = 0;
+                openFileDialog.RestoreDirectory = true;
+                openFileDialog.Title = "Open an image file...";
+
+                result = openFileDialog.ShowDialog();
+                if (result == true)
+                {
+                    IconPath = openFileDialog.FileName;
+                }
+                else
+                {
+                    IconPath = ParentDir.FullName + "/Images/VortexIcon.png";
+                }
+
+                createButton(WFFile, IconPath, dockPanel.Name);
+                SaveButtons();
+            }
+        }
     }
 }
 
