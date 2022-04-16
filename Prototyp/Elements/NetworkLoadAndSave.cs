@@ -403,6 +403,8 @@ namespace Prototyp.Elements
                 System.Diagnostics.ProcessStartInfo moduleProcessInfo = new System.Diagnostics.ProcessStartInfo(ModulesPath + "\\" + m.Name + "\\" + m.Name + ".exe", PrepPorts[i].ToString());
                 //moduleProcessInfo.CreateNoWindow = true;
                 moduleProcessInfo.UseShellExecute = false;
+                moduleProcessInfo.LoadUserProfile = true;
+                moduleProcessInfo.WorkingDirectory = ModulesPath + "\\" + m.Name;
                 moduleProcess.StartInfo = moduleProcessInfo;
                 try
                 {

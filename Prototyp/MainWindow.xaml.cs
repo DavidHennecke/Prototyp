@@ -203,7 +203,7 @@ namespace Prototyp
                 // else if ... Any other settings here.
             }
 
-            // Process anything else at will
+            // Process anything else at will.
         }
 
         private void SaveButtons()
@@ -386,6 +386,8 @@ namespace Prototyp
             System.Diagnostics.ProcessStartInfo moduleProcessInfo = new System.Diagnostics.ProcessStartInfo(BinaryPath + ".exe", port.ToString());
             //moduleProcessInfo.CreateNoWindow = true; //Ja, dies macht das Server-Window wirklich unsichtbar. Sichtbarkeit nur für Debugging-Zwecke.
             moduleProcessInfo.UseShellExecute = false; //'UseShellExecute = true' would be available only on the Windows platform.
+            moduleProcessInfo.LoadUserProfile = true;
+            moduleProcessInfo.WorkingDirectory = BinaryPath.Substring(0, BinaryPath.LastIndexOf("/"));
             moduleProcess.StartInfo = moduleProcessInfo;
             try
             {
@@ -646,7 +648,6 @@ namespace Prototyp
         {
             if (ToolsComboBox.IsDropDownOpen == false)
             {
-                System.Diagnostics.Debug.WriteLine("Hallo");
                 ComboSearchItems.Clear();
                 ComboItems[0].ToolName = COMBOMSG;
                 ToolsComboBox.ItemsSource = null;
