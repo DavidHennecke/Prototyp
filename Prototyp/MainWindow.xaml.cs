@@ -194,11 +194,11 @@ namespace Prototyp
             {
                 if (s.tButton != null)
                 {
-                    createButton(s.tButton.ToolName, s.tButton.TargetControl);
+                    CreateButton(s.tButton.ToolName, s.tButton.TargetControl);
                 }
                 else if (s.wfButton != null)
                 {
-                    createButton(s.wfButton.WFPath, s.wfButton.IconPath, s.wfButton.TargetControl);
+                    CreateButton(s.wfButton.WFPath, s.wfButton.IconPath, s.wfButton.TargetControl);
                 }
                 // else if ... Any other settings here.
             }
@@ -209,58 +209,12 @@ namespace Prototyp
         private void SaveButtons()
         {
             ProgSettings ps = new ProgSettings();
-
-            string Child = null;
-
-            for (int i = 1; ; i++)
-            {
-                Child = "ToolBar" + i;
-                System.Windows.Controls.DockPanel toolbar = FindName(Child) as System.Windows.Controls.DockPanel;
-
-                if (toolbar == null) break;
-                if (toolbar.Children.Count == 0) break;
-                if (toolbar.Children[0].GetType().FullName != "System.Windows.Controls.Button") break;
-
-                for (int j = 0; j < toolbar.Children.Count; j++)
-                {
-                    System.Windows.Controls.Button button = toolbar.Children[j] as System.Windows.Controls.Button;
-
-                    System.Windows.Controls.Image cont = (System.Windows.Controls.Image)button.Content;
-                    string TT = cont.ToolTip.ToString();
-
-                    if (TT.EndsWith(".wff")) // Indicates a workflow.
-                    {
-                        if (System.IO.File.Exists(TT))
-                        {
-                            WorkflowButton wf = new WorkflowButton();
-                            wf.WFPath = TT;
-                            wf.IconPath = cont.Source.ToString().Replace("file:///", "");
-                            wf.TargetControl = Child;
-
-                            PSetting ProgSetting = new PSetting();
-                            ProgSetting.wfButton = wf;
-                            ps.PSettings.Add(ProgSetting);
-                        }
-                    }
-                    // Extend with else ifs for additional purposes.
-                    else
-                    {
-                        ToolButton tb = new ToolButton();
-                        tb.ToolName = TT;
-                        tb.TargetControl = Child;
-
-                        PSetting ProgSetting = new PSetting();
-                        ProgSetting.tButton = tb;
-                        ps.PSettings.Add(ProgSetting);
-                    }
-                }
-            }
-
+            ps.PrepareSaveButtons();
             ps.SaveProgSettings(ParentDir.FullName + "/appsettings.json");
         }
 
         //Overload that creates tool buttons.
-        private void createButton(string ToolName, string DockPanelName)
+        private void CreateButton(string ToolName, string DockPanelName)
         {
             System.Windows.Controls.Button ModuleBtn = new System.Windows.Controls.Button();
             ModuleBtn.Content = new System.Windows.Controls.Image
@@ -286,7 +240,7 @@ namespace Prototyp
         }
 
         // Overload that creates workflow buttons.
-        private void createButton(string WFFile, string IconPath, string DockPanelName)
+        private void CreateButton(string WFFile, string IconPath, string DockPanelName)
         {
             System.Windows.Controls.Button ModuleBtn = new System.Windows.Controls.Button();
             if (System.IO.File.Exists(IconPath))
@@ -1162,7 +1116,7 @@ namespace Prototyp
             chooseModuleWindow.ShowDialog();
             if (chooseModuleWindow.selectedModule.ToolName != null)
             {
-                createButton(chooseModuleWindow.selectedModule.ToolName, dockPanel.Name);
+                CreateButton(chooseModuleWindow.selectedModule.ToolName, dockPanel.Name);
                 SaveButtons();
             }
         }
@@ -1209,7 +1163,7 @@ namespace Prototyp
                     IconPath = ParentDir.FullName + "/Images/VortexIcon.png";
                 }
 
-                createButton(WFFile, IconPath, dockPanel.Name);
+                CreateButton(WFFile, IconPath, dockPanel.Name);
                 SaveButtons();
             }
         }

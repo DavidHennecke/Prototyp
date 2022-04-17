@@ -56,6 +56,55 @@ namespace Prototyp.Elements
 
         // Public methods ---------------------------------------------
 
+        public void PrepareSaveButtons()
+        {
+            string Child = null;
+
+            for (int i = 1; ; i++)
+            {
+                Child = "ToolBar" + i;
+                System.Windows.Controls.DockPanel toolbar = MainWindow.AppWindow.FindName(Child) as System.Windows.Controls.DockPanel;
+
+                if (toolbar == null) break;
+                if (toolbar.Children.Count == 0) break;
+                if (toolbar.Children[0].GetType().FullName != "System.Windows.Controls.Button") break;
+
+                for (int j = 0; j < toolbar.Children.Count; j++)
+                {
+                    System.Windows.Controls.Button button = toolbar.Children[j] as System.Windows.Controls.Button;
+
+                    System.Windows.Controls.Image cont = (System.Windows.Controls.Image)button.Content;
+                    string TT = cont.ToolTip.ToString();
+
+                    if (TT.EndsWith(".wff")) // Indicates a workflow.
+                    {
+                        if (System.IO.File.Exists(TT))
+                        {
+                            WorkflowButton wf = new WorkflowButton();
+                            wf.WFPath = TT;
+                            wf.IconPath = cont.Source.ToString().Replace("file:///", "");
+                            wf.TargetControl = Child;
+
+                            PSetting ProgSetting = new PSetting();
+                            ProgSetting.wfButton = wf;
+                            _settings.Add(ProgSetting);
+                        }
+                    }
+                    // Extend with else ifs for additional purposes.
+                    else
+                    {
+                        ToolButton tb = new ToolButton();
+                        tb.ToolName = TT;
+                        tb.TargetControl = Child;
+
+                        PSetting ProgSetting = new PSetting();
+                        ProgSetting.tButton = tb;
+                        _settings.Add(ProgSetting);
+                    }
+                }
+            }
+        }
+
         public bool SaveProgSettings(string FileName)
         {
             System.Text.Json.JsonSerializerOptions options = new System.Text.Json.JsonSerializerOptions { WriteIndented = true };
