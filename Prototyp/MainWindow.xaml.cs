@@ -794,6 +794,8 @@ namespace Prototyp
 
             //STEP 3: Load inputs into the correct modules
             //
+            //Prepare a list of grpc streams and chunk-lists
+            System.Collections.Generic.List<System.Threading.Tasks.Task> uploadTasks = new System.Collections.Generic.List<System.Threading.Tasks.Task>();
             foreach (NodeConnection nc in importConnections)
             {
                 //Get data
@@ -815,33 +817,19 @@ namespace Prototyp
                 {
                     chunks.Add(layer.Substring(i, Math.Min(maxChunkSize, layer.Length - i)));
                 }
-                //Upload data to module through GRPC call (TODO: multitasking?)
-                using (var call = nc.InputNode.grpcConnection.SetLayer())
-                {
-                    foreach (string chunk in chunks)
-                    {
-                        await call.RequestStream.WriteAsync(new GrpcClient.ByteStream { Chunk = Google.Protobuf.ByteString.FromBase64(chunk) });
-                    }
-                    await call.RequestStream.CompleteAsync();
-                    GrpcClient.LayerResponse response = await call.ResponseAsync;
-                    if (response.Finished == 1)
-                    {
-                        System.Diagnostics.Trace.WriteLine("Data loaded from " + nc.ImportNodeOutput + " to " + nc.InputNode + "_" + nc.InputChannel);
-                    }
-                    else
-                    {
-                        System.Diagnostics.Trace.WriteLine("Data load failed from " + nc.ImportNodeOutput + " to " + nc.InputNode + "_" + nc.InputChannel);
-                    }
-                }
+                //Upload data to module through GRPC call
+                uploadTasks.Add(UploadChunk(nc.InputNode.grpcConnection.SetLayer(), chunks));
             }
+            //Run all uploads asynchronously
+            await System.Threading.Tasks.Task.WhenAll(uploadTasks);
+
             //STEP 4: Run modules
             //
             //Initialize Progress object to asynchronously report module progress throughout the whole graph traversal
             var progress = new Progress<NodeProgressReport>(ReportProgress);
             //Start module handling process
             try {
-                //await RunGraphAsync(modules, progress);
-                await System.Threading.Tasks.Task.Run(() => RunGraphAsync(moduleConnections, progress));
+                await System.Threading.Tasks.Task.Run(() => RunGraph(moduleConnections, progress));
             } catch (Exception ex) {
                 System.Diagnostics.Trace.WriteLine("Node processing interrupted");
                 System.Diagnostics.Trace.WriteLine(ex.ToString());
@@ -849,7 +837,17 @@ namespace Prototyp
             }
         }
 
-        async System.Threading.Tasks.Task RunGraphAsync(System.Collections.Generic.Dictionary<Node_Module, System.Collections.Generic.List<NodeConnection>> sendList, IProgress<NodeProgressReport> progress)
+        async System.Threading.Tasks.Task UploadChunk(Grpc.Core.AsyncClientStreamingCall<GrpcClient.ByteStream, GrpcClient.LayerResponse> call, System.Collections.Generic.List<string> chunks)
+        {
+            foreach (string chunk in chunks)
+            {
+                await call.RequestStream.WriteAsync(new GrpcClient.ByteStream { Chunk = Google.Protobuf.ByteString.FromBase64(chunk) });
+            }
+            await call.RequestStream.CompleteAsync();
+            await call.ResponseAsync;
+        }
+
+        async System.Threading.Tasks.Task RunGraph(System.Collections.Generic.Dictionary<Node_Module, System.Collections.Generic.List<NodeConnection>> sendList, IProgress<NodeProgressReport> progress)
         {
             //Concept: Receive a dictionary which for each node has the outgoing connections (sendList)
             //For each node, also count the incoming connections (incomingCount) 
