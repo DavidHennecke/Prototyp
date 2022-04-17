@@ -821,7 +821,7 @@ namespace Prototyp
                     chunks.Add(layer.Substring(i, Math.Min(maxChunkSize, layer.Length - i)));
                 }
                 //Upload data to module through GRPC call
-                uploadTasks.Add(UploadChunk(nc.InputNode, chunks, progress));
+                uploadTasks.Add(UploadChunks(nc.InputNode, chunks, progress));
             }
             //Run all uploads asynchronously
             try
@@ -846,7 +846,7 @@ namespace Prototyp
             }
         }
 
-        async Task UploadChunk(Node_Module targetNode, List<string> chunks, IProgress<NodeProgressReport> progress)
+        async Task UploadChunks(Node_Module targetNode, List<string> chunks, IProgress<NodeProgressReport> progress)
         {
             try
             {
@@ -927,7 +927,7 @@ namespace Prototyp
 
         async private Task<Node_Module> runGRPCNode(Node_Module node, List<NodeConnection> sendList, IProgress<NodeProgressReport> progress)
         {
-            try { //try-catch so that the offending node can be marked with the interrupted status in the UI
+            try {   // try-catch so that the offending node can be marked with the interrupted status if it fails at any point
                 //  STEP 1:
                 //  TODO - UPLOAD NODE CONFIG
 

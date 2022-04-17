@@ -9,10 +9,12 @@ service ControlConnector {
 	rpc RunProcess (RunRequest) returns (stream RunUpdate);
 	rpc SendData (ChannelInfo) returns (SendResponse);
 	rpc SetLayer (stream ByteStream) returns (LayerResponse);
-	rpc GetLayer (LayerRequest) returns (stream ByteStream);
+	rpc GetLayer (LayerRequest) returns (stream ByteStream); //Remove on next grpcModule update
 
 	rpc StartUI (UIRequest) returns (UIResponse);
 	rpc SendSettings (Settings) returns (SettingsResponse);
+
+	//TODO: Add realtime messages
 }
 
 message ChannelInfo {
@@ -29,7 +31,7 @@ message RunUpdate {
 }
 
 message SendResponse {
-	int32 finished = 1;
+	int32 finished = 1; //Remove on next grpcModule update
 }
 
 message ByteStream {
@@ -37,10 +39,10 @@ message ByteStream {
 }
 
 message LayerResponse {
-	int32 finished = 1;
+	int32 finished = 1; //Remove on next grpcModule update
 }
 
-message LayerRequest {
+message LayerRequest { //Remove on next grpcModule update
 	int32 outputChannelID = 1;
 }
 
