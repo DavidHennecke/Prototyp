@@ -66,7 +66,6 @@ namespace Prototyp
     public enum NodeProgress
     {
         Waiting,        //Not all inputs ready, node is waiting for inputs
-        Ready,          //All required inputs are loaded
         Processing,     //Currently running the process
         Finished,       //Process finished successfully
         Interrupted     //Process ended unsuccessfully
@@ -796,6 +795,8 @@ namespace Prototyp
 
             //STEP 3: Load inputs into the correct modules
             //
+            //Initialize Progress object to asynchronously report module progress throughout the whole upload and graph traversal
+            var progress = new Progress<NodeProgressReport>(ReportProgress);
             //Prepare a list of grpc streams and chunk-lists
             List<Task> uploadTasks = new List<Task>();
             foreach (NodeConnection nc in importConnections)
@@ -820,15 +821,21 @@ namespace Prototyp
                     chunks.Add(layer.Substring(i, Math.Min(maxChunkSize, layer.Length - i)));
                 }
                 //Upload data to module through GRPC call
-                uploadTasks.Add(UploadChunk(nc.InputNode.grpcConnection.SetLayer(), chunks));
+                uploadTasks.Add(UploadChunk(nc.InputNode, chunks, progress));
             }
             //Run all uploads asynchronously
-            await Task.WhenAll(uploadTasks);
-
+            try
+            {
+                await Task.WhenAll(uploadTasks);
+            } catch(Exception ex)
+            {
+                System.Diagnostics.Trace.WriteLine("Uploading data failed");
+                System.Diagnostics.Trace.WriteLine(ex.ToString());
+                MessageBox.Show("Error while uploading data!\n" + ex.ToString());
+            }
+             
             //STEP 4: Run modules
             //
-            //Initialize Progress object to asynchronously report module progress throughout the whole graph traversal
-            var progress = new Progress<NodeProgressReport>(ReportProgress);
             //Start module handling process
             try {
                 await Task.Run(() => RunGraph(moduleConnections, progress));
@@ -839,14 +846,26 @@ namespace Prototyp
             }
         }
 
-        async Task UploadChunk(Grpc.Core.AsyncClientStreamingCall<GrpcClient.ByteStream, GrpcClient.LayerResponse> call, List<string> chunks)
+        async Task UploadChunk(Node_Module targetNode, List<string> chunks, IProgress<NodeProgressReport> progress)
         {
-            foreach (string chunk in chunks)
+            try
             {
-                await call.RequestStream.WriteAsync(new GrpcClient.ByteStream { Chunk = Google.Protobuf.ByteString.FromBase64(chunk) });
+                var call = targetNode.grpcConnection.SetLayer();
+                foreach (string chunk in chunks)
+                {
+                    await call.RequestStream.WriteAsync(new GrpcClient.ByteStream { Chunk = Google.Protobuf.ByteString.FromBase64(chunk) });
+                }
+                await call.RequestStream.CompleteAsync();
+                await call.ResponseAsync;
             }
-            await call.RequestStream.CompleteAsync();
-            await call.ResponseAsync;
+            catch (Exception ex)
+            {
+                NodeProgressReport report = new NodeProgressReport();
+                report.node = targetNode;
+                report.stage = NodeProgress.Interrupted;
+                progress.Report(report);
+                throw (ex);
+            }
         }
 
         async Task RunGraph(Dictionary<Node_Module, List<NodeConnection>> sendList, IProgress<NodeProgressReport> progress)
@@ -908,45 +927,55 @@ namespace Prototyp
 
         async private Task<Node_Module> runGRPCNode(Node_Module node, List<NodeConnection> sendList, IProgress<NodeProgressReport> progress)
         {
-            //  STEP 1:
-            //  TODO - UPLOAD NODE CONFIG
+            try { //try-catch so that the offending node can be marked with the interrupted status in the UI
+                //  STEP 1:
+                //  TODO - UPLOAD NODE CONFIG
 
-            //  STEP 2:
-            //  RUN NODE
-            var request = new GrpcClient.RunRequest { };
-            NodeProgressReport report = new NodeProgressReport();
-            report.node = node;
-            using (var call = node.grpcConnection.RunProcess(request))
-            {
-                report.stage = NodeProgress.Processing;
-                report.progress = 0;
-                progress.Report(report);
-                while (await call.ResponseStream.MoveNext(System.Threading.CancellationToken.None))
+                //  STEP 2:
+                //  RUN NODE
+                var request = new GrpcClient.RunRequest { };
+                NodeProgressReport report = new NodeProgressReport();
+                report.node = node;
+                using (var call = node.grpcConnection.RunProcess(request))
                 {
-                    GrpcClient.RunUpdate update = call.ResponseStream.Current;
-                    //report.progress = update.Progress;
-                    //progress.Report(report);
+                    report.stage = NodeProgress.Processing;
+                    report.progress = 0;
+                    progress.Report(report);
+                    while (await call.ResponseStream.MoveNext(System.Threading.CancellationToken.None))
+                    {
+                        GrpcClient.RunUpdate update = call.ResponseStream.Current;
+                        //report.progress = update.Progress;
+                        //progress.Report(report);
+                    }
+                    report.progress = 100;
+                    report.stage = NodeProgress.Finished;
+                    progress.Report(report);
                 }
-                report.progress = 100;
-                report.stage = NodeProgress.Finished;
-                progress.Report(report);
-            }
-            //  STEP 3:
-            //  IMMEDIATELY SEND DATA TO ALL DOWNSTREAM NODES
-            var sendingTasks = new List<Grpc.Core.AsyncUnaryCall<GrpcClient.SendResponse>>();
-            foreach (var send in sendList)
-            {
-                System.Diagnostics.Trace.WriteLine("Sending data from " + node.Url + "[" + send.OutputChannel + "] to " + send.InputNode.Url + "[" + send.InputChannel + "]");
-                var sendRequest = new GrpcClient.ChannelInfo
+                //  STEP 3:
+                //  IMMEDIATELY SEND DATA TO ALL DOWNSTREAM NODES
+                var sendingTasks = new List<Grpc.Core.AsyncUnaryCall<GrpcClient.SendResponse>>();
+                foreach (var send in sendList)
                 {
-                    TargetNodeUrl = send.InputNode.Url,
-                    SourceChannelID = send.OutputChannel,
-                    TargetChannelID = send.InputChannel
-                };
-                sendingTasks.Add(node.grpcConnection.SendDataAsync(sendRequest));
+                    System.Diagnostics.Trace.WriteLine("Sending data from " + node.Url + "[" + send.OutputChannel + "] to " + send.InputNode.Url + "[" + send.InputChannel + "]");
+                    var sendRequest = new GrpcClient.ChannelInfo
+                    {
+                        TargetNodeUrl = send.InputNode.Url,
+                        SourceChannelID = send.OutputChannel,
+                        TargetChannelID = send.InputChannel
+                    };
+                    sendingTasks.Add(node.grpcConnection.SendDataAsync(sendRequest));
+                }
+                await Task.WhenAll(sendingTasks.Select(c => c.ResponseAsync));
+                return node;
+            } 
+            catch (Exception ex)
+            {
+                NodeProgressReport report = new NodeProgressReport();
+                report.node = node;
+                report.stage = NodeProgress.Interrupted;
+                progress.Report(report);
+                throw (ex);
             }
-            await Task.WhenAll(sendingTasks.Select(c => c.ResponseAsync));
-            return node;
         }
 
         //Method to report node state from async tasks
@@ -958,9 +987,6 @@ namespace Prototyp
                 case NodeProgress.Waiting:
                     System.Diagnostics.Trace.WriteLine("Node " + report.node.Url + " waiting for input.");
                     report.node.ChangeStatus(NodeProgress.Waiting);
-                    break;
-                case NodeProgress.Ready:
-                    //report.node.ChangeStatus(NodeProgress.Ready);
                     break;
                 case NodeProgress.Processing:
                     System.Diagnostics.Trace.WriteLine("Node " + report.node.Url + " progress: " + report.progress);
