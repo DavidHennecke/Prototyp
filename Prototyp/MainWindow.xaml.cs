@@ -44,7 +44,7 @@ namespace Prototyp
     public enum NodeProgress
     {
         Waiting,        //Not all inputs ready, node is waiting for inputs
-        Marked,         //All required inputs are ready
+        Ready,         //All required inputs are loaded
         Processing,     //Currently running the process
         Finished,       //Process finished successfully
         Interrupted     //Process ended unsuccessfully
@@ -516,9 +516,8 @@ namespace Prototyp
 
         private async void PlayButton_Click(object sender, RoutedEventArgs e)
         {
-            System.Collections.Generic.List<NodeConnection> modules = new System.Collections.Generic.List<NodeConnection>();
-            System.Collections.Generic.List<NodeConnection> imports = new System.Collections.Generic.List<NodeConnection>();
-            System.Collections.Generic.List<Node_Module> marked = new System.Collections.Generic.List<Node_Module>();
+            System.Collections.Generic.List<NodeConnection> moduleConnections = new System.Collections.Generic.List<NodeConnection>();
+            System.Collections.Generic.List<NodeConnection> importConnections = new System.Collections.Generic.List<NodeConnection>();
 
             if (NodeNetwork.Toolkit.GraphAlgorithms.FindLoops(network).Any())
             {
@@ -540,7 +539,7 @@ namespace Prototyp
                     nc.InputNode = (Node_Module)conn.Input.Parent;
                     nc.InputChannel = conn.Input.GetID();
 
-                    modules.Add(nc);
+                    moduleConnections.Add(nc);
                     //MessageBox.Show(nc.OutputNode + "_" + nc.OutputChannel + " -> " + nc.InputNode + "_" + nc.InputChannel);
                 }
                 else
@@ -552,16 +551,22 @@ namespace Prototyp
                     nc.InputNode = (Node_Module)conn.Input.Parent;
                     nc.InputChannel = conn.Input.GetID();
 
-                    imports.Add(nc);
+                    importConnections.Add(nc);
                     //MessageBox.Show(nc.ImportNodeOutput +"_" + nc.OutputChannel + " -> " + nc.InputNode + "_" + nc.InputChannel);
+
+                    //Nodes that receive inputs are the first nodes who start waiting
+                    NodeProgressReport report = new NodeProgressReport();
+                    report.node = nc.InputNode;
+                    report.stage = NodeProgress.Waiting;
+                    ReportProgress(report);
                 }
             }
 
             //STEP 2: Traverse graph, check for possible changes in outputs (TODO)
-            //STEP 3: Update module configs (TODO)
-            //STEP 4: Load inputs into the correct modules and mark starting modules of graph
+
+            //STEP 4: Load inputs into the correct modules
             //
-            foreach (NodeConnection nc in imports)
+            foreach (NodeConnection nc in importConnections)
             {
                 //Get data
                 //TODO: vectorData as <int> dictionary
@@ -585,7 +590,6 @@ namespace Prototyp
                     if (response.Finished == 1)
                     {
                         System.Diagnostics.Trace.WriteLine("Data loaded from " + nc.ImportNodeOutput + " to " + nc.InputNode + "_" + nc.InputChannel);
-                        marked.Add(nc.OutputNode);
                     }
                     else
                     {
@@ -593,61 +597,141 @@ namespace Prototyp
                     }
                 }
             }
-            //STEP 5: Run modules (TODO - WIP)
+            //STEP 5: Run modules
             //
-            //Initialize Progress object to report module progress
-            var progressIndicator = new Progress<NodeProgressReport>(ReportProgress);
+            //Initialize Progress object to asynchronously report module progress throughout the whole graph traversal
+            var progress = new Progress<NodeProgressReport>(ReportProgress);
             //Start module handling process
-            if(await RunGraphAsync(modules, marked, progressIndicator))
-            {
-                System.Diagnostics.Trace.WriteLine("All nodes processed");
-            } 
-            else
-            {
+            try {
+                //await RunGraphAsync(modules, progress);
+                await System.Threading.Tasks.Task.Run(() => RunGraphAsync(moduleConnections, progress));
+            } catch (Exception ex) {
                 System.Diagnostics.Trace.WriteLine("Node processing interrupted");
+                System.Diagnostics.Trace.WriteLine(ex.ToString());
+                MessageBox.Show("Error while processing nodes!\n" + ex.ToString());
             }
         }
 
-        async System.Threading.Tasks.Task<bool> RunGraphAsync(System.Collections.Generic.List<NodeConnection> connections, System.Collections.Generic.List<Node_Module> marked, IProgress<NodeProgressReport> progress)
+        async System.Threading.Tasks.Task RunGraphAsync(System.Collections.Generic.List<NodeConnection> connections, IProgress<NodeProgressReport> progress)
         {
-            bool successful = await System.Threading.Tasks.Task.Run<bool>(async () =>
+            //Concept: For each node, count the incoming connections (incomingCount) and list the outgoing connections (sendList)
+            //Begin processing nodes that have no incoming connections. Once they are done, send to all outgoing connections
+            //Once data is sent over a connection, subtract from the count of incoming connections
+            //Once the count hits zero, node is ready to send to all its outgoing connections, etc...
+
+            //Traverse all connections to collect input and output information
+            System.Collections.Generic.Dictionary<Node_Module, int> incomingCount = new System.Collections.Generic.Dictionary<Node_Module, int>();
+            System.Collections.Generic.Dictionary<Node_Module, System.Collections.Generic.List<NodeConnection>> sendList = new System.Collections.Generic.Dictionary<Node_Module, System.Collections.Generic.List<NodeConnection>>();
+            
+            foreach (NodeConnection nc in connections)
             {
-                //Async node graph traversal
-                //Prepare and mark nodes
-                foreach (NodeConnection nc in connections)
+                NodeProgressReport report = new NodeProgressReport();
+                report.node = nc.InputNode;
+                report.stage = NodeProgress.Waiting;
+                progress.Report(report);
+                //Find all nodes and add up all occurences of nodes as input nodes. Nodes that never appear as input nodes are starting nodes
+                if (incomingCount.ContainsKey(nc.InputNode))
                 {
-                    NodeProgressReport report = new NodeProgressReport();
-                    report.node = nc.InputNode;
-                    report.stage = NodeProgress.Waiting;
-                    progress.Report(report);
-                    //TODO: find marked nodes
+                    incomingCount[nc.InputNode]++;
                 }
-                //TODO: Run activated nodes, mark new nodes, keep running
-                foreach (NodeConnection nc in connections)
+                else
                 {
-                    //Make grpc call and report progress throughout
-                    var request = new GrpcClient.RunRequest { };
-                    NodeProgressReport report = new NodeProgressReport();
-                    report.node = nc.InputNode;
-                    using (var call = nc.InputNode.grpcConnection.RunProcess(request))
+                    incomingCount[nc.InputNode] = 1;
+                }
+                if (!incomingCount.ContainsKey(nc.OutputNode))
+                {
+                    incomingCount.Add(nc.OutputNode, 0);
+                }
+                //Record all the sending operations that need to happen for each node
+                //(TODO: Ist eine reine Transformation zur besseren Nutzbarkeit, vllt besser connections gleich so übergeben, oder elegantere LINQ-Operation nutzen)
+                if (!sendList.ContainsKey(nc.OutputNode))
+                {
+                    sendList[nc.OutputNode] = new System.Collections.Generic.List<NodeConnection>();
+                }
+                if (!sendList.ContainsKey(nc.InputNode))
+                {
+                    sendList[nc.InputNode] = new System.Collections.Generic.List<NodeConnection>();
+                }
+                sendList[nc.OutputNode].Add(nc);
+            }
+
+            System.Diagnostics.Trace.WriteLine("Node info collected, generating starting tasks...");
+            //Generate tasks for all starting nodes (input count == 0) and put them into a collection
+            var nodeTasks = incomingCount.Where(pair => pair.Value == 0).Select(pair => runGRPCNode(pair.Key, sendList[pair.Key], progress)).ToList();
+
+            //Start tasks, wait for whichever task completes first (whenAny)
+            //Once a task is done, remove it from the list, check for any newly activated nodes and add them to the task list
+            //Keeps going until the list is empty
+            System.Diagnostics.Trace.WriteLine("Starting task loop...");
+            while (nodeTasks.Any())
+            {
+                System.Threading.Tasks.Task<Node_Module> finishedNode = await System.Threading.Tasks.Task.WhenAny(nodeTasks);
+                nodeTasks.Remove(finishedNode);
+                //Find all nodes that received data from this node. Subtract 1 from their input count.
+                //If the input count hits zero, that means all inuts are resolved, and the node can be started.
+                var finishedConnections = connections.Where(i => i.OutputNode.Equals(finishedNode.Result));
+                foreach(var conn in finishedConnections)
+                {
+                    incomingCount[conn.InputNode]--;
+                    if (incomingCount[conn.InputNode] == 0)
                     {
-                        report.stage = NodeProgress.Processing;
-                        report.progress = 0;
-                        progress.Report(report);
-                        while (await call.ResponseStream.MoveNext(System.Threading.CancellationToken.None))
-                        {
-                            GrpcClient.RunUpdate update = call.ResponseStream.Current;
-                            //report.progress = update.Progress;
-                            //progress.Report(report);
-                        }
-                        report.progress = 100;
-                        report.stage = NodeProgress.Finished;
-                        progress.Report(report);
+                        System.Diagnostics.Trace.WriteLine("Running node " + conn.InputNode.Url);
+                        nodeTasks.Add(runGRPCNode(conn.InputNode, sendList[conn.InputNode], progress));
                     }
                 }
-                return true;
-            });
-            return successful;
+            }
+        }
+
+        async private System.Threading.Tasks.Task<Node_Module> runGRPCNode(Node_Module node, System.Collections.Generic.List<NodeConnection> sendList, IProgress<NodeProgressReport> progress)
+        {
+            //  STEP 1:
+            //  UPLOAD CONFIG
+
+            //  STEP 2:
+            //  RUN NODE
+            var request = new GrpcClient.RunRequest { };
+            NodeProgressReport report = new NodeProgressReport();
+            report.node = node;
+            using (var call = node.grpcConnection.RunProcess(request))
+            {
+                report.stage = NodeProgress.Processing;
+                report.progress = 0;
+                progress.Report(report);
+                while (await call.ResponseStream.MoveNext(System.Threading.CancellationToken.None))
+                {
+                    GrpcClient.RunUpdate update = call.ResponseStream.Current;
+                    //report.progress = update.Progress;
+                    //progress.Report(report);
+                }
+                report.progress = 100;
+                report.stage = NodeProgress.Finished;
+                progress.Report(report);
+            }
+            //  STEP 3:
+            //  IMMEDIATELY SEND DATA TO ALL DOWNSTREAM NODES
+            foreach (var send in sendList)
+            {
+                System.Diagnostics.Trace.WriteLine("Sending data from " + node.Url + "[" + send.OutputChannel + "] to " + send.InputNode.Url + "[" + send.InputChannel + "]");
+                var sendRequest = new GrpcClient.ChannelInfo
+                {
+                    TargetNodeUrl = send.InputNode.Url,
+                    SourceChannelID = send.OutputChannel,
+                    TargetChannelID = send.InputChannel
+                };
+                //Resolve inputs to targeted nodes
+                var reply = await node.grpcConnection.SendDataAsync(sendRequest);
+                if (reply.Finished == 1)
+                {
+                    
+                    Console.WriteLine("Data sent!");
+                }
+                else
+                {
+                    Console.WriteLine("Sending failed.");
+                }
+            }
+
+            return node;
         }
 
         //Method to report node state from async tasks
@@ -659,7 +743,7 @@ namespace Prototyp
                 case NodeProgress.Waiting:
                     System.Diagnostics.Trace.WriteLine("Node " + report.node.Url + " waiting for input.");
                     break;
-                case NodeProgress.Marked:
+                case NodeProgress.Ready:
                     break;
                 case NodeProgress.Processing:
                     System.Diagnostics.Trace.WriteLine("Node " + report.node.Url + " progress: " + report.progress);
