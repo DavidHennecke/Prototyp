@@ -52,7 +52,6 @@ namespace Prototyp
         public int OutputChannel { get; set; }
         public double ImportNodeOutput { get; set; }
         public Node_Module InputNode { get; set; }
-        public Node_Module OutputNode { get; set; }
     }
 
     public class NodeProgressReport
@@ -737,31 +736,40 @@ namespace Prototyp
 
         private async void PlayButton_Click(object sender, RoutedEventArgs e)
         {
-            System.Collections.Generic.List<NodeConnection> moduleConnections = new System.Collections.Generic.List<NodeConnection>();
-            System.Collections.Generic.List<NodeConnection> importConnections = new System.Collections.Generic.List<NodeConnection>();
-
+            //Check graph validity
             if (NodeNetwork.Toolkit.GraphAlgorithms.FindLoops(network).Any())
             {
                 MessageBox.Show("Network contains loop(s). Please revert and try again.", "Loop detected", MessageBoxButton.OK, MessageBoxImage.Exclamation);
                 return;
             }
 
-            // Collect all current node-channel-connections
+            //Keeps a list of all modules that need to have data imported
+            System.Collections.Generic.List<NodeConnection> importConnections = new System.Collections.Generic.List<NodeConnection>();
+            //Keeps a list of outgoing connections for each module
+            System.Collections.Generic.Dictionary<Node_Module, System.Collections.Generic.List<NodeConnection>> moduleConnections = new System.Collections.Generic.Dictionary<Node_Module, System.Collections.Generic.List<NodeConnection>>();
+            // Collect info for both lists
             foreach (ConnectionViewModel conn in network.Connections.Items)
             {
-                //MessageBox.Show(conn.Output.Parent.GetType().ToString());
                 NodeConnection nc = new NodeConnection();
                 if (conn.Output.Parent is Node_Module)
-                {
-                    // URL im ((Node_Module)conn.Output.Parent).url
-                    nc.OutputNode = (Node_Module)conn.Output.Parent;
+                { 
                     nc.OutputChannel = conn.Output.GetID();
-
                     nc.InputNode = (Node_Module)conn.Input.Parent;
                     nc.InputChannel = conn.Input.GetID();
 
-                    moduleConnections.Add(nc);
-                    //MessageBox.Show(nc.OutputNode + "_" + nc.OutputChannel + " -> " + nc.InputNode + "_" + nc.InputChannel);
+                    //Add both input and output modules to the dictionary if they aren't already
+                    var outputModule = (Node_Module)conn.Output.Parent;
+                    if (!moduleConnections.ContainsKey(outputModule))
+                    {
+                        moduleConnections[outputModule] = new System.Collections.Generic.List<NodeConnection>();
+                    }
+                    if (!moduleConnections.ContainsKey(nc.InputNode))
+                    {
+                        moduleConnections[nc.InputNode] = new System.Collections.Generic.List<NodeConnection>();
+                    }
+
+                    //Record outgoing connection for current output node
+                    moduleConnections[outputModule].Add(nc);
                 }
                 else
                 {
@@ -773,7 +781,6 @@ namespace Prototyp
                     nc.InputChannel = conn.Input.GetID();
 
                     importConnections.Add(nc);
-                    //MessageBox.Show(nc.ImportNodeOutput +"_" + nc.OutputChannel + " -> " + nc.InputNode + "_" + nc.InputChannel);
 
                     //Nodes that receive inputs are the first nodes who start waiting
                     NodeProgressReport report = new NodeProgressReport();
@@ -785,7 +792,7 @@ namespace Prototyp
 
             //STEP 2: Traverse graph, check for possible changes in outputs (TODO)
 
-            //STEP 4: Load inputs into the correct modules
+            //STEP 3: Load inputs into the correct modules
             //
             foreach (NodeConnection nc in importConnections)
             {
@@ -827,7 +834,7 @@ namespace Prototyp
                     }
                 }
             }
-            //STEP 5: Run modules
+            //STEP 4: Run modules
             //
             //Initialize Progress object to asynchronously report module progress throughout the whole graph traversal
             var progress = new Progress<NodeProgressReport>(ReportProgress);
@@ -842,47 +849,35 @@ namespace Prototyp
             }
         }
 
-        async System.Threading.Tasks.Task RunGraphAsync(System.Collections.Generic.List<NodeConnection> connections, IProgress<NodeProgressReport> progress)
+        async System.Threading.Tasks.Task RunGraphAsync(System.Collections.Generic.Dictionary<Node_Module, System.Collections.Generic.List<NodeConnection>> sendList, IProgress<NodeProgressReport> progress)
         {
-            //Concept: For each node, count the incoming connections (incomingCount) and list the outgoing connections (sendList)
+            //Concept: Receive a dictionary which for each node has the outgoing connections (sendList)
+            //For each node, also count the incoming connections (incomingCount) 
             //Begin processing nodes that have no incoming connections. Once they are done, send to all outgoing connections
             //Once data is sent over a connection, subtract from the count of incoming connections
             //Once the count hits zero, node is ready to send to all its outgoing connections, etc...
 
-            //Traverse all connections to collect input and output information
-            System.Collections.Generic.Dictionary<Node_Module, int> incomingCount = new System.Collections.Generic.Dictionary<Node_Module, int>();
-            System.Collections.Generic.Dictionary<Node_Module, System.Collections.Generic.List<NodeConnection>> sendList = new System.Collections.Generic.Dictionary<Node_Module, System.Collections.Generic.List<NodeConnection>>();
-            
-            foreach (NodeConnection nc in connections)
+            //Start by marking all node modules as waiting (for progress indicators in UI)
+            foreach (var node in sendList.Keys)
             {
                 NodeProgressReport report = new NodeProgressReport();
-                report.node = nc.InputNode;
+                report.node = node;
                 report.stage = NodeProgress.Waiting;
                 progress.Report(report);
-                //Find all nodes and add up all occurences of nodes as input nodes. Nodes that never appear as input nodes are starting nodes
-                if (incomingCount.ContainsKey(nc.InputNode))
-                {
-                    incomingCount[nc.InputNode]++;
-                }
-                else
-                {
-                    incomingCount[nc.InputNode] = 1;
-                }
-                if (!incomingCount.ContainsKey(nc.OutputNode))
-                {
-                    incomingCount.Add(nc.OutputNode, 0);
-                }
-                //Record all the sending operations that need to happen for each node
-                //(TODO: Ist eine reine Transformation zur besseren Nutzbarkeit, vllt besser connections gleich so übergeben, oder elegantere LINQ-Operation nutzen)
-                if (!sendList.ContainsKey(nc.OutputNode))
-                {
-                    sendList[nc.OutputNode] = new System.Collections.Generic.List<NodeConnection>();
-                }
-                if (!sendList.ContainsKey(nc.InputNode))
-                {
-                    sendList[nc.InputNode] = new System.Collections.Generic.List<NodeConnection>();
-                }
-                sendList[nc.OutputNode].Add(nc);
+            }
+
+            //Prepare input occurence Dictionary and set all nodes to 0 (no occurrences as input)
+            System.Collections.Generic.Dictionary<Node_Module, int> incomingCount = new System.Collections.Generic.Dictionary<Node_Module, int>();
+            foreach (var node in sendList.Keys)
+            {
+                incomingCount.Add(node, 0);
+            }
+
+            //Get lists of connections from dictionary and flatten into one list of all connections
+            //Traverse that list and count each occurence of node as input
+            foreach (NodeConnection nc in sendList.Values.SelectMany(x => x))
+            {
+                incomingCount[nc.InputNode]++;
             }
 
             System.Diagnostics.Trace.WriteLine("Node info collected, generating starting tasks...");
@@ -897,10 +892,9 @@ namespace Prototyp
             {
                 System.Threading.Tasks.Task<Node_Module> finishedNode = await System.Threading.Tasks.Task.WhenAny(nodeTasks);
                 nodeTasks.Remove(finishedNode);
-                //Find all nodes that received data from this node. Subtract 1 from their input count.
+                //Iterate through all nodes that received data from this node. Subtract 1 from their input count.
                 //If the input count hits zero, that means all inuts are resolved, and the node can be started.
-                var finishedConnections = connections.Where(i => i.OutputNode.Equals(finishedNode.Result));
-                foreach(var conn in finishedConnections)
+                foreach(var conn in sendList[finishedNode.Result])
                 {
                     incomingCount[conn.InputNode]--;
                     if (incomingCount[conn.InputNode] == 0)
@@ -915,7 +909,7 @@ namespace Prototyp
         async private System.Threading.Tasks.Task<Node_Module> runGRPCNode(Node_Module node, System.Collections.Generic.List<NodeConnection> sendList, IProgress<NodeProgressReport> progress)
         {
             //  STEP 1:
-            //  UPLOAD CONFIG
+            //  TODO - UPLOAD NODE CONFIG
 
             //  STEP 2:
             //  RUN NODE
@@ -939,6 +933,7 @@ namespace Prototyp
             }
             //  STEP 3:
             //  IMMEDIATELY SEND DATA TO ALL DOWNSTREAM NODES
+            var sendingTasks = new System.Collections.Generic.List<System.Threading.Tasks.Task>();
             foreach (var send in sendList)
             {
                 System.Diagnostics.Trace.WriteLine("Sending data from " + node.Url + "[" + send.OutputChannel + "] to " + send.InputNode.Url + "[" + send.InputChannel + "]");
