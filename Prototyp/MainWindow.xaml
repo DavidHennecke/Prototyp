@@ -33,9 +33,9 @@
             <Image Grid.Column="0" Height="25" Source="/Images/VortexIcon.ico" Margin="5,0,0,0"/>
             <Menu Grid.Column="1" Height="32" WindowChrome.IsHitTestVisibleInChrome="True">
                 <MenuItem Header="File" Height="32" FontSize="13" Background="Transparent">
-                    <MenuItem Header="New" FontSize="13"/>
-                    <MenuItem Header="Open..." FontSize="13"/>
-                    <MenuItem Header="Save" FontSize="13"/>
+                    <MenuItem Header="New" FontSize="13" Click="NewClick"/>
+                    <MenuItem Header="Open workflow..." FontSize="13" Click="OpenClick"/>
+                    <MenuItem Header="Save workflow..." FontSize="13" Click="SaveClick"/>
                     <MenuItem Header="Exit" FontSize="13"/>
                 </MenuItem>
 
@@ -55,22 +55,24 @@
         </Grid>
         <Grid x:Name="ToolBarMain" Grid.Row="1" Margin="0,0,0,5">
             <Grid.ColumnDefinitions>
-                <ColumnDefinition Width="200"/>
+                <ColumnDefinition Width="Auto"/>
+                <ColumnDefinition Width="*"/>
+                <ColumnDefinition Width="*"/>
                 <ColumnDefinition Width="*"/>
 
             </Grid.ColumnDefinitions>
-            <Border BorderBrush="#35363A" Grid.Column="0" BorderThickness="3" Margin="0,5,5,5" CornerRadius="2" DockPanel.Dock="Top">
-                <DockPanel x:Name="ToolBar0" Background="#35363A" LastChildFill="True">
+            <Border BorderBrush="#35363A" Grid.Column="0" BorderThickness="3" Margin="5,5,5,0" CornerRadius="2" DockPanel.Dock="Top">
+                <DockPanel x:Name="ToolBar0" Background="#35363A" LastChildFill="True" MinWidth="195">
                     <Border BorderBrush="#FF212225" BorderThickness="3" CornerRadius="2" DockPanel.Dock="Top" Margin="2">
                         <DockPanel  Background="#FF212225" LastChildFill="False" >
                             <Button x:Name="NewFileButton" Content="file" Background="#FF212225" FontFamily="{StaticResource FontAwesomeRegular}" VerticalAlignment="Top" DockPanel.Dock="Left" Width="35" Height="35" FontSize="16"/>
                             <Button x:Name="OpenFileButton" Content="folder-open" Background="#FF212225" FontFamily="{StaticResource FontAwesomeRegular}" VerticalAlignment="Top" DockPanel.Dock="Left" Width="35" Height="35" FontSize="16"/>
                             <Button x:Name="SaveButton" Content="save" Background="#FF212225" FontFamily="{StaticResource FontAwesomeRegular}" VerticalAlignment="Top" DockPanel.Dock="Left" Width="35" Height="35" FontSize="16"/>
                             <Button x:Name="UndoButton" Content="undo" Background="#FF212225" FontFamily="{StaticResource FontAwesomeSolid}" VerticalAlignment="Top" DockPanel.Dock="Left" Width="35" Height="35" FontSize="16"/>
-                            <Button x:Name="RedoButton" Content="redo" Background="#FF212225" FontFamily="{StaticResource FontAwesomeSolid}" VerticalAlignment="Top" DockPanel.Dock="Left" Width="35" Height="35" FontSize="16"/>
+                            <Button x:Name="RedoButton" Content="redo" Background="#FF212225" FontFamily="{StaticResource FontAwesomeSolid}" VerticalAlignment="Top" DockPanel.Dock="Left" Width="35" Height="35" FontSize="16" Click="RedoButton_Click"/>
                         </DockPanel>
                     </Border>
-                    <Border BorderBrush="#FF212225" BorderThickness="3" CornerRadius="2" DockPanel.Dock="Top" Margin="2">
+                    <Border BorderBrush="#FF212225" BorderThickness="3px" CornerRadius="2" DockPanel.Dock="Top" Margin="2">
                         <DockPanel  Background="#FF212225" LastChildFill="True" >
                             <Button x:Name="PlayButton" Content="play" Background="#FF212225" FontFamily="{StaticResource FontAwesomeSolid}" VerticalAlignment="Center"  DockPanel.Dock="Left" Width="50" Height="50" FontSize="30" Foreground="#FF009107" Click="PlayButton_Click"/>
                             <Button x:Name="StopButton" Content="stop" Background="#FF212225" FontFamily="{StaticResource FontAwesomeSolid}" VerticalAlignment="Center" DockPanel.Dock="Left" Width="50" Height="50" FontSize="30" Foreground="#FFAC0000" Click="StopButton_Click"/>
@@ -85,27 +87,97 @@
                                 </Grid.RowDefinitions>
                                 <Button x:Name="ImportButton" Content="upload" Grid.Column="0" Grid.Row="0" Background="#FF212225" FontFamily="{StaticResource FontAwesomeSolid}" VerticalAlignment="Center" HorizontalAlignment="Center" Width="35" Height="35" FontSize="16" Foreground="#FFD8A14E" Click="ImportButton_Click"/>
                                 <Button x:Name="ExportButton" Content="download" Background="#FF212225" Grid.Column="1" Grid.Row="0" FontFamily="{StaticResource FontAwesomeSolid}" VerticalAlignment="Center" HorizontalAlignment="Center"  Width="35" Height="35" FontSize="16" Foreground="#FFD8A14E"/>
-                                <Button x:Name="ConnectionsButton" Content="database" Background="#FF212225" Grid.Column="0" Grid.Row="1" FontFamily="{StaticResource FontAwesomeSolid}" VerticalAlignment="Center" HorizontalAlignment="Center"  Width="35" Height="35" FontSize="16" Click="ConnectionsButton_Click"/>
-                                <Button x:Name="ToolboxButton" Content="toolbox" Background="#FF252221" Grid.Column="1" Grid.Row="1" FontFamily="{StaticResource FontAwesomeSolid}" VerticalAlignment="Center" HorizontalAlignment="Center"  Width="35" Height="35" FontSize="16" Foreground="#FFCD4715"/>
+                                <Button x:Name="ConnectionsButton" Content="database" Background="#FF212225" Grid.Row="1" FontFamily="{StaticResource FontAwesomeSolid}" VerticalAlignment="Top" HorizontalAlignment="Center"  Width="35" Height="35" FontSize="16" Click="ConnectionsButton_Click" Margin="0,1,0,0"/>
+                                <Button x:Name="ToolboxButton" Content="toolbox" Background="#FF252221" Grid.Column="1" Grid.Row="1" FontFamily="{StaticResource FontAwesomeSolid}" VerticalAlignment="Center" HorizontalAlignment="Center"  Width="35" Height="35" FontSize="16" Foreground="#FFCD4715" Click="ToolboxButton_Click"/>
+                            </Grid>
+                        </DockPanel>
+                    </Border>
+                </DockPanel>
+            </Border>
+            <Border BorderBrush="#35363A" Grid.Column="1" BorderThickness="3" Margin="5,5,5,0" CornerRadius="2" DockPanel.Dock="Top">
+                <DockPanel Background="#35363A" LastChildFill="True">
+                    <Border BorderBrush="#FF212225" BorderThickness="3" CornerRadius="2" DockPanel.Dock="Top" Margin="2">
+                        <DockPanel x:Name="ToolBar1" Background="#FF212225" LastChildFill="False" Height="35" RenderOptions.BitmapScalingMode="HighQuality">
+                            <DockPanel.ContextMenu>
+                                <ContextMenu>
+                                    <MenuItem Header="Add Module" Click="OpenModuleList"/>
+                                    <MenuItem Header="Add Workflow" Click="AddWorkflowClick" />
+                                </ContextMenu>
+                            </DockPanel.ContextMenu>
+                        </DockPanel>
+                    </Border>
+                    <Border BorderBrush="#FF212225" BorderThickness="3" CornerRadius="2" DockPanel.Dock="Top" Margin="2">
+                        <DockPanel x:Name="ToolBar2" Background="#FF212225" LastChildFill="False" Height="80" RenderOptions.BitmapScalingMode="HighQuality">
+                            <Grid DockPanel.Dock="Left">
+                                <Grid.RowDefinitions>
+                                    <RowDefinition Height="*"/>
+                                    <RowDefinition Height="*"/>
+                                </Grid.RowDefinitions>
+                                    <DockPanel Grid.Row="0">
+
+                                </DockPanel>
+                                <DockPanel Grid.Row="1">
+
+                                    </DockPanel>
+                                </Grid>
+                        </DockPanel>
+                    </Border>
+                </DockPanel>
+            </Border>
+
+            <Border BorderBrush="#35363A" Grid.Column="2" BorderThickness="3" Margin="5,5,5,0" CornerRadius="2" DockPanel.Dock="Top">
+                <DockPanel Background="#35363A" LastChildFill="True">
+                    <Border BorderBrush="#FF212225" BorderThickness="3" CornerRadius="2" DockPanel.Dock="Top" Margin="2">
+                        <DockPanel x:Name="ToolBar3"  Background="#FF212225" LastChildFill="False" Height="35" RenderOptions.BitmapScalingMode="HighQuality">
+
+                        </DockPanel>
+                    </Border>
+                    <Border BorderBrush="#FF212225" BorderThickness="3" CornerRadius="2" DockPanel.Dock="Top" Margin="2">
+                        <DockPanel x:Name="ToolBar4" Background="#FF212225" LastChildFill="False" Height="80" RenderOptions.BitmapScalingMode="HighQuality">
+                            <Grid DockPanel.Dock="Left">
+                                <Grid.RowDefinitions>
+                                    <RowDefinition Height="*"/>
+                                    <RowDefinition Height="*"/>
+                                </Grid.RowDefinitions>
+                                <DockPanel Grid.Row="0">
+
+                                </DockPanel>
+                                <DockPanel Grid.Row="1">
+
+                                </DockPanel>
                             </Grid>
                         </DockPanel>
                     </Border>
                 </DockPanel>
             </Border>
 
-            <ComboBox x:Name="ToolsComboBox" Grid.Column="1" Margin="10" MinWidth="250" SelectionChanged="ComboSelectionChanged" KeyUp="ComboKeyUp" LostFocus="ComboLostFocus">
-                <ComboBox.ItemTemplate>
-                    <DataTemplate>
-                        <StackPanel Orientation="Horizontal">
-                            <Image MaxHeight="48" MaxWidth="48" Source="{Binding IconPath}" RenderOptions.BitmapScalingMode="HighQuality" />
-                            <TextBlock Text="   " VerticalAlignment="Center" HorizontalAlignment="Center" />
-                            <TextBlock Text="{Binding ToolName}" VerticalAlignment="Center" HorizontalAlignment="Center" FontSize="18" />
-                        </StackPanel>
-                    </DataTemplate>
-                </ComboBox.ItemTemplate>                    
-            </ComboBox>
+            <Border BorderBrush="#35363A" Grid.Column="3" BorderThickness="3" Margin="5,5,5,0" CornerRadius="2" DockPanel.Dock="Top">
+                <DockPanel Background="#35363A" LastChildFill="True">
+                    <Border BorderBrush="#FF212225" BorderThickness="3" CornerRadius="2" DockPanel.Dock="Top" Margin="2">
+                        <DockPanel x:Name="ToolBar5"  Background="#FF212225" LastChildFill="False" Height="35" RenderOptions.BitmapScalingMode="HighQuality">
+
+                        </DockPanel>
+                    </Border>
+                    <Border BorderBrush="#FF212225" BorderThickness="3" CornerRadius="2" DockPanel.Dock="Top" Margin="2">
+                        <DockPanel x:Name="ToolBar6" Background="#FF212225" LastChildFill="False" Height="80" RenderOptions.BitmapScalingMode="HighQuality">
+                            <Grid DockPanel.Dock="Left">
+                                <Grid.RowDefinitions>
+                                    <RowDefinition Height="*"/>
+                                    <RowDefinition Height="*"/>
+                                </Grid.RowDefinitions>
+                                <DockPanel Grid.Row="0">
+
+                                </DockPanel>
+                                <DockPanel Grid.Row="1">
+
+                                </DockPanel>
+                            </Grid>
+                        </DockPanel>
+                    </Border>
+                </DockPanel>
+            </Border>
         </Grid>
-        
+
         <Grid Grid.Row="2">
             <Grid.ColumnDefinitions>
                 <ColumnDefinition Width="Auto"/>
@@ -166,39 +238,23 @@
                     </DockPanel>
                 </Grid>
             </Border>
+            <ComboBox x:Name="ToolsComboBox" Visibility="Visible" MinWidth="250" SelectionChanged="ComboSelectionChanged" KeyUp="ComboKeyUp" LostFocus="ComboLostFocus" Grid.Column="1" Margin="179,129,0,0">
+                <ComboBox.ItemTemplate>
+                    <DataTemplate>
+                        <StackPanel Orientation="Horizontal">
+                            <Image MaxHeight="25" MaxWidth="25" Source="{Binding IconPath}" RenderOptions.BitmapScalingMode="HighQuality" />
+                            <TextBlock Text="   " VerticalAlignment="Center" HorizontalAlignment="Center" />
+                            <TextBlock Text="{Binding ToolName}" VerticalAlignment="Center" HorizontalAlignment="Center" FontSize="14" />
+                        </StackPanel>
+                    </DataTemplate>
+                </ComboBox.ItemTemplate>
+            </ComboBox>
             <Border BorderBrush="#FF212225" Grid.Column="1" Margin="0,5,5,5" BorderThickness="1" CornerRadius="2 2 0 0" DockPanel.Dock="Top">
-
-                <TabControl Background="#FF212225" BorderBrush="#FF212225" >
-                    <TabControl.Resources>
-                        <Style TargetType="TabItem">
-                            <Setter Property="Template">
-                                <Setter.Value>
-                                    <ControlTemplate TargetType="{x:Type TabItem}">
-                                        <Border x:Name="tab" BorderThickness="0 0 0 4">
-                                            <Grid >
-                                                <ContentPresenter ContentSource="Header" HorizontalAlignment="left" VerticalAlignment="Center" Margin="5,2"/>
-                                            </Grid>
-                                        </Border>
-                                        <ControlTemplate.Triggers>
-                                            <Trigger Property="IsMouseOver" Value="True">
-                                                <Setter TargetName="tab" Property="BorderBrush" Value="#66CDAA" />
-                                            </Trigger>
-                                            <Trigger Property="IsSelected" Value="True">
-                                                <Setter TargetName="tab" Property="BorderBrush" Value="#66CDAA" />
-                                            </Trigger>
-                                        </ControlTemplate.Triggers>
-                                    </ControlTemplate>
-                                </Setter.Value>
-                            </Setter>
-                        </Style>
-                    </TabControl.Resources>
-                    <TabItem Header="Node Editor" Foreground="White">
-                        <nodenetwork:NetworkView x:Name="networkView" Drop="DropTargetEventNodeEditor" Cursor="Hand" />
-                    </TabItem>
-                </TabControl>
+                
+                <nodenetwork:NetworkView x:Name="networkView" Drop="DropTargetEventNodeEditor" Cursor="Hand" Background="#FF52555C" KeyUp="ComboKeyUp"/>
             </Border>
             <GridSplitter Grid.Column="0" Width="2" VerticalAlignment="Stretch" Background="#35363A"/>
-            </Grid>
+        </Grid>
         <DockPanel Grid.Row="3" Background="#35363A">
         </DockPanel>
     </Grid>

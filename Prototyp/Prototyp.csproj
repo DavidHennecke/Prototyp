@@ -22,7 +22,7 @@
   
   <ItemGroup>
     <PackageReference Include="FlatGeobuf" Version="3.22.2" />
-    <PackageReference Include="MaxRev.Gdal.Core" Version="3.3.3.110" />
+    <PackageReference Include="MaxRev.Gdal.Core" Version="3.3.3.120" />
     <PackageReference Include="MaxRev.Gdal.WindowsRuntime.Minimal" Version="3.3.3.110" />
     <PackageReference Include="Microsoft.Toolkit.Wpf.UI.Controls" Version="6.1.2" />
     <PackageReference Include="ModernWpfUI" Version="0.9.4" />
@@ -56,9 +56,19 @@
   </ItemGroup>
 
   <ItemGroup>
+    <Page Update="ModuleListButtonSelection.xaml">
+      <XamlRuntime>$(DefaultXamlRuntime)</XamlRuntime>
+    </Page>
     <Page Update="Modules\Views\DropDownMenuView.xaml">
       <XamlRuntime>$(DefaultXamlRuntime)</XamlRuntime>
       <SubType>Designer</SubType>
+    </Page>
+    <Page Update="Modules\Views\RasterImportModuleView.xaml">
+      <XamlRuntime>$(DefaultXamlRuntime)</XamlRuntime>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Update="Modules\Views\VectorImportModuleView.xaml">
+      <XamlRuntime>$(DefaultXamlRuntime)</XamlRuntime>
     </Page>
     <Page Update="Modules\Views\OutputNameView.xaml">
       <XamlRuntime>$(DefaultXamlRuntime)</XamlRuntime>
@@ -68,5 +78,10 @@
       <XamlRuntime>$(DefaultXamlRuntime)</XamlRuntime>
     </Page>
   </ItemGroup>
+    <ItemGroup>
+		<None Update="appsettings.json">
+			<CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+		</None>
+    </ItemGroup>
 
 </Project>

@@ -6,11 +6,14 @@
 		<Element:Input rowNr="1" name="Geometry">
 			<InputTypes>
 				<Vector:Point />
-				<Vector:Line />
+			</InputTypes>
+		</Element:Input>
+		<Element:Input rowNr="2" name="Geometry">
+			<InputTypes>
 				<Vector:Polygon />
 			</InputTypes>
 		</Element:Input>
-		<Element:Control rowNr="2" name="Distance">
+		<Element:Control rowNr="3" name="Distance">
 			<Control:Slider style="default">
 				<Value:Float default="100.0">Start</Value:Float>
 				<Value:Float default="5000.0">End</Value:Float>
@@ -19,19 +22,19 @@
 				<Value:String default="m">Unit</Value:String>
 			</Control:Slider>
 		</Element:Control>
-		<Element:Output rowNr="3" name="Buffer">
+		<Element:Output rowNr="4" name="Buffer">
 			<OutputTypes>
 				<Vector:Polygon />
 			</OutputTypes>
 		</Element:Output>
-		<Element:Control rowNr="4" name="Enable Line Options">
+		<Element:Control rowNr="5" name="Enable Line Options">
 			<Control:Checkbox style="default">
 				<EnableElements>
-					<Reference row="5" />
+					<Reference row="6" />
 				</EnableElements>
 			</Control:Checkbox>
 		</Element:Control>
-		<Element:Control rowNr="5" name="Line Side">
+		<Element:Control rowNr="6" name="Line Side">
 			<Control:Dropdown style="default">
 				<Value:String value="Full" />
 				<Value:String value="Left" />

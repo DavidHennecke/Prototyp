@@ -15,7 +15,9 @@ namespace Prototyp
         {
             public string SlotType { get; set; }
             public string RowName;
-            
+
+            public bool Invalid = true;
+
             public System.Collections.Generic.List<string> InputTypes = new System.Collections.Generic.List<string>();
 
             public string ControlType;
@@ -52,16 +54,31 @@ namespace Prototyp
 
             Prototyp.Elements.VorteXML vorteXML = MakeXML();
             if (vorteXML == null) return;
-            
+
             Prototyp.Modules.Node_Module nodeModule = new Prototyp.Modules.Node_Module(vorteXML);
             previewNetwork.ZoomFactor = 2.0 / 3.0;
-            
+
             System.Windows.Point TempPoint;
             TempPoint.X = 119.0 / 3.0;
             TempPoint.Y = 275.0 / 6.0;
             previewNetwork.DragOffset = TempPoint;
 
             previewNetwork.Nodes.Add(nodeModule);
+        }
+
+        private void CheckValidity()
+        {
+            int si = MyListBox.SelectedIndex;
+
+            foreach (ListViewEntry l in ListViewEntries)
+            {
+                l.SlotType = l.SlotType.Replace(" (invalid)", "");
+                if (l.Invalid) l.SlotType = l.SlotType + " (invalid)";
+            }
+            MyListBox.ItemsSource = null;
+            MyListBox.ItemsSource = ListViewEntries;
+
+            MyListBox.SelectedIndex = si;
         }
 
         // Event handlers -------------------------------------------------------------------------
@@ -72,6 +89,7 @@ namespace Prototyp
             MyListBox.ItemsSource = null;
             MyListBox.ItemsSource = ListViewEntries;
             MyListBox.SelectedIndex = ListViewEntries.Count - 1;
+            CheckValidity();
         }
 
         private void CmdAddControl_Click(object sender, RoutedEventArgs e)
@@ -94,6 +112,7 @@ namespace Prototyp
             MyListBox.ItemsSource = null;
             MyListBox.ItemsSource = ListViewEntries;
             MyListBox.SelectedIndex = ListViewEntries.Count - 1;
+            CheckValidity();
         }
 
         private void CmdAddOutput_Click(object sender, RoutedEventArgs e)
@@ -102,6 +121,7 @@ namespace Prototyp
             MyListBox.ItemsSource = null;
             MyListBox.ItemsSource = ListViewEntries;
             MyListBox.SelectedIndex = ListViewEntries.Count - 1;
+            CheckValidity();
         }
 
         private void CmdEditProperties_Click(object sender, RoutedEventArgs e)
@@ -113,7 +133,7 @@ namespace Prototyp
 
             if (ListViewEntries[MyListBox.SelectedIndex].RowName != null) moduleProperties.TxtRowName.Text = ListViewEntries[MyListBox.SelectedIndex].RowName;
 
-            if (ListViewEntries[MyListBox.SelectedIndex].SlotType == "Input")
+            if (ListViewEntries[MyListBox.SelectedIndex].SlotType.Contains("Input"))
             {
                 moduleProperties.TxtSliderStart.IsEnabled = false;
                 moduleProperties.TxtSliderEnd.IsEnabled = false;
@@ -121,39 +141,45 @@ namespace Prototyp
                 moduleProperties.TxtSliderTick.IsEnabled = false;
                 moduleProperties.TxtSliderUnit.IsEnabled = false;
                 moduleProperties.TxtDropdownEntries.IsEnabled = false;
-                moduleProperties.ChkOutVectorPoint.IsEnabled = false;
-                moduleProperties.ChkOutVectorLine.IsEnabled = false;
-                moduleProperties.ChkOutVectorPolygon.IsEnabled = false;
-                moduleProperties.ChkOutRaster.IsEnabled = false;
+                moduleProperties.RdoOutVectorPoint.IsEnabled = false;
+                moduleProperties.RdoOutVectorLine.IsEnabled = false;
+                moduleProperties.RdoOutVectorPolygon.IsEnabled = false;
+                moduleProperties.RdoOutVectorMultiPolygon.IsEnabled = false;
+                moduleProperties.RdoOutRaster.IsEnabled = false;
 
-                foreach (string InpTy in ListViewEntries[MyListBox.SelectedIndex].InputTypes) { if (InpTy == "VectorPoint") moduleProperties.ChkInVectorPoint.IsChecked = true; }
-                foreach (string InpTy in ListViewEntries[MyListBox.SelectedIndex].InputTypes) { if (InpTy == "VectorLine") moduleProperties.ChkInVectorLine.IsChecked = true; }
-                foreach (string InpTy in ListViewEntries[MyListBox.SelectedIndex].InputTypes) { if (InpTy == "VectorPolygon") moduleProperties.ChkInVectorPolygon.IsChecked = true; }
-                foreach (string InpTy in ListViewEntries[MyListBox.SelectedIndex].InputTypes) { if (InpTy == "Raster") moduleProperties.ChkInRaster.IsChecked = true; }
+                foreach (string InpTy in ListViewEntries[MyListBox.SelectedIndex].InputTypes) { if (InpTy == "VectorPoint") moduleProperties.RdoInVectorPoint.IsChecked = true; else moduleProperties.RdoInVectorPoint.IsChecked = false; }
+                foreach (string InpTy in ListViewEntries[MyListBox.SelectedIndex].InputTypes) { if (InpTy == "VectorLine") moduleProperties.RdoInVectorLine.IsChecked = true; else moduleProperties.RdoInVectorLine.IsChecked = false; }
+                foreach (string InpTy in ListViewEntries[MyListBox.SelectedIndex].InputTypes) { if (InpTy == "VectorPolygon") moduleProperties.RdoInVectorPolygon.IsChecked = true; else moduleProperties.RdoInVectorPolygon.IsChecked = false; }
+                foreach (string InpTy in ListViewEntries[MyListBox.SelectedIndex].InputTypes) { if (InpTy == "VectorMultiPolygon") moduleProperties.RdoInVectorMultiPolygon.IsChecked = true; else moduleProperties.RdoInVectorMultiPolygon.IsChecked = false; }
+                foreach (string InpTy in ListViewEntries[MyListBox.SelectedIndex].InputTypes) { if (InpTy == "Raster") moduleProperties.RdoInRaster.IsChecked = true; else moduleProperties.RdoInRaster.IsChecked = false; }
 
                 moduleProperties.ShowDialog();
                 if (!moduleProperties.OkayClicked) return;
 
                 ListViewEntries[MyListBox.SelectedIndex].RowName = moduleProperties.TxtRowName.Text;
 
-                if ((bool)moduleProperties.ChkInVectorPoint.IsChecked) ListViewEntries[MyListBox.SelectedIndex].InputTypes.Add("VectorPoint");
-                if ((bool)moduleProperties.ChkInVectorLine.IsChecked) ListViewEntries[MyListBox.SelectedIndex].InputTypes.Add("VectorLine");
-                if ((bool)moduleProperties.ChkInVectorPolygon.IsChecked) ListViewEntries[MyListBox.SelectedIndex].InputTypes.Add("VectorPolygon");
-                if ((bool)moduleProperties.ChkInRaster.IsChecked) ListViewEntries[MyListBox.SelectedIndex].InputTypes.Add("Raster");
+                ListViewEntries[MyListBox.SelectedIndex].InputTypes.Clear();
+                if ((bool)moduleProperties.RdoInVectorPoint.IsChecked) ListViewEntries[MyListBox.SelectedIndex].InputTypes.Add("VectorPoint");
+                if ((bool)moduleProperties.RdoInVectorLine.IsChecked) ListViewEntries[MyListBox.SelectedIndex].InputTypes.Add("VectorLine");
+                if ((bool)moduleProperties.RdoInVectorPolygon.IsChecked) ListViewEntries[MyListBox.SelectedIndex].InputTypes.Add("VectorPolygon");
+                if ((bool)moduleProperties.RdoInVectorMultiPolygon.IsChecked) ListViewEntries[MyListBox.SelectedIndex].InputTypes.Add("VectorMultiPolygon");
+                if ((bool)moduleProperties.RdoInRaster.IsChecked) ListViewEntries[MyListBox.SelectedIndex].InputTypes.Add("Raster");
             }
             else if (ListViewEntries[MyListBox.SelectedIndex].SlotType.Contains("Control"))
             {
                 if (ListViewEntries[MyListBox.SelectedIndex].ControlType == "Slider")
                 {
-                    moduleProperties.ChkInVectorPoint.IsEnabled = false;
-                    moduleProperties.ChkInVectorLine.IsEnabled = false;
-                    moduleProperties.ChkInVectorPolygon.IsEnabled = false;
-                    moduleProperties.ChkInRaster.IsEnabled = false;
+                    moduleProperties.RdoInVectorPoint.IsEnabled = false;
+                    moduleProperties.RdoInVectorLine.IsEnabled = false;
+                    moduleProperties.RdoInVectorPolygon.IsEnabled = false;
+                    moduleProperties.RdoInVectorMultiPolygon.IsEnabled = false;
+                    moduleProperties.RdoInRaster.IsEnabled = false;
                     moduleProperties.TxtDropdownEntries.IsEnabled = false;
-                    moduleProperties.ChkOutVectorPoint.IsEnabled = false;
-                    moduleProperties.ChkOutVectorLine.IsEnabled = false;
-                    moduleProperties.ChkOutVectorPolygon.IsEnabled = false;
-                    moduleProperties.ChkOutRaster.IsEnabled = false;
+                    moduleProperties.RdoOutVectorPoint.IsEnabled = false;
+                    moduleProperties.RdoOutVectorLine.IsEnabled = false;
+                    moduleProperties.RdoOutVectorPolygon.IsEnabled = false;
+                    moduleProperties.RdoOutVectorMultiPolygon.IsEnabled = false;
+                    moduleProperties.RdoOutRaster.IsEnabled = false;
 
                     if (ListViewEntries[MyListBox.SelectedIndex].SliderUnit != null)
                     {
@@ -177,19 +203,21 @@ namespace Prototyp
                 }
                 else if (ListViewEntries[MyListBox.SelectedIndex].ControlType == "Dropdown")
                 {
-                    moduleProperties.ChkInVectorPoint.IsEnabled = false;
-                    moduleProperties.ChkInVectorLine.IsEnabled = false;
-                    moduleProperties.ChkInVectorPolygon.IsEnabled = false;
-                    moduleProperties.ChkInRaster.IsEnabled = false;
+                    moduleProperties.RdoInVectorPoint.IsEnabled = false;
+                    moduleProperties.RdoInVectorLine.IsEnabled = false;
+                    moduleProperties.RdoInVectorPolygon.IsEnabled = false;
+                    moduleProperties.RdoInVectorMultiPolygon.IsEnabled = false;
+                    moduleProperties.RdoInRaster.IsEnabled = false;
                     moduleProperties.TxtSliderStart.IsEnabled = false;
                     moduleProperties.TxtSliderEnd.IsEnabled = false;
                     moduleProperties.TxtSliderDefault.IsEnabled = false;
                     moduleProperties.TxtSliderTick.IsEnabled = false;
                     moduleProperties.TxtSliderUnit.IsEnabled = false;
-                    moduleProperties.ChkOutVectorPoint.IsEnabled = false;
-                    moduleProperties.ChkOutVectorLine.IsEnabled = false;
-                    moduleProperties.ChkOutVectorPolygon.IsEnabled = false;
-                    moduleProperties.ChkOutRaster.IsEnabled = false;
+                    moduleProperties.RdoOutVectorPoint.IsEnabled = false;
+                    moduleProperties.RdoOutVectorLine.IsEnabled = false;
+                    moduleProperties.RdoOutVectorPolygon.IsEnabled = false;
+                    moduleProperties.RdoOutVectorMultiPolygon.IsEnabled = false;
+                    moduleProperties.RdoOutRaster.IsEnabled = false;
 
                     moduleProperties.TxtDropdownEntries.Text = string.Join(System.Environment.NewLine, ListViewEntries[MyListBox.SelectedIndex].DropDownEntries);
 
@@ -199,15 +227,17 @@ namespace Prototyp
                     ListViewEntries[MyListBox.SelectedIndex].RowName = moduleProperties.TxtRowName.Text;
 
                     string[] DropDownList = moduleProperties.TxtDropdownEntries.Text.Split(System.Environment.NewLine);
+                    ListViewEntries[MyListBox.SelectedIndex].DropDownEntries.Clear();
                     foreach (string LstStr in DropDownList) ListViewEntries[MyListBox.SelectedIndex].DropDownEntries.Add(LstStr);
                 }
             }
-            else if (ListViewEntries[MyListBox.SelectedIndex].SlotType == "Output")
+            else if (ListViewEntries[MyListBox.SelectedIndex].SlotType.Contains("Output"))
             {
-                moduleProperties.ChkInVectorPoint.IsEnabled = false;
-                moduleProperties.ChkInVectorLine.IsEnabled = false;
-                moduleProperties.ChkInVectorPolygon.IsEnabled = false;
-                moduleProperties.ChkInRaster.IsEnabled = false;
+                moduleProperties.RdoInVectorPoint.IsEnabled = false;
+                moduleProperties.RdoInVectorLine.IsEnabled = false;
+                moduleProperties.RdoInVectorPolygon.IsEnabled = false;
+                moduleProperties.RdoInVectorMultiPolygon.IsEnabled = false;
+                moduleProperties.RdoInRaster.IsEnabled = false;
                 moduleProperties.TxtSliderStart.IsEnabled = false;
                 moduleProperties.TxtSliderEnd.IsEnabled = false;
                 moduleProperties.TxtSliderDefault.IsEnabled = false;
@@ -215,23 +245,27 @@ namespace Prototyp
                 moduleProperties.TxtSliderUnit.IsEnabled = false;
                 moduleProperties.TxtDropdownEntries.IsEnabled = false;
 
-                foreach (string OutTy in ListViewEntries[MyListBox.SelectedIndex].OutputTypes) { if (OutTy == "VectorPoint") moduleProperties.ChkOutVectorPoint.IsChecked = true; }
-                foreach (string OutTy in ListViewEntries[MyListBox.SelectedIndex].OutputTypes) { if (OutTy == "VectorLine") moduleProperties.ChkOutVectorLine.IsChecked = true; }
-                foreach (string OutTy in ListViewEntries[MyListBox.SelectedIndex].OutputTypes) { if (OutTy == "VectorPolygon") moduleProperties.ChkOutVectorPolygon.IsChecked = true; }
-                foreach (string OutTy in ListViewEntries[MyListBox.SelectedIndex].OutputTypes) { if (OutTy == "Raster") moduleProperties.ChkOutRaster.IsChecked = true; }
+                foreach (string OutTy in ListViewEntries[MyListBox.SelectedIndex].OutputTypes) { if (OutTy == "VectorPoint") moduleProperties.RdoOutVectorPoint.IsChecked = true; else moduleProperties.RdoOutVectorPoint.IsChecked = false; }
+                foreach (string OutTy in ListViewEntries[MyListBox.SelectedIndex].OutputTypes) { if (OutTy == "VectorLine") moduleProperties.RdoOutVectorLine.IsChecked = true; else moduleProperties.RdoOutVectorLine.IsChecked = false; }
+                foreach (string OutTy in ListViewEntries[MyListBox.SelectedIndex].OutputTypes) { if (OutTy == "VectorPolygon") moduleProperties.RdoOutVectorPolygon.IsChecked = true; else moduleProperties.RdoOutVectorPolygon.IsChecked = false; }
+                foreach (string OutTy in ListViewEntries[MyListBox.SelectedIndex].OutputTypes) { if (OutTy == "VectorMultiPolygon") moduleProperties.RdoOutVectorMultiPolygon.IsChecked = true; else moduleProperties.RdoOutVectorMultiPolygon.IsChecked = false; }
+                foreach (string OutTy in ListViewEntries[MyListBox.SelectedIndex].OutputTypes) { if (OutTy == "Raster") moduleProperties.RdoOutRaster.IsChecked = true; else moduleProperties.RdoOutRaster.IsChecked = false; }
 
                 moduleProperties.ShowDialog();
                 if (!moduleProperties.OkayClicked) return;
 
                 ListViewEntries[MyListBox.SelectedIndex].RowName = moduleProperties.TxtRowName.Text;
 
-                if ((bool)moduleProperties.ChkOutVectorPoint.IsChecked) ListViewEntries[MyListBox.SelectedIndex].OutputTypes.Add("VectorPoint");
-                if ((bool)moduleProperties.ChkOutVectorLine.IsChecked) ListViewEntries[MyListBox.SelectedIndex].OutputTypes.Add("VectorLine");
-                if ((bool)moduleProperties.ChkOutVectorPolygon.IsChecked) ListViewEntries[MyListBox.SelectedIndex].OutputTypes.Add("VectorPolygon");
-                if ((bool)moduleProperties.ChkOutRaster.IsChecked) ListViewEntries[MyListBox.SelectedIndex].OutputTypes.Add("Raster");
+                ListViewEntries[MyListBox.SelectedIndex].OutputTypes.Clear();
+                if ((bool)moduleProperties.RdoOutVectorPoint.IsChecked) ListViewEntries[MyListBox.SelectedIndex].OutputTypes.Add("VectorPoint");
+                if ((bool)moduleProperties.RdoOutVectorLine.IsChecked) ListViewEntries[MyListBox.SelectedIndex].OutputTypes.Add("VectorLine");
+                if ((bool)moduleProperties.RdoOutVectorPolygon.IsChecked) ListViewEntries[MyListBox.SelectedIndex].OutputTypes.Add("VectorPolygon");
+                if ((bool)moduleProperties.RdoOutVectorMultiPolygon.IsChecked) ListViewEntries[MyListBox.SelectedIndex].OutputTypes.Add("VectorMultiPolygon");
+                if ((bool)moduleProperties.RdoOutRaster.IsChecked) ListViewEntries[MyListBox.SelectedIndex].OutputTypes.Add("Raster");
             }
 
             MakePreview();
+            CheckValidity();
         }
 
         private void CmdDelete_Click(object sender, RoutedEventArgs e)
@@ -243,6 +277,7 @@ namespace Prototyp
             MyListBox.ItemsSource = ListViewEntries;
 
             MakePreview();
+            CheckValidity();
         }
 
         private void CmdUp_Click(object sender, RoutedEventArgs e)
@@ -261,6 +296,7 @@ namespace Prototyp
             MyListBox.SelectedIndex = SwapPos - 1;
 
             MakePreview();
+            CheckValidity();
         }
 
         private void CmdDown_Click(object sender, RoutedEventArgs e)
@@ -279,6 +315,7 @@ namespace Prototyp
             MyListBox.SelectedIndex = SwapPos + 1;
 
             MakePreview();
+            CheckValidity();
         }
 
         private void CmdClear_Click(object sender, RoutedEventArgs e)
@@ -307,6 +344,7 @@ namespace Prototyp
         private void TxtName_TextChanged(object sender, System.Windows.Controls.TextChangedEventArgs e)
         {
             MakePreview();
+            CheckValidity();
         }
 
         // Public methods -------------------------------------------------------------------------
@@ -325,18 +363,21 @@ namespace Prototyp
                 vorteXML.ToolRows[i].Index = i + 1;
                 vorteXML.ToolRows[i].Name = ListViewEntries[i].RowName;
 
-                if (ListViewEntries[i].SlotType == "Input")
+                if (ListViewEntries[i].SlotType.Contains("Input"))
                 {
                     vorteXML.ToolRows[i].rowType = Prototyp.Elements.VorteXML.RowType.Input;
                     vorteXML.ToolRows[i].inputRow.inputTypes = new Prototyp.Elements.VorteXML.ConnectorType[ListViewEntries[i].InputTypes.Count];
 
+                    ListViewEntries[i].Invalid = true;
                     if (ListViewEntries[i].InputTypes.Count == 0) return (null); // Module description corrupted: ANY input type must be allowed.
+                    ListViewEntries[i].Invalid = false;
                     int j = 0;
                     foreach (string InpTy in ListViewEntries[i].InputTypes)
                     {
                         if (InpTy == "VectorPoint") vorteXML.ToolRows[i].inputRow.inputTypes[j] = Prototyp.Elements.VorteXML.ConnectorType.VectorPoint;
                         if (InpTy == "VectorLine") vorteXML.ToolRows[i].inputRow.inputTypes[j] = Prototyp.Elements.VorteXML.ConnectorType.VectorLine;
                         if (InpTy == "VectorPolygon") vorteXML.ToolRows[i].inputRow.inputTypes[j] = Prototyp.Elements.VorteXML.ConnectorType.VectorPolygon;
+                        if (InpTy == "VectorMultiPolygon") vorteXML.ToolRows[i].inputRow.inputTypes[j] = Prototyp.Elements.VorteXML.ConnectorType.VectorMultiPolygon;
                         if (InpTy == "Raster") vorteXML.ToolRows[i].inputRow.inputTypes[j] = Prototyp.Elements.VorteXML.ConnectorType.Raster;
                         j++;
                     }
@@ -356,6 +397,8 @@ namespace Prototyp
                         vorteXML.ToolRows[i].controlRow.slider.Default = ListViewEntries[i].SliderDefault;
                         vorteXML.ToolRows[i].controlRow.slider.TickFrequency = ListViewEntries[i].SliderTickFrequency;
                         vorteXML.ToolRows[i].controlRow.slider.Unit = ListViewEntries[i].SliderUnit;
+
+                        ListViewEntries[i].Invalid = false;
                     }
                     else if (ListViewEntries[i].ControlType == "Dropdown")
                     {
@@ -365,7 +408,9 @@ namespace Prototyp
 
                         vorteXML.ToolRows[i].controlRow.dropdown.Values = new string[ListViewEntries[i].DropDownEntries.Count];
 
+                        ListViewEntries[i].Invalid = true;
                         if (ListViewEntries[i].DropDownEntries.Count == 0) return (null); // Module description corrupted: ANY dropdown entry must be present.
+                        ListViewEntries[i].Invalid = false;
                         int j = 0;
                         foreach (string DD in ListViewEntries[i].DropDownEntries)
                         {
@@ -374,18 +419,21 @@ namespace Prototyp
                         }
                     }
                 }
-                else if (ListViewEntries[i].SlotType == "Output")
+                else if (ListViewEntries[i].SlotType.Contains("Output"))
                 {
                     vorteXML.ToolRows[i].rowType = Prototyp.Elements.VorteXML.RowType.Output;
                     vorteXML.ToolRows[i].outputRow.outputTypes = new Prototyp.Elements.VorteXML.ConnectorType[ListViewEntries[i].OutputTypes.Count];
 
+                    ListViewEntries[i].Invalid = true;
                     if (ListViewEntries[i].OutputTypes.Count == 0) return (null); // Module description corrupted: ANY output type must be allowed.
+                    ListViewEntries[i].Invalid = false;
                     int j = 0;
                     foreach (string OutTy in ListViewEntries[i].OutputTypes)
                     {
                         if (OutTy == "VectorPoint") vorteXML.ToolRows[i].outputRow.outputTypes[j] = Prototyp.Elements.VorteXML.ConnectorType.VectorPoint;
                         if (OutTy == "VectorLine") vorteXML.ToolRows[i].outputRow.outputTypes[j] = Prototyp.Elements.VorteXML.ConnectorType.VectorLine;
                         if (OutTy == "VectorPolygon") vorteXML.ToolRows[i].outputRow.outputTypes[j] = Prototyp.Elements.VorteXML.ConnectorType.VectorPolygon;
+                        if (OutTy == "VectorMultiPolygon") vorteXML.ToolRows[i].outputRow.outputTypes[j] = Prototyp.Elements.VorteXML.ConnectorType.VectorMultiPolygon;
                         if (OutTy == "Raster") vorteXML.ToolRows[i].outputRow.outputTypes[j] = Prototyp.Elements.VorteXML.ConnectorType.Raster;
                         j++;
                     }

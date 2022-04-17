@@ -90,7 +90,7 @@ namespace Prototyp
             newRasterChild.ContextMenu = rasterContextMenu;
 
             // ID zuweisen
-            newVectorChild.Uid = rasterData.ID.ToString();
+            newRasterChild.Uid = rasterData.ID.ToString();
 
             // Rasterfarbe bestimmen
             rasterColor = Windows.UI.Color.FromArgb(255, (byte)rnd.Next(256), (byte)rnd.Next(256), (byte)rnd.Next(256));
@@ -161,7 +161,7 @@ namespace Prototyp
         public void RemoveRaster(Object sender, RoutedEventArgs e)
         {
             Prototyp.MainWindow.AppWindow.TableOfContentsRaster.Items.Remove(newRasterChild);
-            Prototyp.MainWindow.AppWindow.RemoveRasterData(newVectorChild.Uid);
+            Prototyp.MainWindow.AppWindow.RemoveRasterData(newRasterChild.Uid);
         }
 
         public void DisableVector(Object sender, RoutedEventArgs e)
