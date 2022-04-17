@@ -933,7 +933,7 @@ namespace Prototyp
             }
             //  STEP 3:
             //  IMMEDIATELY SEND DATA TO ALL DOWNSTREAM NODES
-            var sendingTasks = new System.Collections.Generic.List<System.Threading.Tasks.Task>();
+            var sendingTasks = new System.Collections.Generic.List<Grpc.Core.AsyncUnaryCall<GrpcClient.SendResponse>>();
             foreach (var send in sendList)
             {
                 System.Diagnostics.Trace.WriteLine("Sending data from " + node.Url + "[" + send.OutputChannel + "] to " + send.InputNode.Url + "[" + send.InputChannel + "]");
@@ -943,19 +943,9 @@ namespace Prototyp
                     SourceChannelID = send.OutputChannel,
                     TargetChannelID = send.InputChannel
                 };
-                //Resolve inputs to targeted nodes
-                var reply = await node.grpcConnection.SendDataAsync(sendRequest);
-                if (reply.Finished == 1)
-                {
-                    
-                    Console.WriteLine("Data sent!");
-                }
-                else
-                {
-                    Console.WriteLine("Sending failed.");
-                }
+                sendingTasks.Add(node.grpcConnection.SendDataAsync(sendRequest));
             }
-
+            await System.Threading.Tasks.Task.WhenAll(sendingTasks.Select(c => c.ResponseAsync));
             return node;
         }
 
