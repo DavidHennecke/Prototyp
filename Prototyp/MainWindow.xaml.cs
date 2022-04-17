@@ -7,6 +7,8 @@ using System;
 using System.IO;
 using System.Linq;
 using System.Windows;
+using System.Collections.Generic;
+using System.Threading.Tasks;
 
 /* -------------------------------
 
@@ -79,10 +81,10 @@ namespace Prototyp
         private const string ALPHABET = "ABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890";
         private bool Typing = false;
 
-        public System.Collections.Generic.List<VectorData> vectorData = new System.Collections.Generic.List<VectorData>();
-        public System.Collections.Generic.List<RasterData> rasterData = new System.Collections.Generic.List<RasterData>();
-        private System.Collections.Generic.List<ComboItem> ComboItems = new System.Collections.Generic.List<ComboItem>();
-        private System.Collections.Generic.List<ComboItem> ComboSearchItems = new System.Collections.Generic.List<ComboItem>();
+        public List<VectorData> vectorData = new List<VectorData>();
+        public List<RasterData> rasterData = new List<RasterData>();
+        private List<ComboItem> ComboItems = new List<ComboItem>();
+        private List<ComboItem> ComboSearchItems = new List<ComboItem>();
 
         public string ModulesPath;
         System.IO.DirectoryInfo ParentDir;
@@ -92,19 +94,19 @@ namespace Prototyp
 
         // Getters and setters -------------------------------------------------------------
 
-        public System.Collections.Generic.List<VectorData> VecList
+        public List<VectorData> VecList
         {
             get { return (vectorData); }
             set { vectorData = value; }
         }
 
-        public System.Collections.Generic.List<RasterData> RasList
+        public List<RasterData> RasList
         {
             get { return (rasterData); }
             set { rasterData = value; }
         }
 
-        public System.Collections.Generic.List<ComboItem> ComboBoxItems
+        public List<ComboItem> ComboBoxItems
         {
             get { return (ComboItems); }
         }
@@ -142,7 +144,7 @@ namespace Prototyp
             string[] FileNames;
             string XMLName;
             VorteXML ThisXML;
-            System.Collections.Generic.List<ComboItem> LocalList = new System.Collections.Generic.List<ComboItem>();
+            List<ComboItem> LocalList = new List<ComboItem>();
 
             foreach (string Dir in SubDirs)
             {
@@ -744,9 +746,9 @@ namespace Prototyp
             }
 
             //Keeps a list of all modules that need to have data imported
-            System.Collections.Generic.List<NodeConnection> importConnections = new System.Collections.Generic.List<NodeConnection>();
+            List<NodeConnection> importConnections = new List<NodeConnection>();
             //Keeps a list of outgoing connections for each module
-            System.Collections.Generic.Dictionary<Node_Module, System.Collections.Generic.List<NodeConnection>> moduleConnections = new System.Collections.Generic.Dictionary<Node_Module, System.Collections.Generic.List<NodeConnection>>();
+            Dictionary<Node_Module, List<NodeConnection>> moduleConnections = new Dictionary<Node_Module, List<NodeConnection>>();
             // Collect info for both lists
             foreach (ConnectionViewModel conn in network.Connections.Items)
             {
@@ -761,11 +763,11 @@ namespace Prototyp
                     var outputModule = (Node_Module)conn.Output.Parent;
                     if (!moduleConnections.ContainsKey(outputModule))
                     {
-                        moduleConnections[outputModule] = new System.Collections.Generic.List<NodeConnection>();
+                        moduleConnections[outputModule] = new List<NodeConnection>();
                     }
                     if (!moduleConnections.ContainsKey(nc.InputNode))
                     {
-                        moduleConnections[nc.InputNode] = new System.Collections.Generic.List<NodeConnection>();
+                        moduleConnections[nc.InputNode] = new List<NodeConnection>();
                     }
 
                     //Record outgoing connection for current output node
@@ -795,7 +797,7 @@ namespace Prototyp
             //STEP 3: Load inputs into the correct modules
             //
             //Prepare a list of grpc streams and chunk-lists
-            System.Collections.Generic.List<System.Threading.Tasks.Task> uploadTasks = new System.Collections.Generic.List<System.Threading.Tasks.Task>();
+            List<Task> uploadTasks = new List<Task>();
             foreach (NodeConnection nc in importConnections)
             {
                 //Get data
@@ -811,7 +813,7 @@ namespace Prototyp
                     }
                 }
                 //Split into chunks of 65536 bytes (64 KiB)
-                System.Collections.Generic.List<string> chunks = new System.Collections.Generic.List<string>();
+                List<string> chunks = new List<string>();
                 int maxChunkSize = MAX_UNSIGNED_SHORT / sizeof(Char);
                 for (int i = 0; i < layer.Length; i += maxChunkSize)
                 {
@@ -821,7 +823,7 @@ namespace Prototyp
                 uploadTasks.Add(UploadChunk(nc.InputNode.grpcConnection.SetLayer(), chunks));
             }
             //Run all uploads asynchronously
-            await System.Threading.Tasks.Task.WhenAll(uploadTasks);
+            await Task.WhenAll(uploadTasks);
 
             //STEP 4: Run modules
             //
@@ -829,7 +831,7 @@ namespace Prototyp
             var progress = new Progress<NodeProgressReport>(ReportProgress);
             //Start module handling process
             try {
-                await System.Threading.Tasks.Task.Run(() => RunGraph(moduleConnections, progress));
+                await Task.Run(() => RunGraph(moduleConnections, progress));
             } catch (Exception ex) {
                 System.Diagnostics.Trace.WriteLine("Node processing interrupted");
                 System.Diagnostics.Trace.WriteLine(ex.ToString());
@@ -837,7 +839,7 @@ namespace Prototyp
             }
         }
 
-        async System.Threading.Tasks.Task UploadChunk(Grpc.Core.AsyncClientStreamingCall<GrpcClient.ByteStream, GrpcClient.LayerResponse> call, System.Collections.Generic.List<string> chunks)
+        async Task UploadChunk(Grpc.Core.AsyncClientStreamingCall<GrpcClient.ByteStream, GrpcClient.LayerResponse> call, List<string> chunks)
         {
             foreach (string chunk in chunks)
             {
@@ -847,7 +849,7 @@ namespace Prototyp
             await call.ResponseAsync;
         }
 
-        async System.Threading.Tasks.Task RunGraph(System.Collections.Generic.Dictionary<Node_Module, System.Collections.Generic.List<NodeConnection>> sendList, IProgress<NodeProgressReport> progress)
+        async Task RunGraph(Dictionary<Node_Module, List<NodeConnection>> sendList, IProgress<NodeProgressReport> progress)
         {
             //Concept: Receive a dictionary which for each node has the outgoing connections (sendList)
             //For each node, also count the incoming connections (incomingCount) 
@@ -865,7 +867,7 @@ namespace Prototyp
             }
 
             //Prepare input occurence Dictionary and set all nodes to 0 (no occurrences as input)
-            System.Collections.Generic.Dictionary<Node_Module, int> incomingCount = new System.Collections.Generic.Dictionary<Node_Module, int>();
+            Dictionary<Node_Module, int> incomingCount = new Dictionary<Node_Module, int>();
             foreach (var node in sendList.Keys)
             {
                 incomingCount.Add(node, 0);
@@ -888,7 +890,7 @@ namespace Prototyp
             System.Diagnostics.Trace.WriteLine("Starting task loop...");
             while (nodeTasks.Any())
             {
-                System.Threading.Tasks.Task<Node_Module> finishedNode = await System.Threading.Tasks.Task.WhenAny(nodeTasks);
+                Task<Node_Module> finishedNode = await Task.WhenAny(nodeTasks);
                 nodeTasks.Remove(finishedNode);
                 //Iterate through all nodes that received data from this node. Subtract 1 from their input count.
                 //If the input count hits zero, that means all inuts are resolved, and the node can be started.
@@ -904,7 +906,7 @@ namespace Prototyp
             }
         }
 
-        async private System.Threading.Tasks.Task<Node_Module> runGRPCNode(Node_Module node, System.Collections.Generic.List<NodeConnection> sendList, IProgress<NodeProgressReport> progress)
+        async private Task<Node_Module> runGRPCNode(Node_Module node, List<NodeConnection> sendList, IProgress<NodeProgressReport> progress)
         {
             //  STEP 1:
             //  TODO - UPLOAD NODE CONFIG
@@ -931,7 +933,7 @@ namespace Prototyp
             }
             //  STEP 3:
             //  IMMEDIATELY SEND DATA TO ALL DOWNSTREAM NODES
-            var sendingTasks = new System.Collections.Generic.List<Grpc.Core.AsyncUnaryCall<GrpcClient.SendResponse>>();
+            var sendingTasks = new List<Grpc.Core.AsyncUnaryCall<GrpcClient.SendResponse>>();
             foreach (var send in sendList)
             {
                 System.Diagnostics.Trace.WriteLine("Sending data from " + node.Url + "[" + send.OutputChannel + "] to " + send.InputNode.Url + "[" + send.InputChannel + "]");
@@ -943,7 +945,7 @@ namespace Prototyp
                 };
                 sendingTasks.Add(node.grpcConnection.SendDataAsync(sendRequest));
             }
-            await System.Threading.Tasks.Task.WhenAll(sendingTasks.Select(c => c.ResponseAsync));
+            await Task.WhenAll(sendingTasks.Select(c => c.ResponseAsync));
             return node;
         }
 
