@@ -61,7 +61,7 @@ namespace Prototyp.Modules.Views
             {
                 this.NodeView.Background = (System.Windows.Media.SolidColorBrush)new System.Windows.Media.BrushConverter().ConvertFromString("#e6f0ef");
             }
-            else if (this.ViewModel.Status == NodeProgress.Marked)
+            else if (this.ViewModel.Status == NodeProgress.Ready)
             {
                 this.NodeView.Background = (System.Windows.Media.SolidColorBrush)new System.Windows.Media.BrushConverter().ConvertFromString("#e5a31f");
             }
