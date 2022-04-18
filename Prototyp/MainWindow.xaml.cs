@@ -758,12 +758,13 @@ namespace Prototyp
                     nc.InputNode = (Node_Module)conn.Input.Parent;
                     nc.InputChannel = conn.Input.GetID();
 
-                    //Add both input and output modules to the dictionary if they aren't already
+                    //Add output module to the dictionary in case they aren't already
                     var outputModule = (Node_Module)conn.Output.Parent;
                     if (!moduleConnections.ContainsKey(outputModule))
                     {
                         moduleConnections[outputModule] = new List<NodeConnection>();
                     }
+                    //Add input module too, in case it is an end point in the graph
                     if (!moduleConnections.ContainsKey(nc.InputNode))
                     {
                         moduleConnections[nc.InputNode] = new List<NodeConnection>();
@@ -782,6 +783,12 @@ namespace Prototyp
                     nc.InputChannel = conn.Input.GetID();
 
                     importConnections.Add(nc);
+
+                    //Add input module to node modules, to catch node modules that are connected only to import modules
+                    if (!moduleConnections.ContainsKey(nc.InputNode))
+                    {
+                        moduleConnections[nc.InputNode] = new List<NodeConnection>();
+                    }
 
                     //Nodes that receive inputs are the first nodes who start waiting
                     NodeProgressReport report = new NodeProgressReport();
@@ -877,6 +884,7 @@ namespace Prototyp
             //Once the count hits zero, node is ready to send to all its outgoing connections, etc...
 
             //Start by marking all node modules as waiting (for progress indicators in UI)
+            System.Diagnostics.Trace.WriteLine("Collecting info for " + sendList.Keys.Count + " nodes...");
             foreach (var node in sendList.Keys)
             {
                 NodeProgressReport report = new NodeProgressReport();
@@ -906,7 +914,7 @@ namespace Prototyp
             //Start tasks, wait for whichever task completes first (whenAny)
             //Once a task is done, remove it from the list, check for any newly activated nodes and add them to the task list
             //Keeps going until the list is empty
-            System.Diagnostics.Trace.WriteLine("Starting task loop...");
+            System.Diagnostics.Trace.WriteLine("Starting task loop with " + nodeTasks.Count + " starting tasks.");
             while (nodeTasks.Any())
             {
                 Task<Node_Module> finishedNode = await Task.WhenAny(nodeTasks);
@@ -918,7 +926,6 @@ namespace Prototyp
                     incomingCount[conn.InputNode]--;
                     if (incomingCount[conn.InputNode] == 0)
                     {
-                        System.Diagnostics.Trace.WriteLine("Running node " + conn.InputNode.Url);
                         nodeTasks.Add(runGRPCNode(conn.InputNode, sendList[conn.InputNode], progress));
                     }
                 }
@@ -927,6 +934,7 @@ namespace Prototyp
 
         async private Task<Node_Module> runGRPCNode(Node_Module node, List<NodeConnection> sendList, IProgress<NodeProgressReport> progress)
         {
+            System.Diagnostics.Trace.WriteLine("Running node " + node.Url);
             try {   // try-catch so that the offending node can be marked with the interrupted status if it fails at any point
                 //  STEP 1:
                 //  TODO - UPLOAD NODE CONFIG
