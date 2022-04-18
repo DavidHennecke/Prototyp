@@ -858,6 +858,7 @@ namespace Prototyp
             try
             {
                 var call = targetNode.grpcConnection.SetLayer();
+                await call.RequestStream.WriteAsync(new GrpcClient.ByteStream { TargetChannel = targetChannel });
                 foreach (string chunk in chunks)
                 {
                     //TODO: Add targeted channel once new grpc protobuf definition is available
