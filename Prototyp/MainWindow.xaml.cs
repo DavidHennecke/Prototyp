@@ -828,7 +828,7 @@ namespace Prototyp
                     chunks.Add(layer.Substring(i, Math.Min(maxChunkSize, layer.Length - i)));
                 }
                 //Upload data to module through GRPC call
-                uploadTasks.Add(UploadChunks(nc.InputNode, chunks, progress));
+                uploadTasks.Add(UploadChunks(nc.InputNode, nc.InputChannel, chunks, progress));
             }
             //Run all uploads asynchronously
             try
@@ -853,13 +853,14 @@ namespace Prototyp
             }
         }
 
-        async Task UploadChunks(Node_Module targetNode, List<string> chunks, IProgress<NodeProgressReport> progress)
+        async Task UploadChunks(Node_Module targetNode, int targetChannel, List<string> chunks, IProgress<NodeProgressReport> progress)
         {
             try
             {
                 var call = targetNode.grpcConnection.SetLayer();
                 foreach (string chunk in chunks)
                 {
+                    //TODO: Add targeted channel once new grpc protobuf definition is available
                     await call.RequestStream.WriteAsync(new GrpcClient.ByteStream { Chunk = Google.Protobuf.ByteString.FromBase64(chunk) });
                 }
                 await call.RequestStream.CompleteAsync();
