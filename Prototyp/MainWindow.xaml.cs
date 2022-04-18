@@ -838,7 +838,7 @@ namespace Prototyp
             {
                 System.Diagnostics.Trace.WriteLine("Uploading data failed");
                 System.Diagnostics.Trace.WriteLine(ex.ToString());
-                MessageBox.Show("Error while uploading data!\n" + ex.ToString());
+                //MessageBox.Show("Error while uploading data!\n" + ex.ToString());
             }
              
             //STEP 4: Run modules
