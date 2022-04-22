@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<root xmlns:Element="Element" xmlns:Raster="Raster" xmlns:Vector="Vector" xmlns:Control="Control" xmlns:Value="Value">
+<Node style="default" editorVersion="0.1">
+	<NodeTitle>LeafletMapView</NodeTitle>
+	<NodeElements>
+		<Element:Input rowNr="1" name="Point">
+			<InputTypes>
+				<Vector:Point />
+			</InputTypes>
+		</Element:Input>
+		<Element:Input rowNr="2" name="Line">
+			<InputTypes>
+				<Vector:Line />
+			</InputTypes>
+		</Element:Input>
+		<Element:Input rowNr="3" name="Polygon">
+			<InputTypes>
+				<Vector:Polygon />
+			</InputTypes>
+		</Element:Input>
+		<Element:Input rowNr="4" name="Multipolygon">
+			<InputTypes>
+				<Vector:MultiPolygon />
+			</InputTypes>
+		</Element:Input>
+		<Element:Input rowNr="5" name="Raster">
+			<InputTypes>
+				<Raster:Raster />
+			</InputTypes>
+		</Element:Input>
+	</NodeElements>
+</Node>
+</root>
