@@ -28,8 +28,38 @@ o Mouse select in ComboBox after typing does not work.
 o Please make an event for node deletion.
 o Low priority: Add multi-select in toolbar modules selection.
 
-Notiz: Multi-Subtyp-Vektor-Anschlüsse sind nicht mehr erlaubt. Falls mehrere Vektortypen
-erlaubt sein sollen, muss man für jeden einen eigenen Anschluss machen. Siehe neues Buffer-Modul.
+Nächste Schritte:
+- David schaut nach, wie man die Settings aus den Modulen bekommt, z.B.
+  für einen Slider auf einem Modul (Buffer) brauchen wir: float SliderValue = ...
+- Markus schickt die Settings mitsamt den Daten per gRPC.
+- Carsten erzeugt ein Buffer-Modul, das die Daten und Settings (insb. den Radius)
+  entgegen nimmt, einen neuen Layer mit dem Buffer als Geometrie (Polygon) erzeugt und
+  den wieder als VectorData serialisiert und per gRPC weiterschickt
+  (bei letzterem muss Markus nochmal helfen).
+- Anschließend kann das Ergebnis z.B. gespeichert oder per Leaflet visualisiert werden!
+
+Blaupausen-Code für den Buffer:
+        VectorPointData VecDatPoint = new VectorPointData(openFileDialog.FileName);
+
+        OSGeo.OGR.Geometry CenterPoint = VecDatPoint.Layer.GetFeature(0).GetGeometryRef();
+        OSGeo.OGR.Geometry BufferDefinition = CenterPoint.Buffer(400, 100);
+        OSGeo.OGR.Geometry BufferDefinitionPolygonReference = BufferDefinition.GetGeometryRef(0);
+        OSGeo.OGR.Geometry Circle = OSGeo.OGR.Ogr.ForceToPolygon(BufferDefinitionPolygonReference);
+
+        OSGeo.OGR.Driver MyDriver = OSGeo.OGR.Ogr.GetDriverByName("ESRI Shapefile");
+        OSGeo.OGR.DataSource MyDS = MyDriver.CreateDataSource("/vsimem/Temporary", new string[] { });
+        OSGeo.OGR.Layer MyLayer = MyDS.CreateLayer("Temp", VecDatPoint.SpatialReference, OSGeo.OGR.wkbGeometryType.wkbPolygon, new string[] { });
+        OSGeo.OGR.FeatureDefn MyFeatureDefn = MyLayer.GetLayerDefn();
+        OSGeo.OGR.Feature MyFeature = new OSGeo.OGR.Feature(MyFeatureDefn);
+
+        MyFeature.SetGeometry(Circle);
+        MyLayer.CreateFeature(MyFeature);
+        MyFeature.Dispose();
+        MyFeatureDefn.Dispose();
+        MyDS.SyncToDisk();
+        MyDriver.Dispose();
+
+        VectorPolygonData BufferData = new VectorPolygonData(MyLayer);
 
 ------------------------------- */
 
