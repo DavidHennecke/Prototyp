@@ -39,27 +39,32 @@ Nächste Schritte:
 - Anschließend kann das Ergebnis z.B. gespeichert oder per Leaflet visualisiert werden!
 
 Blaupausen-Code für den Buffer:
-        VectorPointData VecDatPoint = new VectorPointData(openFileDialog.FileName);
-
-        OSGeo.OGR.Geometry CenterPoint = VecDatPoint.Layer.GetFeature(0).GetGeometryRef();
-        OSGeo.OGR.Geometry BufferDefinition = CenterPoint.Buffer(400, 100);
-        OSGeo.OGR.Geometry BufferDefinitionPolygonReference = BufferDefinition.GetGeometryRef(0);
-        OSGeo.OGR.Geometry Circle = OSGeo.OGR.Ogr.ForceToPolygon(BufferDefinitionPolygonReference);
-
-        OSGeo.OGR.Driver MyDriver = OSGeo.OGR.Ogr.GetDriverByName("ESRI Shapefile");
-        OSGeo.OGR.DataSource MyDS = MyDriver.CreateDataSource("/vsimem/Temporary", new string[] { });
-        OSGeo.OGR.Layer MyLayer = MyDS.CreateLayer("Temp", VecDatPoint.SpatialReference, OSGeo.OGR.wkbGeometryType.wkbPolygon, new string[] { });
-        OSGeo.OGR.FeatureDefn MyFeatureDefn = MyLayer.GetLayerDefn();
-        OSGeo.OGR.Feature MyFeature = new OSGeo.OGR.Feature(MyFeatureDefn);
-
-        MyFeature.SetGeometry(Circle);
-        MyLayer.CreateFeature(MyFeature);
-        MyFeature.Dispose();
-        MyFeatureDefn.Dispose();
-        MyDS.SyncToDisk();
-        MyDriver.Dispose();
-
-        VectorPolygonData BufferData = new VectorPolygonData(MyLayer);
+    // Distance parameter for buffer should be expressed into the same unit as the coordinates of the geometry, see https://gdal.org/python/osgeo.ogr.Geometry-class.html
+    // For EPSG 4326, this means "degrees". 1 degree is around 111 km, therefore 1 km is around 1 / 111 = 0.009 degrees.
+    float Radius = 0.009f;
+    
+    VectorPointData VecDatPoint = new VectorPointData("C:/Users/ccroo/ownCloud/WFLO/Vortex/Demo/Testdata/Point_4326.shp");
+    
+    OSGeo.OGR.Geometry CenterPoint = VecDatPoint.Layer.GetFeature(0).GetGeometryRef();
+    OSGeo.OGR.Geometry BufferDefinition = CenterPoint.Buffer(Radius, 30); // 30 edge points per quarter circle.
+    OSGeo.OGR.Geometry BufferDefinitionPolygonReference = BufferDefinition.GetGeometryRef(0);
+    OSGeo.OGR.Geometry Circle = OSGeo.OGR.Ogr.ForceToPolygon(BufferDefinitionPolygonReference);
+    
+    OSGeo.OGR.Driver MyDriver = OSGeo.OGR.Ogr.GetDriverByName("ESRI Shapefile");
+    OSGeo.OGR.DataSource MyDS = MyDriver.CreateDataSource("/vsimem/Temporary", new string[] { });
+    OSGeo.OGR.Layer MyLayer = MyDS.CreateLayer("Temp", VecDatPoint.SpatialReference, OSGeo.OGR.wkbGeometryType.wkbPolygon, new string[] { });
+    OSGeo.OGR.FeatureDefn MyFeatureDefn = MyLayer.GetLayerDefn();
+    OSGeo.OGR.Feature MyFeature = new OSGeo.OGR.Feature(MyFeatureDefn);
+    
+    MyFeature.SetGeometry(Circle);
+    MyLayer.CreateFeature(MyFeature);
+    MyFeature.Dispose();
+    MyFeatureDefn.Dispose();
+    MyDS.SyncToDisk();
+    MyDriver.Dispose();
+    
+    VectorPolygonData BufferData = new VectorPolygonData(MyLayer);
+    BufferData.SaveAsFGB("C:/Users/ccroo/ownCloud/WFLO/Vortex/Demo/Testdata/TestBuffer.fgb");
 
 ------------------------------- */
 
