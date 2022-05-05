@@ -352,7 +352,7 @@ namespace Prototyp
 
                 // Establish GRPC connection
                 // TODO: nicht nur localhost
-                string url = "https://localhost:" + port.ToString();
+                string url = "http://localhost:" + port.ToString();
                 Grpc.Net.Client.GrpcChannel channel = Grpc.Net.Client.GrpcChannel.ForAddress(url);
                 grpcConnection = new GrpcClient.ControlConnector.ControlConnectorClient(channel);
 
@@ -826,6 +826,7 @@ namespace Prototyp
                 //Split into chunks of 65536 bytes (64 KiB)
                 List<string> chunks = new List<string>();
                 int maxChunkSize = MAX_UNSIGNED_SHORT / sizeof(Char);
+                if (maxChunkSize % 2 != 0) maxChunkSize++;
                 for (int i = 0; i < layer.Length; i += maxChunkSize)
                 {
                     chunks.Add(layer.Substring(i, Math.Min(maxChunkSize, layer.Length - i)));
