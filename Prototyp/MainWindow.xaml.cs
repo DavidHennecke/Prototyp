@@ -27,6 +27,7 @@ TODO:
 o Mouse select in ComboBox after typing does not work.
 o Please make an event for node deletion.
 o Low priority: Add multi-select in toolbar modules selection.
+o Slider default setting is not even used.
 
 Nächste Schritte:
 - David schaut nach, wie man die Settings aus den Modulen bekommt, z.B.

@@ -17,9 +17,9 @@
 
         *///////////////////////////////////////////////////////////////////////////////////
 
-        private string IntNodeStyle;
-        private string IntEditorVersion;
-        private string IntNodeTitle;
+        private string _NodeStyle;
+        private string _EditorVersion;
+        private string _NodeTitle;
 
         public ToolRow[] ToolRows;
 
@@ -126,20 +126,20 @@
 
         public string NodeStyle
         {
-            get { return (IntNodeStyle); }
-            set { IntNodeStyle = value; }
+            get { return (_NodeStyle); }
+            set { _NodeStyle = value; }
         }
 
         public string EditorVersion
         {
-            get { return (IntEditorVersion); }
-            set { IntEditorVersion = value; }
+            get { return (_EditorVersion); }
+            set { _EditorVersion = value; }
         }
 
         public string NodeTitle
         {
-            get { return (IntNodeTitle); }
-            set { IntNodeTitle = value; }
+            get { return (_NodeTitle); }
+            set { _NodeTitle = value; }
         }
 
         //-----------------------------------------------------------------------------------------------------
@@ -194,12 +194,12 @@
                 {
                     foreach (var attribs in nodes.Attributes())
                     {
-                        if (attribs.Name == "style") IntNodeStyle = attribs.Value;
-                        if (attribs.Name == "editorVersion") IntEditorVersion = attribs.Value;
+                        if (attribs.Name == "style") _NodeStyle = attribs.Value;
+                        if (attribs.Name == "editorVersion") _EditorVersion = attribs.Value;
                     }
                 }
 
-                if (nodes.Name == "NodeTitle") IntNodeTitle = nodes.Value;
+                if (nodes.Name == "NodeTitle") _NodeTitle = nodes.Value;
 
                 if (nodes.Name.NamespaceName == "Element")
                 {
@@ -833,11 +833,11 @@
             Line = Line.Replace("'", "\"");
             XMLFile = XMLFile + Line;
 
-            Line = "<Node style='" + IntNodeStyle + "' editorVersion='" + IntEditorVersion + "'>" + "\n";
+            Line = "<Node style='" + _NodeStyle + "' editorVersion='" + _EditorVersion + "'>" + "\n";
             Line = Line.Replace("'", "\"");
             XMLFile = XMLFile + Line;
 
-            Line = "\t" + "<NodeTitle>" + IntNodeTitle + "</NodeTitle>" + "\n";
+            Line = "\t" + "<NodeTitle>" + _NodeTitle + "</NodeTitle>" + "\n";
             XMLFile = XMLFile + Line;
 
             Line = "\t" + "<NodeElements>" + "\n";

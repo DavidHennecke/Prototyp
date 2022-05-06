@@ -76,43 +76,43 @@ namespace Prototyp.Elements
 
         // Internal variables --------------------------------------------------------------
 
-        private double IntZoomFactor;
-        private System.Windows.Point IntDragOffset;
-        private System.Collections.Generic.List<ModuleNodeProperties> IntModuleNodeProperties;
-        private System.Collections.Generic.List<VecImportNodeProperties> IntVecImportNodeProperties;
-        private System.Collections.Generic.List<RasImportNodeProperties> IntRasImportNodeProperties;
-        private System.Collections.Generic.List<ConnectionProperties> IntConnectionProperties;
+        private double _ZoomFactor;
+        private System.Windows.Point _DragOffset;
+        private System.Collections.Generic.List<ModuleNodeProperties> _ModuleNodeProperties;
+        private System.Collections.Generic.List<VecImportNodeProperties> _VecImportNodeProperties;
+        private System.Collections.Generic.List<RasImportNodeProperties> _RasImportNodeProperties;
+        private System.Collections.Generic.List<ConnectionProperties> _ConnectionProperties;
 
         // Getters and setters -------------------------------------------------------------
 
         public double ZoomFactor
         {
-            get { return (IntZoomFactor); }
+            get { return (_ZoomFactor); }
         }
 
         public System.Windows.Point DragOffset
         {
-            get { return (IntDragOffset); }
+            get { return (_DragOffset); }
         }
 
         public System.Collections.Generic.List<ModuleNodeProperties> ModNodeProps
         {
-            get { return (IntModuleNodeProperties); }
+            get { return (_ModuleNodeProperties); }
         }
 
         public System.Collections.Generic.List<VecImportNodeProperties> VecImportNodeProps
         {
-            get { return (IntVecImportNodeProperties); }
+            get { return (_VecImportNodeProperties); }
         }
 
         public System.Collections.Generic.List<RasImportNodeProperties> RasImportNodeProps
         {
-            get { return (IntRasImportNodeProperties); }
+            get { return (_RasImportNodeProperties); }
         }
 
         public System.Collections.Generic.List<ConnectionProperties> ConnectionProps
         {
-            get { return (IntConnectionProperties); }
+            get { return (_ConnectionProperties); }
         }
 
         // Constructors --------------------------------------------------------------------
@@ -156,13 +156,13 @@ namespace Prototyp.Elements
             {
                 Read = (Prototyp.Elements.NetworkLoadAndSave)binForm.Deserialize(fs);
 
-                IntZoomFactor = Read.ZoomFactor;
-                IntDragOffset = Read.DragOffset;
+                _ZoomFactor = Read.ZoomFactor;
+                _DragOffset = Read.DragOffset;
 
-                IntModuleNodeProperties = Read.ModNodeProps;
-                IntVecImportNodeProperties = Read.VecImportNodeProps;
-                IntRasImportNodeProperties = Read.RasImportNodeProps;
-                IntConnectionProperties = Read.ConnectionProps;
+                _ModuleNodeProperties = Read.ModNodeProps;
+                _VecImportNodeProperties = Read.VecImportNodeProps;
+                _RasImportNodeProperties = Read.RasImportNodeProps;
+                _ConnectionProperties = Read.ConnectionProps;
             }
         }
 
@@ -174,14 +174,14 @@ namespace Prototyp.Elements
                                        bool IncludeDataSets)
         {
             // Init lists.
-            IntVecImportNodeProperties = new System.Collections.Generic.List<VecImportNodeProperties>();
-            IntRasImportNodeProperties = new System.Collections.Generic.List<RasImportNodeProperties>();
-            IntModuleNodeProperties = new System.Collections.Generic.List<ModuleNodeProperties>();
-            IntConnectionProperties = new System.Collections.Generic.List<ConnectionProperties>();
+            _VecImportNodeProperties = new System.Collections.Generic.List<VecImportNodeProperties>();
+            _RasImportNodeProperties = new System.Collections.Generic.List<RasImportNodeProperties>();
+            _ModuleNodeProperties = new System.Collections.Generic.List<ModuleNodeProperties>();
+            _ConnectionProperties = new System.Collections.Generic.List<ConnectionProperties>();
 
             // First, save some basic infos.
-            IntZoomFactor = network.ZoomFactor;
-            IntDragOffset = network.DragOffset;
+            _ZoomFactor = network.ZoomFactor;
+            _DragOffset = network.DragOffset;
 
             // Second, look into the nodes.
             foreach (NodeNetwork.ViewModels.NodeViewModel node in network.Nodes.Items)
@@ -197,7 +197,7 @@ namespace Prototyp.Elements
 
                     // Eigentlich müssten auch noch die Settings aller Controls in dem Modul gespeichert werden... :-(
 
-                    IntModuleNodeProperties.Add(modProp);
+                    _ModuleNodeProperties.Add(modProp);
                 }
                 else if (node is VectorImport_Module vecImp)
                 {
@@ -215,7 +215,7 @@ namespace Prototyp.Elements
                         }
                     }
 
-                    IntVecImportNodeProperties.Add(impProp);
+                    _VecImportNodeProperties.Add(impProp);
                 }
                 else if (node is RasterImport_Module rasImp)
                 {
@@ -233,7 +233,7 @@ namespace Prototyp.Elements
                         }
                     }
 
-                    IntRasImportNodeProperties.Add(impProp);
+                    _RasImportNodeProperties.Add(impProp);
                 }
                 // else if (other data types...)
                 {
@@ -255,9 +255,9 @@ namespace Prototyp.Elements
                 if (conn.Input.Parent is Node_Module moduleIn)
                 {
                     // Find the corresponding entry in the modules list.
-                    for (i = 0; i < IntModuleNodeProperties.Count; i++)
+                    for (i = 0; i < _ModuleNodeProperties.Count; i++)
                     {
-                        if (IntModuleNodeProperties[i].Position == conn.Input.Parent.Position && IntModuleNodeProperties[i].Size == conn.Input.Parent.Size)
+                        if (_ModuleNodeProperties[i].Position == conn.Input.Parent.Position && _ModuleNodeProperties[i].Size == conn.Input.Parent.Size)
                         {
                             connProp.InputType = ConnectionType.Module;
                             connProp.InputIndex = i;
@@ -283,9 +283,9 @@ namespace Prototyp.Elements
                 if (conn.Output.Parent is Node_Module moduleOut)
                 {
                     // Find the corresponding entry in the modules list.
-                    for (i = 0; i < IntModuleNodeProperties.Count; i++)
+                    for (i = 0; i < _ModuleNodeProperties.Count; i++)
                     {
-                        if (IntModuleNodeProperties[i].Position == conn.Output.Parent.Position && IntModuleNodeProperties[i].Size == conn.Output.Parent.Size)
+                        if (_ModuleNodeProperties[i].Position == conn.Output.Parent.Position && _ModuleNodeProperties[i].Size == conn.Output.Parent.Size)
                         {
                             connProp.OutputType = ConnectionType.Module;
                             connProp.OutputIndex = i;
@@ -308,9 +308,9 @@ namespace Prototyp.Elements
                 else if (conn.Output.Parent is VectorImport_Module vecImp)
                 {
                     // Find the corresponding entry in the vector imports list.
-                    for (i = 0; i < IntVecImportNodeProperties.Count; i++)
+                    for (i = 0; i < _VecImportNodeProperties.Count; i++)
                     {
-                        if (IntVecImportNodeProperties[i].Position == conn.Output.Parent.Position && IntVecImportNodeProperties[i].Size == conn.Output.Parent.Size)
+                        if (_VecImportNodeProperties[i].Position == conn.Output.Parent.Position && _VecImportNodeProperties[i].Size == conn.Output.Parent.Size)
                         {
                             connProp.OutputType = ConnectionType.Vector;
                             connProp.OutputIndex = i;
@@ -333,9 +333,9 @@ namespace Prototyp.Elements
                 else if (conn.Output.Parent is RasterImport_Module rasImp)
                 {
                     // Find the corresponding entry in the raster imports list.
-                    for (i = 0; i < IntRasImportNodeProperties.Count; i++)
+                    for (i = 0; i < _RasImportNodeProperties.Count; i++)
                     {
-                        if (IntRasImportNodeProperties[i].Position == conn.Output.Parent.Position && IntRasImportNodeProperties[i].Size == conn.Output.Parent.Size)
+                        if (_RasImportNodeProperties[i].Position == conn.Output.Parent.Position && _RasImportNodeProperties[i].Size == conn.Output.Parent.Size)
                         {
                             connProp.OutputType = ConnectionType.Raster;
                             connProp.OutputIndex = i;
@@ -356,7 +356,7 @@ namespace Prototyp.Elements
                     }
                 }
 
-                IntConnectionProperties.Add(connProp);
+                _ConnectionProperties.Add(connProp);
             }
         }
 
