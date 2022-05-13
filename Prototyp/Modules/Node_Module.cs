@@ -445,6 +445,7 @@ namespace Prototyp.Modules
                         valueFloatInput.Editor = sliderEditor;
                         valueFloatInput.Port.IsVisible = false;
                         Inputs.Add(valueFloatInput);
+                        //valueFloatInput.Value  <-- Das ist der Wert z.B. der Buffer-Radius
                     }
                     else if (toolRow.controlRow.controlType == VorteXML.ControlType.Dropdown)
                     {
