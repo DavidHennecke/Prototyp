@@ -388,7 +388,7 @@ namespace Prototyp
 
                 // Establish GRPC connection
                 // TODO: nicht nur localhost
-                string url = "http://localhost:" + port.ToString();
+                string url = "https://localhost:" + port.ToString();
                 Grpc.Net.Client.GrpcChannel channel = Grpc.Net.Client.GrpcChannel.ForAddress(url);
                 grpcConnection = new GrpcClient.ControlConnector.ControlConnectorClient(channel);
 
@@ -796,6 +796,9 @@ namespace Prototyp
                     nc.OutputChannel = conn.Output.GetID();
                     nc.InputNode = (Node_Module)conn.Input.Parent;
                     nc.InputChannel = conn.Input.GetID();
+
+                    // Delete me, I'm here just for demonstration purposes:
+                    //float SliderVal = ((Node_Module)conn.Output.Parent).sliderEditor.FloatValue;
 
                     //Add output module to the dictionary in case they aren't already
                     var outputModule = (Node_Module)conn.Output.Parent;

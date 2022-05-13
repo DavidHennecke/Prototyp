@@ -64,10 +64,10 @@ namespace Prototyp.Modules
         public ValueNodeOutputViewModel<Prototyp.Elements.VectorMultiPolygonData> vectorOutputMultiPolygon { get; set; }
         public ValueNodeOutputViewModel<Prototyp.Elements.RasterData> rasterOutput { get; set; }
 
-        private string IntPathXML;
-        private GrpcClient.ControlConnector.ControlConnectorClient IntGrpcConnection;
-        private System.Diagnostics.Process IntProcess;
-        private string IntUrl;
+        private string _PathXML;
+        private GrpcClient.ControlConnector.ControlConnectorClient _GrpcConnection;
+        private System.Diagnostics.Process _Process;
+        private string _Url;
         public NodeProgress Status;
 
         public void ChangeStatus(NodeProgress statusNumber)
@@ -80,25 +80,25 @@ namespace Prototyp.Modules
 
         public string PathXML
         {
-            get { return (IntPathXML); }
-            set { IntPathXML = value; }
+            get { return (_PathXML); }
+            set { _PathXML = value; }
         }
 
         public GrpcClient.ControlConnector.ControlConnectorClient grpcConnection
         {
-            get { return (IntGrpcConnection); }
-            set { IntGrpcConnection = value; }
+            get { return (_GrpcConnection); }
+            set { _GrpcConnection = value; }
         }
 
         public System.Diagnostics.Process Process
         {
-            get { return (IntProcess); }
+            get { return (_Process); }
         }
 
         public string Url
         {
-            get { return (IntUrl); }
-            set { IntUrl = value; }
+            get { return (_Url); }
+            set { _Url = value; }
         }
 
         // Constructors --------------------------------------------------------------------
@@ -112,15 +112,15 @@ namespace Prototyp.Modules
         // Used for actually adding something to the main window node editor.
         public Node_Module(string pathXML, GrpcClient.ControlConnector.ControlConnectorClient grpcConnection, string url, System.Diagnostics.Process process)
         {
-            IntPathXML = pathXML;
+            _PathXML = pathXML;
 
             VorteXML newModule = new VorteXML(pathXML);
 
             Name = newModule.NodeTitle;
 
-            IntUrl = url;
-            IntProcess = process;            
-            IntGrpcConnection = grpcConnection;
+            _Url = url;
+            _Process = process;            
+            _GrpcConnection = grpcConnection;
             Status = NodeProgress.Waiting; // Korrekt?
 
             ParseXML(newModule, true);
@@ -131,9 +131,9 @@ namespace Prototyp.Modules
         {
             Name = Title;
 
-            IntUrl = url;
-            IntProcess = process;
-            IntGrpcConnection = grpcConnection;
+            _Url = url;
+            _Process = process;
+            _GrpcConnection = grpcConnection;
             Status = NodeProgress.Waiting; // Korrekt?
 
             ParseXML(XML, true);
@@ -445,7 +445,6 @@ namespace Prototyp.Modules
                         valueFloatInput.Editor = sliderEditor;
                         valueFloatInput.Port.IsVisible = false;
                         Inputs.Add(valueFloatInput);
-                        //valueFloatInput.Value  <-- Das ist der Wert z.B. der Buffer-Radius
                     }
                     else if (toolRow.controlRow.controlType == VorteXML.ControlType.Dropdown)
                     {
