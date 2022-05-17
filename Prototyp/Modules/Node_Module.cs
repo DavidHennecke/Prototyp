@@ -449,7 +449,7 @@ namespace Prototyp.Modules
                         //{
                         //    if (newValue != null)
                         //    {
-                                    //hier toJSON aufrufen 
+                                    //hier sendChange grpc
                         //    }
                         //});
                         }
