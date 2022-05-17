@@ -445,7 +445,14 @@ namespace Prototyp.Modules
                         valueFloatInput.Editor = sliderEditor;
                         valueFloatInput.Port.IsVisible = false;
                         Inputs.Add(valueFloatInput);
-                    }
+                        //valueFloatInput.ValueChanged.Subscribe(newValue =>
+                        //{
+                        //    if (newValue != null)
+                        //    {
+                                    //hier toJSON aufrufen 
+                        //    }
+                        //});
+                        }
                     else if (toolRow.controlRow.controlType == VorteXML.ControlType.Dropdown)
                     {
                         valueStringInput = new ValueNodeInputViewModel<string>();
