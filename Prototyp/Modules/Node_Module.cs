@@ -501,7 +501,7 @@ namespace Prototyp.Modules
 
         // Public methods ------------------------------------------------------------------
 
-        public string ParamsToXML() /////////// Work in progress
+        public string ParamsToJson() /////////// Work in progress
         {
             int SliderCount = 0;
             int DropDownCount = 0;
@@ -555,11 +555,7 @@ namespace Prototyp.Modules
                 }
             }
 
-            System.Xml.Serialization.XmlSerializer serializer = new System.Xml.Serialization.XmlSerializer(typeof(ParamData));
-            System.IO.StringWriter MyString = new System.IO.StringWriter();
-            serializer.Serialize(MyString, Params);
-
-            return (MyString.ToString());
+            return (Newtonsoft.Json.JsonConvert.SerializeObject(Params));
         }
 
         // Static methods ------------------------------------------------------------------
