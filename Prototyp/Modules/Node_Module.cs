@@ -456,6 +456,14 @@ namespace Prototyp.Modules
                         Inputs.Add(valueFloatInput[valueFloatInput.Count - 1]);
 
                         /////////// Work in progress end
+                        
+                        //valueFloatInput.ValueChanged.Subscribe(newValue =>
+                        //{
+                        //    if (newValue != null)
+                        //    {
+                                    //hier sendChange grpc
+                        //    }
+                        //});                        
                     }
                     else if (toolRow.controlRow.controlType == VorteXML.ControlType.Dropdown)
                     {
