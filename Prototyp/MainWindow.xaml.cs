@@ -797,8 +797,17 @@ namespace Prototyp
                     nc.InputNode = (Node_Module)conn.Input.Parent;
                     nc.InputChannel = conn.Input.GetID();
 
-                    // Delete me, I'm here just for demonstration purposes:
-                    //float SliderVal = ((Node_Module)conn.Output.Parent).sliderEditor.FloatValue;
+                    //////////// Delete us,we're here just for demonstration purposes:
+
+                    string XMLParams = ((Node_Module)conn.Output.Parent).ParamsToXML();
+
+                    // @Markus: Wenn Du diesen XML-String deserialisieren willst, bruachst Du dafür die Klasse "ParamData" aus Node_Module.cs. Also etwa so hier:                    
+                    Node_Module.ParamData Parameter;
+                    System.Xml.Serialization.XmlSerializer serializer = new System.Xml.Serialization.XmlSerializer(typeof(Node_Module.ParamData));
+                    System.IO.StringReader stringReader = new System.IO.StringReader(XMLParams);
+                    Parameter = (Node_Module.ParamData) serializer.Deserialize(stringReader);
+
+                    //////////// Delete us,we're here just for demonstration purposes.
 
                     //Add output module to the dictionary in case they aren't already
                     var outputModule = (Node_Module)conn.Output.Parent;

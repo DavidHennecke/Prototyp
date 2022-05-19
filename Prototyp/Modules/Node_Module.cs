@@ -73,6 +73,27 @@ namespace Prototyp.Modules
         private string _Url;
         public NodeProgress Status;
 
+        [Serializable]
+        public class SliderParams
+        {
+            public string Name;
+            public string Value;
+        }
+
+        [Serializable]
+        public class DropdownParams
+        {
+            public string Name;
+            public string[] Entries;
+        }
+
+        [Serializable]
+        public class ParamData
+        {
+            public SliderParams[] Slid;
+            public DropdownParams[] DD;
+        }
+
         public void ChangeStatus(NodeProgress statusNumber)
         {
             Status = statusNumber;
@@ -447,11 +468,11 @@ namespace Prototyp.Modules
 
                         sliderEditor.Add(new Modules.ViewModels.FloatSliderViewModel(toolRow.Name, toolRow.controlRow.slider.Start, toolRow.controlRow.slider.End, toolRow.controlRow.slider.TickFrequency, toolRow.controlRow.slider.Unit));
                         sliderEditor[sliderEditor.Count - 1].FloatValue = toolRow.controlRow.slider.Default;
-                        
+
                         valueFloatInput.Add(new ValueNodeInputViewModel<float>());
                         valueFloatInput[valueFloatInput.Count - 1].Editor = sliderEditor[valueFloatInput.Count - 1];
                         valueFloatInput[valueFloatInput.Count - 1].Port.IsVisible = false;
-                        //valueFloatInput[valueFloatInput.Count - 1].Name = toolRow.Name;
+                        valueFloatInput[valueFloatInput.Count - 1].Name = toolRow.Name;
 
                         Inputs.Add(valueFloatInput[valueFloatInput.Count - 1]);
 
@@ -480,8 +501,11 @@ namespace Prototyp.Modules
 
         // Public methods ------------------------------------------------------------------
 
-        public string ParamsToJson() /////////// Work in progress
+        public string ParamsToXML() /////////// Work in progress
         {
+            int SliderCount = 0;
+            int DropDownCount = 0;
+
             foreach (NodeInputViewModel i in Inputs.Items)
             {
                 if (i.Editor != null)
@@ -489,16 +513,53 @@ namespace Prototyp.Modules
                     string MyName = i.Name;
                     if (i.Editor is Prototyp.Modules.ViewModels.FloatSliderViewModel)
                     {
-                        // Hole float value
+                        SliderCount++;
                     }
                     else if (i.Editor is Prototyp.Modules.ViewModels.DropDownMenuViewModel)
                     {
-                        // Hole string array
+                        DropDownCount++;
                     }
                 }
             }
 
-            return ("");
+            ParamData Params = new ParamData();
+            Params.Slid = new SliderParams[SliderCount];
+            Params.DD = new DropdownParams[DropDownCount];
+
+            SliderCount = 0;
+            DropDownCount = 0;
+            foreach (NodeInputViewModel i in Inputs.Items)
+            {
+                if (i.Editor != null)
+                {
+                    string MyName = i.Name;
+                    if (i.Editor is Prototyp.Modules.ViewModels.FloatSliderViewModel)
+                    {
+                        Params.Slid[SliderCount] = new SliderParams();
+
+                        Params.Slid[SliderCount].Name = i.Name;
+                        Params.Slid[SliderCount].Value = ((Prototyp.Modules.ViewModels.FloatSliderViewModel)i.Editor).FloatValue.ToString();
+                        
+                        SliderCount++;
+                    }
+                    else if (i.Editor is Prototyp.Modules.ViewModels.DropDownMenuViewModel)
+                    {
+                        Params.DD[DropDownCount] = new DropdownParams();
+
+                        Params.DD[DropDownCount].Name = i.Name;
+
+                        //Params.DD[DropDownCount].Entries = new string[???.Count];
+                        //Params.DD[DropDownCount].Value = ((Prototyp.Modules.ViewModels.DropDownMenuViewModel)i.Editor). //Don't even hope to know how to get this fucker. :-(
+                        DropDownCount++;
+                    }
+                }
+            }
+
+            System.Xml.Serialization.XmlSerializer serializer = new System.Xml.Serialization.XmlSerializer(typeof(ParamData));
+            System.IO.StringWriter MyString = new System.IO.StringWriter();
+            serializer.Serialize(MyString, Params);
+
+            return (MyString.ToString());
         }
 
         // Static methods ------------------------------------------------------------------
