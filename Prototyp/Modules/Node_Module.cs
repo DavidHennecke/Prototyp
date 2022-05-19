@@ -48,16 +48,19 @@ namespace Prototyp.Modules
     public class Node_Module : NodeViewModel
     {
         public event EventHandler ProcessStatusChanged;
-        public Modules.ViewModels.FloatSliderViewModel sliderEditor { get; set; }
-        public Modules.ViewModels.OutputNameViewModel outNameEditor { get; set; }
+
+        public System.Collections.Generic.List<Modules.ViewModels.FloatSliderViewModel> sliderEditor = new System.Collections.Generic.List<Modules.ViewModels.FloatSliderViewModel>();
         public Modules.ViewModels.DropDownMenuViewModel dropDownEditor { get; set; }
+
+        public System.Collections.Generic.List<ValueNodeInputViewModel<float>> valueFloatInput = new System.Collections.Generic.List<ValueNodeInputViewModel<float>>();
+        public ValueNodeInputViewModel<string> valueStringInput { get; set; }
+
+        public Modules.ViewModels.OutputNameViewModel outNameEditor { get; set; }
         public ValueNodeInputViewModel<Prototyp.Elements.VectorPointData> vectorInputPoint { get; set; }
         public ValueNodeInputViewModel<Prototyp.Elements.VectorLineData> vectorInputLine { get; set; }
         public ValueNodeInputViewModel<Prototyp.Elements.VectorPolygonData> vectorInputPolygon { get; set; }
         public ValueNodeInputViewModel<Prototyp.Elements.VectorMultiPolygonData> vectorInputMultiPolygon { get; set; }
         public ValueNodeInputViewModel<Prototyp.Elements.RasterData> rasterInput { get; set; }
-        public ValueNodeInputViewModel<float> valueFloatInput { get; set; }
-        public ValueNodeInputViewModel<string> valueStringInput { get; set; }
         public ValueNodeOutputViewModel<Prototyp.Elements.VectorPointData> vectorOutputPoint { get; set; }
         public ValueNodeOutputViewModel<Prototyp.Elements.VectorLineData> vectorOutputLine { get; set; }
         public ValueNodeOutputViewModel<Prototyp.Elements.VectorPolygonData> vectorOutputPolygon { get; set; }
@@ -440,14 +443,23 @@ namespace Prototyp.Modules
                 {
                     if (toolRow.controlRow.controlType == VorteXML.ControlType.Slider)
                     {
-                        valueFloatInput = new ValueNodeInputViewModel<float>();
-                        sliderEditor = new Modules.ViewModels.FloatSliderViewModel(toolRow.Name, toolRow.controlRow.slider.Start, toolRow.controlRow.slider.End, toolRow.controlRow.slider.TickFrequency, toolRow.controlRow.slider.Unit);
-                        valueFloatInput.Editor = sliderEditor;
-                        valueFloatInput.Port.IsVisible = false;
-                        Inputs.Add(valueFloatInput);
+                        /////////// Work in progress start
+
+                        sliderEditor.Add(new Modules.ViewModels.FloatSliderViewModel(toolRow.Name, toolRow.controlRow.slider.Start, toolRow.controlRow.slider.End, toolRow.controlRow.slider.TickFrequency, toolRow.controlRow.slider.Unit));
+                        sliderEditor[sliderEditor.Count - 1].FloatValue = toolRow.controlRow.slider.Default;
+                        
+                        valueFloatInput.Add(new ValueNodeInputViewModel<float>());
+                        valueFloatInput[valueFloatInput.Count - 1].Editor = sliderEditor[valueFloatInput.Count - 1];
+                        valueFloatInput[valueFloatInput.Count - 1].Port.IsVisible = false;
+                        //valueFloatInput[valueFloatInput.Count - 1].Name = toolRow.Name;
+
+                        Inputs.Add(valueFloatInput[valueFloatInput.Count - 1]);
+
+                        /////////// Work in progress end
                     }
                     else if (toolRow.controlRow.controlType == VorteXML.ControlType.Dropdown)
                     {
+                        // TODO: Korrekturen von oben hier ebenfalls übernehmen. Siehe auch Deklarationen ganz oben.
                         valueStringInput = new ValueNodeInputViewModel<string>();
                         dropDownEditor = new Modules.ViewModels.DropDownMenuViewModel(toolRow.Name, toolRow.controlRow.dropdown.Values);
                         valueStringInput.Editor = dropDownEditor;
@@ -456,6 +468,29 @@ namespace Prototyp.Modules
                     }
                 }
             }
+        }
+
+        // Public methods ------------------------------------------------------------------
+
+        public string ParamsToJson() /////////// Work in progress
+        {
+            foreach (NodeInputViewModel i in Inputs.Items)
+            {
+                if (i.Editor != null)
+                {
+                    string MyName = i.Name;
+                    if (i.Editor is Prototyp.Modules.ViewModels.FloatSliderViewModel)
+                    {
+                        // Hole float value
+                    }
+                    else if (i.Editor is Prototyp.Modules.ViewModels.DropDownMenuViewModel)
+                    {
+                        // Hole string array
+                    }
+                }
+            }
+
+            return ("");
         }
 
         // Static methods ------------------------------------------------------------------
