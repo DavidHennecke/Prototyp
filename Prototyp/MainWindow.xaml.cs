@@ -985,13 +985,20 @@ namespace Prototyp
 
         async private Task<Node_Module> runGRPCNode(Node_Module node, List<NodeConnection> sendList, IProgress<NodeProgressReport> progress)
         {
-            System.Diagnostics.Trace.WriteLine("Running node " + node.Url);
-            try {   // try-catch so that the offending node can be marked with the interrupted status if it fails at any point
+            //try-catch so that the offending node can be marked with the interrupted status if it fails at any point
+            try {
                 //  STEP 1:
-                //  TODO - UPLOAD NODE CONFIG
+                //  Uploading current node configuration
+                System.Diagnostics.Trace.WriteLine("Uploading settings for node " + node.Url);
+                var settings = new GrpcClient.Settings
+                {
+                    Mapping = node.ParamsToProtobufStruct()
+                };
+                node.grpcConnection.SendSettings(settings);
 
                 //  STEP 2:
                 //  RUN NODE
+                System.Diagnostics.Trace.WriteLine("Running node " + node.Url);
                 var request = new GrpcClient.RunRequest { };
                 NodeProgressReport report = new NodeProgressReport();
                 report.node = node;

@@ -501,6 +501,32 @@ namespace Prototyp.Modules
 
         // Public methods ------------------------------------------------------------------
 
+        public Google.Protobuf.WellKnownTypes.Struct ParamsToProtobufStruct()
+        {
+            var Params = new Google.Protobuf.WellKnownTypes.Struct();
+            foreach (NodeInputViewModel i in Inputs.Items)
+            {
+                if (i.Editor != null)
+                {
+                    if (i.Editor is Prototyp.Modules.ViewModels.FloatSliderViewModel)
+                    {
+                        Params.Fields.Add(i.Name, Google.Protobuf.WellKnownTypes.Value.ForNumber(
+                            ((ViewModels.FloatSliderViewModel)i.Editor).FloatValue)
+                        );
+                    }
+                    else if (i.Editor is Prototyp.Modules.ViewModels.DropDownMenuViewModel)
+                    {
+                        /* TODO
+                        Params.Fields.Add(i.Name, Google.Protobuf.WellKnownTypes.Value.ForString(
+                            ???
+                        );
+                        */
+                    }
+                }
+            }
+            return Params;
+        }
+
         public string ParamsToJson() /////////// Work in progress
         {
             int SliderCount = 0;
@@ -521,7 +547,7 @@ namespace Prototyp.Modules
                     }
                 }
             }
-
+            
             ParamData Params = new ParamData();
             Params.Slid = new SliderParams[SliderCount];
             Params.DD = new DropdownParams[DropDownCount];
