@@ -1,0 +1,38 @@
+Server started.
+Error in MaxRev.Gdal.Core, Version=3.3.3.120, Culture=neutral, PublicKeyToken=null
+System.IO.IOException: The process cannot access the file 'C:\Users\ccroo\source\repos\Prototyp\Prototyp\Custom modules\SlidTestMod\gdalplugins\gdal_HDF4.dll' because it is being used by another process.
+   at System.IO.FileSystem.CopyFile(String sourceFullPath, String destFullPath, Boolean overwrite)
+   at System.IO.File.Copy(String sourceFileName, String destFileName, Boolean overwrite)
+   at MaxRev.Gdal.Core.GdalBase.MoveDriversTo(IEnumerable`1 drivers, String& targetDrivers)
+   at MaxRev.Gdal.Core.GdalBase.TryFindDriversInExecutingDirectory(DirectoryInfo targetDir, DirectoryInfo executingDir, String& targetDrivers)
+   at MaxRev.Gdal.Core.GdalBase.ConfigureGdalDrivers()
+fail: Grpc.AspNetCore.Server.ServerCallHandler[6]
+      Error when executing service method 'SetLayer'.
+System.IO.IOException: The process cannot access the file 'C:\Users\ccroo\source\repos\Prototyp\Prototyp\Custom modules\SlidTestMod\gdalplugins\gdal_HDF4.dll' because it is being used by another process.
+   at System.IO.FileSystem.CopyFile(String sourceFullPath, String destFullPath, Boolean overwrite)
+   at System.IO.File.Copy(String sourceFileName, String destFileName, Boolean overwrite)
+   at MaxRev.Gdal.Core.GdalBase.MoveDriversTo(IEnumerable`1 drivers, String& targetDrivers)
+   at MaxRev.Gdal.Core.GdalBase.TryFindDriversInExecutingDirectory(DirectoryInfo targetDir, DirectoryInfo executingDir, String& targetDrivers)
+   at MaxRev.Gdal.Core.GdalBase.ConfigureGdalDrivers()
+   at MaxRev.Gdal.Core.GdalBase.ConfigureAll()
+   at GrpcServer.Elements.VectorData.InitGDAL() in C:\Users\ccroo\Source\Repos\GrpcDemo_Markus\GrpcServer\Elements\VectorData.cs:line 651
+   at GrpcServer.Elements.VectorData.HandleHeader(Header MyHeader) in C:\Users\ccroo\Source\Repos\GrpcDemo_Markus\GrpcServer\Elements\VectorData.cs:line 494
+   at GrpcServer.Elements.VectorData.HandleNameAndCRS() in C:\Users\ccroo\Source\Repos\GrpcDemo_Markus\GrpcServer\Elements\VectorData.cs:line 517
+   at GrpcServer.Elements.VectorData..ctor(Byte[] VecArray) in C:\Users\ccroo\Source\Repos\GrpcDemo_Markus\GrpcServer\Elements\VectorData.cs:line 277
+   at GrpcServer.ControlConnectorService.SetLayer(IAsyncStreamReader`1 requestStream, ServerCallContext context) in C:\Users\ccroo\Source\Repos\GrpcDemo_Markus\GrpcServer\Services\ControlConnectorService.cs:line 144
+   at Grpc.Shared.Server.ClientStreamingServerMethodInvoker`3.Invoke(HttpContext httpContext, ServerCallContext serverCallContext, IAsyncStreamReader`1 requestStream)
+   at Grpc.Shared.Server.ClientStreamingServerMethodInvoker`3.Invoke(HttpContext httpContext, ServerCallContext serverCallContext, IAsyncStreamReader`1 requestStream)
+   at Grpc.AspNetCore.Server.Internal.CallHandlers.ClientStreamingServerCallHandler`3.HandleCallAsyncCore(HttpContext httpContext, HttpContextServerCallContext serverCallContext)
+   at Grpc.AspNetCore.Server.Internal.CallHandlers.ServerCallHandlerBase`3.<HandleCallAsync>g__AwaitHandleCall|8_0(HttpContextServerCallContext serverCallContext, Method`2 method, Task handleCall)
+Settings received.
+Running process
+fail: Grpc.AspNetCore.Server.ServerCallHandler[6]
+      Error when executing service method 'RunProcess'.
+System.Collections.Generic.KeyNotFoundException: The given key 'Distance' was not present in the dictionary.
+   at System.Collections.Generic.Dictionary`2.get_Item(TKey key)
+   at GrpcServer.Services.ModuleProcessingService.runProcess() in C:\Users\ccroo\Source\Repos\GrpcDemo_Markus\GrpcServer\Services\ModuleProcessingService.cs:line 33
+   at GrpcServer.ControlConnectorService.RunProcess(RunRequest request, IServerStreamWriter`1 responseStream, ServerCallContext context) in C:\Users\ccroo\Source\Repos\GrpcDemo_Markus\GrpcServer\Services\ControlConnectorService.cs:line 54
+   at Grpc.Shared.Server.ServerStreamingServerMethodInvoker`3.Invoke(HttpContext httpContext, ServerCallContext serverCallContext, TRequest request, IServerStreamWriter`1 streamWriter)
+   at Grpc.Shared.Server.ServerStreamingServerMethodInvoker`3.Invoke(HttpContext httpContext, ServerCallContext serverCallContext, TRequest request, IServerStreamWriter`1 streamWriter)
+   at Grpc.AspNetCore.Server.Internal.CallHandlers.ServerStreamingServerCallHandler`3.HandleCallAsyncCore(HttpContext httpContext, HttpContextServerCallContext serverCallContext)
+   at Grpc.AspNetCore.Server.Internal.CallHandlers.ServerCallHandlerBase`3.<HandleCallAsync>g__AwaitHandleCall|8_0(HttpContextServerCallContext serverCallContext, Method`2 method, Task handleCall)
