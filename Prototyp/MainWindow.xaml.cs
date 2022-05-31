@@ -370,7 +370,8 @@ namespace Prototyp
             //Problem hier beschrieben https://github.com/openssl/openssl/issues/1418
 
             //Find lowest available port
-            int port = Node_Module.GetNextPort(BASEPORT);
+            //int port = Node_Module.GetNextPort(BASEPORT);
+            int port = 5000;
 
             GrpcClient.ControlConnector.ControlConnectorClient grpcConnection;
 
@@ -384,12 +385,18 @@ namespace Prototyp
             moduleProcess.StartInfo = moduleProcessInfo;
             try
             {
-                moduleProcess.Start();
+                //moduleProcess.Start();
 
                 // Establish GRPC connection
                 // TODO: nicht nur localhost
                 string url = "https://localhost:" + port.ToString();
-                Grpc.Net.Client.GrpcChannel channel = Grpc.Net.Client.GrpcChannel.ForAddress(url);
+                var handler = new System.Net.Http.HttpClientHandler();
+                handler.ServerCertificateCustomValidationCallback = System.Net.Http.HttpClientHandler.DangerousAcceptAnyServerCertificateValidator;
+                Grpc.Net.Client.GrpcChannel channel = Grpc.Net.Client.GrpcChannel.ForAddress(url, new Grpc.Net.Client.GrpcChannelOptions
+                {
+                    HttpHandler = handler
+                }
+                );
                 grpcConnection = new GrpcClient.ControlConnector.ControlConnectorClient(channel);
 
                 Node_Module nodeModule = new Node_Module(BinaryPath + ".xml", grpcConnection, url, moduleProcess);
