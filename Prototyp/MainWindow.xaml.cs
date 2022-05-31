@@ -28,44 +28,7 @@ o Mouse select in ComboBox after typing does not work.
 o Please make an event for node deletion.
 o Low priority: Add multi-select in toolbar modules selection.
 o Slider default setting is not even used.
-
-Nächste Schritte:
-- David schaut nach, wie man die Settings aus den Modulen bekommt, z.B.
-  für einen Slider auf einem Modul (Buffer) brauchen wir: float SliderValue = ...
-- Markus schickt die Settings mitsamt den Daten per gRPC.
-- Carsten erzeugt ein Buffer-Modul, das die Daten und Settings (insb. den Radius)
-  entgegen nimmt, einen neuen Layer mit dem Buffer als Geometrie (Polygon) erzeugt und
-  den wieder als VectorData serialisiert und per gRPC weiterschickt
-  (bei letzterem muss Markus nochmal helfen).
-- Anschließend kann das Ergebnis z.B. gespeichert oder per Leaflet visualisiert werden!
-
-Blaupausen-Code für den Buffer:
-    // Distance parameter for buffer should be expressed into the same unit as the coordinates of the geometry, see https://gdal.org/python/osgeo.ogr.Geometry-class.html
-    // For EPSG 4326, this means "degrees". 1 degree is around 111 km, therefore 1 km is around 1 / 111 = 0.009 degrees.
-    float Radius = 0.009f;
-    
-    VectorPointData VecDatPoint = new VectorPointData("C:/Users/ccroo/ownCloud/WFLO/Vortex/Demo/Testdata/Point_4326.shp");
-    
-    OSGeo.OGR.Geometry CenterPoint = VecDatPoint.Layer.GetFeature(0).GetGeometryRef();
-    OSGeo.OGR.Geometry BufferDefinition = CenterPoint.Buffer(Radius, 30); // 30 edge points per quarter circle.
-    OSGeo.OGR.Geometry BufferDefinitionPolygonReference = BufferDefinition.GetGeometryRef(0);
-    OSGeo.OGR.Geometry Circle = OSGeo.OGR.Ogr.ForceToPolygon(BufferDefinitionPolygonReference);
-    
-    OSGeo.OGR.Driver MyDriver = OSGeo.OGR.Ogr.GetDriverByName("ESRI Shapefile");
-    OSGeo.OGR.DataSource MyDS = MyDriver.CreateDataSource("/vsimem/Temporary", new string[] { });
-    OSGeo.OGR.Layer MyLayer = MyDS.CreateLayer("Temp", VecDatPoint.SpatialReference, OSGeo.OGR.wkbGeometryType.wkbPolygon, new string[] { });
-    OSGeo.OGR.FeatureDefn MyFeatureDefn = MyLayer.GetLayerDefn();
-    OSGeo.OGR.Feature MyFeature = new OSGeo.OGR.Feature(MyFeatureDefn);
-    
-    MyFeature.SetGeometry(Circle);
-    MyLayer.CreateFeature(MyFeature);
-    MyFeature.Dispose();
-    MyFeatureDefn.Dispose();
-    MyDS.SyncToDisk();
-    MyDriver.Dispose();
-    
-    VectorPolygonData BufferData = new VectorPolygonData(MyLayer);
-    BufferData.SaveAsFGB("C:/Users/ccroo/ownCloud/WFLO/Vortex/Demo/Testdata/TestBuffer.fgb");
+o Sliders have two name captions. How can we access slider properties (and other control properties) during runtime?
 
 ------------------------------- */
 
@@ -364,14 +327,14 @@ namespace Prototyp
 
         private void importModule(string BinaryPath)
         {
-            AppContext.SetSwitch("System.Net.Http.SocketsHttpHandler.Http2UnencryptedSupport", true); // Wozu ist das? Habe unten url von http auf https geändert.
+            //AppContext.SetSwitch("System.Net.Http.SocketsHttpHandler.Http2UnencryptedSupport", true); // Wozu ist das? Habe unten url von http auf https geändert.
 
             //Lösung: dotnet dev-certs https --trust --> https://stackoverflow.com/questions/57630672/how-to-fix-one-or-more-errors-occurred-the-ssl-connection-could-not-be-establ
             //Problem hier beschrieben https://github.com/openssl/openssl/issues/1418
 
             //Find lowest available port
-            //int port = Node_Module.GetNextPort(BASEPORT);
-            int port = 5000;
+            int port = Node_Module.GetNextPort(BASEPORT);
+            //int port = 5000;
 
             GrpcClient.ControlConnector.ControlConnectorClient grpcConnection;
 
@@ -385,18 +348,29 @@ namespace Prototyp
             moduleProcess.StartInfo = moduleProcessInfo;
             try
             {
-                //moduleProcess.Start();
+                moduleProcess.Start();
 
                 // Establish GRPC connection
                 // TODO: nicht nur localhost
                 string url = "https://localhost:" + port.ToString();
-                var handler = new System.Net.Http.HttpClientHandler();
+
+                // This is only nessesary if you don't trust your tool's custom certificate.
+                /***************************************************************************
+                System.Net.Http.HttpClientHandler handler = new System.Net.Http.HttpClientHandler();
                 handler.ServerCertificateCustomValidationCallback = System.Net.Http.HttpClientHandler.DangerousAcceptAnyServerCertificateValidator;
                 Grpc.Net.Client.GrpcChannel channel = Grpc.Net.Client.GrpcChannel.ForAddress(url, new Grpc.Net.Client.GrpcChannelOptions
                 {
                     HttpHandler = handler
                 }
                 );
+                *//////////////////////////////////////////////////////////////////////////
+
+                // Otherwise, use this:
+                // /***************************************************************************
+                Grpc.Net.Client.GrpcChannel channel = Grpc.Net.Client.GrpcChannel.ForAddress(url);
+                grpcConnection = new GrpcClient.ControlConnector.ControlConnectorClient(channel);
+                // *//////////////////////////////////////////////////////////////////////////
+
                 grpcConnection = new GrpcClient.ControlConnector.ControlConnectorClient(channel);
 
                 Node_Module nodeModule = new Node_Module(BinaryPath + ".xml", grpcConnection, url, moduleProcess);
