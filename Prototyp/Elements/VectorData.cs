@@ -101,7 +101,7 @@ namespace Prototyp.Elements
         public OSGeo.OGR.Layer Layer
         {
             get { return (GetAsLayer()); }
-            set { if (value != null) ImportLayer(value); }
+            set { if (value != null) _vecData = ImportLayer(value); }
         }
 
         public string GeoJSON
@@ -697,6 +697,127 @@ namespace Prototyp.Elements
             _busy = true;
             byte[] FGB = SerializeVec();
             System.IO.File.WriteAllBytes(FileName, FGB);
+            _busy = false;
+        }
+
+        public void ReprojectToWGS84()
+        {
+            _busy = true;
+            InitGDAL();
+
+            OSGeo.OGR.Driver ShapeDriver = OSGeo.OGR.Ogr.GetDriverByName("ESRI Shapefile");
+            OSGeo.OGR.Layer InLayer = GetAsLayer();
+            string LayerName = InLayer.GetName();
+
+            OSGeo.OSR.SpatialReference FromSRS = InLayer.GetSpatialRef();
+            FromSRS.SetAxisMappingStrategy(OSGeo.OSR.AxisMappingStrategy.OAMS_TRADITIONAL_GIS_ORDER);
+
+            OSGeo.OSR.SpatialReference ToCRS = new OSGeo.OSR.SpatialReference(null);
+            OSGeo.OSR.SpatialReference ToWGS84 = new OSGeo.OSR.SpatialReference(null);
+
+            ToCRS = FromSRS.CloneGeogCS();
+            ToCRS.SetAxisMappingStrategy(OSGeo.OSR.AxisMappingStrategy.OAMS_TRADITIONAL_GIS_ORDER);
+            OSGeo.OSR.CoordinateTransformation TransformToCRS = new OSGeo.OSR.CoordinateTransformation(FromSRS, ToCRS);
+            ToWGS84.SetWellKnownGeogCS("EPSG:4326");
+            ToWGS84.SetAxisMappingStrategy(OSGeo.OSR.AxisMappingStrategy.OAMS_TRADITIONAL_GIS_ORDER);
+            OSGeo.OSR.CoordinateTransformation TransformToWGS84 = new OSGeo.OSR.CoordinateTransformation(ToCRS, ToWGS84);
+
+            OSGeo.OGR.DataSource OutDS = ShapeDriver.CreateDataSource("/vsimem/Temporary", new string[] { });
+            OSGeo.OGR.Layer OutLayer = OutDS.CreateLayer(LayerName + "_WGS84", ToWGS84, InLayer.GetGeomType(), new string[] { });
+
+            OSGeo.OGR.FeatureDefn InFeatureDefn = InLayer.GetLayerDefn();
+            OSGeo.OGR.FeatureDefn OutLayerDefn = InLayer.GetLayerDefn();
+
+            OSGeo.OGR.FieldDefn FieldDefn = null;
+            for (int j = 0; j < InFeatureDefn.GetFieldCount(); j++)
+            {
+                if (InLayer.GetFeature(0).GetFieldType(j) == OSGeo.OGR.FieldType.OFTReal)
+                {
+                    FieldDefn = new OSGeo.OGR.FieldDefn(InFeatureDefn.GetFieldDefn(j).GetName(), OSGeo.OGR.FieldType.OFTReal);                    
+                }
+                else if (InLayer.GetFeature(0).GetFieldType(j) == OSGeo.OGR.FieldType.OFTInteger64)
+                {
+                    FieldDefn = new OSGeo.OGR.FieldDefn(InFeatureDefn.GetFieldDefn(j).GetName(), OSGeo.OGR.FieldType.OFTInteger64);
+                }
+                else if (InLayer.GetFeature(0).GetFieldType(j) == OSGeo.OGR.FieldType.OFTInteger)
+                {
+                    FieldDefn = new OSGeo.OGR.FieldDefn(InFeatureDefn.GetFieldDefn(j).GetName(), OSGeo.OGR.FieldType.OFTInteger);
+                }
+                else
+                {
+                    FieldDefn = new OSGeo.OGR.FieldDefn(InFeatureDefn.GetFieldDefn(j).GetName(), OSGeo.OGR.FieldType.OFTString);
+                }
+
+                OutLayer.CreateField(FieldDefn, 0);
+                FieldDefn.Dispose();
+            }
+
+            OSGeo.OGR.Geometry OGRGeom;
+            for (long i = 0; i < InLayer.GetFeatureCount(0); i++)
+            {
+                OGRGeom = InLayer.GetFeature(i).GetGeometryRef();
+
+                if (OGRGeom.Transform(TransformToCRS) == OSGeo.OGR.Ogr.OGRERR_NONE)
+                {
+                    if (OGRGeom.Transform(TransformToWGS84) == OSGeo.OGR.Ogr.OGRERR_NONE)
+                    {
+                        OSGeo.OGR.Feature OutFeature = new OSGeo.OGR.Feature(InFeatureDefn);
+                        
+                        OutFeature.SetGeometry(OGRGeom);
+
+                        for (int j = 0; j < InFeatureDefn.GetFieldCount(); j++)
+                        {
+                            if (InLayer.GetFeature(i).GetFieldType(j) == OSGeo.OGR.FieldType.OFTReal)
+                            {
+                                OutFeature.SetField(j, InLayer.GetFeature(i).GetFieldAsDouble(j));
+                            }
+                            else if (InLayer.GetFeature(i).GetFieldType(j) == OSGeo.OGR.FieldType.OFTInteger64)
+                            {
+                                OutFeature.SetField(j, InLayer.GetFeature(i).GetFieldAsInteger64(j));
+                            }
+                            else if (InLayer.GetFeature(i).GetFieldType(j) == OSGeo.OGR.FieldType.OFTInteger)
+                            {
+                                OutFeature.SetField(j, InLayer.GetFeature(i).GetFieldAsInteger(j));
+                            }
+                            else
+                            {
+                                OutFeature.SetField(j, InLayer.GetFeature(i).GetFieldAsString(j));
+                            }
+                        }
+
+                        OutLayer.CreateFeature(OutFeature);
+                        OutFeature.Dispose();
+                    }
+                    else
+                    {
+                        System.Diagnostics.Debug.WriteLine("Error during projection.");
+                        InLayer.Dispose();
+                        OutLayer.Dispose();
+                        OutDS.Dispose();
+                        ShapeDriver.Dispose();
+                        return;
+                    }
+                }
+                else
+                {
+                    System.Diagnostics.Debug.WriteLine("Error during projection.");
+                    InLayer.Dispose();
+                    OutLayer.Dispose();
+                    OutDS.Dispose();
+                    ShapeDriver.Dispose();
+                    return;
+                }
+            }
+
+            InFeatureDefn.Dispose();            
+            OutDS.SyncToDisk();
+            Layer = OutLayer; // "Layer" is the setter of the VectorData class, meaning that here the instance is actually being updated.
+            InLayer.Dispose();
+            OutLayerDefn.Dispose();
+            OutLayer.Dispose();
+            OutDS.Dispose();
+            ShapeDriver.Dispose();
+
             _busy = false;
         }
     }

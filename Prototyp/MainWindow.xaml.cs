@@ -457,6 +457,11 @@ namespace Prototyp
 
                     VectorData peek = (new VectorData(openFileDialog.FileName));
                     string geometryType = peek.FeatureCollection[0].Geometry.GeometryType;
+
+                    // Delme start
+                    peek.ReprojectToWGS84();
+                    // Delme end
+
                     peek = null;
                     switch (geometryType)
                     {
