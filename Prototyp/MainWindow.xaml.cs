@@ -29,6 +29,7 @@ o Please make an event for node deletion.
 o Low priority: Add multi-select in toolbar modules selection.
 o Slider default setting is not even used.
 o Sliders have two name captions. How can we access slider properties (and other control properties) during runtime?
+o Do a mandatory WGS84 transformation? If so, where and when, on load, in VectorData constructors, ...?
 
 ------------------------------- */
 
@@ -457,11 +458,6 @@ namespace Prototyp
 
                     VectorData peek = (new VectorData(openFileDialog.FileName));
                     string geometryType = peek.FeatureCollection[0].Geometry.GeometryType;
-
-                    // Delme start
-                    peek.ReprojectToWGS84();
-                    // Delme end
-
                     peek = null;
                     switch (geometryType)
                     {
