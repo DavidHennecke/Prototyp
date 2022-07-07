@@ -29,7 +29,7 @@ o Please make an event for node deletion.
 o Low priority: Add multi-select in toolbar modules selection.
 o Slider default setting is not even used.
 o Sliders have two name captions. How can we access slider properties (and other control properties) during runtime?
-o Do a mandatory WGS84 transformation? If so, where and when, on load, in VectorData constructors, ...?
+o Do a mandatory WGS84 transformation? If so, where and when, on load, in VectorData constructors, ...? Constructors would be a bad idea since then it would be unnecessarily invoked several times, e.g. at receipt via gPRC.
 
 ------------------------------- */
 
