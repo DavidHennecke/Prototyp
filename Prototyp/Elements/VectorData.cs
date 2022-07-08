@@ -700,7 +700,7 @@ namespace Prototyp.Elements
             _busy = false;
         }
 
-        public void ReprojectToWGS84()
+        public int TransformToWGS84() // Returns 0 on success and 1 if an error occurred.
         {
             _busy = true;
             InitGDAL();
@@ -790,22 +790,22 @@ namespace Prototyp.Elements
                     }
                     else
                     {
-                        System.Diagnostics.Debug.WriteLine("Error during projection.");
+                        System.Diagnostics.Debug.WriteLine("Error during tranformation.");
                         InLayer.Dispose();
                         OutLayer.Dispose();
                         OutDS.Dispose();
                         ShapeDriver.Dispose();
-                        return;
+                        return (1);
                     }
                 }
                 else
                 {
-                    System.Diagnostics.Debug.WriteLine("Error during projection.");
+                    System.Diagnostics.Debug.WriteLine("Error during tranformation.");
                     InLayer.Dispose();
                     OutLayer.Dispose();
                     OutDS.Dispose();
                     ShapeDriver.Dispose();
-                    return;
+                    return (1);
                 }
             }
 
@@ -819,6 +819,7 @@ namespace Prototyp.Elements
             ShapeDriver.Dispose();
 
             _busy = false;
+            return (0);
         }
     }
 
