@@ -795,6 +795,7 @@ namespace Prototyp.Elements
                         OutLayer.Dispose();
                         OutDS.Dispose();
                         ShapeDriver.Dispose();
+                        _busy = false;
                         return (1);
                     }
                 }
@@ -805,6 +806,7 @@ namespace Prototyp.Elements
                     OutLayer.Dispose();
                     OutDS.Dispose();
                     ShapeDriver.Dispose();
+                    _busy = false;
                     return (1);
                 }
             }
