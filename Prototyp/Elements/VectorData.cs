@@ -642,6 +642,58 @@ namespace Prototyp.Elements
             return (builder.DataBuffer);
         }
 
+        private void PrepareFields(OSGeo.OGR.Layer InLayer, ref OSGeo.OGR.Layer OutLayer)
+        {
+            OSGeo.OGR.FeatureDefn InFeatureDefn = InLayer.GetLayerDefn();
+
+            OSGeo.OGR.FieldDefn FieldDefn = null;
+            for (int j = 0; j < InFeatureDefn.GetFieldCount(); j++)
+            {
+                if (InLayer.GetFeature(0).GetFieldType(j) == OSGeo.OGR.FieldType.OFTReal)
+                {
+                    FieldDefn = new OSGeo.OGR.FieldDefn(InFeatureDefn.GetFieldDefn(j).GetName(), OSGeo.OGR.FieldType.OFTReal);
+                }
+                else if (InLayer.GetFeature(0).GetFieldType(j) == OSGeo.OGR.FieldType.OFTInteger64)
+                {
+                    FieldDefn = new OSGeo.OGR.FieldDefn(InFeatureDefn.GetFieldDefn(j).GetName(), OSGeo.OGR.FieldType.OFTInteger64);
+                }
+                else if (InLayer.GetFeature(0).GetFieldType(j) == OSGeo.OGR.FieldType.OFTInteger)
+                {
+                    FieldDefn = new OSGeo.OGR.FieldDefn(InFeatureDefn.GetFieldDefn(j).GetName(), OSGeo.OGR.FieldType.OFTInteger);
+                }
+                else
+                {
+                    FieldDefn = new OSGeo.OGR.FieldDefn(InFeatureDefn.GetFieldDefn(j).GetName(), OSGeo.OGR.FieldType.OFTString);
+                }
+
+                OutLayer.CreateField(FieldDefn, 0);
+                FieldDefn.Dispose();
+            }
+        }
+
+        private void CopyFields(OSGeo.OGR.Feature InFeature, int numFields, ref OSGeo.OGR.Feature OutFeature)
+        {
+            for (int j = 0; j < numFields; j++)
+            {
+                if (InFeature.GetFieldType(j) == OSGeo.OGR.FieldType.OFTReal)
+                {
+                    OutFeature.SetField(j, InFeature.GetFieldAsDouble(j));
+                }
+                else if (InFeature.GetFieldType(j) == OSGeo.OGR.FieldType.OFTInteger64)
+                {
+                    OutFeature.SetField(j, InFeature.GetFieldAsInteger64(j));
+                }
+                else if (InFeature.GetFieldType(j) == OSGeo.OGR.FieldType.OFTInteger)
+                {
+                    OutFeature.SetField(j, InFeature.GetFieldAsInteger(j));
+                }
+                else
+                {
+                    OutFeature.SetField(j, InFeature.GetFieldAsString(j));
+                }
+            }
+        }
+
         // Static methods ------------------------------------------------------------------
 
         // Static helper that initializes GDAL.
@@ -726,31 +778,8 @@ namespace Prototyp.Elements
             OSGeo.OGR.Layer OutLayer = OutDS.CreateLayer(LayerName + "_WGS84", ToWGS84, InLayer.GetGeomType(), new string[] { });
 
             OSGeo.OGR.FeatureDefn InFeatureDefn = InLayer.GetLayerDefn();
-            OSGeo.OGR.FeatureDefn OutLayerDefn = InLayer.GetLayerDefn();
 
-            OSGeo.OGR.FieldDefn FieldDefn = null;
-            for (int j = 0; j < InFeatureDefn.GetFieldCount(); j++)
-            {
-                if (InLayer.GetFeature(0).GetFieldType(j) == OSGeo.OGR.FieldType.OFTReal)
-                {
-                    FieldDefn = new OSGeo.OGR.FieldDefn(InFeatureDefn.GetFieldDefn(j).GetName(), OSGeo.OGR.FieldType.OFTReal);                    
-                }
-                else if (InLayer.GetFeature(0).GetFieldType(j) == OSGeo.OGR.FieldType.OFTInteger64)
-                {
-                    FieldDefn = new OSGeo.OGR.FieldDefn(InFeatureDefn.GetFieldDefn(j).GetName(), OSGeo.OGR.FieldType.OFTInteger64);
-                }
-                else if (InLayer.GetFeature(0).GetFieldType(j) == OSGeo.OGR.FieldType.OFTInteger)
-                {
-                    FieldDefn = new OSGeo.OGR.FieldDefn(InFeatureDefn.GetFieldDefn(j).GetName(), OSGeo.OGR.FieldType.OFTInteger);
-                }
-                else
-                {
-                    FieldDefn = new OSGeo.OGR.FieldDefn(InFeatureDefn.GetFieldDefn(j).GetName(), OSGeo.OGR.FieldType.OFTString);
-                }
-
-                OutLayer.CreateField(FieldDefn, 0);
-                FieldDefn.Dispose();
-            }
+            PrepareFields(InLayer, ref OutLayer);
 
             OSGeo.OGR.Geometry OGRGeom;
             for (long i = 0; i < InLayer.GetFeatureCount(0); i++)
@@ -764,26 +793,7 @@ namespace Prototyp.Elements
                         OSGeo.OGR.Feature OutFeature = new OSGeo.OGR.Feature(InFeatureDefn);
                         
                         OutFeature.SetGeometry(OGRGeom);
-
-                        for (int j = 0; j < InFeatureDefn.GetFieldCount(); j++)
-                        {
-                            if (InLayer.GetFeature(i).GetFieldType(j) == OSGeo.OGR.FieldType.OFTReal)
-                            {
-                                OutFeature.SetField(j, InLayer.GetFeature(i).GetFieldAsDouble(j));
-                            }
-                            else if (InLayer.GetFeature(i).GetFieldType(j) == OSGeo.OGR.FieldType.OFTInteger64)
-                            {
-                                OutFeature.SetField(j, InLayer.GetFeature(i).GetFieldAsInteger64(j));
-                            }
-                            else if (InLayer.GetFeature(i).GetFieldType(j) == OSGeo.OGR.FieldType.OFTInteger)
-                            {
-                                OutFeature.SetField(j, InLayer.GetFeature(i).GetFieldAsInteger(j));
-                            }
-                            else
-                            {
-                                OutFeature.SetField(j, InLayer.GetFeature(i).GetFieldAsString(j));
-                            }
-                        }
+                        CopyFields(InLayer.GetFeature(i), InFeatureDefn.GetFieldCount(), ref OutFeature);
 
                         OutLayer.CreateFeature(OutFeature);
                         OutFeature.Dispose();
@@ -815,7 +825,6 @@ namespace Prototyp.Elements
             OutDS.SyncToDisk();
             Layer = OutLayer; // "Layer" is the setter of the VectorData class, meaning that here the instance is actually being updated.
             InLayer.Dispose();
-            OutLayerDefn.Dispose();
             OutLayer.Dispose();
             OutDS.Dispose();
             ShapeDriver.Dispose();
@@ -871,31 +880,8 @@ namespace Prototyp.Elements
             OSGeo.OGR.Layer OutLayer = OutDS.CreateLayer(LayerName + "_Project", ToSRS, InLayer.GetGeomType(), new string[] { });
 
             OSGeo.OGR.FeatureDefn InFeatureDefn = InLayer.GetLayerDefn();
-            OSGeo.OGR.FeatureDefn OutLayerDefn = InLayer.GetLayerDefn();
 
-            OSGeo.OGR.FieldDefn FieldDefn = null;
-            for (int j = 0; j < InFeatureDefn.GetFieldCount(); j++)
-            {
-                if (InLayer.GetFeature(0).GetFieldType(j) == OSGeo.OGR.FieldType.OFTReal)
-                {
-                    FieldDefn = new OSGeo.OGR.FieldDefn(InFeatureDefn.GetFieldDefn(j).GetName(), OSGeo.OGR.FieldType.OFTReal);
-                }
-                else if (InLayer.GetFeature(0).GetFieldType(j) == OSGeo.OGR.FieldType.OFTInteger64)
-                {
-                    FieldDefn = new OSGeo.OGR.FieldDefn(InFeatureDefn.GetFieldDefn(j).GetName(), OSGeo.OGR.FieldType.OFTInteger64);
-                }
-                else if (InLayer.GetFeature(0).GetFieldType(j) == OSGeo.OGR.FieldType.OFTInteger)
-                {
-                    FieldDefn = new OSGeo.OGR.FieldDefn(InFeatureDefn.GetFieldDefn(j).GetName(), OSGeo.OGR.FieldType.OFTInteger);
-                }
-                else
-                {
-                    FieldDefn = new OSGeo.OGR.FieldDefn(InFeatureDefn.GetFieldDefn(j).GetName(), OSGeo.OGR.FieldType.OFTString);
-                }
-
-                OutLayer.CreateField(FieldDefn, 0);
-                FieldDefn.Dispose();
-            }
+            PrepareFields(InLayer, ref OutLayer);
 
             OSGeo.OGR.Geometry OGRGeom;
             for (long i = 0; i < InLayer.GetFeatureCount(0); i++)
@@ -907,26 +893,7 @@ namespace Prototyp.Elements
                     OSGeo.OGR.Feature OutFeature = new OSGeo.OGR.Feature(InFeatureDefn);
 
                     OutFeature.SetGeometry(OGRGeom);
-
-                    for (int j = 0; j < InFeatureDefn.GetFieldCount(); j++)
-                    {
-                        if (InLayer.GetFeature(i).GetFieldType(j) == OSGeo.OGR.FieldType.OFTReal)
-                        {
-                            OutFeature.SetField(j, InLayer.GetFeature(i).GetFieldAsDouble(j));
-                        }
-                        else if (InLayer.GetFeature(i).GetFieldType(j) == OSGeo.OGR.FieldType.OFTInteger64)
-                        {
-                            OutFeature.SetField(j, InLayer.GetFeature(i).GetFieldAsInteger64(j));
-                        }
-                        else if (InLayer.GetFeature(i).GetFieldType(j) == OSGeo.OGR.FieldType.OFTInteger)
-                        {
-                            OutFeature.SetField(j, InLayer.GetFeature(i).GetFieldAsInteger(j));
-                        }
-                        else
-                        {
-                            OutFeature.SetField(j, InLayer.GetFeature(i).GetFieldAsString(j));
-                        }
-                    }
+                    CopyFields(InLayer.GetFeature(i), InFeatureDefn.GetFieldCount(), ref OutFeature);
 
                     OutLayer.CreateFeature(OutFeature);
                     OutFeature.Dispose();
@@ -947,7 +914,6 @@ namespace Prototyp.Elements
             OutDS.SyncToDisk();
             Layer = OutLayer; // "Layer" is the setter of the VectorData class, meaning that here the instance is actually being updated.
             InLayer.Dispose();
-            OutLayerDefn.Dispose();
             OutLayer.Dispose();
             OutDS.Dispose();
             ShapeDriver.Dispose();
