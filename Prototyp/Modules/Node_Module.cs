@@ -173,8 +173,12 @@ namespace Prototyp.Modules
 
         // Private methods -----------------------------------------------------------------
 
+        // Verändert damit die Verlinkungen im Knoteneditor wieder funktionieren, muss nochmal geprüft/überarbeitet werden
         private void ParseXML(VorteXML newModule, bool inMain) //Use inMain = true for MainWindow node editor, inMain = false for ModuleDesigner preview.
         {
+            //Counters for correctly tracking id's
+            int inputRowCounter = 0;
+            int outputRowCounter = 0;
             foreach (VorteXML.ToolRow toolRow in newModule.ToolRows)
             {
                 if (toolRow.rowType == VorteXML.RowType.Input)
@@ -186,7 +190,7 @@ namespace Prototyp.Modules
                             vectorInputPoint = new ValueNodeInputViewModel<Prototyp.Elements.VectorPointData>();
                             if (inMain)
                             {
-                                vectorInputPoint.SetID(i);
+                                vectorInputPoint.SetID(inputRowCounter);
                                 vectorInputPoint.Name = toolRow.inputRow.inputTypes[i].ToString();
                                 // Alternativ: vectorInput.Name = toolRow.inputRow.inputTypes.Last().ToString();
                                 // Grundsätzlich: Was tun bei mehreren validen Inputtypen?
@@ -204,14 +208,14 @@ namespace Prototyp.Modules
                                 vectorInputPoint.Name = toolRow.Name;
                             }
                             Inputs.Add(vectorInputPoint);
-                            break;
+                            continue;
                         }
                         else if (toolRow.inputRow.inputTypes[i] == VorteXML.ConnectorType.VectorLine)
                         {
                             vectorInputLine = new ValueNodeInputViewModel<Prototyp.Elements.VectorLineData>();
                             if (inMain)
                             {
-                                vectorInputLine.SetID(i);
+                                vectorInputLine.SetID(inputRowCounter);
                                 vectorInputLine.Name = toolRow.inputRow.inputTypes[i].ToString();
                                 // Alternativ: vectorInput.Name = toolRow.inputRow.inputTypes.Last().ToString();
                                 // Grundsätzlich: Was tun bei mehreren validen Inputtypen?
@@ -229,14 +233,14 @@ namespace Prototyp.Modules
                                 vectorInputLine.Name = toolRow.Name;
                             }
                             Inputs.Add(vectorInputLine);
-                            break;
+                            continue;
                         }
                         else if (toolRow.inputRow.inputTypes[i] == VorteXML.ConnectorType.VectorPolygon)
                         {
                             vectorInputPolygon = new ValueNodeInputViewModel<Prototyp.Elements.VectorPolygonData>();
                             if (inMain)
                             {
-                                vectorInputPolygon.SetID(i);
+                                vectorInputPolygon.SetID(inputRowCounter);
                                 vectorInputPolygon.Name = toolRow.inputRow.inputTypes[i].ToString();
                                 // Alternativ: vectorInput.Name = toolRow.inputRow.inputTypes.Last().ToString();
                                 // Grundsätzlich: Was tun bei mehreren validen Inputtypen?
@@ -254,14 +258,14 @@ namespace Prototyp.Modules
                                 vectorInputPolygon.Name = toolRow.Name;
                             }
                             Inputs.Add(vectorInputPolygon);
-                            break;
+                            continue;
                         }
                         else if (toolRow.inputRow.inputTypes[i] == VorteXML.ConnectorType.VectorMultiPolygon)
                         {
                             vectorInputMultiPolygon = new ValueNodeInputViewModel<Prototyp.Elements.VectorMultiPolygonData>();
                             if (inMain)
                             {
-                                vectorInputMultiPolygon.SetID(i);
+                                vectorInputMultiPolygon.SetID(inputRowCounter);
                                 vectorInputMultiPolygon.Name = toolRow.inputRow.inputTypes[i].ToString();
                                 // Alternativ: vectorInput.Name = toolRow.inputRow.inputTypes.Last().ToString();
                                 // Grundsätzlich: Was tun bei mehreren validen Inputtypen?
@@ -279,7 +283,7 @@ namespace Prototyp.Modules
                                 vectorInputMultiPolygon.Name = toolRow.Name;
                             }
                             Inputs.Add(vectorInputMultiPolygon);
-                            break;
+                            continue;
                         }
                         else if (toolRow.inputRow.inputTypes[i] == VorteXML.ConnectorType.Raster)
                         {
@@ -287,7 +291,7 @@ namespace Prototyp.Modules
                             if (inMain)
                             {
 
-                                rasterInput.SetID(i);
+                                rasterInput.SetID(inputRowCounter);
                                 rasterInput.Name = toolRow.inputRow.inputTypes[i].ToString();
                                 // Alternativ: rasterInput.Name = toolRow.inputRow.inputTypes.Last().ToString();
                                 // Grundsätzlich: Was tun bei mehreren validen Inputtypen?
@@ -305,7 +309,7 @@ namespace Prototyp.Modules
                                 rasterInput.Name = toolRow.Name;
                             }
                             Inputs.Add(rasterInput);
-                            break;
+                            continue;
                         }
                         //... TODO: Support more types?
                         else
@@ -313,6 +317,7 @@ namespace Prototyp.Modules
                             throw new System.Exception("No implemented input connector type specified.");
                         }
                     }
+                    inputRowCounter++;
                 }
                 else if (toolRow.rowType == VorteXML.RowType.Output)
                 {
@@ -323,7 +328,7 @@ namespace Prototyp.Modules
                             vectorOutputPoint = new ValueNodeOutputViewModel<Elements.VectorPointData>();
                             if (inMain)
                             {
-                                vectorOutputPoint.SetID(i);
+                                vectorOutputPoint.SetID(outputRowCounter);
                                 VectorPointData placeholder = new VectorPointData();
                                 // Name-Editor Implementation
                                 //outNameEditor = new Modules.ViewModels.OutputNameViewModel(vectorOutput.Name);
@@ -343,14 +348,14 @@ namespace Prototyp.Modules
                                 vectorOutputPoint.Name = toolRow.Name;
                             }
                             Outputs.Add(vectorOutputPoint);
-                            break;
+                            continue;
                         }
                         else if (toolRow.outputRow.outputTypes[i] == VorteXML.ConnectorType.VectorLine)
                         {
                             vectorOutputLine = new ValueNodeOutputViewModel<Elements.VectorLineData>();
                             if (inMain)
                             {
-                                vectorOutputLine.SetID(i);
+                                vectorOutputLine.SetID(outputRowCounter);
                                 VectorLineData placeholder = new VectorLineData();
                                 // Name-Editor Implementation
                                 //outNameEditor = new Modules.ViewModels.OutputNameViewModel(vectorOutput.Name);
@@ -370,14 +375,14 @@ namespace Prototyp.Modules
                                 vectorOutputLine.Name = toolRow.Name;
                             }
                             Outputs.Add(vectorOutputLine);
-                            break;
+                            continue;
                         }
                         else if (toolRow.outputRow.outputTypes[i] == VorteXML.ConnectorType.VectorPolygon)
                         {
                             vectorOutputPolygon = new ValueNodeOutputViewModel<Elements.VectorPolygonData>();
                             if (inMain)
                             {
-                                vectorOutputPolygon.SetID(i);
+                                vectorOutputPolygon.SetID(outputRowCounter);
                                 VectorPolygonData placeholder = new VectorPolygonData();
                                 // Name-Editor Implementation
                                 //outNameEditor = new Modules.ViewModels.OutputNameViewModel(vectorOutput.Name);
@@ -397,14 +402,14 @@ namespace Prototyp.Modules
                                 vectorOutputPolygon.Name = toolRow.Name;
                             }
                             Outputs.Add(vectorOutputPolygon);
-                            break;
+                            continue;
                         }
                         else if (toolRow.outputRow.outputTypes[i] == VorteXML.ConnectorType.VectorMultiPolygon)
                         {
                             vectorOutputMultiPolygon = new ValueNodeOutputViewModel<Elements.VectorMultiPolygonData>();
                             if (inMain)
                             {
-                                vectorOutputMultiPolygon.SetID(i);
+                                vectorOutputMultiPolygon.SetID(outputRowCounter);
                                 VectorMultiPolygonData placeholder = new VectorMultiPolygonData();
                                 // Name-Editor Implementation
                                 //outNameEditor = new Modules.ViewModels.OutputNameViewModel(vectorOutput.Name);
@@ -424,14 +429,14 @@ namespace Prototyp.Modules
                                 vectorOutputMultiPolygon.Name = toolRow.Name;
                             }
                             Outputs.Add(vectorOutputMultiPolygon);
-                            break;
+                            continue;
                         }
                         else if (toolRow.outputRow.outputTypes[i] == VorteXML.ConnectorType.Raster)
                         {
                             rasterOutput = new ValueNodeOutputViewModel<Elements.RasterData>();
                             if (inMain)
                             {
-                                rasterOutput.SetID(i);
+                                rasterOutput.SetID(outputRowCounter);
                                 RasterData placeholder = new RasterData();
                                 // Name-Editor Implementation
                                 //outNameEditor = new Modules.ViewModels.OutputNameViewModel(rasterOutput.Name);
@@ -451,7 +456,7 @@ namespace Prototyp.Modules
                                 rasterOutput.Name = toolRow.Name;
                             }
                             Outputs.Add(rasterOutput);
-                            break;
+                            continue;
                         }
                         //... TODO: Support more types?
                         else
@@ -459,6 +464,7 @@ namespace Prototyp.Modules
                             throw new System.Exception("An unimplemented output connector type was specified.");
                         }
                     }
+                    outputRowCounter++;
                 }
                 else if (toolRow.rowType == VorteXML.RowType.Control)
                 {
