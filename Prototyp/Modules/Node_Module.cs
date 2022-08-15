@@ -510,15 +510,14 @@ namespace Prototyp.Modules
         public Google.Protobuf.WellKnownTypes.Struct ParamsToProtobufStruct()
         {
             var Params = new Google.Protobuf.WellKnownTypes.Struct();
+
             foreach (NodeInputViewModel i in Inputs.Items)
             {
                 if (i.Editor != null)
                 {
                     if (i.Editor is Prototyp.Modules.ViewModels.FloatSliderViewModel)
                     {
-                        Params.Fields.Add(i.Name, Google.Protobuf.WellKnownTypes.Value.ForNumber(
-                            ((ViewModels.FloatSliderViewModel)i.Editor).FloatValue)
-                        );
+                        Params.Fields.Add(i.Name, Google.Protobuf.WellKnownTypes.Value.ForNumber(((ViewModels.FloatSliderViewModel)i.Editor).FloatValue));
                     }
                     else if (i.Editor is Prototyp.Modules.ViewModels.DropDownMenuViewModel)
                     {
