@@ -29,6 +29,7 @@ o Please make an event for node deletion.
 o Low priority: Add multi-select in toolbar modules selection.
 o Slider default setting is not even used.
 o Sliders have two name captions. How can we access slider properties (and other control properties) during runtime?
+o Do a mandatory WGS84 transformation? If so, where and when, on load, in VectorData constructors, ...? Constructors would be a bad idea since then it would be unnecessarily invoked several times, e.g. at receipt via gPRC.
 
 ------------------------------- */
 
@@ -778,15 +779,6 @@ namespace Prototyp
                     nc.InputNode = (Node_Module)conn.Input.Parent;
                     nc.InputChannel = conn.Input.GetID();
 
-                    //////////// Delete us, we're here just for demonstration purposes:
-
-                    string JsonParams = ((Node_Module)conn.Output.Parent).ParamsToJson();
-
-                    // @Markus: Wenn Du diesen Json-String deserialisieren willst, bruachst Du dafür die Klasse "ParamData" aus Node_Module.cs. Also etwa so hier:
-                    Node_Module.ParamData Parameter = Newtonsoft.Json.JsonConvert.DeserializeObject<Node_Module.ParamData>(JsonParams);
-
-                    //////////// Delete us, we're here just for demonstration purposes.
-
                     //Add output module to the dictionary in case they aren't already
                     var outputModule = (Node_Module)conn.Output.Parent;
                     if (!moduleConnections.ContainsKey(outputModule))
@@ -1000,17 +992,34 @@ namespace Prototyp
                 }
                 //  STEP 3:
                 //  IMMEDIATELY SEND DATA TO ALL DOWNSTREAM NODES
-                var sendingTasks = new List<Grpc.Core.AsyncUnaryCall<GrpcClient.SendResponse>>();
+                var sendingTasks = new List<Grpc.Core.AsyncUnaryCall<GrpcClient.TransferResponse>>();
                 foreach (var send in sendList)
                 {
-                    System.Diagnostics.Trace.WriteLine("Sending data from " + node.Url + "[" + send.OutputChannel + "] to " + send.InputNode.Url + "[" + send.InputChannel + "]");
-                    var sendRequest = new GrpcClient.ChannelInfo
+                    Uri fromUrl = new Uri(node.Url, UriKind.Absolute);
+                    Uri toUrl = new Uri(send.InputNode.Url, UriKind.Absolute);
+                    //Check if it this is a remote -> local send (which can't be a normal send, but has to be turned around to be a request from local to remote)
+                    if ( !fromUrl.IsLoopback && toUrl.IsLoopback )
                     {
-                        TargetNodeUrl = send.InputNode.Url,
-                        SourceChannelID = send.OutputChannel,
-                        TargetChannelID = send.InputChannel
-                    };
-                    sendingTasks.Add(node.grpcConnection.SendDataAsync(sendRequest));
+                        System.Diagnostics.Trace.WriteLine(send.InputNode.Url + "[" + send.InputChannel + "]" + "requesting data from " + node.Url + "[" + send.OutputChannel + "]");
+                        var receiveRequest = new GrpcClient.ChannelInfo
+                        {
+                            TargetNodeUrl = node.Url,
+                            SourceChannelID = send.OutputChannel,
+                            TargetChannelID = send.InputChannel
+                        };
+                        sendingTasks.Add(send.InputNode.grpcConnection.ReceiveDataAsync(receiveRequest));
+                    } 
+                    else
+                    {
+                        System.Diagnostics.Trace.WriteLine("Sending data from " + node.Url + "[" + send.OutputChannel + "] to " + send.InputNode.Url + "[" + send.InputChannel + "]");
+                        var sendRequest = new GrpcClient.ChannelInfo
+                        {
+                            TargetNodeUrl = send.InputNode.Url,
+                            SourceChannelID = send.OutputChannel,
+                            TargetChannelID = send.InputChannel
+                        };
+                        sendingTasks.Add(node.grpcConnection.SendDataAsync(sendRequest));
+                    }
                 }
                 await Task.WhenAll(sendingTasks.Select(c => c.ResponseAsync));
                 return node;

@@ -7,19 +7,21 @@ import "google/protobuf/struct.proto";
 
 service ControlConnector {
 	rpc RunProcess (RunRequest) returns (stream RunUpdate);
-	rpc SendData (ChannelInfo) returns (SendResponse);
+	rpc SendData (ChannelInfo) returns (TransferResponse);
+	rpc ReceiveData (ChannelInfo) returns (TransferResponse);
 	rpc SetLayer (stream ByteStream) returns (LayerResponse);
 
 	rpc StartUI (UIRequest) returns (UIResponse);
-	rpc SendSettings (Settings) returns (SettingsResponse);
+	rpc SendSettings (Settings) returns (ChangeList);
 
 	rpc StartRealtime (RealtimeChannels) returns (RealtimeResponse);
+	rpc PollRealtime (PollMessage) returns (ChangeList);
 	rpc StopRealtime (RealtimeStopRequest) returns (RealtimeResponse);
 }
 
 message ChannelInfo {
 	int32 sourceChannelID = 1;
-	string targetNodeUrl = 2;
+	string targetNodeUrl = 2; //Represents the receiving module when SendData and the sending module when ReceiveData
 	int32 targetChannelID = 3;
 }
 
@@ -30,7 +32,15 @@ message RunUpdate {
 	int32 progress = 1;
 }
 
-message SendResponse {
+message PollMessage {
+
+}
+
+message ChangeList {
+
+}
+
+message TransferResponse { //Affirmation that a data transfer between modules happened, possible in both directions
 }
 
 message ByteStream {
@@ -54,9 +64,6 @@ message UIResponse {
 
 message Settings {
 	google.protobuf.Struct mapping = 1;
-}
-
-message SettingsResponse{
 }
 
 message RealtimeChannels{
