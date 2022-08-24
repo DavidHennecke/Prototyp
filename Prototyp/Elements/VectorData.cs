@@ -717,6 +717,48 @@ namespace Prototyp.Elements
             return (System.Convert.FromBase64String(ByteStr));
         }
 
+        public static byte[] FindData(System.Collections.Generic.List<Google.Protobuf.ByteString> data)
+        {
+            // Find the actual data. There seem to be some leading bytes in front (varying many)...?!?
+            int startPos = 0;
+            for (int i = 0; i < data[0].Length; i++)
+            {
+                if (data[0][i] == 0x66 & data[0][i + 1] == 0x67 & data[0][i + 2] == 0x62 & data[0][i + 4] == 0x66 & data[0][i + 5] == 0x67 & data[0][i + 6] == 0x62)
+                {
+                    startPos = i;
+                    break;
+                }
+            }
+
+            int targetPos = 0;
+            byte[] result = new byte[data.Sum(a => a.Length) - (startPos * data.Count)];
+            for (int i = 0; i < data.Count; i++)
+            {
+                for (int j = startPos; j < data[i].Length; j++)
+                {
+                    result[targetPos] = data[i][j];
+                    targetPos++;
+                }
+            }
+
+            return result;
+        }
+
+        public static bool CheckData(VectorData vectorData)
+        {
+            if (vectorData != null)
+            {
+                System.Console.WriteLine("Vector data seem to be okay.");
+                System.Console.WriteLine("Name: " + vectorData.Name + ", number of features: " + vectorData.FeatureCollection.Count.ToString() + ", geometry type: " + vectorData.FeatureCollection[0].Geometry.GeometryType + ".");
+                return true;
+            }
+            else
+            {
+                System.Console.WriteLine("Some problem ocurred while creating the vector data instance.");
+                return false;
+            }
+        }
+
         // Methods -------------------------------------------------------------------------
 
         public string ToString(ToStringParams? Params)
