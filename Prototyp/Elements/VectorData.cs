@@ -156,7 +156,7 @@ namespace Prototyp.Elements
         // First, a Base64 coded ByteArray is assumed. If that's not it, it is assumed that the string
         // contains a file name. If that's an fgb file, open it. If not, try GDAL.
         // Examples:
-        // VectorData vectorData = new VectorData(MyByteArray;
+        // VectorData vectorData = new VectorData(MyByteArray);
         // VectorData vectorData = new VectorData("C:/Temp/UScounties.fgb");
         // VectorData vectorData = new VectorData("C:/Temp/UScounties.shp");
         public VectorData(string MyString)
