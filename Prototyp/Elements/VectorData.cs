@@ -608,6 +608,7 @@ namespace Prototyp.Elements
             }
             string Organization = _SRS.GetAuthorityName(null);
             int Code = System.Convert.ToInt32(_SRS.GetAuthorityCode(null));
+            string CodeString = Code.ToString();
 
             FlatBuffers.FlatBufferBuilder builder = new FlatBuffers.FlatBufferBuilder(1024);
 
@@ -618,12 +619,17 @@ namespace Prototyp.Elements
                                                        builder.CreateString(CRSName),
                                                        builder.CreateString(""),
                                                        builder.CreateString(WKTString),
-                                                       builder.CreateString(Code.ToString()));
+                                                       builder.CreateString(CodeString)
+                                                       );
 
             FlatBuffers.StringOffset NameO = builder.CreateString("");
             if (_name != null) NameO = builder.CreateString(_name);
             FlatBuffers.StringOffset DescO = builder.CreateString("");
             if (_description != null) DescO = builder.CreateString(_description);
+            FlatBuffers.StringOffset MetaO = builder.CreateString("    "); // Padding-Bytes als rudimentäre Lösung für das Padding-Problem.
+            FlatBuffers.VectorOffset Env = new FlatBuffers.VectorOffset(0);
+            ushort idx = 0;
+            if (index != null) idx = 16;
 
             FlatBuffers.VectorOffset? columnsOffset = null;
             if (columns != null)
@@ -636,23 +642,21 @@ namespace Prototyp.Elements
 
             FlatGeobuf.Header.StartHeader(builder);
 
-            FlatGeobuf.Header.AddCrs(builder, MyCRS);
+            FlatGeobuf.Header.AddName(builder, NameO);
+            FlatGeobuf.Header.AddEnvelope(builder, Env);
             FlatGeobuf.Header.AddGeometryType(builder, geometryType);
-            if (_name != null) FlatGeobuf.Header.AddName(builder, NameO);
-            if (_description != null) FlatGeobuf.Header.AddDescription(builder, DescO);
-            if (dimensions == 3) FlatGeobuf.Header.AddHasZ(builder, true);
-            if (dimensions == 4) FlatGeobuf.Header.AddHasM(builder, true);
-            if (columnsOffset.HasValue) FlatGeobuf.Header.AddColumns(builder, columnsOffset.Value);
-            if (index != null)
-            {
-                FlatGeobuf.Header.AddIndexNodeSize(builder, 16);
-            }
-            else
-            {
-                FlatGeobuf.Header.AddIndexNodeSize(builder, 0);
-            }
+            if (dimensions == 3) FlatGeobuf.Header.AddHasZ(builder, true); else FlatGeobuf.Header.AddHasZ(builder, false);
+            if (dimensions == 4) FlatGeobuf.Header.AddHasM(builder, true); else FlatGeobuf.Header.AddHasM(builder, false);
+            FlatGeobuf.Header.AddHasT(builder, false);
+            FlatGeobuf.Header.AddHasTm(builder, false);
+            if (columnsOffset.HasValue) FlatGeobuf.Header.AddColumns(builder, columnsOffset.Value); else FlatGeobuf.Header.AddColumns(builder, new FlatBuffers.VectorOffset(0));
+            FlatGeobuf.Header.AddFeaturesCount(builder, (ulong) 0);
+            FlatGeobuf.Header.AddIndexNodeSize(builder, idx);
+            FlatGeobuf.Header.AddCrs(builder, MyCRS);
+            FlatGeobuf.Header.AddTitle(builder, NameO);
+            FlatGeobuf.Header.AddDescription(builder, DescO);
+            FlatGeobuf.Header.AddMetadata(builder, MetaO);
 
-            FlatGeobuf.Header.AddFeaturesCount(builder, count);
             FlatBuffers.Offset<FlatGeobuf.Header> offset = FlatGeobuf.Header.EndHeader(builder);
 
             builder.FinishSizePrefixed(offset.Value);
