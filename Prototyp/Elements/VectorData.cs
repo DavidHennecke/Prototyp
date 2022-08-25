@@ -791,7 +791,10 @@ namespace Prototyp.Elements
                 }
                 else if (Params == ToStringParams.ByteString)
                 {
-                    MyString = ByteArrToString(_vecData);
+                    NetTopologySuite.Features.FeatureCollection MyFC = FlatGeobuf.NTS.FeatureCollectionConversions.Deserialize(_vecData);
+                    byte[] retVal = IntSerialize(MyFC, FlatGeobuf.GeometryType.Unknown);
+                    //byte[] retVal = FlatGeobuf.NTS.FeatureCollectionConversions.Serialize(MyFC, FlatGeobuf.GeometryType.Unknown);
+                    MyString = ByteArrToString(retVal);
                 }
                 else
                 {
