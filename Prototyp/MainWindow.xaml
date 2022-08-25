@@ -113,13 +113,13 @@
                                     <RowDefinition Height="*"/>
                                     <RowDefinition Height="*"/>
                                 </Grid.RowDefinitions>
-                                    <DockPanel Grid.Row="0">
+                                <DockPanel Grid.Row="0">
 
                                 </DockPanel>
                                 <DockPanel Grid.Row="1">
 
-                                    </DockPanel>
-                                </Grid>
+                                </DockPanel>
+                            </Grid>
                         </DockPanel>
                     </Border>
                 </DockPanel>
@@ -180,65 +180,11 @@
 
         <Grid Grid.Row="2">
             <Grid.ColumnDefinitions>
-                <ColumnDefinition Width="Auto"/>
-                <ColumnDefinition Width="6*"/>
+                <ColumnDefinition Width="12*"/>
+
             </Grid.ColumnDefinitions>
-            <Border BorderBrush="#FF212225" Grid.Column="0" Margin="5,5,2,5" BorderThickness="1" CornerRadius="2 2 0 0" DockPanel.Dock="Top" Width="Auto">
-                <Grid x:Name="Workbench1" Background="#FF272727" x:FieldModifier="public">
-                    <Grid.RowDefinitions>
-                        <RowDefinition Height="32"/>
-                        <RowDefinition Height="3"/>
-                        <RowDefinition Height="Auto"/>
-                        <RowDefinition Height="Auto"/>
-                        <RowDefinition Height="Auto"/>
-                    </Grid.RowDefinitions>
-                    <GridSplitter Grid.Row="3" HorizontalAlignment="Stretch" VerticalAlignment="Top" Height="4" Width="Auto" Margin="10 0 10 0" Background="Transparent"/>
-                    <DockPanel Grid.Row="0"  Background="#FF212225" LastChildFill="False" MinWidth="200">
-                        <Button x:Name="NewFileButton1" Content="file" Background="#FF212225" FontFamily="{StaticResource FontAwesomeRegular}" VerticalAlignment="Top" DockPanel.Dock="Left" Width="32" Height="32" FontSize="14"/>
-                        <Button x:Name="OpenFileButton1" Content="folder-open" Background="#FF212225" FontFamily="{StaticResource FontAwesomeRegular}" VerticalAlignment="Top" DockPanel.Dock="Left" Width="32" Height="32" FontSize="14"/>
-                        <Button x:Name="SaveButton1" Content="save" Background="#FF212225" FontFamily="{StaticResource FontAwesomeRegular}" VerticalAlignment="Top" DockPanel.Dock="Left" Width="32" Height="32" FontSize="14"/>
-                        <Button x:Name="VectorSettingsButton" Content="cog" Background="#FF212225" FontFamily="{StaticResource FontAwesomeSolid}" VerticalAlignment="Top" DockPanel.Dock="Right" Width="32" Height="32" FontSize="14"/>
-                    </DockPanel>
-
-                    <!--<Border  Grid.Row="1" BorderThickness="2" CornerRadius="2" BorderBrush="#66CDAA" Margin="10 0 10 0">
-
-                    </Border>-->
-
-                    <Border Grid.Row="1" BorderThickness="0 1 0 0" BorderBrush="#FF111111" Margin="0 0 0 0" Padding="0">
-
-                    </Border>
-
-                    <DockPanel Grid.Row="2">
-
-                        <TextBlock DockPanel.Dock="Top" Text="Vector data" Margin="15 5 0 10" FontWeight="Bold" FontSize="16"/>
-                        <!--<Border DockPanel.Dock="Top" BorderThickness="0 0 0 1" BorderBrush="#66CDAA" Margin="15 0 10 0" Width="50" HorizontalAlignment="Left"/>-->
-
-                        <ListView DockPanel.Dock="Top" Grid.Row="1" x:Name="TableOfContentsVector" AllowDrop="False" MinHeight="30" Margin="0 0 0 10" >
-
-                        </ListView>
-                    </DockPanel>
-
-                    <DockPanel Grid.Row="3">
-
-                        <TextBlock DockPanel.Dock="Top" Text="Raster data" Margin="15 5 0 10" FontWeight="Bold" FontSize="16"/>
-                        <!--<Border DockPanel.Dock="Top" BorderThickness="0 0 0 1" BorderBrush="#66CDAA" Margin="15 0 10 0" Width="50" HorizontalAlignment="Left"/>-->
-
-                        <ListView DockPanel.Dock="Top" Grid.Row="1" x:Name="TableOfContentsRaster" AllowDrop="False" MinHeight="30" Margin="0 0 0 10" >
-
-                        </ListView>
-                    </DockPanel>
-
-                    <DockPanel Grid.Row="4">
-                        <Border DockPanel.Dock="Top" BorderThickness="0 0 0 1" BorderBrush="#FF111111" Margin="5 0 5 0"  HorizontalAlignment="Stretch"/>
-                        <TextBlock DockPanel.Dock="Top" Text="Table" Margin="15 5 0 10" FontWeight="Bold" FontSize="16"/>
-                        <!--<Border DockPanel.Dock="Top" BorderThickness="0 0 0 1" BorderBrush="#66CDAA" Margin="15 0 10 0" Width="50" HorizontalAlignment="Left"/>-->
-
-
-                        <ListView DockPanel.Dock="Top" Grid.Row="1" x:Name="TableOfContentsTable" AllowDrop="True" MinHeight="30"/>
-                    </DockPanel>
-                </Grid>
-            </Border>
-            <ComboBox x:Name="ToolsComboBox" Visibility="Visible" MinWidth="250" SelectionChanged="ComboSelectionChanged" KeyUp="ComboKeyUp" LostFocus="ComboLostFocus" Grid.Column="1" Margin="179,129,0,0">
+            
+            <ComboBox x:Name="ToolsComboBox" Visibility="Visible" MinWidth="250" SelectionChanged="ComboSelectionChanged" KeyUp="ComboKeyUp" LostFocus="ComboLostFocus" Grid.Column="0" Margin="179,129,0,0">
                 <ComboBox.ItemTemplate>
                     <DataTemplate>
                         <StackPanel Orientation="Horizontal">
@@ -249,9 +195,9 @@
                     </DataTemplate>
                 </ComboBox.ItemTemplate>
             </ComboBox>
-            <Border BorderBrush="#FF212225" Grid.Column="1" Margin="0,5,5,5" BorderThickness="1" CornerRadius="2 2 0 0" DockPanel.Dock="Top">
-                
-                <nodenetwork:NetworkView x:Name="networkView" Drop="DropTargetEventNodeEditor" Cursor="Hand" Background="#FF52555C" KeyUp="ComboKeyUp"/>
+            <Border BorderBrush="#FF212225" Grid.Column="1" Margin="5,5,5,5" BorderThickness="1" CornerRadius="2 2 0 0" DockPanel.Dock="Top">
+
+                <nodenetwork:NetworkView x:Name="networkView" Cursor="Hand" Background="#FF52555C" KeyUp="ComboKeyUp"/>
             </Border>
             <GridSplitter Grid.Column="0" Width="2" VerticalAlignment="Stretch" Background="#35363A"/>
         </Grid>

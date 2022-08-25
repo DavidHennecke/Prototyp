@@ -465,8 +465,7 @@ namespace Prototyp.Elements
                     {
                         vectorData.Add(new VectorData(v.RawData));
                     }
-                    MainWindowHelpers mainWindowHelpers = new MainWindowHelpers();
-                    mainWindowHelpers.AddTreeViewChild(vectorData.Last());
+
                 }
 
                 VectorImport_Module importNode = null;
@@ -519,8 +518,6 @@ namespace Prototyp.Elements
                     {
                         rasterData.Add(new RasterData(r.RawData));
                     }
-                    MainWindowHelpers mainWindowHelpers = new MainWindowHelpers();
-                    mainWindowHelpers.AddTreeViewChild(rasterData.Last());
                 }
 
                 RasterImport_Module importNode = new RasterImport_Module(r.Name, rasterData.Last().FileType, rasterData.Last().ID);

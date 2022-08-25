@@ -334,8 +334,8 @@ namespace Prototyp
             //Problem hier beschrieben https://github.com/openssl/openssl/issues/1418
 
             //Find lowest available port
-            //int port = Node_Module.GetNextPort(BASEPORT);
-            int port = 5000;
+            int port = Node_Module.GetNextPort(BASEPORT);
+            //int port = 5000;
 
             GrpcClient.ControlConnector.ControlConnectorClient grpcConnection;
 
@@ -349,7 +349,7 @@ namespace Prototyp
             moduleProcess.StartInfo = moduleProcessInfo;
             try
             {
-                //moduleProcess.Start();
+                moduleProcess.Start();
 
                 // Establish GRPC connection
                 // TODO: nicht nur localhost
@@ -489,8 +489,45 @@ namespace Prototyp
                     //    if (ByteArr1[i] != ByteArr2[i]) MessageBox.Show("Index: " + i.ToString() + ", ByteArr1: " + ByteArr1[i].ToString("X") + ", ByteArr2: " + ByteArr2[i].ToString("X"));
                     //}
                     //// Testcode end
-                    MainWindowHelpers mainWindowHelpers = new MainWindowHelpers();
-                    mainWindowHelpers.AddTreeViewChild(vectorData[vectorData.Count - 1]);
+
+                    //Add vector data to node editor
+                    for (int i = 0; i < vectorData.Count; i++)
+                    {
+                        if (vectorData[i].ID == vectorData[vectorData.Count - 1].ID)
+                        {
+                            VectorImport_Module importNode = null;
+
+                            Type vecType = vectorData[i].GetType();
+                            if (vecType.Name == "VectorPointData")
+                            {
+                                importNode = new VectorImport_ModulePoint(vectorData[i].Name, vectorData[i].FeatureCollection[0].Geometry.GeometryType, vectorData[i].ID);
+                            }
+                            else if (vecType.Name == "VectorLineData")
+                            {
+                                importNode = new VectorImport_ModuleLine(vectorData[i].Name, vectorData[i].FeatureCollection[0].Geometry.GeometryType, vectorData[i].ID);
+                            }
+                            else if (vecType.Name == "VectorPolygonData")
+                            {
+                                importNode = new VectorImport_ModulePolygon(vectorData[i].Name, vectorData[i].FeatureCollection[0].Geometry.GeometryType, vectorData[i].ID);
+                            }
+                            else if (vecType.Name == "VectorMultiPolygonData")
+                            {
+                                importNode = new VectorImport_ModuleMultiPolygon(vectorData[i].Name, vectorData[i].FeatureCollection[0].Geometry.GeometryType, vectorData[i].ID);
+                            }
+                            else
+                            {
+                                // There should be nothing here.
+                            }
+
+                            //Node Position
+                            Point TempPoint;
+                            TempPoint.X = 20 / networkView.ViewModel.ZoomFactor;
+                            TempPoint.Y = 20 / networkView.ViewModel.ZoomFactor;
+                            importNode.Position = TempPoint;
+                            network.Nodes.Add(importNode);
+                            
+                        }
+                    }
                 }
                 else if (Path.GetExtension(openFileDialog.FileName).ToLower() == ".tif" | Path.GetExtension(openFileDialog.FileName).ToLower() == ".asc" | Path.GetExtension(openFileDialog.FileName).ToLower() == ".sdat") //TODO: Auch andere GDAL-Raster-Dateitypen möglich.
                 {
@@ -518,8 +555,26 @@ namespace Prototyp
                     //    if (ByteArr1[i] != ByteArr2[i]) MessageBox.Show("Index: " + i.ToString() + ", ByteArr1: " + ByteArr1[i].ToString("X") + ", ByteArr2: " + ByteArr2[i].ToString("X"));
                     //}
                     //// Testcode end
-                    MainWindowHelpers mainWindowHelpers = new MainWindowHelpers();
-                    mainWindowHelpers.AddTreeViewChild(rasterData[rasterData.Count - 1]);
+
+
+                    //Add raster data to node editor
+                    for (int i = 0; i < rasterData.Count; i++)
+                    {
+                        if (rasterData[i].ID == rasterData[rasterData.Count - 1].ID)
+                        {
+                            RasterImport_Module importNode = new RasterImport_Module(rasterData[i].Name, rasterData[i].FileType, rasterData[i].ID);
+
+                            //Node Position
+                            //Point TempPoint;
+                            //TempPoint = e.GetPosition(networkView);
+                            //TempPoint.X = (TempPoint.X - networkView.ViewModel.DragOffset.X) / networkView.ViewModel.ZoomFactor;
+                            //TempPoint.Y = (TempPoint.Y - networkView.ViewModel.DragOffset.Y) / networkView.ViewModel.ZoomFactor;
+                            //importNode.Position = TempPoint;
+
+                            network.Nodes.Add(importNode);
+                            break;
+                        }
+                    }
                 }
                 //else if (...) //TODO: Ggf. andere Datentypen...
                 //{
@@ -535,78 +590,6 @@ namespace Prototyp
             }
         }
 
-        //Objekt wird in den NodeEditor gezogen
-        public void DropTargetEventNodeEditor(object sender, DragEventArgs e)
-        {
-            if (((string)e.Data.GetData("Type")).ToLower() == "vector")
-            {
-                for (int i = 0; i < vectorData.Count; i++)
-                {
-                    if (vectorData[i].ID.ToString() == (string)e.Data.GetData("ID"))
-                    {
-                        VectorImport_Module importNode = null;
-
-                        Type vecType = vectorData[i].GetType();
-                        if (vecType.Name == "VectorPointData")
-                        {
-                            importNode = new VectorImport_ModulePoint(vectorData[i].Name, vectorData[i].FeatureCollection[0].Geometry.GeometryType, vectorData[i].ID);
-                        }
-                        else if (vecType.Name == "VectorLineData")
-                        {
-                            importNode = new VectorImport_ModuleLine(vectorData[i].Name, vectorData[i].FeatureCollection[0].Geometry.GeometryType, vectorData[i].ID);
-                        }
-                        else if (vecType.Name == "VectorPolygonData")
-                        {
-                            importNode = new VectorImport_ModulePolygon(vectorData[i].Name, vectorData[i].FeatureCollection[0].Geometry.GeometryType, vectorData[i].ID);
-                        }
-                        else if (vecType.Name == "VectorMultiPolygonData")
-                        {
-                            importNode = new VectorImport_ModuleMultiPolygon(vectorData[i].Name, vectorData[i].FeatureCollection[0].Geometry.GeometryType, vectorData[i].ID);
-                        }
-                        else
-                        {
-                            // There should be nothing here.
-                        }
-
-                        Point TempPoint;
-                        TempPoint = e.GetPosition(networkView);
-                        TempPoint.X = (TempPoint.X - networkView.ViewModel.DragOffset.X) / networkView.ViewModel.ZoomFactor;
-                        TempPoint.Y = (TempPoint.Y - networkView.ViewModel.DragOffset.Y) / networkView.ViewModel.ZoomFactor;
-                        importNode.Position = TempPoint;
-
-                        network.Nodes.Add(importNode);
-                        break;
-                    }
-                }
-            }
-            else if (((string)e.Data.GetData("Type")).ToLower() == "raster")
-            {
-                for (int i = 0; i < rasterData.Count; i++)
-                {
-                    if (rasterData[i].ID.ToString() == (string)e.Data.GetData("ID"))
-                    {
-                        RasterImport_Module importNode = new RasterImport_Module(rasterData[i].Name, rasterData[i].FileType, rasterData[i].ID);
-
-                        Point TempPoint;
-                        TempPoint = e.GetPosition(networkView);
-                        TempPoint.X = (TempPoint.X - networkView.ViewModel.DragOffset.X) / networkView.ViewModel.ZoomFactor;
-                        TempPoint.Y = (TempPoint.Y - networkView.ViewModel.DragOffset.Y) / networkView.ViewModel.ZoomFactor;
-                        importNode.Position = TempPoint;
-
-                        network.Nodes.Add(importNode);
-                        break;
-                    }
-                }
-            }
-            //else if (...) //TODO: Ggf. andere Datentypen...
-            //{
-
-            //}
-            else
-            {
-
-            }
-        }
 
         private void ComboSelectionChanged(object sender, System.Windows.Controls.SelectionChangedEventArgs e)
         {
@@ -1099,70 +1082,7 @@ namespace Prototyp
                     {
                         TerminateServer(module);
                     }
-                    else if (node is VectorImport_Module v)
-                    {
-                        //// First check whether there is another importer that also employs the same data source. If yes, data must not be deleted.
-                        //foreach (NodeViewModel node2 in network.Nodes.Items)
-                        //{
-                        //    if (node2 is VectorImport_Module v2)
-                        //    {
-                        //        if (v2 != v)
-                        //        {
-                        //            if (v2.IntID == v.IntID)
-                        //            {
-                        //                // Found one. Don't delete data.
-                        //                DeleteData = false;
-                        //            }
-                        //        }
-                        //    }
-                        //}
-
-                        //if (DeleteData)
-                        //{
-                        //    // Okay, now it's save to delete the data. Find entries and off you go.
-                        //    foreach (object t in TableOfContentsVector.Items)
-                        //    {
-                        //        if (((Prototyp.Custom_Controls.VectorListViewItem)t).Uid == v.IntID.ToString())
-                        //        {
-                        //            RemoveVectorData(((Prototyp.Custom_Controls.VectorListViewItem)t).Uid);
-                        //            TableOfContentsVector.Items.Remove(t);
-                        //            break;
-                        //        }
-                        //    }
-                        //}
-                    }
-                    else if (node is RasterImport_Module r)
-                    {
-                        //// First check whether there is another importer that also employs the same data source. If yes, data must not be deleted.
-                        //foreach (NodeViewModel node2 in network.Nodes.Items)
-                        //{
-                        //    if (node2 is RasterImport_Module r2)
-                        //    {
-                        //        if (r2 != r)
-                        //        {
-                        //            if (r2.IntID == r.IntID)
-                        //            {
-                        //                // Found one. Don't delete data.
-                        //                DeleteData = false;
-                        //            }
-                        //        }
-                        //    }
-                        //}
-
-                        //if (DeleteData)
-                        //{
-                        //    // Okay, now it's save to delete the data. Find entries and off you go.
-                        //    foreach (object t in TableOfContentsRaster.Items)
-                        //    {
-                        //        if (((Prototyp.Custom_Controls.RasterListViewItem)t).Uid == r.IntID.ToString())
-                        //        {
-                        //            RemoveRasterData(((Prototyp.Custom_Controls.RasterListViewItem)t).Uid);
-                        //            TableOfContentsRaster.Items.Remove(t);
-                        //            break;
-                        //        }
-                        //    }
-                        //}
-                    }
+                    
 
                     network.Nodes.Remove(node);
                 }
