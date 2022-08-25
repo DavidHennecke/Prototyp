@@ -371,7 +371,8 @@ namespace Prototyp.Elements
             InitGDAL();
 
             OSGeo.OGR.Driver MyDriver = OSGeo.OGR.Ogr.GetDriverByName("ESRI Shapefile");
-            OSGeo.OGR.DataSource MyDS = MyDriver.CreateDataSource("/vsimem/Temporary", new string[] { });
+            string RandomFilename = System.IO.Path.GetRandomFileName();
+            OSGeo.OGR.DataSource MyDS = MyDriver.CreateDataSource("/vsimem/" + RandomFilename, new string[] { });
             OSGeo.OGR.Layer MyLayer = MyDS.CreateLayer(_name + MyDS.GetLayerCount().ToString(), _SRS, OSGeo.OGR.wkbGeometryType.wkbUnknown, new string[] { });
             OSGeo.OGR.FeatureDefn MyFeatureDefn = MyLayer.GetLayerDefn();
             OSGeo.OGR.Feature MyFeature;
@@ -816,7 +817,8 @@ namespace Prototyp.Elements
             ToWGS84.SetAxisMappingStrategy(OSGeo.OSR.AxisMappingStrategy.OAMS_TRADITIONAL_GIS_ORDER);
             OSGeo.OSR.CoordinateTransformation TransformToWGS84 = new OSGeo.OSR.CoordinateTransformation(ToCRS, ToWGS84);
 
-            OSGeo.OGR.DataSource OutDS = ShapeDriver.CreateDataSource("/vsimem/Temporary", new string[] { });
+            string RandomFilename = System.IO.Path.GetRandomFileName();
+            OSGeo.OGR.DataSource OutDS = ShapeDriver.CreateDataSource("/vsimem/" + RandomFilename, new string[] { });
             OSGeo.OGR.Layer OutLayer = OutDS.CreateLayer(LayerName + "_WGS84", ToWGS84, InLayer.GetGeomType(), new string[] { });
 
             OSGeo.OGR.FeatureDefn InFeatureDefn = InLayer.GetLayerDefn();
@@ -918,7 +920,8 @@ namespace Prototyp.Elements
 
             OSGeo.OSR.CoordinateTransformation Project = new OSGeo.OSR.CoordinateTransformation(FromSRS, ToSRS);
 
-            OSGeo.OGR.DataSource OutDS = ShapeDriver.CreateDataSource("/vsimem/Temporary", new string[] { });
+            string RandomFilename = System.IO.Path.GetRandomFileName();
+            OSGeo.OGR.DataSource OutDS = ShapeDriver.CreateDataSource("/vsimem/" + RandomFilename, new string[] { });
             OSGeo.OGR.Layer OutLayer = OutDS.CreateLayer(LayerName + "_Project", ToSRS, InLayer.GetGeomType(), new string[] { });
 
             OSGeo.OGR.FeatureDefn InFeatureDefn = InLayer.GetLayerDefn();
