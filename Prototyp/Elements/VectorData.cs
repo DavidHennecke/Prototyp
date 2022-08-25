@@ -380,36 +380,80 @@ namespace Prototyp.Elements
             NetTopologySuite.Features.FeatureCollection MyFC = FlatGeobuf.NTS.FeatureCollectionConversions.Deserialize(_vecData);
             NetTopologySuite.IO.WKBWriter MyWriter;
             byte[] WKB;
-            string[] AttribNames = MyFC[0].Attributes.GetNames();
-            string[] FieldTypes = new string[AttribNames.Length];
-
-            if (MyFC[0].Attributes.Count > 0)
+            if (MyFC[0].Attributes != null)
             {
-                // Prepare fields.
-                for (int i = 0; i < MyFC[0].Attributes.Count; i++)
+                string[] AttribNames = MyFC[0].Attributes.GetNames();
+                string[] FieldTypes = new string[AttribNames.Length];
+
+                if (MyFC[0].Attributes.Count > 0)
                 {
-                    FieldTypes[i] = MyFC[0].Attributes.GetType(AttribNames[i]).ToString();
-                    if (FieldTypes[i] == "System.Int32")
+                    // Prepare fields.
+                    for (int i = 0; i < MyFC[0].Attributes.Count; i++)
                     {
-                        MyFieldDefn = new OSGeo.OGR.FieldDefn(AttribNames[i], OSGeo.OGR.FieldType.OFTInteger);
-                    }
-                    else if (FieldTypes[i] == "System.Int64")
-                    {
-                        MyFieldDefn = new OSGeo.OGR.FieldDefn(AttribNames[i], OSGeo.OGR.FieldType.OFTInteger64);
-                    }
-                    else if (FieldTypes[i] == "System.Double")
-                    {
-                        MyFieldDefn = new OSGeo.OGR.FieldDefn(AttribNames[i], OSGeo.OGR.FieldType.OFTReal);
-                    }
-                    else
-                    {
-                        MyFieldDefn = new OSGeo.OGR.FieldDefn(AttribNames[i], OSGeo.OGR.FieldType.OFTString);
+                        FieldTypes[i] = MyFC[0].Attributes.GetType(AttribNames[i]).ToString();
+                        if (FieldTypes[i] == "System.Int32")
+                        {
+                            MyFieldDefn = new OSGeo.OGR.FieldDefn(AttribNames[i], OSGeo.OGR.FieldType.OFTInteger);
+                        }
+                        else if (FieldTypes[i] == "System.Int64")
+                        {
+                            MyFieldDefn = new OSGeo.OGR.FieldDefn(AttribNames[i], OSGeo.OGR.FieldType.OFTInteger64);
+                        }
+                        else if (FieldTypes[i] == "System.Double")
+                        {
+                            MyFieldDefn = new OSGeo.OGR.FieldDefn(AttribNames[i], OSGeo.OGR.FieldType.OFTReal);
+                        }
+                        else
+                        {
+                            MyFieldDefn = new OSGeo.OGR.FieldDefn(AttribNames[i], OSGeo.OGR.FieldType.OFTString);
+                        }
+
+                        MyLayer.CreateField(MyFieldDefn, 0);
+                        MyFieldDefn.Dispose();
                     }
 
-                    MyLayer.CreateField(MyFieldDefn, 0);
-                    MyFieldDefn.Dispose();
+                    for (int i = 0; i < MyFC.Count; i++)
+                    {
+                        // Handle geometry.
+                        MyWriter = new NetTopologySuite.IO.WKBWriter();
+                        WKB = MyWriter.Write(MyFC[i].Geometry);
+                        OSGeo.OGR.Geometry OGRGeom = OSGeo.OGR.Geometry.CreateFromWkb(WKB);
+                        MyFeature = new OSGeo.OGR.Feature(MyFeatureDefn);
+                        MyFeature.SetGeometry(OGRGeom);
+
+                        // Handle fields.
+                        if (MyFC[i].Attributes.Count > 0)
+                        {
+                            object[] AttribValuesObj = MyFC[i].Attributes.GetValues();
+                            for (int j = 0; j < MyFC[i].Attributes.Count; j++)
+                            {
+                                if (FieldTypes[j] == "System.Int32")
+                                {
+                                    MyFeature.SetField(j, System.Convert.ToInt32(AttribValuesObj[j]));
+                                }
+                                else if (FieldTypes[j] == "System.Int64")
+                                {
+                                    MyFeature.SetField(j, System.Convert.ToInt64(AttribValuesObj[j]));
+                                }
+                                else if (FieldTypes[j] == "System.Double")
+                                {
+                                    MyFeature.SetField(j, System.Convert.ToDouble(AttribValuesObj[j]));
+                                }
+                                else
+                                {
+                                    MyFeature.SetField(j, AttribValuesObj[j].ToString());
+                                }
+                            }
+                        }
+
+                        MyLayer.CreateFeature(MyFeature);
+                        MyFeature.Dispose();
+                    }
+
                 }
-
+            }
+            else   //for layer without attributes
+            {
                 for (int i = 0; i < MyFC.Count; i++)
                 {
                     // Handle geometry.
@@ -418,40 +462,13 @@ namespace Prototyp.Elements
                     OSGeo.OGR.Geometry OGRGeom = OSGeo.OGR.Geometry.CreateFromWkb(WKB);
                     MyFeature = new OSGeo.OGR.Feature(MyFeatureDefn);
                     MyFeature.SetGeometry(OGRGeom);
-
-                    // Handle fields.
-                    if (MyFC[i].Attributes.Count > 0)
-                    {
-                        object[] AttribValuesObj = MyFC[i].Attributes.GetValues();
-                        for (int j = 0; j < MyFC[i].Attributes.Count; j++)
-                        {
-                            if (FieldTypes[j] == "System.Int32")
-                            {
-                                MyFeature.SetField(j, System.Convert.ToInt32(AttribValuesObj[j]));
-                            }
-                            else if (FieldTypes[j] == "System.Int64")
-                            {
-                                MyFeature.SetField(j, System.Convert.ToInt64(AttribValuesObj[j]));
-                            }
-                            else if (FieldTypes[j] == "System.Double")
-                            {
-                                MyFeature.SetField(j, System.Convert.ToDouble(AttribValuesObj[j]));
-                            }
-                            else
-                            {
-                                MyFeature.SetField(j, AttribValuesObj[j].ToString());
-                            }
-                        }
-                    }
-
                     MyLayer.CreateFeature(MyFeature);
                     MyFeature.Dispose();
                 }
-                MyFeatureDefn.Dispose();
-                MyDS.SyncToDisk();
-                MyDriver.Dispose();
             }
-
+            MyFeatureDefn.Dispose();
+            MyDS.SyncToDisk();
+            MyDriver.Dispose();
             _busy = false;
             return (MyLayer);
         }

@@ -334,8 +334,8 @@ namespace Prototyp
             //Problem hier beschrieben https://github.com/openssl/openssl/issues/1418
 
             //Find lowest available port
-            int port = Node_Module.GetNextPort(BASEPORT);
-            //int port = 5000;
+            //int port = Node_Module.GetNextPort(BASEPORT);
+            int port = 5000;
 
             GrpcClient.ControlConnector.ControlConnectorClient grpcConnection;
 
@@ -349,7 +349,7 @@ namespace Prototyp
             moduleProcess.StartInfo = moduleProcessInfo;
             try
             {
-                moduleProcess.Start();
+                //moduleProcess.Start();
 
                 // Establish GRPC connection
                 // TODO: nicht nur localhost
