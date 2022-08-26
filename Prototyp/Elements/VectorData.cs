@@ -587,7 +587,7 @@ namespace Prototyp.Elements
             byte[] bytes = new byte[1];
             FlatBuffers.ByteBuffer headerBuffer = null;
             int NumPaddingBytes = 0;
-            while (bytes.Length % 8 != 0)
+            while (bytes.Length % 16 != 0)
             {
                 headerBuffer = IntBuildHeader(0, geometryType, dimensions, columns, null, NumPaddingBytes);
                 bytes = headerBuffer.ToSizedArray();
