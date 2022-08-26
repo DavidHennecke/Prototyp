@@ -514,6 +514,7 @@ namespace Prototyp.Elements
             _name = MyHeader.Name;
             _description = MyHeader.Description;
             FlatGeobuf.Crs? MyCRS = MyHeader.Crs;
+            if (MyCRS == null) return;
             string WKTString = MyCRS?.Wkt;
             int Code = (int)MyCRS?.Code;
             string Organization = MyCRS?.Org;
@@ -582,8 +583,17 @@ namespace Prototyp.Elements
         private async System.Threading.Tasks.Task IntSerializeAsync(System.IO.Stream output, System.Collections.Generic.IEnumerable<NetTopologySuite.Features.IFeature> features, FlatGeobuf.GeometryType geometryType, byte dimensions = 2, System.Collections.Generic.IList<FlatGeobuf.NTS.ColumnMeta> columns = null)
         {
             await output.WriteAsync(FlatGeobuf.Constants.MagicBytes, 0, FlatGeobuf.Constants.MagicBytes.Length);
-            FlatBuffers.ByteBuffer headerBuffer = IntBuildHeader(0, geometryType, dimensions, columns, null);
-            byte[] bytes = headerBuffer.ToSizedArray();
+
+            byte[] bytes = new byte[1];
+            FlatBuffers.ByteBuffer headerBuffer = null;
+            int NumPaddingBytes = 0;
+            while (bytes.Length % 8 != 0)
+            {
+                headerBuffer = IntBuildHeader(0, geometryType, dimensions, columns, null, NumPaddingBytes);
+                bytes = headerBuffer.ToSizedArray();
+                NumPaddingBytes++;
+            }
+
             await output.WriteAsync(bytes, 0, bytes.Length);
             headerBuffer.Position = headerBuffer.Position + 4;
             FlatGeobuf.HeaderT header = FlatGeobuf.Header.GetRootAsHeader(headerBuffer).UnPack();
@@ -595,7 +605,7 @@ namespace Prototyp.Elements
             }
         }
 
-        private FlatBuffers.ByteBuffer IntBuildHeader(ulong count, FlatGeobuf.GeometryType geometryType, byte dimensions, System.Collections.Generic.IList<FlatGeobuf.NTS.ColumnMeta> columns, FlatGeobuf.Index.PackedRTree index)
+        private FlatBuffers.ByteBuffer IntBuildHeader(ulong count, FlatGeobuf.GeometryType geometryType, byte dimensions, System.Collections.Generic.IList<FlatGeobuf.NTS.ColumnMeta> columns, FlatGeobuf.Index.PackedRTree index, int NumPaddingBytes)
         {
             string WKTString;
             _SRS.ExportToWkt(out WKTString, null);
@@ -626,7 +636,9 @@ namespace Prototyp.Elements
             if (_name != null) NameO = builder.CreateString(_name);
             FlatBuffers.StringOffset DescO = builder.CreateString("");
             if (_description != null) DescO = builder.CreateString(_description);
-            FlatBuffers.StringOffset MetaO = builder.CreateString("    "); // Padding-Bytes als rudimentäre Lösung für das Padding-Problem.
+            string PadString = "";
+            PadString = PadString.PadRight(NumPaddingBytes, ' ');  // Padding bytes as a ridiculous solution for the alignment problem.
+            FlatBuffers.StringOffset MetaO = builder.CreateString(PadString);
             FlatBuffers.VectorOffset Env = new FlatBuffers.VectorOffset(0);
             ushort idx = 0;
             if (index != null) idx = 16;

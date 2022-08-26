@@ -328,11 +328,6 @@ namespace Prototyp
 
         private void importModule(string BinaryPath)
         {
-           //AppContext.SetSwitch("System.Net.Http.SocketsHttpHandler.Http2UnencryptedSupport", true); // Wozu ist das? Habe unten url von http auf https geändert.
-
-            //Lösung: dotnet dev-certs https --trust --> https://stackoverflow.com/questions/57630672/how-to-fix-one-or-more-errors-occurred-the-ssl-connection-could-not-be-establ
-            //Problem hier beschrieben https://github.com/openssl/openssl/issues/1418
-
             //Find lowest available port
             int port = Node_Module.GetNextPort(BASEPORT);
             //int port = 5000;
