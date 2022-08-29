@@ -173,10 +173,10 @@ namespace Prototyp.Modules
 
         // Private methods -----------------------------------------------------------------
 
-        // Verändert damit die Verlinkungen im Knoteneditor wieder funktionieren, muss nochmal geprüft/überarbeitet werden
+        // Verändert, damit die Verlinkungen im Knoteneditor wieder funktionieren, muss nochmal geprüft/überarbeitet werden
         private void ParseXML(VorteXML newModule, bool inMain) //Use inMain = true for MainWindow node editor, inMain = false for ModuleDesigner preview.
         {
-            //Counters for correctly tracking id's
+            //Counters for correctly tracking IDs
             int inputRowCounter = 0;
             int outputRowCounter = 0;
             foreach (VorteXML.ToolRow toolRow in newModule.ToolRows)
