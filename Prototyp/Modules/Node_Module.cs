@@ -525,10 +525,8 @@ namespace Prototyp.Modules
                     }
                     else if (i.Editor is Prototyp.Modules.ViewModels.DropDownMenuViewModel)
                     {
-                        foreach (string s in ((Prototyp.Modules.ViewModels.DropDownMenuViewModel)i.Editor).StringItems)
-                        {
-                            Params.Fields.Add(i.Name, Google.Protobuf.WellKnownTypes.Value.ForString(s));
-                        }
+                        //TODO: Welchen String schicken, d.h. welcher ist im UI ausgewählt?
+                        Params.Fields.Add(i.Name, Google.Protobuf.WellKnownTypes.Value.ForString(((Prototyp.Modules.ViewModels.DropDownMenuViewModel)i.Editor).StringItems[0]));
                     }
                 }
             }
