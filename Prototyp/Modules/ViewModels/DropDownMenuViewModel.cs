@@ -14,18 +14,18 @@ namespace Prototyp.Modules.ViewModels
             Splat.Locator.CurrentMutable.Register(() => new DropDownMenuView(controlName, items), typeof(IViewFor<DropDownMenuViewModel>));
         }
 
-        #region FloatValue
-        private float _floatValue;
-        public float FloatValue
+        #region StringItems
+        private string[] _stringItems;
+        public string[] StringItems
         {
-            get => _floatValue;
-            set => this.RaiseAndSetIfChanged(ref _floatValue, value);
+            get => _stringItems;
+            set => this.RaiseAndSetIfChanged(ref _stringItems, value);
         }
         #endregion
 
         public DropDownMenuViewModel()
         {
-            this.WhenAnyValue(vm => vm.FloatValue)
+            this.WhenAnyValue(vm => vm.StringItems)
                 .BindTo(this, vm => vm.Value);
         }
     }

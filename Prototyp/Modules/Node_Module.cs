@@ -50,11 +50,12 @@ namespace Prototyp.Modules
         public event EventHandler ProcessStatusChanged;
 
         public System.Collections.Generic.List<Modules.ViewModels.FloatSliderViewModel> sliderEditor = new System.Collections.Generic.List<Modules.ViewModels.FloatSliderViewModel>();
+        public System.Collections.Generic.List<Modules.ViewModels.DropDownMenuViewModel> dropdownEditor = new System.Collections.Generic.List<Modules.ViewModels.DropDownMenuViewModel>();
         public Modules.ViewModels.DropDownMenuViewModel dropDownEditor { get; set; }
 
         public System.Collections.Generic.List<ValueNodeInputViewModel<float>> valueFloatInput = new System.Collections.Generic.List<ValueNodeInputViewModel<float>>();
-        public ValueNodeInputViewModel<string> valueStringInput { get; set; }
-
+        public System.Collections.Generic.List<ValueNodeInputViewModel<string>> valueStringInput = new System.Collections.Generic.List<ValueNodeInputViewModel<string>>();
+        
         public Modules.ViewModels.OutputNameViewModel outNameEditor { get; set; }
         public ValueNodeInputViewModel<Prototyp.Elements.VectorPointData> vectorInputPoint { get; set; }
         public ValueNodeInputViewModel<Prototyp.Elements.VectorLineData> vectorInputLine { get; set; }
@@ -494,12 +495,15 @@ namespace Prototyp.Modules
                     }
                     else if (toolRow.controlRow.controlType == VorteXML.ControlType.Dropdown)
                     {
-                        // TODO: Korrekturen von oben hier ebenfalls übernehmen. Siehe auch Deklarationen ganz oben.
-                        valueStringInput = new ValueNodeInputViewModel<string>();
-                        dropDownEditor = new Modules.ViewModels.DropDownMenuViewModel(toolRow.Name, toolRow.controlRow.dropdown.Values);
-                        valueStringInput.Editor = dropDownEditor;
-                        valueStringInput.Port.IsVisible = false;
-                        Inputs.Add(valueStringInput);
+                        dropdownEditor.Add(new Modules.ViewModels.DropDownMenuViewModel(toolRow.Name, toolRow.controlRow.dropdown.Values));
+                        dropdownEditor[dropdownEditor.Count - 1].StringItems = toolRow.controlRow.dropdown.Values;
+
+                        valueStringInput.Add(new ValueNodeInputViewModel<string>());
+                        valueStringInput[valueStringInput.Count - 1].Editor = dropdownEditor[valueStringInput.Count - 1];
+                        valueStringInput[valueStringInput.Count - 1].Port.IsVisible = false;
+                        valueStringInput[valueStringInput.Count - 1].Name = toolRow.Name;
+
+                        Inputs.Add(valueStringInput[valueStringInput.Count - 1]);
                     }
                 }
             }
@@ -521,11 +525,10 @@ namespace Prototyp.Modules
                     }
                     else if (i.Editor is Prototyp.Modules.ViewModels.DropDownMenuViewModel)
                     {
-                        /* TODO
-                        Params.Fields.Add(i.Name, Google.Protobuf.WellKnownTypes.Value.ForString(
-                            ???
-                        );
-                        */
+                        foreach (string s in ((Prototyp.Modules.ViewModels.DropDownMenuViewModel)i.Editor).StringItems)
+                        {
+                            Params.Fields.Add(i.Name, Google.Protobuf.WellKnownTypes.Value.ForString(s));
+                        }
                     }
                 }
             }
@@ -578,9 +581,8 @@ namespace Prototyp.Modules
                         Params.DD[DropDownCount] = new DropdownParams();
 
                         Params.DD[DropDownCount].Name = i.Name;
+                        Params.DD[DropDownCount].Entries = ((Prototyp.Modules.ViewModels.DropDownMenuViewModel)i.Editor).StringItems;
 
-                        //Params.DD[DropDownCount].Entries = new string[???.Count];
-                        //Params.DD[DropDownCount].Value = ((Prototyp.Modules.ViewModels.DropDownMenuViewModel)i.Editor). //Don't even hope to know how to get this fucker. :-(
                         DropDownCount++;
                     }
                 }
