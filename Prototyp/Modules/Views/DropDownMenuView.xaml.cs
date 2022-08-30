@@ -33,6 +33,7 @@ namespace Prototyp.Modules.Views
             {
                 this.comboMenu.Items.Add(item);
             }
+            //string SelectedText = (string)this.comboMenu.SelectedItem;
         }
     }
 }

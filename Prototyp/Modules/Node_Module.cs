@@ -525,8 +525,15 @@ namespace Prototyp.Modules
                     }
                     else if (i.Editor is Prototyp.Modules.ViewModels.DropDownMenuViewModel)
                     {
-                        //TODO: Welchen String schicken, d.h. welcher ist im UI ausgewählt?
                         Params.Fields.Add(i.Name, Google.Protobuf.WellKnownTypes.Value.ForString(((Prototyp.Modules.ViewModels.DropDownMenuViewModel)i.Editor).StringItems[0]));
+
+                        // TODO: Welchen String schicken, d.h. welcher ist im UI ausgewählt?
+                        // Müsste in etwa so gehen:
+
+                        // string SelectedText = (string)this.comboMenu.SelectedItem;
+
+                        // 'this' müsste dabei etwa sein: Prototyp.Modules.Views.DropDownMenuView
+                        // siehe Konstruktor in DropDownMenuView.xaml.cs
                     }
                 }
             }
