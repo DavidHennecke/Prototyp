@@ -478,7 +478,7 @@ namespace Prototyp.Modules
 
                         valueFloatInput.Add(new ValueNodeInputViewModel<float>());
                         valueFloatInput[valueFloatInput.Count - 1].Editor = sliderEditor[valueFloatInput.Count - 1];
-                        valueFloatInput[valueFloatInput.Count - 1].Port.IsVisible = false;
+                        valueFloatInput[valueFloatInput.Count - 1].Port.IsVisible = true;
                         valueFloatInput[valueFloatInput.Count - 1].Name = toolRow.Name;
 
                         Inputs.Add(valueFloatInput[valueFloatInput.Count - 1]);

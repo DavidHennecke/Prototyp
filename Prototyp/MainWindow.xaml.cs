@@ -82,6 +82,7 @@ namespace Prototyp
 
         public List<VectorData> vectorData = new List<VectorData>();
         public List<RasterData> rasterData = new List<RasterData>();
+        public List<string> csvData = new List<string>();
         private List<ComboItem> ComboItems = new List<ComboItem>();
         private List<ComboItem> ComboSearchItems = new List<ComboItem>();
 
@@ -428,6 +429,7 @@ namespace Prototyp
                                     "GeoTiff (*.tif)|*.tif|" +
                                     "GeoASCII (*.asc)|*.asc|" +
                                     "Raster files (*.sdat)|*.sdat|" +
+                                    "Generic list data files (*.csv)|*.csv|" +
                                     "All files (*.*)|*.*";
             openFileDialog.FilterIndex = openFileDialog.Filter.Length;
             openFileDialog.RestoreDirectory = true;
@@ -570,6 +572,18 @@ namespace Prototyp
                             break;
                         }
                     }
+                }
+                else if (Path.GetExtension(openFileDialog.FileName).ToLower() == ".csv")
+                {
+                    string csvText = File.ReadAllText(openFileDialog.FileName);
+
+                    csvData.Add(csvText);
+
+                    Random rnd = new Random();
+                                        
+                    csvImport_Module importNode = new csvImport_Module(openFileDialog.FileName.Substring(openFileDialog.FileName.LastIndexOf("\\") + 1), "csv", rnd.NextDouble());
+
+                    network.Nodes.Add(importNode);
                 }
                 //else if (...) //TODO: Ggf. andere Datentypen...
                 //{
