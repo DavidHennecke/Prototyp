@@ -147,6 +147,12 @@ namespace Prototyp.Elements
         // Constructors --------------------------------------------------------------------
 
         // Parameterless constructor.
+        public VectorData()
+        {
+
+        }
+
+        // Constructor utilizing only the mere ID.
         public VectorData(int uid)
         {
             SetID(uid);
@@ -156,9 +162,9 @@ namespace Prototyp.Elements
         // First, a Base64 coded ByteArray is assumed. If that's not it, it is assumed that the string
         // contains a file name. If that's an fgb file, open it. If not, try GDAL.
         // Examples:
-        // VectorData vectorData = new VectorData(MyByteArray);
-        // VectorData vectorData = new VectorData("C:/Temp/UScounties.fgb");
-        // VectorData vectorData = new VectorData("C:/Temp/UScounties.shp");
+        // VectorData vectorData = new VectorData(1, MyByteArray);
+        // VectorData vectorData = new VectorData(1, "C:/Temp/UScounties.fgb");
+        // VectorData vectorData = new VectorData(1, "C:/Temp/UScounties.shp");
         public VectorData(int uid, string MyString)
         {
             if (MyString.StartsWith("ZmdiA2ZnYg")) //Base64 for fgb header
@@ -210,7 +216,7 @@ namespace Prototyp.Elements
         // Constructor that opens a rectangle out of a FlatGeobuf file.
         // Example:
         // var FilterRect = new NetTopologySuite.Geometries.Envelope(-100, -90, 40, 30);
-        // VectorData vectorData = new VectorData("C:/Temp/UScounties.fgb", FilterRect);
+        // VectorData vectorData = new VectorData(1, "C:/Temp/UScounties.fgb", FilterRect);
         public VectorData(int uid, string FlatGeobufFileName, NetTopologySuite.Geometries.Envelope FlatGeobufRect)
         {
             if (System.IO.File.Exists(FlatGeobufFileName))
@@ -252,7 +258,7 @@ namespace Prototyp.Elements
 
         // Constructor that is provided a GDAL layer as a data source (e.g. obtained from a shape file).
         // Example:
-        // VectorData vectorData = new VectorData(LayerData);
+        // VectorData vectorData = new VectorData(1, LayerData);
         public VectorData(int uid, OSGeo.OGR.Layer LayerData)
         {
             if (LayerData != null)
@@ -266,7 +272,7 @@ namespace Prototyp.Elements
 
         // Constructor that is provided a byte array containing serialized FGB VectorData.
         // Example:
-        // VectorData vectorData = new VectorData(VecArray);
+        // VectorData vectorData = new VectorData(1, VecArray);
         public VectorData(int uid, byte[] VecArray)
         {
             if (ByteArrValid(VecArray))

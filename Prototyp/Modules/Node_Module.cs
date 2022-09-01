@@ -53,20 +53,29 @@ namespace Prototyp.Modules
         public System.Collections.Generic.List<Modules.ViewModels.DropDownMenuViewModel> dropdownEditor = new System.Collections.Generic.List<Modules.ViewModels.DropDownMenuViewModel>();
         public Modules.ViewModels.DropDownMenuViewModel dropDownEditor { get; set; }
 
-        public System.Collections.Generic.List<ValueNodeInputViewModel<float>> valueFloatInput = new System.Collections.Generic.List<ValueNodeInputViewModel<float>>();
-        public System.Collections.Generic.List<ValueNodeInputViewModel<string>> valueStringInput = new System.Collections.Generic.List<ValueNodeInputViewModel<string>>();
-        
+
         public Modules.ViewModels.OutputNameViewModel outNameEditor { get; set; }
+
+        public System.Collections.Generic.List<ValueNodeInputViewModel<float>> FloatInput = new System.Collections.Generic.List<ValueNodeInputViewModel<float>>();
+        public System.Collections.Generic.List<ValueNodeInputViewModel<string>> StringInput = new System.Collections.Generic.List<ValueNodeInputViewModel<string>>();
+        public System.Collections.Generic.List<ValueNodeOutputViewModel<float>> FloatOutput = new System.Collections.Generic.List<ValueNodeOutputViewModel<float>>();
+        public System.Collections.Generic.List<ValueNodeOutputViewModel<string>> StringOutput = new System.Collections.Generic.List<ValueNodeOutputViewModel<string>>();
+
         public ValueNodeInputViewModel<Prototyp.Elements.VectorPointData> vectorInputPoint { get; set; }
         public ValueNodeInputViewModel<Prototyp.Elements.VectorLineData> vectorInputLine { get; set; }
         public ValueNodeInputViewModel<Prototyp.Elements.VectorPolygonData> vectorInputPolygon { get; set; }
         public ValueNodeInputViewModel<Prototyp.Elements.VectorMultiPolygonData> vectorInputMultiPolygon { get; set; }
         public ValueNodeInputViewModel<Prototyp.Elements.RasterData> rasterInput { get; set; }
+        public ValueNodeInputViewModel<Prototyp.Elements.TableData> tableInput { get; set; }
+        public ValueNodeInputViewModel<Prototyp.Elements.FloatData> floatInput { get; set; }
+
         public ValueNodeOutputViewModel<Prototyp.Elements.VectorPointData> vectorOutputPoint { get; set; }
         public ValueNodeOutputViewModel<Prototyp.Elements.VectorLineData> vectorOutputLine { get; set; }
         public ValueNodeOutputViewModel<Prototyp.Elements.VectorPolygonData> vectorOutputPolygon { get; set; }
         public ValueNodeOutputViewModel<Prototyp.Elements.VectorMultiPolygonData> vectorOutputMultiPolygon { get; set; }
         public ValueNodeOutputViewModel<Prototyp.Elements.RasterData> rasterOutput { get; set; }
+        public ValueNodeOutputViewModel<Prototyp.Elements.TableData> tableOutput { get; set; }
+        public ValueNodeOutputViewModel<Prototyp.Elements.FloatData> floatOutput { get; set; }
 
         private string _PathXML;
         private GrpcClient.ControlConnector.ControlConnectorClient _GrpcConnection;
@@ -291,7 +300,6 @@ namespace Prototyp.Modules
                             rasterInput = new ValueNodeInputViewModel<Prototyp.Elements.RasterData>();
                             if (inMain)
                             {
-
                                 rasterInput.SetID(inputRowCounter);
                                 rasterInput.Name = toolRow.inputRow.inputTypes[i].ToString();
                                 // Alternativ: rasterInput.Name = toolRow.inputRow.inputTypes.Last().ToString();
@@ -310,6 +318,57 @@ namespace Prototyp.Modules
                                 rasterInput.Name = toolRow.Name;
                             }
                             Inputs.Add(rasterInput);
+                            continue;
+                        }
+                        else if (toolRow.inputRow.inputTypes[i] == VorteXML.ConnectorType.Table)
+                        {
+                            tableInput = new ValueNodeInputViewModel<Prototyp.Elements.TableData>();
+                            if (inMain)
+                            {
+                                tableInput.SetID(inputRowCounter);
+                                tableInput.Name = toolRow.inputRow.inputTypes[i].ToString();
+                                // Alternativ: rasterInput.Name = toolRow.inputRow.inputTypes.Last().ToString();
+                                // Grundsätzlich: Was tun bei mehreren validen Inputtypen?
+                                tableInput.ValueChanged.Subscribe(tableInputSource =>
+                                {
+                                    if (tableInputSource != null)
+                                    {
+                                        // TODO: Hier muss noch nach den Ports differenziert werden, falls mehrere vorhanden sind.
+                                        tableInput.Name = tableInputSource.Name;
+                                    }
+                                });
+                            }
+                            else
+                            {
+                                tableInput.Name = toolRow.Name;
+                            }
+                            Inputs.Add(tableInput);
+                            continue;
+                        }
+                        else if (toolRow.inputRow.inputTypes[i] == VorteXML.ConnectorType.Float)
+                        {
+                            floatInput = new ValueNodeInputViewModel<Prototyp.Elements.FloatData>();
+
+                            if (inMain)
+                            {
+                                floatInput.SetID(inputRowCounter);
+                                floatInput.Name = toolRow.inputRow.inputTypes[i].ToString();
+                                // Alternativ: rasterInput.Name = toolRow.inputRow.inputTypes.Last().ToString();
+                                // Grundsätzlich: Was tun bei mehreren validen Inputtypen?
+                                floatInput.ValueChanged.Subscribe(floatInputSource =>
+                                {
+                                    if (floatInputSource != null)
+                                    {
+                                        // TODO: Hier muss noch nach den Ports differenziert werden, falls mehrere vorhanden sind.
+                                        floatInput.Name = floatInputSource.Name;
+                                    }
+                                });
+                            }
+                            else
+                            {
+                                floatInput.Name = toolRow.Name;
+                            }
+                            Inputs.Add(floatInput);
                             continue;
                         }
                         //... TODO: Support more types?
@@ -459,6 +518,44 @@ namespace Prototyp.Modules
                             Outputs.Add(rasterOutput);
                             continue;
                         }
+                        else if (toolRow.outputRow.outputTypes[i] == VorteXML.ConnectorType.Table)
+                        {
+                            tableOutput = new ValueNodeOutputViewModel<Elements.TableData>();
+                            if (inMain)
+                            {
+                                tableOutput.SetID(outputRowCounter);
+                                TableData placeholder = new TableData(-1);
+
+                                placeholder.Name = toolRow.outputRow.outputTypes[i].ToString();
+                                tableOutput.Name = toolRow.outputRow.outputTypes[i].ToString();
+                                tableOutput.Value = System.Reactive.Linq.Observable.Return(placeholder);
+                            }
+                            else
+                            {
+                                tableOutput.Name = toolRow.Name;
+                            }
+                            Outputs.Add(tableOutput);
+                            continue;
+                        }
+                        else if (toolRow.outputRow.outputTypes[i] == VorteXML.ConnectorType.Float)
+                        {
+                            floatOutput = new ValueNodeOutputViewModel<Elements.FloatData>();
+                            if (inMain)
+                            {
+                                floatOutput.SetID(outputRowCounter);
+                                FloatData placeholder = new FloatData(-1);
+
+                                placeholder.Name = toolRow.outputRow.outputTypes[i].ToString();
+                                floatOutput.Name = toolRow.outputRow.outputTypes[i].ToString();
+                                floatOutput.Value = System.Reactive.Linq.Observable.Return(placeholder);
+                            }
+                            else
+                            {
+                                floatOutput.Name = toolRow.Name;
+                            }
+                            Outputs.Add(floatOutput);
+                            continue;
+                        }
                         //... TODO: Support more types?
                         else
                         {
@@ -476,12 +573,12 @@ namespace Prototyp.Modules
                         sliderEditor.Add(new Modules.ViewModels.FloatSliderViewModel(toolRow.Name, toolRow.controlRow.slider.Start, toolRow.controlRow.slider.End, toolRow.controlRow.slider.TickFrequency, toolRow.controlRow.slider.Unit));
                         sliderEditor[sliderEditor.Count - 1].FloatValue = toolRow.controlRow.slider.Default;
 
-                        valueFloatInput.Add(new ValueNodeInputViewModel<float>());
-                        valueFloatInput[valueFloatInput.Count - 1].Editor = sliderEditor[valueFloatInput.Count - 1];
-                        valueFloatInput[valueFloatInput.Count - 1].Port.IsVisible = true;
-                        valueFloatInput[valueFloatInput.Count - 1].Name = toolRow.Name;
+                        FloatInput.Add(new ValueNodeInputViewModel<float>());
+                        FloatInput[FloatInput.Count - 1].Editor = sliderEditor[FloatInput.Count - 1];
+                        FloatInput[FloatInput.Count - 1].Port.IsVisible = true;
+                        FloatInput[FloatInput.Count - 1].Name = toolRow.Name;
 
-                        Inputs.Add(valueFloatInput[valueFloatInput.Count - 1]);
+                        Inputs.Add(FloatInput[FloatInput.Count - 1]);
 
                         /////////// Work in progress end
                         
@@ -498,12 +595,12 @@ namespace Prototyp.Modules
                         dropdownEditor.Add(new Modules.ViewModels.DropDownMenuViewModel(toolRow.Name, toolRow.controlRow.dropdown.Values));
                         dropdownEditor[dropdownEditor.Count - 1].StringItems = toolRow.controlRow.dropdown.Values;
 
-                        valueStringInput.Add(new ValueNodeInputViewModel<string>());
-                        valueStringInput[valueStringInput.Count - 1].Editor = dropdownEditor[valueStringInput.Count - 1];
-                        valueStringInput[valueStringInput.Count - 1].Port.IsVisible = false;
-                        valueStringInput[valueStringInput.Count - 1].Name = toolRow.Name;
+                        StringInput.Add(new ValueNodeInputViewModel<string>());
+                        StringInput[StringInput.Count - 1].Editor = dropdownEditor[StringInput.Count - 1];
+                        StringInput[StringInput.Count - 1].Port.IsVisible = false;
+                        StringInput[StringInput.Count - 1].Name = toolRow.Name;
 
-                        Inputs.Add(valueStringInput[valueStringInput.Count - 1]);
+                        Inputs.Add(StringInput[StringInput.Count - 1]);
                     }
                 }
             }

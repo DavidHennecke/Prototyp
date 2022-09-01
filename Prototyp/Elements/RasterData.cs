@@ -122,6 +122,12 @@
         // Constructors --------------------------------------------------------------------
 
         // Parameterless constructor.
+        public RasterData()
+        {
+
+        }
+
+        // Constructor utilizing only the mere ID.
         public RasterData(int uid)
         {
             SetID(uid);
@@ -131,8 +137,8 @@
         // First, it is assumed that the string contains a file name.
         // If that's not it, a Base64 coded byte array string is assumed.
         // Example:
-        // RasterData rasterData = new RasterData("C:/Temp/WindData.asc");
-        // RasterData rasterData = new RasterData(MyByteArrayString);
+        // RasterData rasterData = new RasterData(1, "C:/Temp/WindData.asc");
+        // RasterData rasterData = new RasterData(1, MyByteArrayString);
         public RasterData(int uid, string MyString)
         {
             if (System.IO.File.Exists(MyString))
@@ -157,7 +163,7 @@
 
         // Constructor that opens a rectangle from a file.
         // Example:
-        // RasterData rasterData = new RasterData("C:/Temp/WindData.asc", 100, 100, 200, 200);
+        // RasterData rasterData = new RasterData(1, "C:/Temp/WindData.asc", 100, 100, 200, 200);
         public RasterData(int uid, string RasterFileName, int xOff, int yOff, int xSize, int ySize)
         {
             if (System.IO.File.Exists(RasterFileName))
@@ -189,7 +195,7 @@
 
         // Constructor that deserializes a byte array representation of raster data.
         // Example:
-        // RasterData rasterData = new RasterData(SomeByteArray);
+        // RasterData rasterData = new RasterData(1, SomeByteArray);
         public RasterData(int uid, byte[] SerializedData)
         {
             Deserialize(SerializedData);

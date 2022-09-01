@@ -588,21 +588,17 @@ namespace Prototyp
                     }
                     tableData.Add(new TableData(importDataUID, openFileDialog.FileName));
 
-                    //Add table data to node editor
+                    //Add table data to node editor.
                     for (int i = 0; i < tableData.Count; i++)
                     {
                         if (tableData[i].ID == tableData[tableData.Count - 1].ID)
                         {
-                            TableImport_Module importNode = new TableImport_Module(openFileDialog.FileName.Substring(openFileDialog.FileName.LastIndexOf("\\") + 1), "csv", tableData[i].ID);
+                            TableImport_Module importNode = new TableImport_Module(openFileDialog.FileName.Substring(openFileDialog.FileName.LastIndexOf("\\") + 1), "Table", tableData[i].ID);
 
                             network.Nodes.Add(importNode);
                             break;
                         }
                     }
-
-                    //TableImport_Module importNode = new TableImport_Module(openFileDialog.FileName.Substring(openFileDialog.FileName.LastIndexOf("\\") + 1), "csv", rnd.NextDouble());
-
-                    //network.Nodes.Add(importNode);
                 }
                 //else if (...) //TODO: Ggf. andere Datentypen...
                 //{

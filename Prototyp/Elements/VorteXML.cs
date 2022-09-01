@@ -51,9 +51,13 @@
             VectorMultiPolygon,
 
             // Raster types
-            Raster
+            Raster,
 
-            // Add primitive types such as int, float, string, ...? E.g. for controls.
+            // Primitive types
+            Float,
+            Table
+
+            // Add more primitive types such as int, string, ...? E.g. for controls.
         }
 
         public struct Slider
@@ -289,6 +293,10 @@
 
                         if (SubElement.Name == "{Raster}Raster") ToolRows[Counter].inputRow.inputTypes[SubCounter] = ConnectorType.Raster;
 
+                        if (SubElement.Name == "{Table}Table") ToolRows[Counter].inputRow.inputTypes[SubCounter] = ConnectorType.Table;
+
+                        if (SubElement.Name == "{Float}Float") ToolRows[Counter].inputRow.inputTypes[SubCounter] = ConnectorType.Float;
+
                         SubCounter++;
                     }
                 }
@@ -322,6 +330,10 @@
                         if (SubElement.Name == "{Vector}MultiPolygon") ToolRows[Counter].inputRow.altControls[SubCounter].inputType = ConnectorType.VectorMultiPolygon;
 
                         if (SubElement.Name == "{Raster}Raster") ToolRows[Counter].inputRow.altControls[SubCounter].inputType = ConnectorType.Raster;
+                        
+                        if (SubElement.Name == "{Table}Table") ToolRows[Counter].inputRow.altControls[SubCounter].inputType = ConnectorType.Table;
+
+                        if (SubElement.Name == "{Float}Float") ToolRows[Counter].inputRow.altControls[SubCounter].inputType = ConnectorType.Float;
 
                         SubCounter2 = 0;
                         foreach (var nodes2 in SubElement.Nodes())
@@ -388,6 +400,10 @@
                         if (SubElement.Name == "{Vector}MultiPolygon") ToolRows[Counter].outputRow.outputTypes[SubCounter] = ConnectorType.VectorMultiPolygon;
 
                         if (SubElement.Name == "{Raster}Raster") ToolRows[Counter].outputRow.outputTypes[SubCounter] = ConnectorType.Raster;
+
+                        if (SubElement.Name == "{Table}Table") ToolRows[Counter].outputRow.outputTypes[SubCounter] = ConnectorType.Table;
+
+                        if (SubElement.Name == "{Float}Float") ToolRows[Counter].outputRow.outputTypes[SubCounter] = ConnectorType.Float;
 
                         SubCounter++;
                     }
@@ -632,6 +648,10 @@
 
                     if (ToolRows[Row].inputRow.inputTypes[i] == ConnectorType.Raster) Line = "\t\t\t\t" + "<Raster:Raster />" + "\n";
 
+                    if (ToolRows[Row].inputRow.inputTypes[i] == ConnectorType.Table) Line = "\t\t\t\t" + "<Table:Table />" + "\n";
+
+                    if (ToolRows[Row].inputRow.inputTypes[i] == ConnectorType.Float) Line = "\t\t\t\t" + "<Float:Float />" + "\n";
+
                     InpString = InpString + Line;
                 }
 
@@ -653,6 +673,10 @@
                     if (ToolRows[Row].inputRow.altControls[i].inputType == ConnectorType.VectorMultiPolygon) AltTypeStr = "Vector:MultiPolygon";
 
                     if (ToolRows[Row].inputRow.altControls[i].inputType == ConnectorType.Raster) AltTypeStr = "Raster:Raster";
+
+                    if (ToolRows[Row].inputRow.altControls[i].inputType == ConnectorType.Table) AltTypeStr = "Table:Table";
+
+                    if (ToolRows[Row].inputRow.altControls[i].inputType == ConnectorType.Float) AltTypeStr = "Float:Float";
 
                     Line = "\t\t\t\t" + "<" + AltTypeStr + ">" + "\n";
                     InpString = InpString + Line;
@@ -802,6 +826,10 @@
                 if (ToolRows[Row].outputRow.outputTypes[i] == ConnectorType.VectorMultiPolygon) OutTypeStr = "Vector:MultiPolygon";
 
                 if (ToolRows[Row].outputRow.outputTypes[i] == ConnectorType.Raster) OutTypeStr = "Raster:Raster";
+
+                if (ToolRows[Row].outputRow.outputTypes[i] == ConnectorType.Table) OutTypeStr = "Table:Table";
+
+                if (ToolRows[Row].outputRow.outputTypes[i] == ConnectorType.Float) OutTypeStr = "Float:Float";
 
                 Line = "\t\t\t\t" + "<" + OutTypeStr + " />" + "\n";
                 OutString = OutString + Line;

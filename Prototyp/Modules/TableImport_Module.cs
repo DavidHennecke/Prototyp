@@ -12,7 +12,7 @@ namespace Prototyp.Modules
     {
         public event System.EventHandler ProcessStatusChanged;
         public ValueNodeInputViewModel<string> importNodeInput { get; }
-        public ValueNodeOutputViewModel<string> importNodeOutput { get; }
+        public ValueNodeOutputViewModel<Prototyp.Elements.TableData> importNodeOutput { get; }
         public double IntID { get; }
         public int Status;
 
@@ -26,14 +26,15 @@ namespace Prototyp.Modules
         {
             Name = dataName;
             IntID = dataID;
-            importNodeOutput = new ValueNodeOutputViewModel<string>();
+            importNodeOutput = new ValueNodeOutputViewModel<Prototyp.Elements.TableData>();
             Outputs.Add(importNodeOutput);
+            Prototyp.Elements.TableData placeholder = new Prototyp.Elements.TableData(-1);
+            placeholder.Name = dataType;
 
             importNodeOutput.Name = dataType;
-            //importNodeOutput.Value = System.Reactive.Linq.Observable.Return(placeholder);
+            importNodeOutput.Value = System.Reactive.Linq.Observable.Return(placeholder);
             importNodeOutput.SetDataID(dataID);
         }
-
         static TableImport_Module()
         {
             Splat.Locator.CurrentMutable.Register(() => new Views.csvImportModuleView(), typeof(IViewFor<TableImport_Module>));

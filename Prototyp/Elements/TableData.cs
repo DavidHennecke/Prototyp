@@ -1,4 +1,5 @@
 ﻿using System.Linq;
+using System.Text;
 
 namespace Prototyp.Elements
 {
@@ -53,38 +54,42 @@ namespace Prototyp.Elements
         // Constructors --------------------------------------------------------------------
 
         // Parameterless constructor.
+        public TableData()
+        {
+
+        }
+
+        // Constructor utilizing only the mere ID.
         public TableData(int uid)
         {
             SetID(uid);
         }
 
         // Constructor that accepts a string that is a filename of a csv file.
-        public TableData(int uid, string fileName)
+        public TableData(int uid, string InString)
         {
-            if (System.IO.File.Exists(fileName))
+            if (System.IO.File.Exists(InString))
             {
                 _busy = true;
-                using (System.IO.Stream SourceFile = System.IO.File.OpenRead(fileName))
-                {
-                    _filename = fileName;
+                _filename = InString;
 
-                    byte[] FileBuffer = new byte[8];
-                    SourceFile.Read(FileBuffer, 0, FileBuffer.Length);
-                    _csvData = System.IO.File.ReadAllBytes(fileName);
-                    SetID(uid);
+                _csvData = System.IO.File.ReadAllBytes(InString);
+                SetID(uid);
 
-                }
                 _busy = false;
             }
             else
             {
-                throw new System.Exception("File does not exist.");
+                //throw new System.Exception("File does not exist.");
+
+                _busy = true;
+                _csvData = Encoding.Default.GetBytes(InString);
+                SetID(uid);
+                _busy = false;
             }
         }
 
-        // Constructor that is provided a byte array containing serialized FGB VectorData.
-        // Example:
-        // VectorData vectorData = new VectorData(VecArray);
+        // Constructor that is provided a byte array containing serialized table data.
         public TableData(int uid, byte[] csvArray)
         {
             _busy = true;
@@ -101,7 +106,6 @@ namespace Prototyp.Elements
             _ID = uid;
         }
 
-
         // Static methods ------------------------------------------------------------------
 
         public static string ByteArrToString(byte[] ByteArr)
@@ -114,10 +118,9 @@ namespace Prototyp.Elements
             return (System.Convert.FromBase64String(ByteStr));
         }
 
-
         // Methods -------------------------------------------------------------------------
 
-        public string ToString()
+        public override string ToString()
         {
             string MyString = null;
 
