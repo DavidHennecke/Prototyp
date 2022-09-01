@@ -10,23 +10,23 @@ namespace Prototyp.Modules.Views
     /// <summary>
     /// Interaction logic for NodeModuleView.xaml
     /// </summary>
-    public partial class csvImportModuleView : IViewFor<csvImport_Module>
+    public partial class csvImportModuleView : IViewFor<TableImport_Module>
     {
 
         #region ViewModel
         public static readonly DependencyProperty ViewModelProperty =
-        DependencyProperty.Register(nameof(ViewModel), typeof(csvImport_Module), typeof(csvImportModuleView), new PropertyMetadata(null));
+        DependencyProperty.Register(nameof(ViewModel), typeof(TableImport_Module), typeof(csvImportModuleView), new PropertyMetadata(null));
 
-        public csvImport_Module ViewModel
+        public TableImport_Module ViewModel
         {
-            get => (csvImport_Module)GetValue(ViewModelProperty);
+            get => (TableImport_Module)GetValue(ViewModelProperty);
             set => SetValue(ViewModelProperty, value);
         }
 
         object IViewFor.ViewModel
         {
             get => ViewModel;
-            set => ViewModel = (csvImport_Module)value;
+            set => ViewModel = (TableImport_Module)value;
         }
         
 

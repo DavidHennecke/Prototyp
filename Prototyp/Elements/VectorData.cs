@@ -48,7 +48,7 @@ namespace Prototyp.Elements
         private string _name;
         private string _filename;
         private string _description;
-        private double _ID = 0.0;
+        private int _ID = 0;
 
         // Getters and setters -------------------------------------------------------------
 
@@ -139,7 +139,7 @@ namespace Prototyp.Elements
                 }
             }
         }
-        public double ID
+        public int ID
         {
             get { return (_ID); }
         }
@@ -147,9 +147,9 @@ namespace Prototyp.Elements
         // Constructors --------------------------------------------------------------------
 
         // Parameterless constructor.
-        public VectorData()
+        public VectorData(int uid)
         {
-            MakeID();
+            SetID(uid);
         }
 
         // Constructor that accepts a string and decides what to do internally.
@@ -159,14 +159,14 @@ namespace Prototyp.Elements
         // VectorData vectorData = new VectorData(MyByteArray);
         // VectorData vectorData = new VectorData("C:/Temp/UScounties.fgb");
         // VectorData vectorData = new VectorData("C:/Temp/UScounties.shp");
-        public VectorData(string MyString)
+        public VectorData(int uid, string MyString)
         {
             if (MyString.StartsWith("ZmdiA2ZnYg")) //Base64 for fgb header
             {
                 _busy = true;
                 _vecData = StringToByteArr(MyString);
                 HandleNameAndCRS();
-                MakeID();
+                SetID(uid);
                 _busy = false;
             }
             else
@@ -195,7 +195,7 @@ namespace Prototyp.Elements
                             }
                         }
                         HandleNameAndCRS();
-                        MakeID();
+                        SetID(uid);
 
                     }
                     _busy = false;
@@ -211,7 +211,7 @@ namespace Prototyp.Elements
         // Example:
         // var FilterRect = new NetTopologySuite.Geometries.Envelope(-100, -90, 40, 30);
         // VectorData vectorData = new VectorData("C:/Temp/UScounties.fgb", FilterRect);
-        public VectorData(string FlatGeobufFileName, NetTopologySuite.Geometries.Envelope FlatGeobufRect)
+        public VectorData(int uid, string FlatGeobufFileName, NetTopologySuite.Geometries.Envelope FlatGeobufRect)
         {
             if (System.IO.File.Exists(FlatGeobufFileName))
             {
@@ -240,7 +240,7 @@ namespace Prototyp.Elements
                     HandleHeader(MyHeader);
 
                     _vecData = IntSerialize(NewCollection, FlatGeobuf.GeometryType.Unknown);
-                    MakeID();
+                    SetID(uid);
                 }
             }
             else
@@ -253,13 +253,13 @@ namespace Prototyp.Elements
         // Constructor that is provided a GDAL layer as a data source (e.g. obtained from a shape file).
         // Example:
         // VectorData vectorData = new VectorData(LayerData);
-        public VectorData(OSGeo.OGR.Layer LayerData)
+        public VectorData(int uid, OSGeo.OGR.Layer LayerData)
         {
             if (LayerData != null)
             {
                 _busy = true;
                 _vecData = ImportLayer(LayerData);
-                MakeID();
+                SetID(uid);
                 _busy = false;
             }
         }
@@ -267,25 +267,24 @@ namespace Prototyp.Elements
         // Constructor that is provided a byte array containing serialized FGB VectorData.
         // Example:
         // VectorData vectorData = new VectorData(VecArray);
-        public VectorData(byte[] VecArray)
+        public VectorData(int uid, byte[] VecArray)
         {
             if (ByteArrValid(VecArray))
             {
                 _busy = true;
                 _vecData = VecArray;
                 HandleNameAndCRS();
-                MakeID();
+                SetID(uid);
                 _busy = false;
             }
         }
 
         // Private methods -----------------------------------------------------------------
 
-        // Make ID.
-        private void MakeID()
+        // Set ID.
+        private void SetID(int uid)
         {
-            System.Random rnd = new System.Random();
-            _ID = rnd.NextDouble();
+            _ID = uid;
         }
 
         // Checks the FGB-validity of a provided byte array.
@@ -1008,37 +1007,37 @@ namespace Prototyp.Elements
 
     public class VectorPointData : VectorData
     {
-        public VectorPointData() : base() { }
-        public VectorPointData(string MyString) : base(MyString) { }
-        public VectorPointData(string FlatGeobufFileName, NetTopologySuite.Geometries.Envelope FlatGeobufRect) : base(FlatGeobufFileName, FlatGeobufRect) { }
-        public VectorPointData(OSGeo.OGR.Layer LayerData) : base(LayerData) { }
-        public VectorPointData(byte[] VecArray) : base(VecArray) { }
+        public VectorPointData(int uid) : base(uid) { }
+        public VectorPointData(int uid, string MyString) : base(uid, MyString) { }
+        public VectorPointData(int uid, string FlatGeobufFileName, NetTopologySuite.Geometries.Envelope FlatGeobufRect) : base(uid, FlatGeobufFileName, FlatGeobufRect) { }
+        public VectorPointData(int uid, OSGeo.OGR.Layer LayerData) : base(uid, LayerData) { }
+        public VectorPointData(int uid, byte[] VecArray) : base(uid, VecArray) { }
     }
 
     public class VectorLineData : VectorData
     {
-        public VectorLineData() : base() { }
-        public VectorLineData(string MyString) : base(MyString) { }
-        public VectorLineData(string FlatGeobufFileName, NetTopologySuite.Geometries.Envelope FlatGeobufRect) : base(FlatGeobufFileName, FlatGeobufRect) { }
-        public VectorLineData(OSGeo.OGR.Layer LayerData) : base(LayerData) { }
-        public VectorLineData(byte[] VecArray) : base(VecArray) { }
+        public VectorLineData(int uid) : base(uid) { }
+        public VectorLineData(int uid, string MyString) : base(uid, MyString) { }
+        public VectorLineData(int uid, string FlatGeobufFileName, NetTopologySuite.Geometries.Envelope FlatGeobufRect) : base(uid, FlatGeobufFileName, FlatGeobufRect) { }
+        public VectorLineData(int uid, OSGeo.OGR.Layer LayerData) : base(uid, LayerData) { }
+        public VectorLineData(int uid, byte[] VecArray) : base(uid, VecArray) { }
     }
 
     public class VectorPolygonData : VectorData
     {
-        public VectorPolygonData() : base() { }
-        public VectorPolygonData(string MyString) : base(MyString) { }
-        public VectorPolygonData(string FlatGeobufFileName, NetTopologySuite.Geometries.Envelope FlatGeobufRect) : base(FlatGeobufFileName, FlatGeobufRect) { }
-        public VectorPolygonData(OSGeo.OGR.Layer LayerData) : base(LayerData) { }
-        public VectorPolygonData(byte[] VecArray) : base(VecArray) { }
+        public VectorPolygonData(int uid) : base(uid) { }
+        public VectorPolygonData(int uid, string MyString) : base(uid, MyString) { }
+        public VectorPolygonData(int uid, string FlatGeobufFileName, NetTopologySuite.Geometries.Envelope FlatGeobufRect) : base(uid, FlatGeobufFileName, FlatGeobufRect) { }
+        public VectorPolygonData(int uid, OSGeo.OGR.Layer LayerData) : base(uid, LayerData) { }
+        public VectorPolygonData(int uid, byte[] VecArray) : base(uid, VecArray) { }
     }
 
     public class VectorMultiPolygonData : VectorData
     {
-        public VectorMultiPolygonData() : base() { }
-        public VectorMultiPolygonData(string MyString) : base(MyString) { }
-        public VectorMultiPolygonData(string FlatGeobufFileName, NetTopologySuite.Geometries.Envelope FlatGeobufRect) : base(FlatGeobufFileName, FlatGeobufRect) { }
-        public VectorMultiPolygonData(OSGeo.OGR.Layer LayerData) : base(LayerData) { }
-        public VectorMultiPolygonData(byte[] VecArray) : base(VecArray) { }
+        public VectorMultiPolygonData(int uid) : base(uid) { }
+        public VectorMultiPolygonData(int uid, string MyString) : base(uid, MyString) { }
+        public VectorMultiPolygonData(int uid, string FlatGeobufFileName, NetTopologySuite.Geometries.Envelope FlatGeobufRect) : base(uid, FlatGeobufFileName, FlatGeobufRect) { }
+        public VectorMultiPolygonData(int uid, OSGeo.OGR.Layer LayerData) : base(uid, LayerData) { }
+        public VectorMultiPolygonData(int uid, byte[] VecArray) : base(uid, VecArray) { }
     }
 }

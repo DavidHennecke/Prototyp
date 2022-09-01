@@ -82,7 +82,8 @@ namespace Prototyp
 
         public List<VectorData> vectorData = new List<VectorData>();
         public List<RasterData> rasterData = new List<RasterData>();
-        public List<string> csvData = new List<string>();
+        public List<TableData> tableData = new List<TableData>();
+        public int importDataUID = 0;
         private List<ComboItem> ComboItems = new List<ComboItem>();
         private List<ComboItem> ComboSearchItems = new List<ComboItem>();
 
@@ -453,22 +454,22 @@ namespace Prototyp
                         }
                     }
 
-                    VectorData peek = (new VectorData(openFileDialog.FileName));
+                    VectorData peek = (new VectorData(-1, openFileDialog.FileName));
                     string geometryType = peek.FeatureCollection[0].Geometry.GeometryType;
                     peek = null;
                     switch (geometryType)
                     {
                         case "Point":
-                            vectorData.Add(new VectorPointData(openFileDialog.FileName));
+                            vectorData.Add(new VectorPointData(importDataUID, openFileDialog.FileName));
                             break;
                         case "Line":
-                            vectorData.Add(new VectorLineData(openFileDialog.FileName));
+                            vectorData.Add(new VectorLineData(importDataUID, openFileDialog.FileName));
                             break;
                         case "Polygon":
-                            vectorData.Add(new VectorPolygonData(openFileDialog.FileName));
+                            vectorData.Add(new VectorPolygonData(importDataUID, openFileDialog.FileName));
                             break;
                         case "MultiPolygon":
-                            vectorData.Add(new VectorMultiPolygonData(openFileDialog.FileName));
+                            vectorData.Add(new VectorMultiPolygonData(importDataUID, openFileDialog.FileName));
                             break;
                         default:
                             // There should be nothing here.
@@ -539,7 +540,7 @@ namespace Prototyp
                         }
                     }
 
-                    rasterData.Add(new RasterData(openFileDialog.FileName));
+                    rasterData.Add(new RasterData(importDataUID, openFileDialog.FileName));
                     //// Testcode start
                     //// Bitte noch nicht löschen!
                     //string Test1 = rasterData[rasterData.Count - 1].ToString();
@@ -575,15 +576,33 @@ namespace Prototyp
                 }
                 else if (Path.GetExtension(openFileDialog.FileName).ToLower() == ".csv")
                 {
-                    string csvText = File.ReadAllText(openFileDialog.FileName);
+                    if (tableData.Count > 0)
+                    {
+                        if (tableData[tableData.Count - 1] != null)
+                        {
+                            while (tableData[tableData.Count - 1].Busy)
+                            {
+                                System.Threading.Thread.Sleep(50);
+                            }
+                        }
+                    }
+                    tableData.Add(new TableData(importDataUID, openFileDialog.FileName));
 
-                    csvData.Add(csvText);
+                    //Add table data to node editor
+                    for (int i = 0; i < tableData.Count; i++)
+                    {
+                        if (tableData[i].ID == tableData[tableData.Count - 1].ID)
+                        {
+                            TableImport_Module importNode = new TableImport_Module(openFileDialog.FileName.Substring(openFileDialog.FileName.LastIndexOf("\\") + 1), "csv", tableData[i].ID);
 
-                    Random rnd = new Random();
-                                        
-                    csvImport_Module importNode = new csvImport_Module(openFileDialog.FileName.Substring(openFileDialog.FileName.LastIndexOf("\\") + 1), "csv", rnd.NextDouble());
+                            network.Nodes.Add(importNode);
+                            break;
+                        }
+                    }
 
-                    network.Nodes.Add(importNode);
+                    //TableImport_Module importNode = new TableImport_Module(openFileDialog.FileName.Substring(openFileDialog.FileName.LastIndexOf("\\") + 1), "csv", rnd.NextDouble());
+
+                    //network.Nodes.Add(importNode);
                 }
                 //else if (...) //TODO: Ggf. andere Datentypen...
                 //{
@@ -594,6 +613,7 @@ namespace Prototyp
                     System.Windows.Forms.Cursor.Current = System.Windows.Forms.Cursors.Default;
                     return;
                 }
+                importDataUID++;
 
                 System.Windows.Forms.Cursor.Current = System.Windows.Forms.Cursors.Default;
             }
@@ -822,8 +842,7 @@ namespace Prototyp
             foreach (NodeConnection nc in importConnections)
             {
                 //Get data
-                //TODO: vectorData as <int> dictionary
-                //string layer = vectorData[(int)nc.ImportNodeOutput].ToString(ToStringParams.ByteString);
+                System.Diagnostics.Trace.WriteLine("Searching for import node " + nc.ImportNodeOutput + " in all data import lists.");
                 string layer = null;
                 foreach (VectorData v in vectorData)
                 {
@@ -831,6 +850,20 @@ namespace Prototyp
                     {
                         layer = v.ToString(ToStringParams.ByteString);
                         break;
+                    }
+                }
+                foreach (RasterData r in rasterData)
+                {
+                    if (r.ID == nc.ImportNodeOutput)
+                    {
+                        layer = r.ToString();
+                    }
+                }
+                foreach (TableData t in tableData)
+                {
+                    if (t.ID == nc.ImportNodeOutput)
+                    {
+                        layer = t.ToString();
                     }
                 }
                 //Split into chunks of 65536 bytes (64 KiB)

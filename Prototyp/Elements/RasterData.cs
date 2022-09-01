@@ -37,7 +37,7 @@
         private int _rasterCount;
         private double _NA;
         private double[] _geoTransform;
-        private double _ID = 0.0;
+        private int _ID = 0;
         private string _name;
         private string _filename;
 
@@ -102,7 +102,7 @@
             set { if (value.Length == 6) _geoTransform = value; }
         }
 
-        public double ID
+        public int ID
         {
             get { return (_ID); }
         }
@@ -122,9 +122,9 @@
         // Constructors --------------------------------------------------------------------
 
         // Parameterless constructor.
-        public RasterData()
+        public RasterData(int uid)
         {
-            MakeID();
+            SetID(uid);
         }
 
         // Constructor that accepts a string and decides what to do internally.
@@ -133,7 +133,7 @@
         // Example:
         // RasterData rasterData = new RasterData("C:/Temp/WindData.asc");
         // RasterData rasterData = new RasterData(MyByteArrayString);
-        public RasterData(string MyString)
+        public RasterData(int uid, string MyString)
         {
             if (System.IO.File.Exists(MyString))
             {
@@ -141,7 +141,7 @@
                 InitGDAL();
                 OSGeo.GDAL.Dataset DS = OSGeo.GDAL.Gdal.Open(MyString, OSGeo.GDAL.Access.GA_ReadOnly);
                 ImportDataset(DS, 0, 0, DS.RasterXSize, DS.RasterYSize);
-                MakeID();
+                SetID(uid);
                 _name = GetName(MyString);
                 _filename = MyString;
                 _busy = false;
@@ -150,7 +150,7 @@
             {
                 _busy = true;
                 Deserialize(System.Convert.FromBase64String(MyString));
-                MakeID();
+                SetID(uid);
                 _busy = false;
             }
         }
@@ -158,7 +158,7 @@
         // Constructor that opens a rectangle from a file.
         // Example:
         // RasterData rasterData = new RasterData("C:/Temp/WindData.asc", 100, 100, 200, 200);
-        public RasterData(string RasterFileName, int xOff, int yOff, int xSize, int ySize)
+        public RasterData(int uid, string RasterFileName, int xOff, int yOff, int xSize, int ySize)
         {
             if (System.IO.File.Exists(RasterFileName))
             {
@@ -166,7 +166,7 @@
                 InitGDAL();
                 OSGeo.GDAL.Dataset DS = OSGeo.GDAL.Gdal.Open(RasterFileName, OSGeo.GDAL.Access.GA_ReadOnly);
                 ImportDataset(DS, xOff, yOff, xSize, ySize);
-                MakeID();
+                SetID(uid);
                 _name = GetName(RasterFileName);
                 _filename = RasterFileName;
             }
@@ -179,30 +179,29 @@
         }
 
         // Constructor that accepts a pre-loaded GDAL dataset object.
-        public RasterData(OSGeo.GDAL.Dataset DS)
+        public RasterData(int uid, OSGeo.GDAL.Dataset DS)
         {
             _busy = true;
             ImportDataset(DS, 0, 0, DS.RasterXSize, DS.RasterYSize);
-            MakeID();
+            SetID(uid);
             _busy = false;
         }
 
         // Constructor that deserializes a byte array representation of raster data.
         // Example:
         // RasterData rasterData = new RasterData(SomeByteArray);
-        public RasterData(byte[] SerializedData)
+        public RasterData(int uid, byte[] SerializedData)
         {
             Deserialize(SerializedData);
-            MakeID();
+            SetID(uid);
         }
 
         // Private methods -----------------------------------------------------------------
 
         // Make ID.
-        private void MakeID()
+        private void SetID(int uid)
         {
-            System.Random rnd = new System.Random();
-            _ID = rnd.NextDouble();
+            _ID = uid;
         }
 
         private string GetName(string FileName)

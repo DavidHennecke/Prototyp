@@ -330,7 +330,7 @@ namespace Prototyp.Modules
                             if (inMain)
                             {
                                 vectorOutputPoint.SetID(outputRowCounter);
-                                VectorPointData placeholder = new VectorPointData();
+                                VectorPointData placeholder = new VectorPointData(-1);
                                 // Name-Editor Implementation
                                 //outNameEditor = new Modules.ViewModels.OutputNameViewModel(vectorOutput.Name);
                                 //outNameEditor.Value = "Vector output";
@@ -357,7 +357,7 @@ namespace Prototyp.Modules
                             if (inMain)
                             {
                                 vectorOutputLine.SetID(outputRowCounter);
-                                VectorLineData placeholder = new VectorLineData();
+                                VectorLineData placeholder = new VectorLineData(-1);
                                 // Name-Editor Implementation
                                 //outNameEditor = new Modules.ViewModels.OutputNameViewModel(vectorOutput.Name);
                                 //outNameEditor.Value = "Vector output";
@@ -384,7 +384,7 @@ namespace Prototyp.Modules
                             if (inMain)
                             {
                                 vectorOutputPolygon.SetID(outputRowCounter);
-                                VectorPolygonData placeholder = new VectorPolygonData();
+                                VectorPolygonData placeholder = new VectorPolygonData(-1);
                                 // Name-Editor Implementation
                                 //outNameEditor = new Modules.ViewModels.OutputNameViewModel(vectorOutput.Name);
                                 //outNameEditor.Value = "Vector output";
@@ -411,7 +411,7 @@ namespace Prototyp.Modules
                             if (inMain)
                             {
                                 vectorOutputMultiPolygon.SetID(outputRowCounter);
-                                VectorMultiPolygonData placeholder = new VectorMultiPolygonData();
+                                VectorMultiPolygonData placeholder = new VectorMultiPolygonData(-1);
                                 // Name-Editor Implementation
                                 //outNameEditor = new Modules.ViewModels.OutputNameViewModel(vectorOutput.Name);
                                 //outNameEditor.Value = "Vector output";
@@ -438,7 +438,7 @@ namespace Prototyp.Modules
                             if (inMain)
                             {
                                 rasterOutput.SetID(outputRowCounter);
-                                RasterData placeholder = new RasterData();
+                                RasterData placeholder = new RasterData(-1);
                                 // Name-Editor Implementation
                                 //outNameEditor = new Modules.ViewModels.OutputNameViewModel(rasterOutput.Name);
                                 //outNameEditor.Value = "Raster output";

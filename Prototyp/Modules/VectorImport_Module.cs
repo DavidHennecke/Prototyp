@@ -25,13 +25,13 @@ namespace Prototyp.Modules
             // Nothing much to do here...
         }
 
-        public VectorImport_Module(string dataName, string geomType, double dataID)
+        public VectorImport_Module(string dataName, string geomType, int dataID)
         {
             Name = dataName;
             IntID = dataID;
             importNodeOutput = new ValueNodeOutputViewModel<Prototyp.Elements.VectorData>();
             Outputs.Add(importNodeOutput);
-            Prototyp.Elements.VectorData placeholder = new Prototyp.Elements.VectorData();
+            Prototyp.Elements.VectorData placeholder = new Prototyp.Elements.VectorData(-1);
             placeholder.Name = geomType;
 
             importNodeOutput.Name = geomType;
@@ -53,13 +53,13 @@ namespace Prototyp.Modules
         public new ValueNodeOutputViewModel<Prototyp.Elements.VectorPointData> importNodeOutput { get; }
         public override double IntID { get; }
 
-        public VectorImport_ModulePoint(string dataName, string geomType, double dataID)
+        public VectorImport_ModulePoint(string dataName, string geomType, int dataID)
         {
             Name = dataName;
             IntID = dataID;
             importNodeOutput = new ValueNodeOutputViewModel<Prototyp.Elements.VectorPointData>();
             Outputs.Add(importNodeOutput);
-            Prototyp.Elements.VectorPointData placeholder = new Prototyp.Elements.VectorPointData();
+            Prototyp.Elements.VectorPointData placeholder = new Prototyp.Elements.VectorPointData(-1);
             placeholder.Name = geomType;
 
             importNodeOutput.Name = geomType;
@@ -78,13 +78,13 @@ namespace Prototyp.Modules
         public new ValueNodeOutputViewModel<Prototyp.Elements.VectorLineData> importNodeOutput { get; }
         public override double IntID { get; }
 
-        public VectorImport_ModuleLine(string dataName, string geomType, double dataID)
+        public VectorImport_ModuleLine(string dataName, string geomType, int dataID)
         {
             Name = dataName;
             IntID = dataID;
             importNodeOutput = new ValueNodeOutputViewModel<Prototyp.Elements.VectorLineData>();
             Outputs.Add(importNodeOutput);
-            Prototyp.Elements.VectorLineData placeholder = new Prototyp.Elements.VectorLineData();
+            Prototyp.Elements.VectorLineData placeholder = new Prototyp.Elements.VectorLineData(-1);
             placeholder.Name = geomType;
 
             importNodeOutput.Name = geomType;
@@ -103,13 +103,13 @@ namespace Prototyp.Modules
         public new ValueNodeOutputViewModel<Prototyp.Elements.VectorPolygonData> importNodeOutput { get; }
         public override double IntID { get; }
 
-        public VectorImport_ModulePolygon(string dataName, string geomType, double dataID)
+        public VectorImport_ModulePolygon(string dataName, string geomType, int dataID)
         {
             Name = dataName;
             IntID = dataID;
             importNodeOutput = new ValueNodeOutputViewModel<Prototyp.Elements.VectorPolygonData>();
             Outputs.Add(importNodeOutput);
-            Prototyp.Elements.VectorPolygonData placeholder = new Prototyp.Elements.VectorPolygonData();
+            Prototyp.Elements.VectorPolygonData placeholder = new Prototyp.Elements.VectorPolygonData(-1);
             placeholder.Name = geomType;
 
             importNodeOutput.Name = geomType;
@@ -128,13 +128,13 @@ namespace Prototyp.Modules
         public new ValueNodeOutputViewModel<Prototyp.Elements.VectorMultiPolygonData> importNodeOutput { get; }
         public override double IntID { get; }
 
-        public VectorImport_ModuleMultiPolygon(string dataName, string geomType, double dataID)
+        public VectorImport_ModuleMultiPolygon(string dataName, string geomType, int dataID)
         {
             Name = dataName;
             IntID = dataID;
             importNodeOutput = new ValueNodeOutputViewModel<Prototyp.Elements.VectorMultiPolygonData>();
             Outputs.Add(importNodeOutput);
-            Prototyp.Elements.VectorMultiPolygonData placeholder = new Prototyp.Elements.VectorMultiPolygonData();
+            Prototyp.Elements.VectorMultiPolygonData placeholder = new Prototyp.Elements.VectorMultiPolygonData(-1);
             placeholder.Name = geomType;
 
             importNodeOutput.Name = geomType;

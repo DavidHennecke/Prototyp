@@ -20,13 +20,13 @@ namespace Prototyp.Modules
             ProcessStatusChanged?.Invoke(Status, System.EventArgs.Empty);
         }
 
-        public RasterImport_Module(string dataName, string dataType, double dataID)
+        public RasterImport_Module(string dataName, string dataType, int dataID)
         {
             Name = dataName;
             IntID = dataID;
             importNodeOutput = new ValueNodeOutputViewModel<Prototyp.Elements.RasterData>();
             Outputs.Add(importNodeOutput);
-            Prototyp.Elements.RasterData placeholder = new Prototyp.Elements.RasterData();
+            Prototyp.Elements.RasterData placeholder = new Prototyp.Elements.RasterData(-1);
             placeholder.Name = dataType;
 
             importNodeOutput.Name = dataType;

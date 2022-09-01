@@ -439,6 +439,8 @@ namespace Prototyp.Elements
                 i++;
             }
 
+
+            int importUIDCounter = 0;
             // Next, add the vector data/list entry/node.
             foreach (VecImportNodeProperties v in VecImportNodeProps)
             {
@@ -459,13 +461,12 @@ namespace Prototyp.Elements
                         // If data is not embedded and the file cannot be found at the specified location, we have a problem.
                         // TODO: Ask the user to specify location?
                         if (!System.IO.File.Exists(v.FileName)) throw new Exception("File not found. Invalid path?");
-                        vectorData.Add(new VectorData(v.FileName));
+                        vectorData.Add(new VectorData(importUIDCounter, v.FileName));
                     }
                     else
                     {
-                        vectorData.Add(new VectorData(v.RawData));
+                        vectorData.Add(new VectorData(importUIDCounter, v.RawData));
                     }
-
                 }
 
                 VectorImport_Module importNode = null;
@@ -490,6 +491,7 @@ namespace Prototyp.Elements
 
                 importNode.Position = v.Position;
                 network.Nodes.Add(importNode);
+                importUIDCounter++;
             }
 
             // Then, add the raster data/list entry/node.
@@ -512,17 +514,18 @@ namespace Prototyp.Elements
                         // If data is not embedded and the file cannot be found at the specified location, we have a problem.
                         // TODO: Ask the user to specify location?
                         if (!System.IO.File.Exists(r.FileName)) throw new Exception("File not found. Invalid path?");
-                        rasterData.Add(new RasterData(r.FileName));
+                        rasterData.Add(new RasterData(importUIDCounter, r.FileName));
                     }
                     else
                     {
-                        rasterData.Add(new RasterData(r.RawData));
+                        rasterData.Add(new RasterData(importUIDCounter, r.RawData));
                     }
                 }
 
                 RasterImport_Module importNode = new RasterImport_Module(r.Name, rasterData.Last().FileType, rasterData.Last().ID);
                 importNode.Position = r.Position;
                 network.Nodes.Add(importNode);
+                importUIDCounter++;
             }
 
             // Finally, add the connections.
