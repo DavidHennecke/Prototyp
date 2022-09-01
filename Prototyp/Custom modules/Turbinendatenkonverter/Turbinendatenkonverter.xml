@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<root xmlns:Element="Element" xmlns:Raster="Raster" xmlns:Vector="Vector" xmlns:CSV="CSV" xmlns:Float="Float" xmlns:Control="Control" xmlns:Value="Value">
+<Node style="default" editorVersion="0.1">
+	<NodeTitle>Turbinendatenkonverter</NodeTitle>
+	<NodeElements>
+		<Element:Input rowNr="1" name="CSVInput">
+			<InputTypes>
+				<CSV:CSV />
+			</InputTypes>
+		</Element:Input>
+		<Element:Output rowNr="2" name="VecPointOutput">
+			<OutputTypes>
+				<Vector:Point />
+			</OutputTypes>
+		</Element:Output>
+		<Element:Output rowNr="3" name="FloatOutput">
+			<OutputTypes>
+				<Float:Float />
+			</OutputTypes>
+		</Element:Output>
+	</NodeElements>
+</Node>
+</root>
