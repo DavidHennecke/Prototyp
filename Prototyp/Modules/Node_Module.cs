@@ -67,7 +67,6 @@ namespace Prototyp.Modules
         public ValueNodeInputViewModel<Prototyp.Elements.VectorMultiPolygonData> vectorInputMultiPolygon { get; set; }
         public ValueNodeInputViewModel<Prototyp.Elements.RasterData> rasterInput { get; set; }
         public ValueNodeInputViewModel<Prototyp.Elements.TableData> tableInput { get; set; }
-        public ValueNodeInputViewModel<Prototyp.Elements.FloatData> floatInput { get; set; }
 
         public ValueNodeOutputViewModel<Prototyp.Elements.VectorPointData> vectorOutputPoint { get; set; }
         public ValueNodeOutputViewModel<Prototyp.Elements.VectorLineData> vectorOutputLine { get; set; }
@@ -75,7 +74,6 @@ namespace Prototyp.Modules
         public ValueNodeOutputViewModel<Prototyp.Elements.VectorMultiPolygonData> vectorOutputMultiPolygon { get; set; }
         public ValueNodeOutputViewModel<Prototyp.Elements.RasterData> rasterOutput { get; set; }
         public ValueNodeOutputViewModel<Prototyp.Elements.TableData> tableOutput { get; set; }
-        public ValueNodeOutputViewModel<Prototyp.Elements.FloatData> floatOutput { get; set; }
 
         private string _PathXML;
         private GrpcClient.ControlConnector.ControlConnectorClient _GrpcConnection;
@@ -347,28 +345,9 @@ namespace Prototyp.Modules
                         }
                         else if (toolRow.inputRow.inputTypes[i] == VorteXML.ConnectorType.Float)
                         {
-                            floatInput = new ValueNodeInputViewModel<Prototyp.Elements.FloatData>();
-
-                            if (inMain)
-                            {
-                                floatInput.SetID(inputRowCounter);
-                                floatInput.Name = toolRow.inputRow.inputTypes[i].ToString();
-                                // Alternativ: rasterInput.Name = toolRow.inputRow.inputTypes.Last().ToString();
-                                // Grundsätzlich: Was tun bei mehreren validen Inputtypen?
-                                floatInput.ValueChanged.Subscribe(floatInputSource =>
-                                {
-                                    if (floatInputSource != null)
-                                    {
-                                        // TODO: Hier muss noch nach den Ports differenziert werden, falls mehrere vorhanden sind.
-                                        floatInput.Name = floatInputSource.Name;
-                                    }
-                                });
-                            }
-                            else
-                            {
-                                floatInput.Name = toolRow.Name;
-                            }
-                            Inputs.Add(floatInput);
+                            FloatInput.Add(new ValueNodeInputViewModel<float>());
+                            FloatInput[FloatInput.Count - 1].Name = toolRow.inputRow.inputTypes[i].ToString();
+                            Inputs.Add(FloatInput[FloatInput.Count - 1]);
                             continue;
                         }
                         //... TODO: Support more types?
@@ -539,21 +518,9 @@ namespace Prototyp.Modules
                         }
                         else if (toolRow.outputRow.outputTypes[i] == VorteXML.ConnectorType.Float)
                         {
-                            floatOutput = new ValueNodeOutputViewModel<Elements.FloatData>();
-                            if (inMain)
-                            {
-                                floatOutput.SetID(outputRowCounter);
-                                FloatData placeholder = new FloatData(-1);
-
-                                placeholder.Name = toolRow.outputRow.outputTypes[i].ToString();
-                                floatOutput.Name = toolRow.outputRow.outputTypes[i].ToString();
-                                floatOutput.Value = System.Reactive.Linq.Observable.Return(placeholder);
-                            }
-                            else
-                            {
-                                floatOutput.Name = toolRow.Name;
-                            }
-                            Outputs.Add(floatOutput);
+                            FloatOutput.Add(new ValueNodeOutputViewModel<float>());
+                            FloatOutput[FloatOutput.Count - 1].Name = toolRow.outputRow.outputTypes[i].ToString();
+                            Outputs.Add(FloatOutput[FloatOutput.Count - 1]);
                             continue;
                         }
                         //... TODO: Support more types?
