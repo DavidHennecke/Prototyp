@@ -551,6 +551,7 @@ namespace Prototyp.Modules
                         FloatInput[FloatInput.Count - 1].Editor = sliderEditor[sliderEditor.Count - 1];
                         FloatInput[FloatInput.Count - 1].Port.IsVisible = true;
                         FloatInput[FloatInput.Count - 1].Name = toolRow.Name;
+                        FloatInput[FloatInput.Count - 1].SetID(inputRowCounter);
 
                         Inputs.Add(FloatInput[FloatInput.Count - 1]);
 
@@ -573,9 +574,11 @@ namespace Prototyp.Modules
                         StringInput[StringInput.Count - 1].Editor = dropdownEditor[StringInput.Count - 1];
                         StringInput[StringInput.Count - 1].Port.IsVisible = false;
                         StringInput[StringInput.Count - 1].Name = toolRow.Name;
+                        StringInput[StringInput.Count - 1].SetID(inputRowCounter);
 
                         Inputs.Add(StringInput[StringInput.Count - 1]);
                     }
+                    inputRowCounter++;
                 }
             }
         }

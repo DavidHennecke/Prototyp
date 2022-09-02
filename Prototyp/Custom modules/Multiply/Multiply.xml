@@ -8,7 +8,7 @@
 				<Float:Float />
 			</InputTypes>
 		</Element:Input>
-		<Element:Control rowNr="2" name="Multiplyer">
+		<Element:Control rowNr="2" name="Multiplier">
 			<Control:Slider style="default">
 				<Value:Float default="1.0">Start</Value:Float>
 				<Value:Float default="50.0">End</Value:Float>
