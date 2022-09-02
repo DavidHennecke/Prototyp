@@ -346,7 +346,9 @@ namespace Prototyp.Modules
                         else if (toolRow.inputRow.inputTypes[i] == VorteXML.ConnectorType.Float)
                         {
                             FloatInput.Add(new ValueNodeInputViewModel<float>());
+                            FloatInput[FloatInput.Count - 1].SetID(inputRowCounter);
                             FloatInput[FloatInput.Count - 1].Name = toolRow.inputRow.inputTypes[i].ToString();
+
                             Inputs.Add(FloatInput[FloatInput.Count - 1]);
                             continue;
                         }
@@ -518,8 +520,13 @@ namespace Prototyp.Modules
                         }
                         else if (toolRow.outputRow.outputTypes[i] == VorteXML.ConnectorType.Float)
                         {
+                            float placeholder = new float();
+                            
                             FloatOutput.Add(new ValueNodeOutputViewModel<float>());
+                            FloatOutput[FloatOutput.Count - 1].SetID(outputRowCounter);
                             FloatOutput[FloatOutput.Count - 1].Name = toolRow.outputRow.outputTypes[i].ToString();
+                            FloatOutput[FloatOutput.Count - 1].Value = System.Reactive.Linq.Observable.Return(placeholder);
+
                             Outputs.Add(FloatOutput[FloatOutput.Count - 1]);
                             continue;
                         }
@@ -541,7 +548,7 @@ namespace Prototyp.Modules
                         sliderEditor[sliderEditor.Count - 1].FloatValue = toolRow.controlRow.slider.Default;
 
                         FloatInput.Add(new ValueNodeInputViewModel<float>());
-                        FloatInput[FloatInput.Count - 1].Editor = sliderEditor[FloatInput.Count - 1];
+                        FloatInput[FloatInput.Count - 1].Editor = sliderEditor[sliderEditor.Count - 1];
                         FloatInput[FloatInput.Count - 1].Port.IsVisible = true;
                         FloatInput[FloatInput.Count - 1].Name = toolRow.Name;
 
