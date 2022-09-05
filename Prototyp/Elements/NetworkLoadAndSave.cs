@@ -9,7 +9,8 @@ namespace Prototyp.Elements
     {
         Module,
         Vector,
-        Raster
+        Raster,
+        Table
     }
 
     [Serializable]
@@ -41,6 +42,16 @@ namespace Prototyp.Elements
         public System.Windows.Size Size { get; set; }
         public byte[] RawData { get; set; }
 
+    }
+
+    [Serializable]
+    public class TabImportNodeProperties
+    {
+        public string Name { get; set; }
+        public string FileName { get; set; }
+        public System.Windows.Point Position { get; set; }
+        public System.Windows.Size Size { get; set; }
+        public byte[] RawData { get; set; }
     }
 
     [Serializable]
@@ -81,6 +92,7 @@ namespace Prototyp.Elements
         private System.Collections.Generic.List<ModuleNodeProperties> _ModuleNodeProperties;
         private System.Collections.Generic.List<VecImportNodeProperties> _VecImportNodeProperties;
         private System.Collections.Generic.List<RasImportNodeProperties> _RasImportNodeProperties;
+        private System.Collections.Generic.List<TabImportNodeProperties> _TabImportNodeProperties;
         private System.Collections.Generic.List<ConnectionProperties> _ConnectionProperties;
 
         // Getters and setters -------------------------------------------------------------
@@ -110,6 +122,11 @@ namespace Prototyp.Elements
             get { return (_RasImportNodeProperties); }
         }
 
+        public System.Collections.Generic.List<TabImportNodeProperties> TabImportNodeProps
+        {
+            get { return (_TabImportNodeProperties); }
+        }
+
         public System.Collections.Generic.List<ConnectionProperties> ConnectionProps
         {
             get { return (_ConnectionProperties); }
@@ -128,9 +145,10 @@ namespace Prototyp.Elements
         public NetworkLoadAndSave(NodeNetwork.ViewModels.NetworkViewModel network,
                                   System.Collections.Generic.List<VectorData> vec,
                                   System.Collections.Generic.List<RasterData> ras,
+                                  System.Collections.Generic.List<TableData> tab,
                                   bool IncludeDataSets = true)
         {
-            MakeInternalLists(network, vec, ras, IncludeDataSets);
+            MakeInternalLists(network, vec, ras, tab, IncludeDataSets);
         }
 
         // Constructor that accepts pointers to the required data structures, extracts the necessary
@@ -138,10 +156,11 @@ namespace Prototyp.Elements
         public NetworkLoadAndSave(NodeNetwork.ViewModels.NetworkViewModel network,
                                   System.Collections.Generic.List<VectorData> vec,
                                   System.Collections.Generic.List<RasterData> ras,
+                                  System.Collections.Generic.List<TableData> tab,
                                   string FileName,
                                   bool IncludeDataSets = true)
         {
-            MakeInternalLists(network, vec, ras, IncludeDataSets);
+            MakeInternalLists(network, vec, ras, tab, IncludeDataSets);
 
             System.Runtime.Serialization.Formatters.Binary.BinaryFormatter binForm = new System.Runtime.Serialization.Formatters.Binary.BinaryFormatter();
             using (System.IO.FileStream fs = System.IO.File.Create(FileName)) { binForm.Serialize(fs, this); }
@@ -162,6 +181,7 @@ namespace Prototyp.Elements
                 _ModuleNodeProperties = Read.ModNodeProps;
                 _VecImportNodeProperties = Read.VecImportNodeProps;
                 _RasImportNodeProperties = Read.RasImportNodeProps;
+                _TabImportNodeProperties = Read.TabImportNodeProps;
                 _ConnectionProperties = Read.ConnectionProps;
             }
         }
@@ -171,11 +191,13 @@ namespace Prototyp.Elements
         private void MakeInternalLists(NodeNetwork.ViewModels.NetworkViewModel network,
                                        System.Collections.Generic.List<VectorData> vec,
                                        System.Collections.Generic.List<RasterData> ras,
+                                       System.Collections.Generic.List<TableData> tab,
                                        bool IncludeDataSets)
         {
             // Init lists.
             _VecImportNodeProperties = new System.Collections.Generic.List<VecImportNodeProperties>();
             _RasImportNodeProperties = new System.Collections.Generic.List<RasImportNodeProperties>();
+            _TabImportNodeProperties = new System.Collections.Generic.List<TabImportNodeProperties>();
             _ModuleNodeProperties = new System.Collections.Generic.List<ModuleNodeProperties>();
             _ConnectionProperties = new System.Collections.Generic.List<ConnectionProperties>();
 
@@ -234,6 +256,24 @@ namespace Prototyp.Elements
                     }
 
                     _RasImportNodeProperties.Add(impProp);
+                }
+                else if (node is TableImport_Module tabImp)
+                {
+                    TabImportNodeProperties impProp = new TabImportNodeProperties();
+                    impProp.Name = tabImp.Name;
+                    impProp.Position = tabImp.Position;
+                    impProp.Size = tabImp.Size;
+
+                    foreach (TableData t in tab)
+                    {
+                        if (t.ID == tabImp.IntID)
+                        {
+                            impProp.FileName = t.FileName;
+                            if (IncludeDataSets) impProp.RawData = t.csvData;
+                        }
+                    }
+
+                    _TabImportNodeProperties.Add(impProp);
                 }
                 // else if (other data types...)
                 {
@@ -355,6 +395,31 @@ namespace Prototyp.Elements
                         i++;
                     }
                 }
+                else if (conn.Output.Parent is TableImport_Module tabImp)
+                {
+                    // Find the corresponding entry in the raster imports list.
+                    for (i = 0; i < _TabImportNodeProperties.Count; i++)
+                    {
+                        if (_TabImportNodeProperties[i].Position == conn.Output.Parent.Position && _TabImportNodeProperties[i].Size == conn.Output.Parent.Size)
+                        {
+                            connProp.OutputType = ConnectionType.Table;
+                            connProp.OutputIndex = i;
+                            break;
+                        }
+                    }
+
+                    // Find the attached port.
+                    i = 0;
+                    foreach (NodeNetwork.ViewModels.NodeOutputViewModel p in tabImp.VisibleOutputs.Items)
+                    {
+                        if (p.Port == conn.Output.Port)
+                        {
+                            connProp.OutputPort = i;
+                            break;
+                        }
+                        i++;
+                    }
+                }
 
                 _ConnectionProperties.Add(connProp);
             }
@@ -364,6 +429,7 @@ namespace Prototyp.Elements
 
         public NodeNetwork.ViewModels.NetworkViewModel ImportWorkflow(System.Collections.Generic.List<VectorData> vectorData,
                                                                       System.Collections.Generic.List<RasterData> rasterData,
+                                                                      System.Collections.Generic.List<TableData> tableData,
                                                                       NodeNetwork.ViewModels.NetworkViewModel network,
                                                                       string ModulesPath)
         {
@@ -528,6 +594,40 @@ namespace Prototyp.Elements
                 importUIDCounter++;
             }
 
+            // Now, add the table data/list entry/node.
+            foreach (TabImportNodeProperties t in TabImportNodeProps)
+            {
+                // Is data already present? If so, do not load again.
+                bool AlreadyPresent = false;
+                foreach (TableData tab in tableData)
+                {
+                    if (tab.Name == t.Name) // Maybe 'Name' is not the best criterion for uniqueness, but it's better than nothing. TODO.
+                    {
+                        AlreadyPresent = true;
+                        break;
+                    }
+                }
+                if (!AlreadyPresent)
+                {
+                    if (t.RawData == null)
+                    {
+                        // If data is not embedded and the file cannot be found at the specified location, we have a problem.
+                        // TODO: Ask the user to specify location?
+                        if (!System.IO.File.Exists(t.FileName)) throw new Exception("File not found. Invalid path?");
+                        tableData.Add(new TableData(importUIDCounter, t.FileName));
+                    }
+                    else
+                    {
+                        tableData.Add(new TableData(importUIDCounter, t.RawData));
+                    }
+                }
+
+                TableImport_Module importNode = new TableImport_Module(t.Name, tableData.Last().FileType, tableData.Last().ID);
+                importNode.Position = t.Position;
+                network.Nodes.Add(importNode);
+                importUIDCounter++;
+            }
+
             // Finally, add the connections.
             NodeNetwork.ViewModels.NodeViewModel inpNode = null;
             NodeNetwork.ViewModels.NodeViewModel outpNode = null;
@@ -591,6 +691,21 @@ namespace Prototyp.Elements
                     foreach (NodeNetwork.ViewModels.NodeViewModel node in network.Nodes.Items)
                     {
                         if (node is RasterImport_Module r)
+                        {
+                            if (i == c.OutputIndex)
+                            {
+                                outpNode = node;
+                                break;
+                            }
+                            i++;
+                        }
+                    }
+                }
+                else if (c.OutputType == ConnectionType.Table)
+                {
+                    foreach (NodeNetwork.ViewModels.NodeViewModel node in network.Nodes.Items)
+                    {
+                        if (node is TableImport_Module t)
                         {
                             if (i == c.OutputIndex)
                             {

@@ -72,6 +72,7 @@ namespace Prototyp.Elements
             {
                 _busy = true;
                 _filename = InString;
+                _name = InString;
 
                 _csvData = System.IO.File.ReadAllBytes(InString);
                 SetID(uid);
@@ -85,6 +86,7 @@ namespace Prototyp.Elements
                 _busy = true;
                 _csvData = Encoding.Default.GetBytes(InString);
                 SetID(uid);
+                _name = uid.ToString();
                 _busy = false;
             }
         }
@@ -95,6 +97,7 @@ namespace Prototyp.Elements
             _busy = true;
             _csvData = csvArray;
             SetID(uid);
+            _name = uid.ToString();
             _busy = false;
         }
 

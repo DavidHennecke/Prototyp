@@ -298,7 +298,7 @@ namespace Prototyp
 
             Prototyp.Elements.NetworkLoadAndSave open = new Prototyp.Elements.NetworkLoadAndSave(FileName);
 
-            network = open.ImportWorkflow(vectorData, rasterData, network, ModulesPath);
+            network = open.ImportWorkflow(vectorData, rasterData, tableData, network, ModulesPath);
         }
 
         private void TerminateServer(Node_Module module)
@@ -1197,7 +1197,7 @@ namespace Prototyp
 
                 if (System.IO.File.Exists(saveFileDialog.FileName)) System.IO.File.Delete(saveFileDialog.FileName);
 
-                Prototyp.Elements.NetworkLoadAndSave save = new Prototyp.Elements.NetworkLoadAndSave(network, vectorData, rasterData, saveFileDialog.FileName, includeData);
+                Prototyp.Elements.NetworkLoadAndSave save = new Prototyp.Elements.NetworkLoadAndSave(network, vectorData, rasterData, tableData, saveFileDialog.FileName, includeData);
 
                 Cursor = System.Windows.Input.Cursors.Arrow;
             }
