@@ -857,7 +857,7 @@
             Line = Line.Replace("'", "\"");
             XMLFile = XMLFile + Line;
 
-            Line = "<root xmlns:Element='Element' xmlns:Raster='Raster' xmlns:Vector='Vector' xmlns:Control='Control' xmlns:Value='Value'>" + "\n";
+            Line = "<root xmlns:Element='Element' xmlns:Raster='Raster' xmlns:Vector='Vector' xmlns:Table='Table' xmlns:Float='Float' xmlns:Control='Control' xmlns:Value='Value'>" + "\n";
             Line = Line.Replace("'", "\"");
             XMLFile = XMLFile + Line;
 

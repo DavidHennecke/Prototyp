@@ -146,12 +146,14 @@ namespace Prototyp
                 moduleProperties.RdoOutVectorPolygon.IsEnabled = false;
                 moduleProperties.RdoOutVectorMultiPolygon.IsEnabled = false;
                 moduleProperties.RdoOutRaster.IsEnabled = false;
+                moduleProperties.RdoOutTable.IsEnabled = false;
 
                 foreach (string InpTy in ListViewEntries[MyListBox.SelectedIndex].InputTypes) { if (InpTy == "VectorPoint") moduleProperties.RdoInVectorPoint.IsChecked = true; else moduleProperties.RdoInVectorPoint.IsChecked = false; }
                 foreach (string InpTy in ListViewEntries[MyListBox.SelectedIndex].InputTypes) { if (InpTy == "VectorLine") moduleProperties.RdoInVectorLine.IsChecked = true; else moduleProperties.RdoInVectorLine.IsChecked = false; }
                 foreach (string InpTy in ListViewEntries[MyListBox.SelectedIndex].InputTypes) { if (InpTy == "VectorPolygon") moduleProperties.RdoInVectorPolygon.IsChecked = true; else moduleProperties.RdoInVectorPolygon.IsChecked = false; }
                 foreach (string InpTy in ListViewEntries[MyListBox.SelectedIndex].InputTypes) { if (InpTy == "VectorMultiPolygon") moduleProperties.RdoInVectorMultiPolygon.IsChecked = true; else moduleProperties.RdoInVectorMultiPolygon.IsChecked = false; }
                 foreach (string InpTy in ListViewEntries[MyListBox.SelectedIndex].InputTypes) { if (InpTy == "Raster") moduleProperties.RdoInRaster.IsChecked = true; else moduleProperties.RdoInRaster.IsChecked = false; }
+                foreach (string InpTy in ListViewEntries[MyListBox.SelectedIndex].InputTypes) { if (InpTy == "Table") moduleProperties.RdoInTable.IsChecked = true; else moduleProperties.RdoInTable.IsChecked = false; }
 
                 moduleProperties.ShowDialog();
                 if (!moduleProperties.OkayClicked) return;
@@ -164,6 +166,7 @@ namespace Prototyp
                 if ((bool)moduleProperties.RdoInVectorPolygon.IsChecked) ListViewEntries[MyListBox.SelectedIndex].InputTypes.Add("VectorPolygon");
                 if ((bool)moduleProperties.RdoInVectorMultiPolygon.IsChecked) ListViewEntries[MyListBox.SelectedIndex].InputTypes.Add("VectorMultiPolygon");
                 if ((bool)moduleProperties.RdoInRaster.IsChecked) ListViewEntries[MyListBox.SelectedIndex].InputTypes.Add("Raster");
+                if ((bool)moduleProperties.RdoInTable.IsChecked) ListViewEntries[MyListBox.SelectedIndex].InputTypes.Add("Table");
             }
             else if (ListViewEntries[MyListBox.SelectedIndex].SlotType.Contains("Control"))
             {
@@ -174,12 +177,14 @@ namespace Prototyp
                     moduleProperties.RdoInVectorPolygon.IsEnabled = false;
                     moduleProperties.RdoInVectorMultiPolygon.IsEnabled = false;
                     moduleProperties.RdoInRaster.IsEnabled = false;
+                    moduleProperties.RdoInTable.IsEnabled = false;
                     moduleProperties.TxtDropdownEntries.IsEnabled = false;
                     moduleProperties.RdoOutVectorPoint.IsEnabled = false;
                     moduleProperties.RdoOutVectorLine.IsEnabled = false;
                     moduleProperties.RdoOutVectorPolygon.IsEnabled = false;
                     moduleProperties.RdoOutVectorMultiPolygon.IsEnabled = false;
                     moduleProperties.RdoOutRaster.IsEnabled = false;
+                    moduleProperties.RdoOutTable.IsEnabled = false;
 
                     if (ListViewEntries[MyListBox.SelectedIndex].SliderUnit != null)
                     {
@@ -208,6 +213,7 @@ namespace Prototyp
                     moduleProperties.RdoInVectorPolygon.IsEnabled = false;
                     moduleProperties.RdoInVectorMultiPolygon.IsEnabled = false;
                     moduleProperties.RdoInRaster.IsEnabled = false;
+                    moduleProperties.RdoInTable.IsEnabled = false;
                     moduleProperties.TxtSliderStart.IsEnabled = false;
                     moduleProperties.TxtSliderEnd.IsEnabled = false;
                     moduleProperties.TxtSliderDefault.IsEnabled = false;
@@ -218,6 +224,7 @@ namespace Prototyp
                     moduleProperties.RdoOutVectorPolygon.IsEnabled = false;
                     moduleProperties.RdoOutVectorMultiPolygon.IsEnabled = false;
                     moduleProperties.RdoOutRaster.IsEnabled = false;
+                    moduleProperties.RdoOutTable.IsEnabled = false;
 
                     moduleProperties.TxtDropdownEntries.Text = string.Join(System.Environment.NewLine, ListViewEntries[MyListBox.SelectedIndex].DropDownEntries);
 
@@ -238,6 +245,7 @@ namespace Prototyp
                 moduleProperties.RdoInVectorPolygon.IsEnabled = false;
                 moduleProperties.RdoInVectorMultiPolygon.IsEnabled = false;
                 moduleProperties.RdoInRaster.IsEnabled = false;
+                moduleProperties.RdoInTable.IsEnabled = false;
                 moduleProperties.TxtSliderStart.IsEnabled = false;
                 moduleProperties.TxtSliderEnd.IsEnabled = false;
                 moduleProperties.TxtSliderDefault.IsEnabled = false;
@@ -250,6 +258,7 @@ namespace Prototyp
                 foreach (string OutTy in ListViewEntries[MyListBox.SelectedIndex].OutputTypes) { if (OutTy == "VectorPolygon") moduleProperties.RdoOutVectorPolygon.IsChecked = true; else moduleProperties.RdoOutVectorPolygon.IsChecked = false; }
                 foreach (string OutTy in ListViewEntries[MyListBox.SelectedIndex].OutputTypes) { if (OutTy == "VectorMultiPolygon") moduleProperties.RdoOutVectorMultiPolygon.IsChecked = true; else moduleProperties.RdoOutVectorMultiPolygon.IsChecked = false; }
                 foreach (string OutTy in ListViewEntries[MyListBox.SelectedIndex].OutputTypes) { if (OutTy == "Raster") moduleProperties.RdoOutRaster.IsChecked = true; else moduleProperties.RdoOutRaster.IsChecked = false; }
+                foreach (string OutTy in ListViewEntries[MyListBox.SelectedIndex].OutputTypes) { if (OutTy == "Table") moduleProperties.RdoOutTable.IsChecked = true; else moduleProperties.RdoOutTable.IsChecked = false; }
 
                 moduleProperties.ShowDialog();
                 if (!moduleProperties.OkayClicked) return;
@@ -262,6 +271,7 @@ namespace Prototyp
                 if ((bool)moduleProperties.RdoOutVectorPolygon.IsChecked) ListViewEntries[MyListBox.SelectedIndex].OutputTypes.Add("VectorPolygon");
                 if ((bool)moduleProperties.RdoOutVectorMultiPolygon.IsChecked) ListViewEntries[MyListBox.SelectedIndex].OutputTypes.Add("VectorMultiPolygon");
                 if ((bool)moduleProperties.RdoOutRaster.IsChecked) ListViewEntries[MyListBox.SelectedIndex].OutputTypes.Add("Raster");
+                if ((bool)moduleProperties.RdoOutTable.IsChecked) ListViewEntries[MyListBox.SelectedIndex].OutputTypes.Add("Table");
             }
 
             MakePreview();
@@ -379,6 +389,7 @@ namespace Prototyp
                         if (InpTy == "VectorPolygon") vorteXML.ToolRows[i].inputRow.inputTypes[j] = Prototyp.Elements.VorteXML.ConnectorType.VectorPolygon;
                         if (InpTy == "VectorMultiPolygon") vorteXML.ToolRows[i].inputRow.inputTypes[j] = Prototyp.Elements.VorteXML.ConnectorType.VectorMultiPolygon;
                         if (InpTy == "Raster") vorteXML.ToolRows[i].inputRow.inputTypes[j] = Prototyp.Elements.VorteXML.ConnectorType.Raster;
+                        if (InpTy == "Table") vorteXML.ToolRows[i].inputRow.inputTypes[j] = Prototyp.Elements.VorteXML.ConnectorType.Table;
                         j++;
                     }
                 }
@@ -435,6 +446,7 @@ namespace Prototyp
                         if (OutTy == "VectorPolygon") vorteXML.ToolRows[i].outputRow.outputTypes[j] = Prototyp.Elements.VorteXML.ConnectorType.VectorPolygon;
                         if (OutTy == "VectorMultiPolygon") vorteXML.ToolRows[i].outputRow.outputTypes[j] = Prototyp.Elements.VorteXML.ConnectorType.VectorMultiPolygon;
                         if (OutTy == "Raster") vorteXML.ToolRows[i].outputRow.outputTypes[j] = Prototyp.Elements.VorteXML.ConnectorType.Raster;
+                        if (OutTy == "Table") vorteXML.ToolRows[i].outputRow.outputTypes[j] = Prototyp.Elements.VorteXML.ConnectorType.Table;
                         j++;
                     }
                 }
