@@ -339,7 +339,6 @@ namespace Prototyp
             System.Diagnostics.Process moduleProcess = new System.Diagnostics.Process();
 
             System.Diagnostics.ProcessStartInfo moduleProcessInfo = new System.Diagnostics.ProcessStartInfo(BinaryPath + ".exe", port.ToString());
-            //moduleProcessInfo.CreateNoWindow = true; //Ja, dies macht das Server-Window wirklich unsichtbar. Sichtbarkeit nur für Debugging-Zwecke.
             moduleProcessInfo.UseShellExecute = false; //'UseShellExecute = true' would be available only on the Windows platform.
             moduleProcessInfo.LoadUserProfile = true;
             moduleProcessInfo.WorkingDirectory = BinaryPath.Substring(0, BinaryPath.LastIndexOf("/"));
