@@ -365,6 +365,21 @@ namespace Prototyp
 
             vorteXML.EditorVersion = "0.1";
             vorteXML.NodeStyle = "default";
+            if (ChkGUI != null)
+            {
+                if (ChkGUI.IsChecked == true)
+                {
+                    vorteXML.ShowGUI = true;
+                }
+                else
+                {
+                    vorteXML.ShowGUI = false;
+                }
+            }
+            else
+            {
+                vorteXML.ShowGUI = false;
+            }
             vorteXML.NodeTitle = TxtName.Text;
 
             vorteXML.ToolRows = new Prototyp.Elements.VorteXML.ToolRow[ListViewEntries.Count];

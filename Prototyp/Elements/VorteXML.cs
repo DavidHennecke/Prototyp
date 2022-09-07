@@ -20,6 +20,7 @@
         private string _NodeStyle;
         private string _EditorVersion;
         private string _NodeTitle;
+        private bool _showGUI;
 
         public ToolRow[] ToolRows;
 
@@ -146,6 +147,12 @@
             set { _NodeTitle = value; }
         }
 
+        public bool ShowGUI
+        {
+            get { return (_showGUI); }
+            set { _showGUI = value; }
+        }
+
         //-----------------------------------------------------------------------------------------------------
         // Constructors
 
@@ -200,6 +207,10 @@
                     {
                         if (attribs.Name == "style") _NodeStyle = attribs.Value;
                         if (attribs.Name == "editorVersion") _EditorVersion = attribs.Value;
+                        if (attribs.Name == "showGUI")
+                        {
+                            if (attribs.Value == "true") _showGUI = true; else _showGUI = false;
+                        }
                     }
                 }
 
@@ -852,6 +863,8 @@
         {
             string XMLFile = "";
             string Line;
+            string ShowGUIString;
+            if (_showGUI) ShowGUIString = "true"; else ShowGUIString = "false";
 
             Line = "<?xml version='1.0' encoding='UTF-8'?>" + "\n";
             Line = Line.Replace("'", "\"");
@@ -861,7 +874,7 @@
             Line = Line.Replace("'", "\"");
             XMLFile = XMLFile + Line;
 
-            Line = "<Node style='" + _NodeStyle + "' editorVersion='" + _EditorVersion + "'>" + "\n";
+            Line = "<Node style='" + _NodeStyle + "' editorVersion='" + _EditorVersion + "' showGUI='" + ShowGUIString + "'>" + "\n";
             Line = Line.Replace("'", "\"");
             XMLFile = XMLFile + Line;
 

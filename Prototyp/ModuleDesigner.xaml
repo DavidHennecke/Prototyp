@@ -33,6 +33,9 @@
         <Button x:Name="CmdClear" Width="120" Height="30" Content="Clear" Margin="20,320,0,0" VerticalAlignment="Top" Click="CmdClear_Click"/>
 
         <TextBox x:Name="TxtName" HorizontalAlignment="Left" Background="#FF212225" Height="3" Margin="244,25,0,0" Text="NewModule" TextWrapping="Wrap" VerticalAlignment="Top" Width="156" TextChanged="TxtName_TextChanged"/>
+        <CheckBox x:Name="ChkGUI" HorizontalAlignment="Left" Background="#FF212225" Height="3" Margin="444,25,0,0" VerticalAlignment="Top" Width="156" IsChecked="False" >
+            <TextBlock FlowDirection="LeftToRight" Text="Module has GUI"/>
+        </CheckBox>
         <TextBlock HorizontalAlignment="Left" Height="18" Margin="154,32,0,0" Text="Module name" TextWrapping="Wrap" VerticalAlignment="Top" Width="85"/>
         <Button x:Name="BtnCancel" Content="Cancel" Height="32" Margin="538,365,0,0" VerticalAlignment="Top" Width="78" Click="BtnCancel_Click"/>
         <Button x:Name="BtnOkay" Content="Okay" Margin="621,365,0,0" VerticalAlignment="Top" Click="BtnOkay_Click"/>

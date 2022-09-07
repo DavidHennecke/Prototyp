@@ -53,7 +53,6 @@ namespace Prototyp.Modules
         public System.Collections.Generic.List<Modules.ViewModels.DropDownMenuViewModel> dropdownEditor = new System.Collections.Generic.List<Modules.ViewModels.DropDownMenuViewModel>();
         public Modules.ViewModels.DropDownMenuViewModel dropDownEditor { get; set; }
 
-
         public Modules.ViewModels.OutputNameViewModel outNameEditor { get; set; }
 
         public System.Collections.Generic.List<ValueNodeInputViewModel<float>> FloatInput = new System.Collections.Generic.List<ValueNodeInputViewModel<float>>();
@@ -79,6 +78,8 @@ namespace Prototyp.Modules
         private GrpcClient.ControlConnector.ControlConnectorClient _GrpcConnection;
         private System.Diagnostics.Process _Process;
         private string _Url;
+        private bool _showGUI = false;
+
         public NodeProgress Status;
 
         [Serializable]
@@ -133,6 +134,12 @@ namespace Prototyp.Modules
             set { _Url = value; }
         }
 
+        public bool ShowGUI
+        {
+            get { return (_showGUI); }
+            set { _showGUI = value; }
+        }
+
         // Constructors --------------------------------------------------------------------
 
         // Parameterless constructor.
@@ -153,9 +160,10 @@ namespace Prototyp.Modules
             _Url = url;
             _Process = process;            
             _GrpcConnection = grpcConnection;
+            _showGUI = newModule.ShowGUI;
             Status = NodeProgress.Waiting; // Korrekt?
 
-            ParseXML(newModule, true);
+            ParseXML(newModule, true, ShowGUI);
         }
 
         // Used for workflow loading procedure.
@@ -168,7 +176,7 @@ namespace Prototyp.Modules
             _GrpcConnection = grpcConnection;
             Status = NodeProgress.Waiting; // Korrekt?
 
-            ParseXML(XML, true);
+            ParseXML(XML, true, ShowGUI);
         }
 
         // Used for the module designer preview.
@@ -176,14 +184,16 @@ namespace Prototyp.Modules
         {
             Name = newModule.NodeTitle;
 
-            ParseXML(newModule, false);
+            ParseXML(newModule, false, ShowGUI);
         }
 
         // Private methods -----------------------------------------------------------------
 
         // Verändert, damit die Verlinkungen im Knoteneditor wieder funktionieren, muss nochmal geprüft/überarbeitet werden
-        private void ParseXML(VorteXML newModule, bool inMain) //Use inMain = true for MainWindow node editor, inMain = false for ModuleDesigner preview.
+        private void ParseXML(VorteXML newModule, bool inMain, bool GUI) //Use inMain = true for MainWindow node editor, inMain = false for ModuleDesigner preview.
         {
+            _showGUI = GUI;
+
             //Counters for correctly tracking IDs
             int inputRowCounter = 0;
             int outputRowCounter = 0;

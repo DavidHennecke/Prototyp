@@ -18,6 +18,7 @@ namespace Prototyp.Elements
     {
         public string Name { get; set; }
         public string Path { get; set; }
+        public bool ShowGUI { get; set; }
         public System.Windows.Point Position { get; set; }
         public System.Windows.Size Size { get; set; }
         public string XML { get; set; }
@@ -215,6 +216,7 @@ namespace Prototyp.Elements
                     modProp.Path = module.PathXML;
                     modProp.Position = module.Position;
                     modProp.Size = module.Size;
+                    modProp.ShowGUI = module.ShowGUI;
                     modProp.XML = System.IO.File.ReadAllText(module.PathXML);
 
                     // Eigentlich müssten auch noch die Settings aller Controls in dem Modul gespeichert werden... :-(
@@ -474,7 +476,24 @@ namespace Prototyp.Elements
                 moduleProcess.StartInfo = moduleProcessInfo;
                 try
                 {
+                    // Establish GRPC connection
+                    // TODO: nicht nur localhost
+                    string url = "https://localhost:" + PrepPorts[i].ToString();
+                    Grpc.Net.Client.GrpcChannel channel = Grpc.Net.Client.GrpcChannel.ForAddress(url);
+                    grpcConnection = new GrpcClient.ControlConnector.ControlConnectorClient(channel);
+
+                    Node_Module nodeModule = new Node_Module(constructXML, m.Name, grpcConnection, url, moduleProcess);
+
+                    nodeModule.Position = m.Position;
+                    //newModule.Size = m.Size; // Damn, write protected.
+                    nodeModule.PathXML = ModulesPath + "\\" + m.Name + "\\" + m.Name + ".xml";
+
+                    moduleProcessInfo.CreateNoWindow = !m.ShowGUI;
                     moduleProcess.Start();
+
+                    network.Nodes.Add(nodeModule);
+
+                    i++;
                 }
                 catch
                 {
@@ -488,21 +507,6 @@ namespace Prototyp.Elements
                         throw new System.Exception("Could not start binary: Reason unknown.");
                     }
                 }
-
-                // Establish GRPC connection
-                // TODO: nicht nur localhost
-                string url = "https://localhost:" + PrepPorts[i].ToString();
-                Grpc.Net.Client.GrpcChannel channel = Grpc.Net.Client.GrpcChannel.ForAddress(url);
-                grpcConnection = new GrpcClient.ControlConnector.ControlConnectorClient(channel);
-
-                Node_Module nodeModule = new Node_Module(constructXML, m.Name, grpcConnection, url, moduleProcess);
-
-                nodeModule.Position = m.Position;
-                //newModule.Size = m.Size; // Damn, write protected.
-                nodeModule.PathXML = ModulesPath + "\\" + m.Name + "\\" + m.Name + ".xml";
-                network.Nodes.Add(nodeModule);
-
-                i++;
             }
 
 

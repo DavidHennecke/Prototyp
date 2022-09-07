@@ -346,8 +346,6 @@ namespace Prototyp
             moduleProcess.StartInfo = moduleProcessInfo;
             try
             {
-                moduleProcess.Start();
-
                 // Establish GRPC connection
                 // TODO: nicht nur localhost
                 string url = "https://localhost:" + port.ToString();
@@ -372,6 +370,10 @@ namespace Prototyp
                 grpcConnection = new GrpcClient.ControlConnector.ControlConnectorClient(channel);
 
                 Node_Module nodeModule = new Node_Module(BinaryPath + ".xml", grpcConnection, url, moduleProcess);
+
+                moduleProcessInfo.CreateNoWindow = !nodeModule.ShowGUI;
+                moduleProcess.Start();
+
                 network.Nodes.Add(nodeModule);
             }
             catch

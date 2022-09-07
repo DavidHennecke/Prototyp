@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <root xmlns:Element="Element" xmlns:Raster="Raster" xmlns:Vector="Vector" xmlns:Control="Control" xmlns:Value="Value">
-<Node style="default" editorVersion="0.1">
+<Node style="default" editorVersion="0.1" showGUI = "true">
 	<NodeTitle>LeafletMapView</NodeTitle>
 	<NodeElements>
 		<Element:Input rowNr="1" name="Point">
