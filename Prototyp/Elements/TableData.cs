@@ -74,6 +74,8 @@ namespace Prototyp.Elements
                 _filename = InString;
                 _name = InString;
 
+                if (!VectorData.FileAccessabe(InString)) { throw new System.Exception("File is not accessible, maybe opened in some other software?"); }
+
                 _csvData = System.IO.File.ReadAllBytes(InString);
                 SetID(uid);
 
@@ -81,8 +83,6 @@ namespace Prototyp.Elements
             }
             else
             {
-                //throw new System.Exception("File does not exist.");
-
                 _busy = true;
                 _csvData = Encoding.Default.GetBytes(InString);
                 SetID(uid);

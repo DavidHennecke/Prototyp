@@ -172,6 +172,9 @@ namespace Prototyp.Elements
         {
             System.Runtime.Serialization.Formatters.Binary.BinaryFormatter binForm = new System.Runtime.Serialization.Formatters.Binary.BinaryFormatter();
             Prototyp.Elements.NetworkLoadAndSave Read = new NetworkLoadAndSave();
+
+            if (!VectorData.FileAccessabe(FileName)) { throw new System.Exception("File does not exist or is not accessible, maybe opened in some other software?"); }
+
             using (System.IO.FileStream fs = System.IO.File.Open(FileName, System.IO.FileMode.Open))
             {
                 Read = (Prototyp.Elements.NetworkLoadAndSave)binForm.Deserialize(fs);

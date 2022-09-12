@@ -118,6 +118,8 @@ namespace Prototyp.Elements
 
         public void LoadProgSettings(string FileName)
         {
+            if (!VectorData.FileAccessabe(FileName)) { throw new System.Exception("File does not exist or is not accessible, maybe opened in some other software?"); }
+
             string JSON = System.IO.File.ReadAllText(FileName);
 
             _settings = System.Text.Json.JsonSerializer.Deserialize<System.Collections.Generic.List<PSetting>>(JSON);

@@ -143,6 +143,8 @@
         {
             if (System.IO.File.Exists(MyString))
             {
+                if (!VectorData.FileAccessabe(MyString)) { throw new System.Exception("File is not accessible, maybe opened in some other software?"); }
+
                 _busy = true;
                 InitGDAL();
                 OSGeo.GDAL.Dataset DS = OSGeo.GDAL.Gdal.Open(MyString, OSGeo.GDAL.Access.GA_ReadOnly);
@@ -168,6 +170,8 @@
         {
             if (System.IO.File.Exists(RasterFileName))
             {
+                if (!VectorData.FileAccessabe(RasterFileName)) { throw new System.Exception("File is not accessible, maybe opened in some other software?"); }
+
                 _busy = true;
                 InitGDAL();
                 OSGeo.GDAL.Dataset DS = OSGeo.GDAL.Gdal.Open(RasterFileName, OSGeo.GDAL.Access.GA_ReadOnly);

@@ -179,7 +179,10 @@ namespace Prototyp.Elements
             {
                 if (System.IO.File.Exists(MyString))
                 {
+                    if (!FileAccessabe(MyString)) { throw new System.Exception("File is not accessible, maybe opened in some other software?"); }
+
                     _busy = true;
+
                     using (System.IO.Stream SourceFile = System.IO.File.OpenRead(MyString))
                     {
                         _filename = MyString;
@@ -202,7 +205,6 @@ namespace Prototyp.Elements
                         }
                         HandleNameAndCRS();
                         SetID(uid);
-
                     }
                     _busy = false;
                 }
@@ -221,6 +223,8 @@ namespace Prototyp.Elements
         {
             if (System.IO.File.Exists(FlatGeobufFileName))
             {
+                if (!FileAccessabe(FlatGeobufFileName)) { throw new System.Exception("File is not accessible, maybe opened in some other software?"); }
+
                 _busy = true;
                 using (System.IO.Stream SourceFile = System.IO.File.OpenRead(FlatGeobufFileName))
                 {
@@ -749,6 +753,25 @@ namespace Prototyp.Elements
         public static string ByteArrToString(byte[] ByteArr)
         {
             return (System.Convert.ToBase64String(ByteArr));
+        }
+
+        public static bool FileAccessabe(string FileName)
+        {
+            if (!System.IO.File.Exists(FileName)) return(false);
+
+            try
+            {
+                using (System.IO.Stream SourceFile = System.IO.File.OpenRead(FileName))
+                {
+                    // Don't actually do anything with it.
+                }
+            }
+            catch
+            {
+                return (false);
+            }
+
+            return (true);
         }
 
         public static byte[] StringToByteArr(string ByteStr)

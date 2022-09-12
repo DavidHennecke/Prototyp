@@ -19,7 +19,6 @@ https://github.com/Wouterdek/NodeNetwork/blob/master/NodeNetworkTests/NetworkVie
 
 ------------------------------- */
 
-
 /* -------------------------------
 
 TODO:
@@ -27,19 +26,11 @@ TODO:
 o Mouse select in ComboBox after typing does not work.
 o Please make an event for node deletion.
 o Low priority: Add multi-select in toolbar modules selection.
-o Slider default setting is not even used.
-o Sliders have two name captions. How can we access slider properties (and other control properties) during runtime?
-o Do a mandatory WGS84 transformation? If so, where and when, on load, in VectorData constructors, ...? Constructors would be a bad idea since then it would be unnecessarily invoked several times, e.g. at receipt via gPRC.
 
 ------------------------------- */
 
 namespace Prototyp
 {
-    //public class Button
-    //{
-    //    public string Binary { get; set; }
-    //    public string Icon { get; set; }
-    //}
     public class ComboItem
     {
         public string IconPath { get; set; }
@@ -94,18 +85,6 @@ namespace Prototyp
         public static MainWindow AppWindow;
 
         // Getters and setters -------------------------------------------------------------
-
-        public List<VectorData> VecList
-        {
-            get { return (vectorData); }
-            set { vectorData = value; }
-        }
-
-        public List<RasterData> RasList
-        {
-            get { return (rasterData); }
-            set { rasterData = value; }
-        }
 
         public List<ComboItem> ComboBoxItems
         {
@@ -245,24 +224,16 @@ namespace Prototyp
         private void CreateButton(string WFFile, string IconPath, string DockPanelName)
         {
             System.Windows.Controls.Button ModuleBtn = new System.Windows.Controls.Button();
-            if (System.IO.File.Exists(IconPath))
+
+            string FileName;
+            if (System.IO.File.Exists(IconPath)) FileName = IconPath; else FileName = ParentDir.FullName + "/Images/VortexIcon.png";
+            ModuleBtn.Content = new System.Windows.Controls.Image
             {
-                ModuleBtn.Content = new System.Windows.Controls.Image
-                {
-                    Source = new System.Windows.Media.Imaging.BitmapImage(new Uri(IconPath)),
-                    ToolTip = WFFile,
-                    VerticalAlignment = VerticalAlignment.Center
-                };
-            }
-            else
-            {
-                ModuleBtn.Content = new System.Windows.Controls.Image
-                {
-                    Source = new System.Windows.Media.Imaging.BitmapImage(new Uri(ParentDir.FullName + "/Images/VortexIcon.png")),
-                    ToolTip = WFFile,
-                    VerticalAlignment = VerticalAlignment.Center
-                };
-            }
+                Source = new System.Windows.Media.Imaging.BitmapImage(new Uri(FileName)),
+                ToolTip = WFFile,
+                VerticalAlignment = VerticalAlignment.Center
+            };
+
             ModuleBtn.Background = (System.Windows.Media.SolidColorBrush)new System.Windows.Media.BrushConverter().ConvertFromString("#FF212225");
             ModuleBtn.Click += new RoutedEventHandler((sender, e) => LoadWorkflow(WFFile));
 
@@ -293,6 +264,8 @@ namespace Prototyp
 
         private void LoadWorkflowFinally(string FileName)
         {
+            if (!VectorData.FileAccessabe(FileName)) { throw new System.Exception("File does not exist or is not accessible, maybe opened in some other software?"); }
+
             // Here we go. First, stop all active servers.
             TerminateAllServers();
 
@@ -377,14 +350,14 @@ namespace Prototyp
             }
             catch
             {
-                //if (!System.IO.File.Exists(ComboItems[Index].BinaryPath + ".exe"))
-                //{
-                //    throw new System.Exception("Could not start binary: No executable file present.");
-                //}
-                //else
-                //{
-                //    throw new System.Exception("Could not start binary: Reason unknown.");
-                //}
+                if (!System.IO.File.Exists(moduleProcessInfo.FileName))
+                {
+                    throw new System.Exception("Could not start binary: No executable file present.");
+                }
+                else
+                {
+                    throw new System.Exception("Could not start binary: Reason unknown.");
+                }
             }
 
             ToolsComboBox.SelectedIndex = 0;
@@ -397,29 +370,7 @@ namespace Prototyp
 
         // Public methods ---------------------------------------------------------------------------
 
-        public void RemoveVectorData(string Uid)
-        {
-            for (int i = 0; i < vectorData.Count; i++)
-            {
-                if (vectorData[i].ID.ToString() == Uid)
-                {
-                    vectorData.RemoveAt(i);
-                    break;
-                }
-            }
-        }
-
-        public void RemoveRasterData(string Uid)
-        {
-            for (int i = 0; i < rasterData.Count; i++)
-            {
-                if (rasterData[i].ID.ToString() == Uid)
-                {
-                    rasterData.RemoveAt(i);
-                    break;
-                }
-            }
-        }
+        // Nothing here so far...
 
         // User control handlers --------------------------------------------------------------------
 
@@ -472,22 +423,11 @@ namespace Prototyp
                         case "MultiPolygon":
                             vectorData.Add(new VectorMultiPolygonData(importDataUID, openFileDialog.FileName));
                             break;
+                        // TODO: More cases, e.g. 'triangle' data... :-/
                         default:
                             // There should be nothing here.
                             break;
                     }
-                    //// Testcode start
-                    //// Bitte noch nicht löschen!
-                    //string Test1 = vectorData[vectorData.Count - 1].ToString(ToStringParams.ByteString);
-                    //VectorData Test2 = new VectorData(Test1);
-
-                    //byte[] ByteArr1 = vectorData[vectorData.Count - 1].VecData;
-                    //byte[] ByteArr2 = Test2.VecData;
-                    //for (int i = 0; i < ByteArr1.Length; i++)
-                    //{
-                    //    if (ByteArr1[i] != ByteArr2[i]) MessageBox.Show("Index: " + i.ToString() + ", ByteArr1: " + ByteArr1[i].ToString("X") + ", ByteArr2: " + ByteArr2[i].ToString("X"));
-                    //}
-                    //// Testcode end
 
                     //Add vector data to node editor
                     for (int i = 0; i < vectorData.Count; i++)
@@ -513,6 +453,7 @@ namespace Prototyp
                             {
                                 importNode = new VectorImport_ModuleMultiPolygon(vectorData[i].Name, vectorData[i].FeatureCollection[0].Geometry.GeometryType, vectorData[i].ID);
                             }
+                            // TODO: More cases, e.g. 'triangle' data... :-/
                             else
                             {
                                 // There should be nothing here.
@@ -523,8 +464,7 @@ namespace Prototyp
                             TempPoint.X = 20 / networkView.ViewModel.ZoomFactor;
                             TempPoint.Y = 20 / networkView.ViewModel.ZoomFactor;
                             importNode.Position = TempPoint;
-                            network.Nodes.Add(importNode);
-                            
+                            network.Nodes.Add(importNode);                            
                         }
                     }
                 }
@@ -542,19 +482,6 @@ namespace Prototyp
                     }
 
                     rasterData.Add(new RasterData(importDataUID, openFileDialog.FileName));
-                    //// Testcode start
-                    //// Bitte noch nicht löschen!
-                    //string Test1 = rasterData[rasterData.Count - 1].ToString();
-                    //RasterData Test2 = new RasterData(Test1);
-
-                    //byte[] ByteArr1 = rasterData[rasterData.Count - 1].Serialize();
-                    //byte[] ByteArr2 = Test2.Serialize();
-                    //for (int i = 0; i < ByteArr1.Length; i++)
-                    //{
-                    //    if (ByteArr1[i] != ByteArr2[i]) MessageBox.Show("Index: " + i.ToString() + ", ByteArr1: " + ByteArr1[i].ToString("X") + ", ByteArr2: " + ByteArr2[i].ToString("X"));
-                    //}
-                    //// Testcode end
-
 
                     //Add raster data to node editor
                     for (int i = 0; i < rasterData.Count; i++)
@@ -564,13 +491,15 @@ namespace Prototyp
                             RasterImport_Module importNode = new RasterImport_Module(rasterData[i].Name, rasterData[i].FileType, rasterData[i].ID);
 
                             //Node Position
-                            //Point TempPoint;
+                            Point TempPoint;
                             //TempPoint = e.GetPosition(networkView);
                             //TempPoint.X = (TempPoint.X - networkView.ViewModel.DragOffset.X) / networkView.ViewModel.ZoomFactor;
                             //TempPoint.Y = (TempPoint.Y - networkView.ViewModel.DragOffset.Y) / networkView.ViewModel.ZoomFactor;
-                            //importNode.Position = TempPoint;
-
+                            TempPoint.X = 20 / networkView.ViewModel.ZoomFactor;
+                            TempPoint.Y = 20 / networkView.ViewModel.ZoomFactor;
+                            importNode.Position = TempPoint;
                             network.Nodes.Add(importNode);
+
                             break;
                         }
                     }
@@ -594,7 +523,7 @@ namespace Prototyp
                     {
                         if (tableData[i].ID == tableData[tableData.Count - 1].ID)
                         {
-                            TableImport_Module importNode = new TableImport_Module(openFileDialog.FileName.Substring(openFileDialog.FileName.LastIndexOf("\\") + 1), "Table", tableData[i].ID);
+                            TableImport_Module importNode = new TableImport_Module(tableData[i].Name.Substring(tableData[i].Name.LastIndexOf("\\") + 1), "Table", tableData[i].ID);
 
                             network.Nodes.Add(importNode);
                             break;
@@ -615,7 +544,6 @@ namespace Prototyp
                 System.Windows.Forms.Cursor.Current = System.Windows.Forms.Cursors.Default;
             }
         }
-
 
         private void ComboSelectionChanged(object sender, System.Windows.Controls.SelectionChangedEventArgs e)
         {
@@ -1109,19 +1037,14 @@ namespace Prototyp
 
         private void ToolboxButton_Click(object sender, RoutedEventArgs e)
         {
-            bool DeleteData;
-
             foreach (NodeViewModel node in network.Nodes.Items)
             {
-                DeleteData = true;
-
                 if (node.IsSelected)
                 {
                     if (node is Node_Module module)
                     {
                         TerminateServer(module);
                     }
-                    
 
                     network.Nodes.Remove(node);
                 }
@@ -1186,11 +1109,6 @@ namespace Prototyp
             Nullable<bool> result = saveFileDialog.ShowDialog();
             if (result == true)
             {
-                if (System.IO.File.Exists(saveFileDialog.FileName))
-                {
-                    if (MessageBox.Show("File exists. Overwrite?", "Overwrite file?", MessageBoxButton.YesNo, MessageBoxImage.Question) == MessageBoxResult.No) return;
-                }
-
                 bool includeData = false;
                 if (MessageBox.Show("Include data sets? This will increase data size and processing time but will make the user of the workflow independent from the data files.", "Include data?", MessageBoxButton.YesNo, MessageBoxImage.Question) == MessageBoxResult.Yes) includeData = true; else includeData = false;
 
