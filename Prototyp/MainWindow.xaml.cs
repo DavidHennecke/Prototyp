@@ -306,59 +306,11 @@ namespace Prototyp
             //Find lowest available port
             int port = Node_Module.GetNextPort(BASEPORT);
             //int port = 5000;
+            string Url = "https://localhost:" + port.ToString();
 
-            GrpcClient.ControlConnector.ControlConnectorClient grpcConnection;
+            Node_Module nodeModule = Prototyp.Elements.BinaryLauncher.Launch(BinaryPath, Url);
 
-            System.Diagnostics.Process moduleProcess = new System.Diagnostics.Process();
-
-            System.Diagnostics.ProcessStartInfo moduleProcessInfo = new System.Diagnostics.ProcessStartInfo(BinaryPath + ".exe", port.ToString());
-            moduleProcessInfo.UseShellExecute = false; //'UseShellExecute = true' would be available only on the Windows platform.
-            moduleProcessInfo.LoadUserProfile = true;
-            moduleProcessInfo.WorkingDirectory = BinaryPath.Substring(0, BinaryPath.LastIndexOf("/"));
-            moduleProcess.StartInfo = moduleProcessInfo;
-            try
-            {
-                // Establish GRPC connection
-                // TODO: nicht nur localhost
-                string url = "https://localhost:" + port.ToString();
-
-                // This is only nessesary if you don't trust your tool's custom certificate.
-                /***************************************************************************
-                System.Net.Http.HttpClientHandler handler = new System.Net.Http.HttpClientHandler();
-                handler.ServerCertificateCustomValidationCallback = System.Net.Http.HttpClientHandler.DangerousAcceptAnyServerCertificateValidator;
-                Grpc.Net.Client.GrpcChannel channel = Grpc.Net.Client.GrpcChannel.ForAddress(url, new Grpc.Net.Client.GrpcChannelOptions
-                {
-                    HttpHandler = handler
-                }
-                );
-                *//////////////////////////////////////////////////////////////////////////
-
-                // Otherwise, use this:
-                // /***************************************************************************
-                Grpc.Net.Client.GrpcChannel channel = Grpc.Net.Client.GrpcChannel.ForAddress(url);
-                grpcConnection = new GrpcClient.ControlConnector.ControlConnectorClient(channel);
-                // *//////////////////////////////////////////////////////////////////////////
-
-                grpcConnection = new GrpcClient.ControlConnector.ControlConnectorClient(channel);
-
-                Node_Module nodeModule = new Node_Module(BinaryPath + ".xml", grpcConnection, url, moduleProcess);
-
-                moduleProcessInfo.CreateNoWindow = !nodeModule.ShowGUI;
-                moduleProcess.Start();
-
-                network.Nodes.Add(nodeModule);
-            }
-            catch
-            {
-                if (!System.IO.File.Exists(moduleProcessInfo.FileName))
-                {
-                    throw new System.Exception("Could not start binary: No executable file present.");
-                }
-                else
-                {
-                    throw new System.Exception("Could not start binary: Reason unknown.");
-                }
-            }
+            network.Nodes.Add(nodeModule);
 
             ToolsComboBox.SelectedIndex = 0;
         }

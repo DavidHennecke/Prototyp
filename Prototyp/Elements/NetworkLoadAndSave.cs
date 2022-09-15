@@ -466,51 +466,17 @@ namespace Prototyp.Elements
             foreach (ModuleNodeProperties m in ModNodeProps)
             {
                 VorteXML constructXML = new VorteXML(m.XML);
+                string Url = "https://localhost:" + PrepPorts[i].ToString();
+                string CurrentPath = ModulesPath + "/" + m.Name + "/" + m.Name;
 
-                GrpcClient.ControlConnector.ControlConnectorClient grpcConnection;
+                Node_Module nodeModule = Prototyp.Elements.BinaryLauncher.Launch(CurrentPath, Url, m.Name, constructXML);
 
-                System.Diagnostics.Process moduleProcess = new System.Diagnostics.Process();
+                nodeModule.Position = m.Position;
+                nodeModule.PathXML = CurrentPath + ".xml";
 
-                System.Diagnostics.ProcessStartInfo moduleProcessInfo = new System.Diagnostics.ProcessStartInfo(ModulesPath + "\\" + m.Name + "\\" + m.Name + ".exe", PrepPorts[i].ToString());
-                moduleProcessInfo.UseShellExecute = false;
-                moduleProcessInfo.LoadUserProfile = true;
-                moduleProcessInfo.WorkingDirectory = ModulesPath + "\\" + m.Name;
-                moduleProcess.StartInfo = moduleProcessInfo;
-                try
-                {
-                    // Establish GRPC connection
-                    // TODO: nicht nur localhost
-                    string url = "https://localhost:" + PrepPorts[i].ToString();
-                    Grpc.Net.Client.GrpcChannel channel = Grpc.Net.Client.GrpcChannel.ForAddress(url);
-                    grpcConnection = new GrpcClient.ControlConnector.ControlConnectorClient(channel);
-
-                    Node_Module nodeModule = new Node_Module(constructXML, m.Name, grpcConnection, url, moduleProcess);
-
-                    nodeModule.Position = m.Position;
-                    //newModule.Size = m.Size; // Damn, write protected.
-                    nodeModule.PathXML = ModulesPath + "\\" + m.Name + "\\" + m.Name + ".xml";
-
-                    moduleProcessInfo.CreateNoWindow = !m.ShowGUI;
-                    moduleProcess.Start();
-
-                    network.Nodes.Add(nodeModule);
-
-                    i++;
-                }
-                catch
-                {
-                    if (!System.IO.File.Exists(ModulesPath + "\\" + m.Name + "\\" + m.Name + ".exe"))
-                    {
-                        // Maybe this user doesn't have that module installed? Go ahead and grab it, pal!
-                        throw new System.Exception("Could not start binary: No executable file present.");
-                    }
-                    else
-                    {
-                        throw new System.Exception("Could not start binary: Reason unknown.");
-                    }
-                }
+                network.Nodes.Add(nodeModule);
+                i++;
             }
-
 
             int importUIDCounter = 0;
             // Next, add the vector data/list entry/node.
