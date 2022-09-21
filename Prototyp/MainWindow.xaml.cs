@@ -24,7 +24,6 @@ https://github.com/Wouterdek/NodeNetwork/blob/master/NodeNetworkTests/NetworkVie
 TODO:
 
 o Mouse select in ComboBox after typing does not work.
-o Please make an event for node deletion.
 o Low priority: Add multi-select in toolbar modules selection.
 
 ------------------------------- */
@@ -301,6 +300,22 @@ namespace Prototyp
             }
         }
 
+        private void TerminateServerEvent()
+        {
+            foreach (NodeViewModel node in network.Nodes.Items)
+            {
+                if (node.IsSelected)
+                {
+                    if (node is Node_Module module)
+                    {
+                        TerminateServer(module);
+                    }
+
+                    network.Nodes.Remove(node);
+                }
+            }
+        }
+
         private void importModule(string BinaryPath)
         {
             //Find lowest available port
@@ -309,6 +324,15 @@ namespace Prototyp
             string Url = "https://localhost:" + port.ToString();
 
             Node_Module nodeModule = Prototyp.Elements.BinaryLauncher.Launch(BinaryPath, Url);
+
+            //Node Position
+            Point TempPoint;
+            TempPoint.X = 20 / networkView.ViewModel.ZoomFactor;
+            TempPoint.Y = 20 / networkView.ViewModel.ZoomFactor;
+            nodeModule.Position = TempPoint;
+
+            //is needed to get to the delete event of the node. Otherwise the node will be deleted before we recognize it as selected in TerminateServerEvent()
+            nodeModule.CanBeRemovedByUser = false;
 
             network.Nodes.Add(nodeModule);
 
@@ -416,6 +440,10 @@ namespace Prototyp
                             TempPoint.X = 20 / networkView.ViewModel.ZoomFactor;
                             TempPoint.Y = 20 / networkView.ViewModel.ZoomFactor;
                             importNode.Position = TempPoint;
+
+                            //is needed to get to the delete event of the node. Otherwise the node will be deleted before we recognize it as selected in TerminateServerEvent()
+                            importNode.CanBeRemovedByUser = false;
+
                             network.Nodes.Add(importNode);                            
                         }
                     }
@@ -450,6 +478,9 @@ namespace Prototyp
                             TempPoint.X = 20 / networkView.ViewModel.ZoomFactor;
                             TempPoint.Y = 20 / networkView.ViewModel.ZoomFactor;
                             importNode.Position = TempPoint;
+
+                            //is needed to get to the delete event of the node. Otherwise the node will be deleted before we recognize it as selected in TerminateServerEvent()
+                            importNode.CanBeRemovedByUser = false;
                             network.Nodes.Add(importNode);
 
                             break;
@@ -477,6 +508,14 @@ namespace Prototyp
                         {
                             TableImport_Module importNode = new TableImport_Module(tableData[i].Name.Substring(tableData[i].Name.LastIndexOf("\\") + 1), "Table", tableData[i].ID);
 
+                            //Node Position
+                            Point TempPoint;
+                            TempPoint.X = 20 / networkView.ViewModel.ZoomFactor;
+                            TempPoint.Y = 20 / networkView.ViewModel.ZoomFactor;
+                            importNode.Position = TempPoint;
+
+                            //is needed to get to the delete event of the node. Otherwise the node will be deleted before we recognize it as selected in TerminateServerEvent()
+                            importNode.CanBeRemovedByUser = false;
                             network.Nodes.Add(importNode);
                             break;
                         }
@@ -534,6 +573,7 @@ namespace Prototyp
             string KeyPress = "";
             if (e.Key == System.Windows.Input.Key.Back) KeyPress = "Back";
             if (e.Key == System.Windows.Input.Key.Escape) KeyPress = "Esc";
+            if (e.Key == System.Windows.Input.Key.Delete) KeyPress = "Del";
             if (e.Key == System.Windows.Input.Key.Return | e.Key == System.Windows.Input.Key.Enter) KeyPress = "Ret";
             if (e.Key == System.Windows.Input.Key.D1) KeyPress = "1";
             if (e.Key == System.Windows.Input.Key.D2) KeyPress = "2";
@@ -590,6 +630,19 @@ namespace Prototyp
                 ToolsComboBox.ItemsSource = ComboItems;
                 ToolsComboBox.SelectedIndex = 0;
                 Typing = false;
+                return;
+            }
+
+            if (KeyPress == "Del")
+            {
+                ToolsComboBox.IsDropDownOpen = false;
+                ComboSearchItems.Clear();
+                ComboItems[0].ToolName = COMBOMSG;
+                ToolsComboBox.ItemsSource = null;
+                ToolsComboBox.ItemsSource = ComboItems;
+                ToolsComboBox.SelectedIndex = 0;
+                Typing = false;
+                TerminateServerEvent();
                 return;
             }
 
@@ -989,18 +1042,7 @@ namespace Prototyp
 
         private void ToolboxButton_Click(object sender, RoutedEventArgs e)
         {
-            foreach (NodeViewModel node in network.Nodes.Items)
-            {
-                if (node.IsSelected)
-                {
-                    if (node is Node_Module module)
-                    {
-                        TerminateServer(module);
-                    }
-
-                    network.Nodes.Remove(node);
-                }
-            }
+            TerminateServerEvent();
         }
 
         private void OpenClick(object sender, RoutedEventArgs e)

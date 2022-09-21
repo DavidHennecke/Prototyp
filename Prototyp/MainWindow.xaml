@@ -15,7 +15,7 @@
         ui:TitleBar.ExtendViewIntoTitleBar="True"
 
         mc:Ignorable="d"
-        Title="Vortex Prototyp" Height="800" Width="1000" WindowState="Normal" Language="en-GB" Closing="AppClosing">
+        Title="Vortex Prototyp" Height="800" Width="1000" WindowState="Normal" Language="en-GB" Closing="AppClosing" KeyUp="ComboKeyUp" LostFocus="ComboLostFocus" >
 
     <Grid x:Name="Main" Background="#35363A">
         <Grid.RowDefinitions>
@@ -184,7 +184,7 @@
 
             </Grid.ColumnDefinitions>
             
-            <ComboBox x:Name="ToolsComboBox" Visibility="Visible" MinWidth="250" SelectionChanged="ComboSelectionChanged" KeyUp="ComboKeyUp" LostFocus="ComboLostFocus" Grid.Column="0" Margin="179,129,0,0">
+            <ComboBox x:Name="ToolsComboBox" Visibility="Visible" MinWidth="250" SelectionChanged="ComboSelectionChanged" Grid.Column="0" Margin="179,129,0,0">
                 <ComboBox.ItemTemplate>
                     <DataTemplate>
                         <StackPanel Orientation="Horizontal">
