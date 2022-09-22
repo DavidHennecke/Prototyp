@@ -45,7 +45,10 @@
                     <MenuItem Header="Copy" FontSize="13"/>
                     <MenuItem Header="Paste" FontSize="13"/>
                 </MenuItem>
-
+                <MenuItem Header="Developer" Height="32" FontSize="13">
+                    <MenuItem Header="Module Designer" FontSize="13" Click="ModuleDesigner_Click"/>
+                    <MenuItem Header="Set Process to Finish" FontSize="13" Click="ChangeStatus_Click"/>
+                </MenuItem>
                 <MenuItem Header="Help" Height="32" FontSize="13">
                     <MenuItem Header="About" FontSize="13"/>
                 </MenuItem>
@@ -65,17 +68,17 @@
                 <DockPanel x:Name="ToolBar0" Background="#35363A" LastChildFill="True" MinWidth="195">
                     <Border BorderBrush="#FF212225" BorderThickness="3" CornerRadius="2" DockPanel.Dock="Top" Margin="2">
                         <DockPanel  Background="#FF212225" LastChildFill="False" >
-                            <Button x:Name="NewFileButton" Content="file" Background="#FF212225" FontFamily="{StaticResource FontAwesomeRegular}" VerticalAlignment="Top" DockPanel.Dock="Left" Width="35" Height="35" FontSize="16"/>
-                            <Button x:Name="OpenFileButton" Content="folder-open" Background="#FF212225" FontFamily="{StaticResource FontAwesomeRegular}" VerticalAlignment="Top" DockPanel.Dock="Left" Width="35" Height="35" FontSize="16"/>
-                            <Button x:Name="SaveButton" Content="save" Background="#FF212225" FontFamily="{StaticResource FontAwesomeRegular}" VerticalAlignment="Top" DockPanel.Dock="Left" Width="35" Height="35" FontSize="16"/>
+                            <Button x:Name="NewFileButton" Content="file" Background="#FF212225" FontFamily="{StaticResource FontAwesomeRegular}" VerticalAlignment="Top" DockPanel.Dock="Left" Width="35" Height="35" FontSize="16" Click="NewClick"/>
+                            <Button x:Name="OpenFileButton" Content="folder-open" Background="#FF212225" FontFamily="{StaticResource FontAwesomeRegular}" VerticalAlignment="Top" DockPanel.Dock="Left" Width="35" Height="35" FontSize="16" Click="OpenClick"/>
+                            <Button x:Name="SaveButton" Content="save" Background="#FF212225" FontFamily="{StaticResource FontAwesomeRegular}" VerticalAlignment="Top" DockPanel.Dock="Left" Width="35" Height="35" FontSize="16" Click="SaveClick"/>
                             <Button x:Name="UndoButton" Content="undo" Background="#FF212225" FontFamily="{StaticResource FontAwesomeSolid}" VerticalAlignment="Top" DockPanel.Dock="Left" Width="35" Height="35" FontSize="16"/>
-                            <Button x:Name="RedoButton" Content="redo" Background="#FF212225" FontFamily="{StaticResource FontAwesomeSolid}" VerticalAlignment="Top" DockPanel.Dock="Left" Width="35" Height="35" FontSize="16" Click="RedoButton_Click"/>
+                            <Button x:Name="RedoButton" Content="redo" Background="#FF212225" FontFamily="{StaticResource FontAwesomeSolid}" VerticalAlignment="Top" DockPanel.Dock="Left" Width="35" Height="35" FontSize="16"/>
                         </DockPanel>
                     </Border>
                     <Border BorderBrush="#FF212225" BorderThickness="3px" CornerRadius="2" DockPanel.Dock="Top" Margin="2">
                         <DockPanel  Background="#FF212225" LastChildFill="True" >
                             <Button x:Name="PlayButton" Content="play" Background="#FF212225" FontFamily="{StaticResource FontAwesomeSolid}" VerticalAlignment="Center"  DockPanel.Dock="Left" Width="50" Height="50" FontSize="30" Foreground="#FF009107" Click="PlayButton_Click"/>
-                            <Button x:Name="StopButton" Content="stop" Background="#FF212225" FontFamily="{StaticResource FontAwesomeSolid}" VerticalAlignment="Center" DockPanel.Dock="Left" Width="50" Height="50" FontSize="30" Foreground="#FFAC0000" Click="StopButton_Click"/>
+                            <Button x:Name="StopButton" Content="stop" Background="#FF212225" FontFamily="{StaticResource FontAwesomeSolid}" VerticalAlignment="Center" DockPanel.Dock="Left" Width="50" Height="50" FontSize="30" Foreground="#FFAC0000"/>
                             <Grid DockPanel.Dock="Left">
                                 <Grid.ColumnDefinitions>
                                     <ColumnDefinition Width="*"/>

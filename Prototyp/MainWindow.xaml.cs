@@ -1043,7 +1043,7 @@ namespace Prototyp
             }
         }
 
-        private void StopButton_Click(object sender, RoutedEventArgs e)
+        private void ModuleDesigner_Click(object sender, RoutedEventArgs e)
         {
             ModuleDesigner moduleDesigner = new ModuleDesigner();
             moduleDesigner.Owner = this;
@@ -1144,7 +1144,7 @@ namespace Prototyp
             }
         }
 
-        private void RedoButton_Click(object sender, RoutedEventArgs e)
+        private void ChangeStatus_Click(object sender, RoutedEventArgs e)
         {
             foreach (NodeViewModel nodeTest in network.Nodes.Items)
             {
