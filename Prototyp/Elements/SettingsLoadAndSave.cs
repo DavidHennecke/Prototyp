@@ -60,14 +60,15 @@ namespace Prototyp.Elements
         {
             string Child = null;
 
-            for (int i = 1; ; i++)
+            for (int i = 1; i<=9 ; i++)
             {
                 Child = "ToolBar" + i;
                 System.Windows.Controls.DockPanel toolbar = MainWindow.AppWindow.FindName(Child) as System.Windows.Controls.DockPanel;
 
-                if (toolbar == null) break;
-                if (toolbar.Children.Count == 0) break;
-                if (toolbar.Children[0].GetType().FullName != "System.Windows.Controls.Button") break;
+                //not needed
+                //if (toolbar == null) break;
+                //if (toolbar.Children.Count == 0) break;
+                //if (toolbar.Children[0].GetType().FullName != "System.Windows.Controls.Button") break;
 
                 for (int j = 0; j < toolbar.Children.Count; j++)
                 {

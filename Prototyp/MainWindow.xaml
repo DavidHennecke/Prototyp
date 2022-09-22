@@ -45,7 +45,7 @@
                     <MenuItem Header="Copy" FontSize="13"/>
                     <MenuItem Header="Paste" FontSize="13"/>
                 </MenuItem>
-                <MenuItem Header="Developer" Height="32" FontSize="13">
+                <MenuItem Header="Development" Height="32" FontSize="13">
                     <MenuItem Header="Module Designer" FontSize="13" Click="ModuleDesigner_Click"/>
                     <MenuItem Header="Set Process to Finish" FontSize="13" Click="ChangeStatus_Click"/>
                 </MenuItem>
@@ -110,20 +110,28 @@
                         </DockPanel>
                     </Border>
                     <Border BorderBrush="#FF212225" BorderThickness="3" CornerRadius="2" DockPanel.Dock="Top" Margin="2">
-                        <DockPanel x:Name="ToolBar2" Background="#FF212225" LastChildFill="False" Height="80" RenderOptions.BitmapScalingMode="HighQuality">
-                            <Grid DockPanel.Dock="Left">
-                                <Grid.RowDefinitions>
-                                    <RowDefinition Height="*"/>
-                                    <RowDefinition Height="*"/>
-                                </Grid.RowDefinitions>
-                                <DockPanel Grid.Row="0">
-
-                                </DockPanel>
-                                <DockPanel Grid.Row="1">
-
-                                </DockPanel>
-                            </Grid>
-                        </DockPanel>
+                        <Grid>
+                            <Grid.RowDefinitions>
+                                <RowDefinition Height="*"/>
+                                <RowDefinition Height="*"/>
+                            </Grid.RowDefinitions>
+                            <DockPanel Grid.Row="0" x:Name="ToolBar2" Background="#FF212225" LastChildFill="False" RenderOptions.BitmapScalingMode="HighQuality">
+                                <DockPanel.ContextMenu>
+                                    <ContextMenu>
+                                        <MenuItem Header="Add Module" Click="OpenModuleList"/>
+                                        <MenuItem Header="Add Workflow" Click="AddWorkflowClick" />
+                                    </ContextMenu>
+                                </DockPanel.ContextMenu>
+                            </DockPanel>
+                            <DockPanel Grid.Row="1" x:Name="ToolBar3" Background="#FF212225" LastChildFill="False" RenderOptions.BitmapScalingMode="HighQuality">
+                                <DockPanel.ContextMenu>
+                                    <ContextMenu>
+                                        <MenuItem Header="Add Module" Click="OpenModuleList"/>
+                                        <MenuItem Header="Add Workflow" Click="AddWorkflowClick" />
+                                    </ContextMenu>
+                                </DockPanel.ContextMenu>
+                            </DockPanel>
+                        </Grid>
                     </Border>
                 </DockPanel>
             </Border>
@@ -131,25 +139,38 @@
             <Border BorderBrush="#35363A" Grid.Column="2" BorderThickness="3" Margin="5,5,5,0" CornerRadius="2" DockPanel.Dock="Top">
                 <DockPanel Background="#35363A" LastChildFill="True">
                     <Border BorderBrush="#FF212225" BorderThickness="3" CornerRadius="2" DockPanel.Dock="Top" Margin="2">
-                        <DockPanel x:Name="ToolBar3"  Background="#FF212225" LastChildFill="False" Height="35" RenderOptions.BitmapScalingMode="HighQuality">
-
+                        <DockPanel x:Name="ToolBar4"  Background="#FF212225" LastChildFill="False" Height="35" RenderOptions.BitmapScalingMode="HighQuality">
+                            <DockPanel.ContextMenu>
+                                <ContextMenu>
+                                    <MenuItem Header="Add Module" Click="OpenModuleList"/>
+                                    <MenuItem Header="Add Workflow" Click="AddWorkflowClick" />
+                                </ContextMenu>
+                            </DockPanel.ContextMenu>
                         </DockPanel>
                     </Border>
                     <Border BorderBrush="#FF212225" BorderThickness="3" CornerRadius="2" DockPanel.Dock="Top" Margin="2">
-                        <DockPanel x:Name="ToolBar4" Background="#FF212225" LastChildFill="False" Height="80" RenderOptions.BitmapScalingMode="HighQuality">
-                            <Grid DockPanel.Dock="Left">
-                                <Grid.RowDefinitions>
-                                    <RowDefinition Height="*"/>
-                                    <RowDefinition Height="*"/>
-                                </Grid.RowDefinitions>
-                                <DockPanel Grid.Row="0">
-
-                                </DockPanel>
-                                <DockPanel Grid.Row="1">
-
-                                </DockPanel>
-                            </Grid>
-                        </DockPanel>
+                        <Grid>
+                            <Grid.RowDefinitions>
+                                <RowDefinition Height="*"/>
+                                <RowDefinition Height="*"/>
+                            </Grid.RowDefinitions>
+                            <DockPanel Grid.Row="0" x:Name="ToolBar5" Background="#FF212225" LastChildFill="False" RenderOptions.BitmapScalingMode="HighQuality">
+                                <DockPanel.ContextMenu>
+                                    <ContextMenu>
+                                        <MenuItem Header="Add Module" Click="OpenModuleList"/>
+                                        <MenuItem Header="Add Workflow" Click="AddWorkflowClick" />
+                                    </ContextMenu>
+                                </DockPanel.ContextMenu>
+                            </DockPanel>
+                            <DockPanel Grid.Row="1" x:Name="ToolBar6" Background="#FF212225" LastChildFill="False" RenderOptions.BitmapScalingMode="HighQuality">
+                                <DockPanel.ContextMenu>
+                                    <ContextMenu>
+                                        <MenuItem Header="Add Module" Click="OpenModuleList"/>
+                                        <MenuItem Header="Add Workflow" Click="AddWorkflowClick" />
+                                    </ContextMenu>
+                                </DockPanel.ContextMenu>
+                            </DockPanel>
+                        </Grid>
                     </Border>
                 </DockPanel>
             </Border>
@@ -157,25 +178,38 @@
             <Border BorderBrush="#35363A" Grid.Column="3" BorderThickness="3" Margin="5,5,5,0" CornerRadius="2" DockPanel.Dock="Top">
                 <DockPanel Background="#35363A" LastChildFill="True">
                     <Border BorderBrush="#FF212225" BorderThickness="3" CornerRadius="2" DockPanel.Dock="Top" Margin="2">
-                        <DockPanel x:Name="ToolBar5"  Background="#FF212225" LastChildFill="False" Height="35" RenderOptions.BitmapScalingMode="HighQuality">
-
+                        <DockPanel x:Name="ToolBar7"  Background="#FF212225" LastChildFill="False" Height="35" RenderOptions.BitmapScalingMode="HighQuality">
+                            <DockPanel.ContextMenu>
+                                <ContextMenu>
+                                    <MenuItem Header="Add Module" Click="OpenModuleList"/>
+                                    <MenuItem Header="Add Workflow" Click="AddWorkflowClick" />
+                                </ContextMenu>
+                            </DockPanel.ContextMenu>
                         </DockPanel>
                     </Border>
                     <Border BorderBrush="#FF212225" BorderThickness="3" CornerRadius="2" DockPanel.Dock="Top" Margin="2">
-                        <DockPanel x:Name="ToolBar6" Background="#FF212225" LastChildFill="False" Height="80" RenderOptions.BitmapScalingMode="HighQuality">
-                            <Grid DockPanel.Dock="Left">
-                                <Grid.RowDefinitions>
-                                    <RowDefinition Height="*"/>
-                                    <RowDefinition Height="*"/>
-                                </Grid.RowDefinitions>
-                                <DockPanel Grid.Row="0">
-
-                                </DockPanel>
-                                <DockPanel Grid.Row="1">
-
-                                </DockPanel>
-                            </Grid>
-                        </DockPanel>
+                        <Grid>
+                            <Grid.RowDefinitions>
+                                <RowDefinition Height="*"/>
+                                <RowDefinition Height="*"/>
+                            </Grid.RowDefinitions>
+                            <DockPanel Grid.Row="0" x:Name="ToolBar8" Background="#FF212225" LastChildFill="False" RenderOptions.BitmapScalingMode="HighQuality">
+                                <DockPanel.ContextMenu>
+                                    <ContextMenu>
+                                        <MenuItem Header="Add Module" Click="OpenModuleList"/>
+                                        <MenuItem Header="Add Workflow" Click="AddWorkflowClick" />
+                                    </ContextMenu>
+                                </DockPanel.ContextMenu>
+                            </DockPanel>
+                            <DockPanel Grid.Row="1" x:Name="ToolBar9" Background="#FF212225" LastChildFill="False" RenderOptions.BitmapScalingMode="HighQuality">
+                                <DockPanel.ContextMenu>
+                                    <ContextMenu>
+                                        <MenuItem Header="Add Module" Click="OpenModuleList"/>
+                                        <MenuItem Header="Add Workflow" Click="AddWorkflowClick" />
+                                    </ContextMenu>
+                                </DockPanel.ContextMenu>
+                            </DockPanel>
+                        </Grid>
                     </Border>
                 </DockPanel>
             </Border>
