@@ -6,7 +6,7 @@ using ReactiveUI;
 
 namespace Prototyp.Modules.Views
 {
-    public partial class DropDownMenuView : UserControl, IViewFor<DropDownMenuViewModel>
+    public partial class DropDownMenuView : IViewFor<DropDownMenuViewModel>
     {
         #region ViewModel
         public static readonly DependencyProperty ViewModelProperty = DependencyProperty.Register(nameof(ViewModel),
@@ -33,7 +33,9 @@ namespace Prototyp.Modules.Views
             {
                 this.comboMenu.Items.Add(item);
             }
-            //string SelectedText = (string)this.comboMenu.SelectedItem;
+            this.WhenActivated(d => d(
+                this.Bind(ViewModel, vm => vm.StringItem, v => v.comboMenu.SelectedItem)
+            ));
         }
     }
 }

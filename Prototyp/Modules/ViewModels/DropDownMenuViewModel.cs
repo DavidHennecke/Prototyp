@@ -15,17 +15,18 @@ namespace Prototyp.Modules.ViewModels
         }
 
         #region StringItems
-        private string[] _stringItems;
-        public string[] StringItems
+        private string _stringItem;
+        public string StringItem
         {
-            get => _stringItems;
-            set => this.RaiseAndSetIfChanged(ref _stringItems, value);
+            get => _stringItem;
+            set => this.RaiseAndSetIfChanged(ref _stringItem, value);
         }
         #endregion
 
+
         public DropDownMenuViewModel()
         {
-            this.WhenAnyValue(vm => vm.StringItems)
+            this.WhenAnyValue(vm => vm.StringItem)
                 .BindTo(this, vm => vm.Value);
         }
     }

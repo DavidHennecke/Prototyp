@@ -578,14 +578,13 @@ namespace Prototyp.Modules
                     else if (toolRow.controlRow.controlType == VorteXML.ControlType.Dropdown)
                     {
                         dropdownEditor.Add(new Modules.ViewModels.DropDownMenuViewModel(toolRow.Name, toolRow.controlRow.dropdown.Values));
-                        dropdownEditor[dropdownEditor.Count - 1].StringItems = toolRow.controlRow.dropdown.Values;
+                        //dropdownEditor[dropdownEditor.Count - 1].StringItems = toolRow.controlRow.dropdown.Values;
 
                         StringInput.Add(new ValueNodeInputViewModel<string>());
                         StringInput[StringInput.Count - 1].Editor = dropdownEditor[StringInput.Count - 1];
                         StringInput[StringInput.Count - 1].Port.IsVisible = false;
                         StringInput[StringInput.Count - 1].Name = toolRow.Name;
                         StringInput[StringInput.Count - 1].SetID(inputRowCounter);
-
                         Inputs.Add(StringInput[StringInput.Count - 1]);
                     }
                     inputRowCounter++;
@@ -609,7 +608,17 @@ namespace Prototyp.Modules
                     }
                     else if (i.Editor is Prototyp.Modules.ViewModels.DropDownMenuViewModel)
                     {
-                        Params.Fields.Add(i.Name, Google.Protobuf.WellKnownTypes.Value.ForString(((Prototyp.Modules.ViewModels.DropDownMenuViewModel)i.Editor).StringItems[0]));
+
+                        if (((Prototyp.Modules.ViewModels.DropDownMenuViewModel)i.Editor).StringItem != null)
+                        {
+                            Params.Fields.Add(i.Name, Google.Protobuf.WellKnownTypes.Value.ForString(((Prototyp.Modules.ViewModels.DropDownMenuViewModel)i.Editor).StringItem));
+                        }
+                        else
+                        {
+                            Params.Fields.Add(i.Name, Google.Protobuf.WellKnownTypes.Value.ForString(""));
+                        }
+                            
+
 
                         // TODO: Welchen String schicken, d.h. welcher ist im UI ausgewählt?
                         // Müsste in etwa so gehen:
@@ -670,7 +679,7 @@ namespace Prototyp.Modules
                         Params.DD[DropDownCount] = new DropdownParams();
 
                         Params.DD[DropDownCount].Name = i.Name;
-                        Params.DD[DropDownCount].Entries = ((Prototyp.Modules.ViewModels.DropDownMenuViewModel)i.Editor).StringItems;
+                        //Params.DD[DropDownCount].Entries = ((Prototyp.Modules.ViewModels.DropDownMenuViewModel)i.Editor).StringItems;
 
                         DropDownCount++;
                     }

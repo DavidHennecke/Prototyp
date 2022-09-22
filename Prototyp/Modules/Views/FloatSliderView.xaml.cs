@@ -35,7 +35,7 @@ namespace Prototyp.Modules.Views
             this.slUnit.Text = unit;
             this.WhenActivated(d => d(
                 this.Bind(ViewModel, vm => vm.FloatValue, v => v.slFloatValue.Value)
-            ));      
+            ));
         }
     }
 }
