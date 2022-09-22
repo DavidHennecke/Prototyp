@@ -179,7 +179,7 @@ namespace Prototyp.Elements
             {
                 if (System.IO.File.Exists(MyString))
                 {
-                    if (!FileAccessabe(MyString)) { throw new System.Exception("File is not accessible, maybe opened in some other software?"); }
+                    if (!FileAccessable(MyString)) { throw new System.Exception("File is not accessible, maybe opened in some other software?"); }
 
                     _busy = true;
 
@@ -223,7 +223,7 @@ namespace Prototyp.Elements
         {
             if (System.IO.File.Exists(FlatGeobufFileName))
             {
-                if (!FileAccessabe(FlatGeobufFileName)) { throw new System.Exception("File is not accessible, maybe opened in some other software?"); }
+                if (!FileAccessable(FlatGeobufFileName)) { throw new System.Exception("File is not accessible, maybe opened in some other software?"); }
 
                 _busy = true;
                 using (System.IO.Stream SourceFile = System.IO.File.OpenRead(FlatGeobufFileName))
@@ -755,7 +755,7 @@ namespace Prototyp.Elements
             return (System.Convert.ToBase64String(ByteArr));
         }
 
-        public static bool FileAccessabe(string FileName)
+        public static bool FileAccessable(string FileName)
         {
             if (!System.IO.File.Exists(FileName)) return(false);
 

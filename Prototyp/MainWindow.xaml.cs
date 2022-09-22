@@ -262,7 +262,7 @@ namespace Prototyp
 
         private void LoadWorkflowFinally(string FileName)
         {
-            if (!VectorData.FileAccessabe(FileName)) { throw new System.Exception("File does not exist or is not accessible, maybe opened in some other software?"); }
+            if (!VectorData.FileAccessable(FileName)) { throw new System.Exception("File does not exist or is not accessible, maybe opened in some other software?"); }
 
             // Here we go. First, stop all active servers.
             TerminateAllServers();

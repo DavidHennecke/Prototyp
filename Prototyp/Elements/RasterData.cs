@@ -143,7 +143,7 @@
         {
             if (System.IO.File.Exists(MyString))
             {
-                if (!VectorData.FileAccessabe(MyString)) { throw new System.Exception("File is not accessible, maybe opened in some other software?"); }
+                if (!VectorData.FileAccessable(MyString)) { throw new System.Exception("File is not accessible, maybe opened in some other software?"); }
 
                 _busy = true;
                 InitGDAL();
@@ -170,7 +170,7 @@
         {
             if (System.IO.File.Exists(RasterFileName))
             {
-                if (!VectorData.FileAccessabe(RasterFileName)) { throw new System.Exception("File is not accessible, maybe opened in some other software?"); }
+                if (!VectorData.FileAccessable(RasterFileName)) { throw new System.Exception("File is not accessible, maybe opened in some other software?"); }
 
                 _busy = true;
                 InitGDAL();

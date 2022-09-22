@@ -119,7 +119,7 @@ namespace Prototyp.Elements
 
         public void LoadProgSettings(string FileName)
         {
-            if (!VectorData.FileAccessabe(FileName)) { throw new System.Exception("File does not exist or is not accessible, maybe opened in some other software?"); }
+            if (!VectorData.FileAccessable(FileName)) { throw new System.Exception("File does not exist or is not accessible, maybe opened in some other software?"); }
 
             string JSON = System.IO.File.ReadAllText(FileName);
 
