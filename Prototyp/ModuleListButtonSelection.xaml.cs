@@ -5,7 +5,7 @@ namespace Prototyp
 
     public partial class ModuleListButtonSelection : Window
     {
-        public ComboItem selectedModule = new ComboItem();
+        public System.Collections.IList selectedModuleList = new Prototyp.ComboItem[] { };
         System.Collections.Generic.List<ComboItem> LocalList = new System.Collections.Generic.List<ComboItem>();
 
         public ModuleListButtonSelection()
@@ -67,8 +67,7 @@ namespace Prototyp
 
         private void BtnAdd_Click(object sender, RoutedEventArgs e)
         {
-            int Index = ModuleListButtonSlectionList.SelectedIndex;
-            selectedModule = LocalList[Index];
+            selectedModuleList = ModuleListButtonSlectionList.SelectedItems;
             this.Close();
         }
 

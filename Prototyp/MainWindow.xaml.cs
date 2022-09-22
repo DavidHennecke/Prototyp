@@ -23,7 +23,7 @@ https://github.com/Wouterdek/NodeNetwork/blob/master/NodeNetworkTests/NetworkVie
 
 TODO:
 
-o Low priority: Add multi-select in toolbar modules selection.
+o Low priority: Add multi-select in toolbar modules selection. (CHECK)
 
 ------------------------------- */
 
@@ -1161,9 +1161,13 @@ namespace Prototyp
             ModuleListButtonSelection chooseModuleWindow = new ModuleListButtonSelection();
             chooseModuleWindow.Owner = this;
             chooseModuleWindow.ShowDialog();
-            if (chooseModuleWindow.selectedModule.ToolName != null)
+            if (chooseModuleWindow.selectedModuleList.Count > 0)
             {
-                CreateButton(chooseModuleWindow.selectedModule.ToolName, dockPanel.Name);
+                foreach(Prototyp.ComboItem Item in chooseModuleWindow.selectedModuleList)
+                {
+                    CreateButton(Item.ToolName, dockPanel.Name);
+                }
+                
                 SaveButtons();
             }
         }
