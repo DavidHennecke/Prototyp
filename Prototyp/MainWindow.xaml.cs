@@ -23,7 +23,6 @@ https://github.com/Wouterdek/NodeNetwork/blob/master/NodeNetworkTests/NetworkVie
 
 TODO:
 
-o Mouse select in ComboBox after typing does not work.
 o Low priority: Add multi-select in toolbar modules selection.
 
 ------------------------------- */
@@ -141,6 +140,7 @@ namespace Prototyp
                         NextItem.VorteXMLStruct = ThisXML;
                         NextItem.ToolName = ThisXML.NodeTitle;
                         NextItem.BinaryPath = Dir + "/" + ThisXML.NodeTitle;
+                        
 
                         LocalList.Add(NextItem);
 
@@ -540,9 +540,10 @@ namespace Prototyp
         {
             int Index = ToolsComboBox.SelectedIndex;
             if (Index <= 0) return;
-            if (Typing) return;
+            if (Typing==true) return;
 
-            importModule(ComboItems[Index].BinaryPath);
+            Prototyp.ComboItem SelectedItem = (Prototyp.ComboItem)ToolsComboBox.SelectedItem;
+            importModule(SelectedItem.BinaryPath);
 
             ToolsComboBox.SelectedIndex = 0;
         }
@@ -560,6 +561,16 @@ namespace Prototyp
             }
         }
 
+        private void Combo_PreviewMouseDown(object sender, System.Windows.Input.MouseButtonEventArgs e)
+        {
+            Typing = false;
+
+            //Hack to get the ChangeSelectionEvent
+            int tempSelectIndex = ToolsComboBox.SelectedIndex;
+            ToolsComboBox.SelectedIndex = 0;
+            ToolsComboBox.SelectedIndex = ToolsComboBox.SelectedIndex;
+        }
+
         private void ComboKeyUp(object sender, System.Windows.Input.KeyEventArgs e)
         {
             if (e.Key == System.Windows.Input.Key.Down |
@@ -567,14 +578,12 @@ namespace Prototyp
                 e.Key == System.Windows.Input.Key.LeftCtrl |
                 e.Key == System.Windows.Input.Key.RightCtrl) return;
 
-            ToolsComboBox.IsDropDownOpen = true;
-            Typing = true;
-
             string KeyPress = "";
             if (e.Key == System.Windows.Input.Key.Back) KeyPress = "Back";
             if (e.Key == System.Windows.Input.Key.Escape) KeyPress = "Esc";
             if (e.Key == System.Windows.Input.Key.Delete) KeyPress = "Del";
-            if (e.Key == System.Windows.Input.Key.Return | e.Key == System.Windows.Input.Key.Enter) KeyPress = "Ret";
+            if (e.Key == System.Windows.Input.Key.Enter) KeyPress = "Enter";
+            if (e.Key == System.Windows.Input.Key.Return) KeyPress = "Ret";
             if (e.Key == System.Windows.Input.Key.D1) KeyPress = "1";
             if (e.Key == System.Windows.Input.Key.D2) KeyPress = "2";
             if (e.Key == System.Windows.Input.Key.D3) KeyPress = "3";
@@ -635,14 +644,29 @@ namespace Prototyp
 
             if (KeyPress == "Del")
             {
-                ToolsComboBox.IsDropDownOpen = false;
                 ComboSearchItems.Clear();
                 ComboItems[0].ToolName = COMBOMSG;
                 ToolsComboBox.ItemsSource = null;
                 ToolsComboBox.ItemsSource = ComboItems;
                 ToolsComboBox.SelectedIndex = 0;
                 Typing = false;
-                TerminateServerEvent();
+                if (ToolsComboBox.IsDropDownOpen==false)
+                {
+                    TerminateServerEvent();
+                }
+                ToolsComboBox.IsDropDownOpen = false;
+                return;
+            }
+
+            if (KeyPress == "Enter")
+            {
+                ComboSearchItems.Clear();
+                ComboItems[0].ToolName = COMBOMSG;
+                ToolsComboBox.ItemsSource = null;
+                ToolsComboBox.ItemsSource = ComboItems;
+                ToolsComboBox.SelectedIndex = 0;
+                Typing = false;
+                ToolsComboBox.IsDropDownOpen = false;
                 return;
             }
 
@@ -670,6 +694,8 @@ namespace Prototyp
 
             if (ALPHABET.Contains(KeyPress))
             {
+                ToolsComboBox.IsDropDownOpen = true;
+                Typing = true;
                 string TempString;
                 if (ComboSearchItems.Count > 0)
                 {
@@ -693,7 +719,9 @@ namespace Prototyp
 
                 ToolsComboBox.ItemsSource = null;
                 ToolsComboBox.ItemsSource = ComboSearchItems;
+
                 if (ComboSearchItems.Count > 1) ToolsComboBox.SelectedIndex = 1;
+                Typing = false;
                 return;
             }
         }
