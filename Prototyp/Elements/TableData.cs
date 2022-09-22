@@ -65,7 +65,7 @@ namespace Prototyp.Elements
             SetID(uid);
         }
 
-        // Constructor that accepts a string that is a filename of a csv file.
+        // Constructor that accepts a string that is a filename of a csv file OR the content of the csv file itself.
         public TableData(int uid, string InString)
         {
             if (System.IO.File.Exists(InString))

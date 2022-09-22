@@ -47,7 +47,6 @@ namespace Prototyp
                         NextItem.ToolName = ThisXML.NodeTitle;
                         NextItem.BinaryPath = Dir + "/" + ThisXML.NodeTitle;
 
-
                         LocalList.Add(NextItem);
 
                         break;

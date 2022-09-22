@@ -608,7 +608,6 @@ namespace Prototyp.Modules
                     }
                     else if (i.Editor is Prototyp.Modules.ViewModels.DropDownMenuViewModel)
                     {
-
                         if (((Prototyp.Modules.ViewModels.DropDownMenuViewModel)i.Editor).StringItem != null)
                         {
                             Params.Fields.Add(i.Name, Google.Protobuf.WellKnownTypes.Value.ForString(((Prototyp.Modules.ViewModels.DropDownMenuViewModel)i.Editor).StringItem));
@@ -617,9 +616,7 @@ namespace Prototyp.Modules
                         {
                             Params.Fields.Add(i.Name, Google.Protobuf.WellKnownTypes.Value.ForString(""));
                         }
-                            
-
-
+                        
                         // TODO: Welchen String schicken, d.h. welcher ist im UI ausgewählt?
                         // Müsste in etwa so gehen:
 
