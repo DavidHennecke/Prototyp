@@ -87,8 +87,8 @@
                                 </Grid.RowDefinitions>
                                 <Button x:Name="ImportButton" Content="upload" Grid.Column="0" Grid.Row="0" Background="#FF212225" FontFamily="{StaticResource FontAwesomeSolid}" VerticalAlignment="Center" HorizontalAlignment="Center" Width="35" Height="35" FontSize="16" Foreground="#FFD8A14E" Click="ImportButton_Click"/>
                                 <Button x:Name="ExportButton" Content="download" Background="#FF212225" Grid.Column="1" Grid.Row="0" FontFamily="{StaticResource FontAwesomeSolid}" VerticalAlignment="Center" HorizontalAlignment="Center"  Width="35" Height="35" FontSize="16" Foreground="#FFD8A14E"/>
-                                <Button x:Name="ConnectionsButton" Content="database" Background="#FF212225" Grid.Row="1" FontFamily="{StaticResource FontAwesomeSolid}" VerticalAlignment="Top" HorizontalAlignment="Center"  Width="35" Height="35" FontSize="16" Click="ConnectionsButton_Click" Margin="0,1,0,0"/>
-                                <Button x:Name="ToolboxButton" Content="toolbox" Background="#FF252221" Grid.Column="1" Grid.Row="1" FontFamily="{StaticResource FontAwesomeSolid}" VerticalAlignment="Center" HorizontalAlignment="Center"  Width="35" Height="35" FontSize="16" Foreground="#FFCD4715" Click="ToolboxButton_Click"/>
+                                <Button x:Name="FormatLayout" Content="&#xf542;" Background="#FF212225" Grid.Row="1" FontFamily="{StaticResource FontAwesomeSolid}" VerticalAlignment="Top" HorizontalAlignment="Center"  Width="35" Height="35" FontSize="15" Click="FormatLayout_Click" Foreground="#FFD8A14E" Padding="0"/>
+                                <Button x:Name="RemoveModule" Content="times" Background="#FF252221" Grid.Column="1" Grid.Row="1" FontFamily="{StaticResource FontAwesomeSolid}" VerticalAlignment="Center" HorizontalAlignment="Center"  Width="35" Height="35" FontSize="18" Foreground="#FFCD4715" Click="RemoveModule_Click" />
                             </Grid>
                         </DockPanel>
                     </Border>
