@@ -24,6 +24,7 @@ https://github.com/Wouterdek/NodeNetwork/blob/master/NodeNetworkTests/NetworkVie
 TODO:
 
 o Low priority: Add multi-select in toolbar modules selection. (CHECK)
+o Ein Modul erzeugen, das keinen Input, sondern nur einen Output hat, Typ Float (gesteuert über einen Slider). Erforderlich für MinDist bei WFLO.
 
 ------------------------------- */
 
