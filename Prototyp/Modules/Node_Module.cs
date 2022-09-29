@@ -209,17 +209,8 @@ namespace Prototyp.Modules
                             if (inMain)
                             {
                                 vectorInputPoint.SetID(inputRowCounter);
-                                vectorInputPoint.Name = toolRow.inputRow.inputTypes[i].ToString();
-                                // Alternativ: vectorInput.Name = toolRow.inputRow.inputTypes.Last().ToString();
-                                // Grundsätzlich: Was tun bei mehreren validen Inputtypen?
-                                vectorInputPoint.ValueChanged.Subscribe(vectorInputSource =>
-                                {
-                                    if (vectorInputSource != null)
-                                    {
-                                        // TODO: Hier muss noch nach den Ports differenziert werden, falls mehrere vorhanden sind.
-                                        vectorInputPoint.Name = vectorInputSource.Name;
-                                    }
-                                });
+                                vectorInputPoint.Name = toolRow.Name;
+                                //vectorInputPoint.Name = toolRow.inputRow.inputTypes[i].ToString();
                             }
                             else
                             {
@@ -234,17 +225,8 @@ namespace Prototyp.Modules
                             if (inMain)
                             {
                                 vectorInputLine.SetID(inputRowCounter);
-                                vectorInputLine.Name = toolRow.inputRow.inputTypes[i].ToString();
-                                // Alternativ: vectorInput.Name = toolRow.inputRow.inputTypes.Last().ToString();
-                                // Grundsätzlich: Was tun bei mehreren validen Inputtypen?
-                                vectorInputLine.ValueChanged.Subscribe(vectorInputSource =>
-                                {
-                                    if (vectorInputSource != null)
-                                    {
-                                        // TODO: Hier muss noch nach den Ports differenziert werden, falls mehrere vorhanden sind.
-                                        vectorInputLine.Name = vectorInputSource.Name;
-                                    }
-                                });
+                                vectorInputLine.Name = toolRow.Name;
+
                             }
                             else
                             {
@@ -259,17 +241,8 @@ namespace Prototyp.Modules
                             if (inMain)
                             {
                                 vectorInputPolygon.SetID(inputRowCounter);
-                                vectorInputPolygon.Name = toolRow.inputRow.inputTypes[i].ToString();
-                                // Alternativ: vectorInput.Name = toolRow.inputRow.inputTypes.Last().ToString();
-                                // Grundsätzlich: Was tun bei mehreren validen Inputtypen?
-                                vectorInputPolygon.ValueChanged.Subscribe(vectorInputSource =>
-                                {
-                                    if (vectorInputSource != null)
-                                    {
-                                        // TODO: Hier muss noch nach den Ports differenziert werden, falls mehrere vorhanden sind.
-                                        vectorInputPolygon.Name = vectorInputSource.Name;
-                                    }
-                                });
+                                vectorInputPolygon.Name = toolRow.Name;
+
                             }
                             else
                             {
@@ -284,17 +257,8 @@ namespace Prototyp.Modules
                             if (inMain)
                             {
                                 vectorInputMultiPolygon.SetID(inputRowCounter);
-                                vectorInputMultiPolygon.Name = toolRow.inputRow.inputTypes[i].ToString();
-                                // Alternativ: vectorInput.Name = toolRow.inputRow.inputTypes.Last().ToString();
-                                // Grundsätzlich: Was tun bei mehreren validen Inputtypen?
-                                vectorInputMultiPolygon.ValueChanged.Subscribe(vectorInputSource =>
-                                {
-                                    if (vectorInputSource != null)
-                                    {
-                                        // TODO: Hier muss noch nach den Ports differenziert werden, falls mehrere vorhanden sind.
-                                        vectorInputMultiPolygon.Name = vectorInputSource.Name;
-                                    }
-                                });
+                                vectorInputMultiPolygon.Name = toolRow.Name;
+
                             }
                             else
                             {
@@ -309,17 +273,8 @@ namespace Prototyp.Modules
                             if (inMain)
                             {
                                 rasterInput.SetID(inputRowCounter);
-                                rasterInput.Name = toolRow.inputRow.inputTypes[i].ToString();
-                                // Alternativ: rasterInput.Name = toolRow.inputRow.inputTypes.Last().ToString();
-                                // Grundsätzlich: Was tun bei mehreren validen Inputtypen?
-                                rasterInput.ValueChanged.Subscribe(rasterInputSource =>
-                                {
-                                    if (rasterInputSource != null)
-                                    {
-                                        // TODO: Hier muss noch nach den Ports differenziert werden, falls mehrere vorhanden sind.
-                                        rasterInput.Name = rasterInputSource.Name;
-                                    }
-                                });
+                                rasterInput.Name = toolRow.Name;
+
                             }
                             else
                             {
@@ -334,17 +289,7 @@ namespace Prototyp.Modules
                             if (inMain)
                             {
                                 tableInput.SetID(inputRowCounter);
-                                tableInput.Name = toolRow.inputRow.inputTypes[i].ToString();
-                                // Alternativ: rasterInput.Name = toolRow.inputRow.inputTypes.Last().ToString();
-                                // Grundsätzlich: Was tun bei mehreren validen Inputtypen?
-                                tableInput.ValueChanged.Subscribe(tableInputSource =>
-                                {
-                                    if (tableInputSource != null)
-                                    {
-                                        // TODO: Hier muss noch nach den Ports differenziert werden, falls mehrere vorhanden sind.
-                                        tableInput.Name = tableInputSource.Name;
-                                    }
-                                });
+                                tableInput.Name = toolRow.Name;
                             }
                             else
                             {
@@ -357,7 +302,7 @@ namespace Prototyp.Modules
                         {
                             FloatInput.Add(new ValueNodeInputViewModel<float>());
                             FloatInput[FloatInput.Count - 1].SetID(inputRowCounter);
-                            FloatInput[FloatInput.Count - 1].Name = toolRow.inputRow.inputTypes[i].ToString();
+                            FloatInput[FloatInput.Count - 1].Name = toolRow.Name;
 
                             Inputs.Add(FloatInput[FloatInput.Count - 1]);
                             continue;
