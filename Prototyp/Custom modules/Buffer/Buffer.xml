@@ -3,12 +3,12 @@
 <Node style="default" editorVersion="0.1" showGUI = "false">
 	<NodeTitle>Buffer</NodeTitle>
 	<NodeElements>
-		<Element:Input rowNr="1" name="Geometry">
+		<Element:Input rowNr="1" name="Point">
 			<InputTypes>
 				<Vector:Point />
 			</InputTypes>
 		</Element:Input>
-		<Element:Input rowNr="2" name="Geometry">
+		<Element:Input rowNr="2" name="Polygon">
 			<InputTypes>
 				<Vector:Polygon />
 			</InputTypes>
