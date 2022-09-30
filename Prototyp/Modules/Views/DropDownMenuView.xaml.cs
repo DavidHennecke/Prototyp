@@ -28,14 +28,14 @@ namespace Prototyp.Modules.Views
         public DropDownMenuView(string controlName, string[] items)
         {
             InitializeComponent();
-            //this.comboName.Text = controlName;
-            foreach (string item in items)
-            {
-                this.comboMenu.Items.Add(item);
-            }
-            this.WhenActivated(d => d(
-                this.Bind(ViewModel, vm => vm.StringItem, v => v.comboMenu.SelectedItem)
-            ));
+            
+            this.WhenActivated(d => {
+            foreach (var item in ViewModel.StringItems)
+                {
+                    this.comboMenu.Items.Add(item);
+                };
+                this.Bind(ViewModel, vm => vm.StringItem, v => v.comboMenu.SelectedItem);
+            });
         }
     }
 }

@@ -527,7 +527,7 @@ namespace Prototyp.Modules
                     else if (toolRow.controlRow.controlType == VorteXML.ControlType.Dropdown)
                     {
                         dropdownEditor.Add(new Modules.ViewModels.DropDownMenuViewModel(toolRow.Name, toolRow.controlRow.dropdown.Values));
-                        //dropdownEditor[dropdownEditor.Count - 1].StringItems = toolRow.controlRow.dropdown.Values;
+                        dropdownEditor[dropdownEditor.Count - 1].StringItems = toolRow.controlRow.dropdown.Values;
 
                         StringInput.Add(new ValueNodeInputViewModel<string>());
                         StringInput[StringInput.Count - 1].Editor = dropdownEditor[StringInput.Count - 1];
