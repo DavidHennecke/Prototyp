@@ -28,13 +28,20 @@ namespace Prototyp.Modules.Views
         public FloatSliderView(string controlName, float minVal, float maxVal, float tick, string unit)
         {
             InitializeComponent();
-            //this.slName.Text = controlName;
-            this.slFloatValue.Minimum = minVal;
-            this.slFloatValue.Maximum = maxVal;
-            this.slFloatValue.TickFrequency = tick;
-            this.slUnit.Text = unit;
             this.WhenActivated(d => d(
                 this.Bind(ViewModel, vm => vm.FloatValue, v => v.slFloatValue.Value)
+            ));
+            this.WhenActivated(d => d(
+                this.Bind(ViewModel, vm => vm.Unit, v => v.slUnit.Text)
+            ));
+            this.WhenActivated(d => d(
+                this.Bind(ViewModel, vm => vm.MaximumValue, v => v.slFloatValue.Maximum)
+            ));
+            this.WhenActivated(d => d(
+                this.Bind(ViewModel, vm => vm.MinimumValue, v => v.slFloatValue.Minimum)
+            ));
+            this.WhenActivated(d => d(
+                this.Bind(ViewModel, vm => vm.TickValue, v => v.slFloatValue.TickFrequency)
             ));
         }
     }

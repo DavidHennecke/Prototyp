@@ -217,7 +217,8 @@
 
         <Grid Grid.Row="2">
             <Grid.ColumnDefinitions>
-                <ColumnDefinition Width="12*"/>
+                <ColumnDefinition Width="10*"/>
+                <ColumnDefinition Width="2*"/>
 
             </Grid.ColumnDefinitions>
 
@@ -232,9 +233,13 @@
                     </DataTemplate>
                 </ComboBox.ItemTemplate>
             </ComboBox>
-            <Border BorderBrush="#FF212225" Grid.Column="1" Margin="5,5,5,5" BorderThickness="1" CornerRadius="2 2 0 0" DockPanel.Dock="Top">
+            <Border BorderBrush="#FF212225" Grid.Column="0" Margin="5,5,5,5" BorderThickness="1" CornerRadius="2 2 0 0" DockPanel.Dock="Top">
 
                 <nodenetwork:NetworkView x:Name="networkView" Cursor="Hand" Background="#FF52555C" KeyUp="ComboKeyUp"/>
+            </Border>
+            <Border BorderBrush="#FF212225" Grid.Column="0" Margin="5,5,5,5" BorderThickness="1" CornerRadius="2 2 0 0" DockPanel.Dock="Top">
+
+                
             </Border>
             <GridSplitter Grid.Column="0" Width="2" VerticalAlignment="Stretch" Background="#35363A"/>
         </Grid>

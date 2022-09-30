@@ -501,6 +501,10 @@ namespace Prototyp.Modules
 
                         sliderEditor.Add(new Modules.ViewModels.FloatSliderViewModel(toolRow.Name, toolRow.controlRow.slider.Start, toolRow.controlRow.slider.End, toolRow.controlRow.slider.TickFrequency, toolRow.controlRow.slider.Unit));
                         sliderEditor[sliderEditor.Count - 1].FloatValue = toolRow.controlRow.slider.Default;
+                        sliderEditor[sliderEditor.Count - 1].MinimumValue = toolRow.controlRow.slider.Start;
+                        sliderEditor[sliderEditor.Count - 1].MaximumValue = toolRow.controlRow.slider.End;
+                        sliderEditor[sliderEditor.Count - 1].TickValue = toolRow.controlRow.slider.TickFrequency;
+                        sliderEditor[sliderEditor.Count - 1].Unit = toolRow.controlRow.slider.Unit;
 
                         FloatInput.Add(new ValueNodeInputViewModel<float>());
                         FloatInput[FloatInput.Count - 1].Editor = sliderEditor[sliderEditor.Count - 1];
