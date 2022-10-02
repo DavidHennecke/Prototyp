@@ -111,22 +111,6 @@ namespace Prototyp.Elements
 
         // Static methods ------------------------------------------------------------------
 
-        public static byte[] FindData(System.Collections.Generic.List<Google.Protobuf.ByteString> data)
-        {
-            // Reassemble csv data
-            int targetPos = 0;
-            byte[] result = new byte[data.Sum(a => a.Length)];
-            for (int i = 0; i < data.Count; i++)
-            {
-                for (int j = 0; j < data[i].Length; j++)
-                {
-                    result[targetPos] = data[i][j];
-                    targetPos++;
-                }
-            }
-            return result;
-        }
-
         public static string ByteArrToString(byte[] ByteArr)
         {
             return (System.Convert.ToBase64String(ByteArr));
