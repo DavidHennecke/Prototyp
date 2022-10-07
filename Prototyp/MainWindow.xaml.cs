@@ -63,8 +63,13 @@ namespace Prototyp
 
     public partial class MainWindow : Window
     {
-        public const int BASEPORT = 5000;
         public const int MAX_UNSIGNED_SHORT = 65535;
+        public const int BASEPORT = 5000;
+        public int DevBASEPORT = 0;
+        public int DevBASEPORTCurrent = 0;
+
+        public int IgnoreStarts = 0;
+        public int ElapsedStarts = 0;
 
         private const string COMBOMSG = "Select your tool here...";
         private const string ALPHABET = "ABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890";
@@ -112,7 +117,7 @@ namespace Prototyp
             networkView.ViewModel = network;
 
             ParseModules(ModulesPath);
-            LoadButtons(ParentDir);
+            LoadSettings(ParentDir);
         }
 
         // Private methods --------------------------------------------------------------------
@@ -165,7 +170,7 @@ namespace Prototyp
             ToolsComboBox.SelectedIndex = 0;
         }
 
-        private void LoadButtons(System.IO.DirectoryInfo LocalDir)
+        private void LoadSettings(System.IO.DirectoryInfo LocalDir)
         {
             ProgSettings progSettings = new ProgSettings(LocalDir.FullName + "/appsettings.json");
 
@@ -180,16 +185,23 @@ namespace Prototyp
                 {
                     CreateButton(s.wfButton.WFPath, s.wfButton.IconPath, s.wfButton.TargetControl);
                 }
+                else if (s.devSettings != null)
+                {
+                    DevBASEPORT = int.Parse(s.devSettings.BasePort);
+                    DevBASEPORTCurrent = DevBASEPORT;
+                    IgnoreStarts = int.Parse(s.devSettings.IgnoreNumber);
+                }
                 // else if ... Any other settings here.
             }
 
             // Process anything else at will.
         }
 
-        private void SaveButtons()
+        private void SaveSettings()
         {
             ProgSettings ps = new ProgSettings();
             ps.PrepareSaveButtons();
+            ps.AddDevSettings(DevBASEPORT, IgnoreStarts);
             ps.SaveProgSettings(ParentDir.FullName + "/appsettings.json");
         }
 
@@ -320,10 +332,21 @@ namespace Prototyp
         {
             //Find lowest available port
             int port = Node_Module.GetNextPort(BASEPORT);
-            //port = 5000;
+            bool DoLaunch = true;
+            if (DevBASEPORT != 0)
+            {
+                if (ElapsedStarts < IgnoreStarts)
+                {
+                    port = DevBASEPORTCurrent;
+                    DevBASEPORTCurrent++;
+                    DoLaunch = false;
+                }
+            }
+
             string Url = "https://localhost:" + port.ToString();
 
-            Node_Module nodeModule = Prototyp.Elements.BinaryLauncher.Launch(BinaryPath, Url);
+            Node_Module nodeModule = Prototyp.Elements.BinaryLauncher.Launch(BinaryPath, Url, DoLaunch: DoLaunch);
+            ElapsedStarts++;
 
             //Node Position
             Point TempPoint;
@@ -331,7 +354,7 @@ namespace Prototyp
             TempPoint.Y = 20 / networkView.ViewModel.ZoomFactor;
             nodeModule.Position = TempPoint;
 
-            //is needed to get to the delete event of the node. Otherwise the node will be deleted before we recognize it as selected in TerminateServerEvent()
+            //This is necessary to get to the delete event of the node. Otherwise the node will be deleted before we recognize it as selected in TerminateServerEvent().
             nodeModule.CanBeRemovedByUser = false;
 
             network.Nodes.Add(nodeModule);
@@ -341,6 +364,7 @@ namespace Prototyp
 
         private void AppClosing(object sender, System.ComponentModel.CancelEventArgs e)
         {
+            SaveSettings();
             TerminateAllServers();
         }
 
@@ -1061,6 +1085,22 @@ namespace Prototyp
             ParseModules(ModulesPath);
         }
 
+        private void DeveloperMode_Click(object sender, RoutedEventArgs e)
+        {
+            Developer_mode developer_mode = new Developer_mode();
+            developer_mode.Owner = this;
+
+            if (DevBASEPORT != 0) developer_mode.TxtStartPort.Text = DevBASEPORT.ToString(); else developer_mode.TxtStartPort.Text = BASEPORT.ToString();
+            developer_mode.TxtNumberIgnore.Text = IgnoreStarts.ToString();
+
+            developer_mode.ShowDialog();
+
+            if (!developer_mode.OkayClicked) return;
+
+            DevBASEPORT = int.Parse(developer_mode.TxtStartPort.Text);
+            IgnoreStarts = int.Parse(developer_mode.TxtNumberIgnore.Text);            
+        }
+
         private void FormatLayout_Click(object sender, RoutedEventArgs e)
         {
             // Startet ein automatisches Network-Arragement, mehr oder weniger gut. Vielleicht irgendwann mal nützlich.
@@ -1168,14 +1208,14 @@ namespace Prototyp
                     CreateButton(Item.ToolName, dockPanel.Name);
                 }
                 
-                SaveButtons();
+                SaveSettings();
             }
         }
 
         private void removeBtn_Click(System.Windows.Controls.Button ModuleBtn, System.Windows.Controls.DockPanel dockPanel)
         {
             dockPanel.Children.Remove(ModuleBtn);
-            SaveButtons();
+            SaveSettings();
         }
 
         private void AddWorkflowClick(object sender, RoutedEventArgs e)
@@ -1215,7 +1255,7 @@ namespace Prototyp
                 }
 
                 CreateButton(WFFile, IconPath, dockPanel.Name);
-                SaveButtons();
+                SaveSettings();
             }
         }
     }

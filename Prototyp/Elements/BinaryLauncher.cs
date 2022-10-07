@@ -7,7 +7,7 @@ namespace Prototyp.Elements
 {
     public class BinaryLauncher
     {
-        public static Node_Module Launch(string BinaryPath, string Url, string ModuleName = "", VorteXML constructXML = null)
+        public static Node_Module Launch(string BinaryPath, string Url, string ModuleName = "", VorteXML constructXML = null, bool DoLaunch = true)
         {
             BinaryPath = BinaryPath.Replace("\\", "/");
 
@@ -55,7 +55,7 @@ namespace Prototyp.Elements
                 }
 
                 moduleProcessInfo.CreateNoWindow = !nodeModule.ShowGUI;
-                moduleProcess.Start();
+                if (DoLaunch) moduleProcess.Start();
             }
             catch
             {

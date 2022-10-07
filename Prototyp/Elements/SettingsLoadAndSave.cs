@@ -17,12 +17,19 @@ namespace Prototyp.Elements
         public string TargetControl { get; set; }
     }
 
+    [Serializable]
+    public class DevSettings
+    {
+        public string BasePort { get; set; }
+        public string IgnoreNumber { get; set; }
+    }
 
     [Serializable]
     public class PSetting
     {
         public WorkflowButton wfButton { get; set; }
         public ToolButton tButton { get; set; }
+        public DevSettings devSettings { get; set; }
     }
 
     [Serializable]
@@ -56,11 +63,21 @@ namespace Prototyp.Elements
 
         // Public methods ---------------------------------------------
 
+        public void AddDevSettings(int BasePort, int IgnoreStarts)
+        {
+            PSetting ProgSetting = new PSetting();
+            DevSettings devSettings = new DevSettings();
+            devSettings.BasePort = BasePort.ToString();
+            devSettings.IgnoreNumber = IgnoreStarts.ToString();
+            ProgSetting.devSettings = devSettings;
+            _settings.Add(ProgSetting);
+        }
+
         public void PrepareSaveButtons()
         {
             string Child = null;
 
-            for (int i = 1; i<=9 ; i++)
+            for (int i = 1; i <= 9 ; i++) // Why nine?
             {
                 Child = "ToolBar" + i;
                 System.Windows.Controls.DockPanel toolbar = MainWindow.AppWindow.FindName(Child) as System.Windows.Controls.DockPanel;

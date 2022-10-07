@@ -46,8 +46,9 @@
                     <MenuItem Header="Paste" FontSize="13"/>
                 </MenuItem>
                 <MenuItem Header="Development" Height="32" FontSize="13">
-                    <MenuItem Header="Module Designer" FontSize="13" Click="ModuleDesigner_Click"/>
+                    <MenuItem Header="Module Designer..." FontSize="13" Click="ModuleDesigner_Click"/>
                     <MenuItem Header="Set Process to Finish" FontSize="13" Click="ChangeStatus_Click"/>
+                    <MenuItem Header="Developer mode settings..." FontSize="13" Click="DeveloperMode_Click"/>
                 </MenuItem>
                 <MenuItem Header="Help" Height="32" FontSize="13">
                     <MenuItem Header="About" FontSize="13"/>
