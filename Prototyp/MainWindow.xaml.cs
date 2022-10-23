@@ -406,6 +406,12 @@ namespace Prototyp
                         }
                     }
 
+                    if (!VectorData.FileAccessable(openFileDialog.FileName))
+                    {
+                        MessageBox.Show("File is not accessible, maybe opened in some other software? Please close and try again.", "File not accessible", MessageBoxButton.OK, MessageBoxImage.Error);
+                        return;
+                    }
+
                     VectorData peek = (new VectorData(-1, openFileDialog.FileName));
                     string geometryType = peek.FeatureCollection[0].Geometry.GeometryType;
                     peek = null;
