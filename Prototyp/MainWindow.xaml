@@ -238,9 +238,65 @@
 
                 <nodenetwork:NetworkView x:Name="networkView" Cursor="Hand" Background="#FF52555C" KeyUp="ComboKeyUp"/>
             </Border>
-            <Border BorderBrush="#FF212225" Grid.Column="0" Margin="5,5,5,5" BorderThickness="1" CornerRadius="2 2 0 0" DockPanel.Dock="Top">
+            <Border BorderBrush="#FF212225" Grid.Column="1" Margin="5,5,5,5" BorderThickness="1" CornerRadius="2 2 0 0" DockPanel.Dock="Top">
+                <TabControl Background="#FF52555C">
+                    <TabControl.Resources>
+                        <Style TargetType="TabItem">
+                            <Setter Property="Template">
+                                <Setter.Value>
+                                    <ControlTemplate TargetType="TabItem">
+                                        <Border Name="Panel" BorderBrush="#FF52555C" BorderThickness="3" CornerRadius="2" Margin="2">
 
-                
+                                            <ContentPresenter x:Name="ContentSite"
+                                        VerticalAlignment="Center"
+                                        HorizontalAlignment="Center"
+                                        ContentSource="Header"
+                                        Margin="10,2"/>
+
+                                        </Border>
+                                        <ControlTemplate.Triggers>
+                                            <Trigger Property="IsSelected" Value="True">
+                                                <Setter TargetName="Panel" Property="Background" Value="#FF212225" />
+                                                <Setter TargetName="Panel" Property="BorderBrush" Value="#FF212225" />
+                                            </Trigger>
+                                            <Trigger Property="IsSelected" Value="False">
+                                                <Setter TargetName="Panel" Property="Background" Value="#FF52555C" />
+                                                <Setter TargetName="Panel" Property="BorderBrush" Value="#FF52555C" />
+                                            </Trigger>
+                                        </ControlTemplate.Triggers>
+                                    </ControlTemplate>
+                                </Setter.Value>
+                            </Setter>
+                        </Style>
+                    </TabControl.Resources>
+                    <TabItem Header="Toolbox" Foreground="white" FontSize="13" >
+                        <Grid Background="#FF212225">
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="41*"/>
+                                <ColumnDefinition Width="114*"/>
+                            </Grid.ColumnDefinitions>
+                            <Grid.RowDefinitions>
+                                <RowDefinition Height="50px"/>
+                                <RowDefinition Height="*"/>
+                            </Grid.RowDefinitions>
+                            <TextBox x:Name="Search_Toolbar" Background="#FF52555C" Text="Search..." Margin="5,0,5,0" FontSize="12" VerticalAlignment="Center" TextAlignment="Left" Grid.ColumnSpan="2"/>
+                        </Grid>
+                    </TabItem>
+                    <TabItem Header="Selection"  Foreground="white" FontSize="13">
+                        <Grid Background="#FF212225">
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="41*"/>
+                                <ColumnDefinition Width="114*"/>
+                            </Grid.ColumnDefinitions>
+                            <Grid.RowDefinitions>
+                                <RowDefinition Height="50px"/>
+                                <RowDefinition Height="*"/>
+                            </Grid.RowDefinitions>
+                            <TextBox x:Name="Search_Selection" Background="#FF52555C" Text="Search in Selection..." Margin="5,0,5,0" FontSize="12" VerticalAlignment="Center" TextAlignment="Left" Grid.ColumnSpan="2"/>
+                        </Grid>
+                    </TabItem>
+                </TabControl>
+
             </Border>
             <GridSplitter Grid.Column="0" Width="2" VerticalAlignment="Stretch" Background="#35363A"/>
         </Grid>
