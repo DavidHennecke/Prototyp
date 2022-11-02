@@ -149,7 +149,7 @@ namespace Prototyp.Elements
         // Parameterless constructor.
         public VectorData()
         {
-
+            
         }
 
         // Constructor utilizing only the mere ID.
