@@ -156,7 +156,6 @@ namespace Prototyp.Elements
         public VectorData(int uid)
         {
             SetID(uid);
-            CheckCRS();
         }
 
         // Constructor that accepts a string and decides what to do internally.
@@ -253,7 +252,6 @@ namespace Prototyp.Elements
                     _vecData = IntSerialize(NewCollection, FlatGeobuf.GeometryType.Unknown);
                     SetID(uid);
                 }
-                CheckCRS();
             }
             else
             {
@@ -273,7 +271,6 @@ namespace Prototyp.Elements
                 _vecData = ImportLayer(LayerData);
                 SetID(uid);
                 _busy = false;
-                CheckCRS();
             }
         }
 
@@ -289,7 +286,6 @@ namespace Prototyp.Elements
                 HandleNameAndCRS();
                 SetID(uid);
                 _busy = false;
-                CheckCRS();
             }
         }
 
@@ -375,11 +371,7 @@ namespace Prototyp.Elements
             return (IntSerialize(NTSFC, FlatGeobuf.GeometryType.Unknown));
         }
 
-        public static void CheckCRS()
-        {
-            HandlerCRS handlerCRS = new HandlerCRS();
-            handlerCRS.ShowDialog();
-        }
+
         // Returns the internal data representation as a GDAL layer.
         private OSGeo.OGR.Layer GetAsLayer()
         {

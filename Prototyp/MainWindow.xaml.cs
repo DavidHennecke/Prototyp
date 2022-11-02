@@ -121,7 +121,6 @@ namespace Prototyp
         }
 
         // Private methods --------------------------------------------------------------------
-
         private void ParseModules(string Path)
         {
             string[] SubDirs = Directory.GetDirectories(Path);
@@ -373,6 +372,21 @@ namespace Prototyp
         // Nothing here so far...
 
         // User control handlers --------------------------------------------------------------------
+        public static void CheckCRS(VectorData tempVectorData)
+        {
+            HandlerCRS handlerCRS = new HandlerCRS();
+
+            string srs = "undefined";
+            string epsg = "undefined";
+            if (tempVectorData.SpatialReference != null)
+            {
+                srs = tempVectorData.SpatialReference.GetName();
+                epsg = tempVectorData.SpatialReference.GetAttrValue("AUTHORITY", 1);
+            }
+            handlerCRS.CrsName.Content = srs;
+            handlerCRS.EPSG.Content = epsg;
+            handlerCRS.ShowDialog();
+        }
 
         private void ImportButton_Click(object sender, RoutedEventArgs e)
         {
@@ -412,22 +426,38 @@ namespace Prototyp
                         return;
                     }
 
-                    VectorData peek = (new VectorData(-1, openFileDialog.FileName));
+                    VectorData peek = (new VectorData(-1, openFileDialog.FileName));//das muss doch iwie anders gehen? so wird die Datei doch zwei mal geladen... Bei großen Datenmengen kostet das Zeit
                     string geometryType = peek.FeatureCollection[0].Geometry.GeometryType;
                     peek = null;
+                    VectorData tempVectorData = null;
                     switch (geometryType)
                     {
                         case "Point":
-                            vectorData.Add(new VectorPointData(importDataUID, openFileDialog.FileName));
+                            tempVectorData = (new VectorPointData(importDataUID, openFileDialog.FileName));
+                            CheckCRS(tempVectorData);
+                            string test = "";
+                            tempVectorData.SpatialReference.ExportToWkt(out test, null);
+                            MessageBox.Show(test);
+                            vectorData.Add(tempVectorData);
+                            tempVectorData = null;
                             break;
                         case "Line":
-                            vectorData.Add(new VectorLineData(importDataUID, openFileDialog.FileName));
+                            tempVectorData = (new VectorLineData(importDataUID, openFileDialog.FileName));
+                            CheckCRS(tempVectorData);
+                            vectorData.Add(tempVectorData);
+                            tempVectorData = null;
                             break;
                         case "Polygon":
-                            vectorData.Add(new VectorPolygonData(importDataUID, openFileDialog.FileName));
+                            tempVectorData = (new VectorPolygonData(importDataUID, openFileDialog.FileName));
+                            CheckCRS(tempVectorData);
+                            vectorData.Add(tempVectorData);
+                            tempVectorData = null;
                             break;
                         case "MultiPolygon":
-                            vectorData.Add(new VectorMultiPolygonData(importDataUID, openFileDialog.FileName));
+                            tempVectorData = (new VectorMultiPolygonData(importDataUID, openFileDialog.FileName));
+                            CheckCRS(tempVectorData);
+                            vectorData.Add(tempVectorData);
+                            tempVectorData = null;
                             break;
                         // TODO: More cases, e.g. 'triangle' data... :-/
                         default:

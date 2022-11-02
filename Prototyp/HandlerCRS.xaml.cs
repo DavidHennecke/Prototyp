@@ -31,5 +31,32 @@ namespace Prototyp
         {
             this.Close();
         }
+
+        private void Search_Toolbar_GotFocus(object sender, RoutedEventArgs e)
+        {
+            
+        }
+
+        private void Search_Toolbar_LostFocus(object sender, RoutedEventArgs e)
+        {
+
+        }
+
+        private void Search_Toolbar_KeyDown(object sender, KeyEventArgs e)
+        {
+            if (e.Key == System.Windows.Input.Key.Enter)
+            {
+                OSGeo.OSR.SpatialReference reference = new OSGeo.OSR.SpatialReference(null);
+                try
+                {
+                    reference.ImportFromEPSG(Int32.Parse(Search_Toolbar.Text));
+                    MessageBox.Show(reference.GetName());
+                }
+                catch (Exception)
+                {
+                    MessageBox.Show("No coordinate system with this EPSG code available in the database.");
+                }
+            }
+        }
     }
 }
