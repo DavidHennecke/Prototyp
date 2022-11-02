@@ -409,7 +409,7 @@ namespace Prototyp
         // Nothing here so far...
 
         // User control handlers --------------------------------------------------------------------
-        public static void CheckCRS(VectorData tempVectorData)
+        public static VectorData CheckVectorDataCRS(VectorData tempVectorData)
         {
             HandlerCRS handlerCRS = new HandlerCRS();
 
@@ -423,6 +423,31 @@ namespace Prototyp
             handlerCRS.CrsName.Content = srs;
             handlerCRS.EPSG.Content = epsg;
             handlerCRS.ShowDialog();
+            if (!handlerCRS.OkayClicked) return tempVectorData;
+            tempVectorData.SpatialReference.ImportFromEPSG(Int32.Parse(handlerCRS.EPSG.Content.ToString()));
+            tempVectorData.TransformToWGS84();
+            return tempVectorData;
+        }
+        public static RasterData CheckRasterDataCRS(RasterData tempRasterData)
+        {
+            HandlerCRS handlerCRS = new HandlerCRS();
+
+            string srs = "undefined";
+            string epsg = "undefined";
+            if (tempRasterData.SpatialReference_WKT != null)
+            {
+                srs = tempRasterData.SpatialReference.GetName();
+                epsg = tempRasterData.SpatialReference.GetAttrValue("AUTHORITY", 1);
+            }
+            handlerCRS.CrsName.Content = srs;
+            handlerCRS.EPSG.Content = epsg;
+            handlerCRS.ShowDialog();
+            if (!handlerCRS.OkayClicked) return tempRasterData;
+            MessageBox.Show(tempRasterData.SpatialReference.GetAttrValue("AUTHORITY", 1));
+            tempRasterData.SpatialReference.ImportFromEPSG(Int32.Parse(handlerCRS.EPSG.Content.ToString()));
+            tempRasterData.TransformToWGS84();
+            MessageBox.Show(tempRasterData.SpatialReference.GetAttrValue("AUTHORITY", 1));
+            return tempRasterData;
         }
 
         private void ImportButton_Click(object sender, RoutedEventArgs e)
@@ -471,28 +496,25 @@ namespace Prototyp
                     {
                         case "Point":
                             tempVectorData = (new VectorPointData(importDataUID, openFileDialog.FileName));
-                            CheckCRS(tempVectorData);
-                            string test = "";
-                            tempVectorData.SpatialReference.ExportToWkt(out test, null);
-                            MessageBox.Show(test);
+                            tempVectorData = CheckVectorDataCRS(tempVectorData);;
                             vectorData.Add(tempVectorData);
                             tempVectorData = null;
                             break;
                         case "Line":
                             tempVectorData = (new VectorLineData(importDataUID, openFileDialog.FileName));
-                            CheckCRS(tempVectorData);
+                            tempVectorData = CheckVectorDataCRS(tempVectorData);
                             vectorData.Add(tempVectorData);
                             tempVectorData = null;
                             break;
                         case "Polygon":
                             tempVectorData = (new VectorPolygonData(importDataUID, openFileDialog.FileName));
-                            CheckCRS(tempVectorData);
+                            tempVectorData = CheckVectorDataCRS(tempVectorData);
                             vectorData.Add(tempVectorData);
                             tempVectorData = null;
                             break;
                         case "MultiPolygon":
                             tempVectorData = (new VectorMultiPolygonData(importDataUID, openFileDialog.FileName));
-                            CheckCRS(tempVectorData);
+                            tempVectorData = CheckVectorDataCRS(tempVectorData);
                             vectorData.Add(tempVectorData);
                             tempVectorData = null;
                             break;
@@ -557,8 +579,9 @@ namespace Prototyp
                             }
                         }
                     }
-
-                    rasterData.Add(new RasterData(importDataUID, openFileDialog.FileName));
+                    RasterData tempRasterData = (new RasterData(importDataUID, openFileDialog.FileName));
+                    tempRasterData = CheckRasterDataCRS(tempRasterData);
+                    rasterData.Add(tempRasterData);
 
                     //Add raster data to node editor
                     for (int i = 0; i < rasterData.Count; i++)

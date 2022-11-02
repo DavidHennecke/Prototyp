@@ -17,6 +17,7 @@ namespace Prototyp
     /// </summary>
     public partial class HandlerCRS : Window
     {
+        public bool OkayClicked;
         public HandlerCRS()
         {
             InitializeComponent();
@@ -24,6 +25,7 @@ namespace Prototyp
 
         private void BtnOkayHandlerCrs_Click(object sender, RoutedEventArgs e)
         {
+            OkayClicked = true;
             this.Close();
         }
 
@@ -32,25 +34,52 @@ namespace Prototyp
             this.Close();
         }
 
-        private void Search_Toolbar_GotFocus(object sender, RoutedEventArgs e)
+        private void Search_CRS_GotFocus(object sender, RoutedEventArgs e)
         {
-            
+            if (Search_CRS.Text == "Search...")
+            {
+                Search_CRS.Text = "";
+            }
         }
 
-        private void Search_Toolbar_LostFocus(object sender, RoutedEventArgs e)
+        private void Search_CRS_LostFocus(object sender, RoutedEventArgs e)
         {
-
+            if (Search_CRS.Text == "")
+            {
+                Search_CRS.Text = "Search...";
+            }
         }
-
-        private void Search_Toolbar_KeyDown(object sender, KeyEventArgs e)
+        private void doubleClickTreeBoxItem(object sender, System.Windows.Input.MouseButtonEventArgs e, string name, string epsg)
         {
-            if (e.Key == System.Windows.Input.Key.Enter)
+            CrsName.Content = name;
+            EPSG.Content = epsg;
+        }
+        bool IsDigitsOnly(string str)
+        {
+            foreach (char c in str)
+            {
+                if (c < '0' || c > '9')
+                    return false;
+            }
+
+            return true;
+        }
+        private void Search_CRS_KeyDown(object sender, KeyEventArgs e)
+        {
+            if (e.Key == System.Windows.Input.Key.Enter && Search_CRS.Text != "")
             {
                 OSGeo.OSR.SpatialReference reference = new OSGeo.OSR.SpatialReference(null);
                 try
                 {
-                    reference.ImportFromEPSG(Int32.Parse(Search_Toolbar.Text));
-                    MessageBox.Show(reference.GetName());
+                    if (IsDigitsOnly(Search_CRS.Text))
+                    {
+                        reference.ImportFromEPSG(Int32.Parse(Search_CRS.Text));
+                        ListBoxItem lvi = new ListBoxItem();
+                        lvi.Content = reference.GetName() + "         " + "EPSG: " + reference.GetAttrValue("AUTHORITY", 1);
+                        lvi.MouseDoubleClick += (sender, e) => doubleClickTreeBoxItem(sender, e, reference.GetName(), reference.GetAttrValue("AUTHORITY", 1));
+                        CRS_List.Items.Add(lvi);
+                    }
+                    
                 }
                 catch (Exception)
                 {

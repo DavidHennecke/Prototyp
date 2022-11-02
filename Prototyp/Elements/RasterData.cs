@@ -31,6 +31,7 @@
         private sBand[] _bands;
         private bool _busy;
         private string _fileType;
+        private OSGeo.OSR.SpatialReference _SRS;
         private string _WKT_SRS;
         private int _rasterXSize;
         private int _rasterYSize;
@@ -70,6 +71,11 @@
         {
             get { return (_WKT_SRS); }
             set { _WKT_SRS = value; }
+        }
+        public OSGeo.OSR.SpatialReference SpatialReference
+        {
+            get { return (_SRS); }
+            set { _SRS = value; }
         }
 
         public int RasterXSize
@@ -464,10 +470,26 @@
             return (Result);
         }
 
+        public void TransformToWGS84() 
+        {
+            OSGeo.OSR.SpatialReference FromSRS = new OSGeo.OSR.SpatialReference(null);
+            FromSRS.ImportFromEPSG(System.Int32.Parse(this.SpatialReference.GetAttrValue("AUTHORITY", 1)));
+            string FromSRS_wkt;
+            FromSRS.ExportToWkt(out FromSRS_wkt, null);
+
+            OSGeo.OSR.SpatialReference ToWGS84 = new OSGeo.OSR.SpatialReference(null);
+            ToWGS84.ImportFromEPSG(4326);
+            string ToWGS84_wkt;
+            ToWGS84.ExportToWkt(out ToWGS84_wkt, null);
+
+            this.GDALDataSet = OSGeo.GDAL.Gdal.AutoCreateWarpedVRT(this.GDALDataSet, FromSRS_wkt, ToWGS84_wkt, OSGeo.GDAL.ResampleAlg.GRA_NearestNeighbour, 0);
+
+        }
         // Imports a GDAL raster dataset.
         public void ImportDataset(OSGeo.GDAL.Dataset DataSet)
         {
             _busy = true;
+            
             ImportDataset(DataSet, 0, 0, DataSet.RasterXSize, DataSet.RasterYSize);
             _busy = false;
         }
@@ -481,6 +503,7 @@
 
             _fileType = DataSet.GetDriver().GetDescription();
             _bands = new sBand[DataSet.RasterCount];
+            _SRS = DataSet.GetSpatialRef();
             _WKT_SRS = DataSet.GetProjection();
             _rasterXSize = xSize;
             _rasterYSize = ySize;

@@ -827,18 +827,15 @@ namespace Prototyp.Elements
             OSGeo.OGR.Layer InLayer = GetAsLayer();
             string LayerName = InLayer.GetName();
 
-            OSGeo.OSR.SpatialReference FromSRS = InLayer.GetSpatialRef();
+            OSGeo.OSR.SpatialReference FromSRS = new OSGeo.OSR.SpatialReference(null);
+            FromSRS.ImportFromEPSG(System.Int32.Parse(this.SpatialReference.GetAttrValue("AUTHORITY", 1)));
             FromSRS.SetAxisMappingStrategy(OSGeo.OSR.AxisMappingStrategy.OAMS_TRADITIONAL_GIS_ORDER);
 
-            OSGeo.OSR.SpatialReference ToCRS = new OSGeo.OSR.SpatialReference(null);
             OSGeo.OSR.SpatialReference ToWGS84 = new OSGeo.OSR.SpatialReference(null);
-
-            ToCRS = FromSRS.CloneGeogCS();
-            ToCRS.SetAxisMappingStrategy(OSGeo.OSR.AxisMappingStrategy.OAMS_TRADITIONAL_GIS_ORDER);
-            OSGeo.OSR.CoordinateTransformation TransformToCRS = new OSGeo.OSR.CoordinateTransformation(FromSRS, ToCRS);
-            ToWGS84.SetWellKnownGeogCS("EPSG:4326");
+            ToWGS84.ImportFromEPSG(4326);
             ToWGS84.SetAxisMappingStrategy(OSGeo.OSR.AxisMappingStrategy.OAMS_TRADITIONAL_GIS_ORDER);
-            OSGeo.OSR.CoordinateTransformation TransformToWGS84 = new OSGeo.OSR.CoordinateTransformation(ToCRS, ToWGS84);
+
+            OSGeo.OSR.CoordinateTransformation TransformToWGS84 = new OSGeo.OSR.CoordinateTransformation(FromSRS, ToWGS84);
 
             string RandomFilename = System.IO.Path.GetRandomFileName();
             OSGeo.OGR.DataSource OutDS = ShapeDriver.CreateDataSource("/vsimem/" + RandomFilename, new string[] { });
@@ -852,29 +849,15 @@ namespace Prototyp.Elements
             for (long i = 0; i < InLayer.GetFeatureCount(0); i++)
             {
                 OGRGeom = InLayer.GetFeature(i).GetGeometryRef();
-
-                if (OGRGeom.Transform(TransformToCRS) == OSGeo.OGR.Ogr.OGRERR_NONE)
+                if (OGRGeom.Transform(TransformToWGS84) == OSGeo.OGR.Ogr.OGRERR_NONE)
                 {
-                    if (OGRGeom.Transform(TransformToWGS84) == OSGeo.OGR.Ogr.OGRERR_NONE)
-                    {
-                        OSGeo.OGR.Feature OutFeature = new OSGeo.OGR.Feature(InFeatureDefn);
+                    OSGeo.OGR.Feature OutFeature = new OSGeo.OGR.Feature(InFeatureDefn);
                         
-                        OutFeature.SetGeometry(OGRGeom);
-                        CopyFields(InLayer.GetFeature(i), InFeatureDefn.GetFieldCount(), ref OutFeature);
+                    OutFeature.SetGeometry(OGRGeom);
+                    CopyFields(InLayer.GetFeature(i), InFeatureDefn.GetFieldCount(), ref OutFeature);
 
-                        OutLayer.CreateFeature(OutFeature);
-                        OutFeature.Dispose();
-                    }
-                    else
-                    {
-                        System.Diagnostics.Debug.WriteLine("Error during tranformation.");
-                        InLayer.Dispose();
-                        OutLayer.Dispose();
-                        OutDS.Dispose();
-                        ShapeDriver.Dispose();
-                        _busy = false;
-                        return (1);
-                    }
+                    OutLayer.CreateFeature(OutFeature);
+                    OutFeature.Dispose();
                 }
                 else
                 {
