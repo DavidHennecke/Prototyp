@@ -524,10 +524,6 @@ namespace Prototyp.Elements
             return (MyData);
         }
 
-        public static void HandleCRS()
-        {
-            CrsHandler handleCrsWindow = new CrsHandler();
-        }
         private void HandleHeader(FlatGeobuf.Header MyHeader)
         {
             InitGDAL();
