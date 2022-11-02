@@ -424,6 +424,7 @@ namespace Prototyp
             handlerCRS.EPSG.Content = epsg;
             handlerCRS.ShowDialog();
             if (!handlerCRS.OkayClicked) return tempVectorData;
+            if (Int16.Parse(tempVectorData.SpatialReference.GetAttrValue("AUTHORITY", 1)) == 4326) return tempVectorData;
             tempVectorData.SpatialReference.ImportFromEPSG(Int32.Parse(handlerCRS.EPSG.Content.ToString()));
             tempVectorData.TransformToWGS84();
             return tempVectorData;
