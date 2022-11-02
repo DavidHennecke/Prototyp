@@ -817,7 +817,80 @@ namespace Prototyp.Elements
             System.IO.File.WriteAllBytes(FileName, FGB);
             _busy = false;
         }
+        public int ToUTM() {
+            _busy = true;
+            InitGDAL();
+            int IsNorth; ;
+            var UtmZone = this.SpatialReference.GetUTMZone();
+            if(UtmZone > 0)
+            {
+                IsNorth = 0;
+            }
+            else
+            {
+                IsNorth = 1;
+            }
 
+            System.Windows.MessageBox.Show(UtmZone.ToString());
+            OSGeo.OGR.Driver ShapeDriver = OSGeo.OGR.Ogr.GetDriverByName("ESRI Shapefile");
+            OSGeo.OGR.Layer InLayer = GetAsLayer();
+            string LayerName = InLayer.GetName();
+
+            OSGeo.OSR.SpatialReference FromSRS = new OSGeo.OSR.SpatialReference(null);
+            FromSRS.ImportFromEPSG(System.Int32.Parse(this.SpatialReference.GetAttrValue("AUTHORITY", 1)));
+            FromSRS.SetAxisMappingStrategy(OSGeo.OSR.AxisMappingStrategy.OAMS_TRADITIONAL_GIS_ORDER);
+
+            OSGeo.OSR.SpatialReference ToUTM = new OSGeo.OSR.SpatialReference(null);
+            ToUTM.SetUTM(UtmZone, IsNorth);
+            ToUTM.SetAxisMappingStrategy(OSGeo.OSR.AxisMappingStrategy.OAMS_TRADITIONAL_GIS_ORDER);
+
+            OSGeo.OSR.CoordinateTransformation TransformToWGS84 = new OSGeo.OSR.CoordinateTransformation(FromSRS, ToUTM);
+
+            string RandomFilename = System.IO.Path.GetRandomFileName();
+            OSGeo.OGR.DataSource OutDS = ShapeDriver.CreateDataSource("/vsimem/" + RandomFilename, new string[] { });
+            OSGeo.OGR.Layer OutLayer = OutDS.CreateLayer(LayerName + "_", ToUTM, InLayer.GetGeomType(), new string[] { });
+
+            OSGeo.OGR.FeatureDefn InFeatureDefn = InLayer.GetLayerDefn();
+
+            PrepareFields(InLayer, ref OutLayer);
+
+            OSGeo.OGR.Geometry OGRGeom;
+            for (long i = 0; i < InLayer.GetFeatureCount(0); i++)
+            {
+                OGRGeom = InLayer.GetFeature(i).GetGeometryRef();
+                if (OGRGeom.Transform(TransformToWGS84) == OSGeo.OGR.Ogr.OGRERR_NONE)
+                {
+                    OSGeo.OGR.Feature OutFeature = new OSGeo.OGR.Feature(InFeatureDefn);
+
+                    OutFeature.SetGeometry(OGRGeom);
+                    CopyFields(InLayer.GetFeature(i), InFeatureDefn.GetFieldCount(), ref OutFeature);
+
+                    OutLayer.CreateFeature(OutFeature);
+                    OutFeature.Dispose();
+                }
+                else
+                {
+                    System.Diagnostics.Debug.WriteLine("Error during tranformation.");
+                    InLayer.Dispose();
+                    OutLayer.Dispose();
+                    OutDS.Dispose();
+                    ShapeDriver.Dispose();
+                    _busy = false;
+                    return (1);
+                }
+            }
+
+            InFeatureDefn.Dispose();
+            OutDS.SyncToDisk();
+            Layer = OutLayer; // "Layer" is the setter of the VectorData class, meaning that here the instance is actually being updated.
+            InLayer.Dispose();
+            OutLayer.Dispose();
+            OutDS.Dispose();
+            ShapeDriver.Dispose();
+
+            _busy = false;
+            return (0);
+        }
         public int TransformToWGS84() // Returns 0 on success and 1 if an error occurred.
         {
             _busy = true;
@@ -839,7 +912,7 @@ namespace Prototyp.Elements
 
             string RandomFilename = System.IO.Path.GetRandomFileName();
             OSGeo.OGR.DataSource OutDS = ShapeDriver.CreateDataSource("/vsimem/" + RandomFilename, new string[] { });
-            OSGeo.OGR.Layer OutLayer = OutDS.CreateLayer(LayerName + "_WGS84", ToWGS84, InLayer.GetGeomType(), new string[] { });
+            OSGeo.OGR.Layer OutLayer = OutDS.CreateLayer(LayerName + "_", ToWGS84, InLayer.GetGeomType(), new string[] { });
 
             OSGeo.OGR.FeatureDefn InFeatureDefn = InLayer.GetLayerDefn();
 

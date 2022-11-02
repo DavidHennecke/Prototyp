@@ -502,6 +502,8 @@ namespace Prototyp
                                 break;
                             }
                                 vectorData.Add(tempVectorData);
+                            tempVectorData.ToUTM();
+                            MessageBox.Show(tempVectorData.SpatialReference.GetAttrValue("AUTHORITY", 1));
                             tempVectorData = null;
                             break;
                         case "Line":
