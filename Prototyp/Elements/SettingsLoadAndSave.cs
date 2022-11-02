@@ -15,6 +15,7 @@ namespace Prototyp.Elements
     {
         public string ToolName { get; set; }
         public string TargetControl { get; set; }
+        public string Folder { get; set; }
     }
 
     [Serializable]
@@ -92,6 +93,10 @@ namespace Prototyp.Elements
                     System.Windows.Controls.Button button = toolbar.Children[j] as System.Windows.Controls.Button;
 
                     System.Windows.Controls.Image cont = (System.Windows.Controls.Image)button.Content;
+                    string dirName = cont.Source.ToString();
+                    System.IO.FileInfo DirInfo = new System.IO.FileInfo(dirName);
+                    string parentDir = DirInfo.Directory.Parent.Name;
+
                     string TT = cont.ToolTip.ToString();
 
                     if (TT.EndsWith(".wff")) // Indicates a workflow.
@@ -114,6 +119,7 @@ namespace Prototyp.Elements
                         ToolButton tb = new ToolButton();
                         tb.ToolName = TT;
                         tb.TargetControl = Child;
+                        tb.Folder = parentDir;
 
                         PSetting ProgSetting = new PSetting();
                         ProgSetting.tButton = tb;

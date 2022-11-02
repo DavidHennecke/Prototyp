@@ -25,7 +25,7 @@ TODO:
 
 o Low priority: Add multi-select in toolbar modules selection. (CHECK)
 o Ein Modul erzeugen, das keinen Input, sondern nur einen Output hat, Typ Float (gesteuert über einen Slider). Erforderlich für MinDist bei WFLO.
-
+o dynamic path specification for button creation
 ------------------------------- */
 
 namespace Prototyp
@@ -36,6 +36,7 @@ namespace Prototyp
         public string ToolName { get; set; }
         public VorteXML VorteXMLStruct { get; set; }
         public string BinaryPath { get; set; }
+        public string Folder { get; set; }
     }
 
     public class NodeConnection
@@ -132,26 +133,55 @@ namespace Prototyp
 
             foreach (string Dir in SubDirs)
             {
-                FileNames = System.IO.Directory.GetFiles(Dir);
-                foreach (string FileName in FileNames)
+                System.Windows.Controls.TreeViewItem newNode = new System.Windows.Controls.TreeViewItem();
+                newNode.Header = new DirectoryInfo(Dir).Name;
+                newNode.FontSize = 13;
+                newNode.Focusable = false;
+                
+                string[] Dirs = Directory.GetDirectories(Dir);
+
+                foreach (string ModuleDir in Dirs)
                 {
-                    if (FileName.ToLower().EndsWith(".xml"))
+                    FileNames = System.IO.Directory.GetFiles(ModuleDir);
+                    System.Windows.Controls.TreeViewItem newItem = new System.Windows.Controls.TreeViewItem();
+
+                    System.Windows.Controls.DockPanel tempDock = new System.Windows.Controls.DockPanel();
+                    System.Windows.Controls.Label tempLabel = new System.Windows.Controls.Label();
+                    System.Windows.Controls.Image tempImage = new System.Windows.Controls.Image();
+                    tempLabel.Content = "  " + new DirectoryInfo(ModuleDir).Name;
+                    tempLabel.FontSize = 12;
+                    var bitmapImage = new System.Windows.Media.Imaging.BitmapImage(new Uri(ModuleDir + "/Icon.png"));
+                    tempImage.Source = bitmapImage;
+                    tempImage.Width = 12;
+                    tempImage.Height = 12;
+                    tempDock.Children.Add(tempImage);
+                    tempDock.Children.Add(tempLabel);
+                    newItem.Header = tempDock;
+                    newItem.Focusable = false;
+                    newItem.MouseDoubleClick += (sender, e) => doubleClickTreeViewItem(sender, e, ModuleDir);
+                    newNode.Items.Add(newItem);
+                    foreach (string FileName in FileNames)
                     {
-                        XMLName = FileName;
-                        ThisXML = new VorteXML(XMLName);
+                        if (FileName.ToLower().EndsWith(".xml"))
+                        {
+                            XMLName = FileName;
+                            ThisXML = new VorteXML(XMLName);
 
-                        ComboItem NextItem = new ComboItem();
+                            ComboItem NextItem = new ComboItem();
 
-                        NextItem.IconPath = Dir + "/Icon.png";
-                        NextItem.VorteXMLStruct = ThisXML;
-                        NextItem.ToolName = ThisXML.NodeTitle;
-                        NextItem.BinaryPath = Dir + "/" + ThisXML.NodeTitle;
-                        
-                        LocalList.Add(NextItem);
+                            NextItem.IconPath = ModuleDir + "/Icon.png";
+                            NextItem.VorteXMLStruct = ThisXML;
+                            NextItem.ToolName = ThisXML.NodeTitle;
+                            NextItem.BinaryPath = ModuleDir + "/" + ThisXML.NodeTitle;
+                            NextItem.Folder = new DirectoryInfo(Dir).Name;
 
-                        break;
+                            LocalList.Add(NextItem);
+
+                            break;
+                        }
                     }
                 }
+                Toolbox_Treeview.Items.Add(newNode);
             }
 
             // Order the list alphabetically
@@ -163,13 +193,20 @@ namespace Prototyp
             ComboItem CaptionItem = new ComboItem();
             CaptionItem.ToolName = COMBOMSG;
             ComboItems.Add(CaptionItem);
-            for (int i = 0; i < LocalList.Count; i++) ComboItems.Add(LocalList[i]);
+            for (int i = 0; i < LocalList.Count; i++) {
+                ComboItems.Add(LocalList[i]);
+            };
 
             ToolsComboBox.ItemsSource = null;
             ToolsComboBox.ItemsSource = ComboItems;
             ToolsComboBox.SelectedIndex = 0;
         }
 
+        private void doubleClickTreeViewItem(object sender, System.Windows.Input.MouseButtonEventArgs e, string ModuleDir)
+        {
+            string moduleName = new DirectoryInfo(ModuleDir).Name;
+            importModule(ModuleDir + "/" + moduleName);
+        }
         private void LoadSettings(System.IO.DirectoryInfo LocalDir)
         {
             ProgSettings progSettings = new ProgSettings(LocalDir.FullName + "/appsettings.json");
@@ -179,11 +216,11 @@ namespace Prototyp
             {
                 if (s.tButton != null)
                 {
-                    CreateButton(s.tButton.ToolName, s.tButton.TargetControl);
+                    CreateButton(s.tButton.ToolName, s.tButton.TargetControl, s.tButton.Folder);
                 }
                 else if (s.wfButton != null)
                 {
-                    CreateButton(s.wfButton.WFPath, s.wfButton.IconPath, s.wfButton.TargetControl);
+                    CreateButtonWFF(s.wfButton.WFPath, s.wfButton.IconPath, s.wfButton.TargetControl);
                 }
                 else if (s.devSettings != null)
                 {
@@ -206,17 +243,17 @@ namespace Prototyp
         }
 
         //Overload that creates tool buttons.
-        private void CreateButton(string ToolName, string DockPanelName)
+        private void CreateButton(string ToolName, string DockPanelName, string Folder)
         {
             System.Windows.Controls.Button ModuleBtn = new System.Windows.Controls.Button();
             ModuleBtn.Content = new System.Windows.Controls.Image
             {
-                Source = new System.Windows.Media.Imaging.BitmapImage(new Uri(ModulesPath + "/" + ToolName + "/" + "Icon.png")),
+                Source = new System.Windows.Media.Imaging.BitmapImage(new Uri(ModulesPath + "/" + Folder  + "/" + ToolName + "/" + "Icon.png")),
                 ToolTip = ToolName,
                 VerticalAlignment = VerticalAlignment.Center
             };
             ModuleBtn.Background = (System.Windows.Media.SolidColorBrush)new System.Windows.Media.BrushConverter().ConvertFromString("#FF212225");
-            ModuleBtn.Click += new RoutedEventHandler((sender, e) => importModule(ModulesPath + "/" + ToolName + "/" + ToolName));
+            ModuleBtn.Click += new RoutedEventHandler((sender, e) => importModule(ModulesPath + "/" + Folder  + "/" + ToolName+"/"+ToolName));
 
             System.Windows.Controls.ContextMenu buttonContextmenu = new System.Windows.Controls.ContextMenu();
 
@@ -232,7 +269,7 @@ namespace Prototyp
         }
 
         // Overload that creates workflow buttons.
-        private void CreateButton(string WFFile, string IconPath, string DockPanelName)
+        private void CreateButtonWFF(string WFFile, string IconPath, string DockPanelName)
         {
             System.Windows.Controls.Button ModuleBtn = new System.Windows.Controls.Button();
 
@@ -573,7 +610,7 @@ namespace Prototyp
             if (Typing==true) return;
 
             Prototyp.ComboItem SelectedItem = (Prototyp.ComboItem)ToolsComboBox.SelectedItem;
-            importModule(SelectedItem.BinaryPath);
+           importModule(SelectedItem.BinaryPath);
 
             ToolsComboBox.SelectedIndex = 0;
         }
@@ -603,6 +640,10 @@ namespace Prototyp
 
         private void ComboKeyUp(object sender, System.Windows.Input.KeyEventArgs e)
         {
+            if (Search_Toolbar.IsFocused)
+            {
+                return;
+            }
             if (e.Key == System.Windows.Input.Key.Down |
                 e.Key == System.Windows.Input.Key.Up |
                 e.Key == System.Windows.Input.Key.LeftCtrl |
@@ -656,7 +697,7 @@ namespace Prototyp
                 }
                 ToolsComboBox.ItemsSource = null;
                 ToolsComboBox.ItemsSource = ComboSearchItems;
-                if (ComboSearchItems.Count > 1) ToolsComboBox.SelectedIndex = 1;
+                //if (ComboSearchItems.Count > 1) ToolsComboBox.SelectedIndex = 1;
                 return;
             }
 
@@ -1211,7 +1252,9 @@ namespace Prototyp
             {
                 foreach(Prototyp.ComboItem Item in chooseModuleWindow.selectedModuleList)
                 {
-                    CreateButton(Item.ToolName, dockPanel.Name);
+                    System.IO.FileInfo DirInfo = new System.IO.FileInfo(Item.IconPath);
+                    string parentDir = DirInfo.Directory.Name;
+                    CreateButton(Item.ToolName, dockPanel.Name, parentDir);
                 }
                 
                 SaveSettings();
@@ -1262,6 +1305,30 @@ namespace Prototyp
 
                 CreateButton(WFFile, IconPath, dockPanel.Name);
                 SaveSettings();
+            }
+        }
+
+        private void Search_Toolbar_GotFocus(object sender, RoutedEventArgs e)
+        {
+            if (Search_Toolbar.Text == "Search...")
+            {
+                Search_Toolbar.Text = "";
+            }
+        }
+
+        private void Search_Toolbar_LostFocus(object sender, RoutedEventArgs e)
+        {
+            if (Search_Toolbar.Text == "")
+            {
+                Search_Toolbar.Text = "Search...";
+            }
+        }
+
+        private void Search_Toolbar_KeyDown(object sender, System.Windows.Input.KeyEventArgs e)
+        {
+            if (e.Key == System.Windows.Input.Key.Enter && Search_Toolbar.Text!="")
+            {
+                ToolsTabControl.SelectedIndex= 1;
             }
         }
     }

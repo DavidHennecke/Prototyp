@@ -32,24 +32,29 @@ namespace Prototyp
 
             foreach (string Dir in SubDirs)
             {
-                FileNames = System.IO.Directory.GetFiles(Dir);
-                foreach (string FileName in FileNames)
+               string[] Dirs = System.IO.Directory.GetDirectories(Dir);
+
+                foreach (string ModuleDir in Dirs)
                 {
-                    if (FileName.ToLower().EndsWith(".xml"))
+                    FileNames = System.IO.Directory.GetFiles(ModuleDir);
+                    foreach (string FileName in FileNames)
                     {
-                        XMLName = FileName;
-                        ThisXML = new Elements.VorteXML(XMLName);
+                        if (FileName.ToLower().EndsWith(".xml"))
+                        {
+                            XMLName = FileName;
+                            ThisXML = new Elements.VorteXML(XMLName);
 
-                        ComboItem NextItem = new ComboItem();
+                            ComboItem NextItem = new ComboItem();
 
-                        NextItem.IconPath = Dir + "/Icon.png";
-                        NextItem.VorteXMLStruct = ThisXML;
-                        NextItem.ToolName = ThisXML.NodeTitle;
-                        NextItem.BinaryPath = Dir + "/" + ThisXML.NodeTitle;
+                            NextItem.IconPath = ModuleDir + "/Icon.png";
+                            NextItem.VorteXMLStruct = ThisXML;
+                            NextItem.ToolName = ThisXML.NodeTitle;
+                            NextItem.BinaryPath = ModuleDir + "/" + ThisXML.NodeTitle;
 
-                        LocalList.Add(NextItem);
+                            LocalList.Add(NextItem);
 
-                        break;
+                            break;
+                        }
                     }
                 }
             }
