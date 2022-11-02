@@ -497,25 +497,40 @@ namespace Prototyp
                     {
                         case "Point":
                             tempVectorData = (new VectorPointData(importDataUID, openFileDialog.FileName));
-                            tempVectorData = CheckVectorDataCRS(tempVectorData);;
-                            vectorData.Add(tempVectorData);
+                            tempVectorData = CheckVectorDataCRS(tempVectorData);
+                            if (Int16.Parse(tempVectorData.SpatialReference.GetAttrValue("AUTHORITY", 1)) != 4326) {
+                                break;
+                            }
+                                vectorData.Add(tempVectorData);
                             tempVectorData = null;
                             break;
                         case "Line":
                             tempVectorData = (new VectorLineData(importDataUID, openFileDialog.FileName));
                             tempVectorData = CheckVectorDataCRS(tempVectorData);
+                            if (Int16.Parse(tempVectorData.SpatialReference.GetAttrValue("AUTHORITY", 1)) != 4326)
+                            {
+                                break;
+                            }
                             vectorData.Add(tempVectorData);
                             tempVectorData = null;
                             break;
                         case "Polygon":
                             tempVectorData = (new VectorPolygonData(importDataUID, openFileDialog.FileName));
                             tempVectorData = CheckVectorDataCRS(tempVectorData);
+                            if (Int16.Parse(tempVectorData.SpatialReference.GetAttrValue("AUTHORITY", 1)) != 4326)
+                            {
+                                break;
+                            }
                             vectorData.Add(tempVectorData);
                             tempVectorData = null;
                             break;
                         case "MultiPolygon":
                             tempVectorData = (new VectorMultiPolygonData(importDataUID, openFileDialog.FileName));
                             tempVectorData = CheckVectorDataCRS(tempVectorData);
+                            if (Int16.Parse(tempVectorData.SpatialReference.GetAttrValue("AUTHORITY", 1)) != 4326)
+                            {
+                                break;
+                            }
                             vectorData.Add(tempVectorData);
                             tempVectorData = null;
                             break;
@@ -581,7 +596,11 @@ namespace Prototyp
                         }
                     }
                     RasterData tempRasterData = (new RasterData(importDataUID, openFileDialog.FileName));
-                    tempRasterData = CheckRasterDataCRS(tempRasterData);
+                    //tempRasterData = CheckRasterDataCRS(tempRasterData);
+                    //if (Int16.Parse(tempRasterData.SpatialReference.GetAttrValue("AUTHORITY", 1)) != 4326)
+                    //{
+                    //    return;
+                    //}
                     rasterData.Add(tempRasterData);
 
                     //Add raster data to node editor
