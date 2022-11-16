@@ -475,40 +475,41 @@
             _busy = true;
             InitGDAL();
 
-            int zone = 0;
+            int Zone = 0;
             double[] geoTrans= null;
             this.GDALDataSet.GetGeoTransform(geoTrans);
-            var centerX = (geoTrans[0]);
-            var centerY = (geoTrans[3]);
+            double centerX = (geoTrans[0]);
+            double centerY = (geoTrans[3]);
 
             if (centerY >= 0)
             {
                 int coordPrev = 0;
-                zone = 31;
+                Zone = 31;
                 for (int coord = 6; coord >= 0 && coord <= 180; coord = coord + 6)
                 {
                     if (coordPrev <= centerY && centerY <= coord)
                     {
                         break;
                     }
-                    zone++;
+                    Zone++;
                 }
             }
             else
             {
                 int coordPrev = -180;
-                zone = 1;
+                Zone = 1;
                 for (int coord = -174; coord >= -180 && coord < 0; coord = coord + 6)
                 {
                     if (coordPrev <= centerX && centerX <= coord)
                     {
                         break;
                     }
-                    zone++;
+                    Zone++;
                 }
             }
 
-            return (zone);
+            _busy = false;
+            return (Zone);
         }
 
         public void TransformToWGS84() 
@@ -518,11 +519,12 @@
 
         public void ProjectToETRS89UTM()
         {
-            int epsg = 25800;
-            epsg = epsg + getUTMZone();
-            ProjectTo(epsg);
+            int EPSG = 25800;
+            EPSG = EPSG + getUTMZone();
+            ProjectTo(EPSG);
         }
-        public void ProjectTo(int epsg)
+
+        public void ProjectTo(int EPSG)
         {
             OSGeo.OSR.SpatialReference FromSRS = new OSGeo.OSR.SpatialReference(null);
             FromSRS.ImportFromEPSG(System.Int32.Parse(this.SpatialReference.GetAttrValue("AUTHORITY", 1)));
@@ -530,7 +532,7 @@
             FromSRS.ExportToWkt(out FromSRS_wkt, null);
 
             OSGeo.OSR.SpatialReference ToWGS84 = new OSGeo.OSR.SpatialReference(null);
-            ToWGS84.ImportFromEPSG(epsg);
+            ToWGS84.ImportFromEPSG(EPSG);
             string ToWGS84_wkt;
             ToWGS84.ExportToWkt(out ToWGS84_wkt, null);
 

@@ -826,72 +826,76 @@ namespace Prototyp.Elements
         public int isNorth()
         {
             _busy = true;
+
             InitGDAL();
 
             OSGeo.OGR.Driver ShapeDriver = OSGeo.OGR.Ogr.GetDriverByName("ESRI Shapefile");
             OSGeo.OGR.Layer InLayer = GetAsLayer();
-            OSGeo.OGR.Envelope envelope = new OSGeo.OGR.Envelope();
-            InLayer.GetExtent(envelope, 0);
-            var centerX = (envelope.MaxX + envelope.MinX) / 2;
-            var centerY = (envelope.MaxY + envelope.MinY) / 2;
-            
+            OSGeo.OGR.Envelope MyEnvelope = new OSGeo.OGR.Envelope();
+            InLayer.GetExtent(MyEnvelope, 0);
+            double centerX = (MyEnvelope.MaxX + MyEnvelope.MinX) / 2;
+            double centerY = (MyEnvelope.MaxY + MyEnvelope.MinY) / 2;
+
+            _busy = false;
+
             if (centerY < 0)
             {
-                return 0;
+                return(0);
             }
             else
             {
-                return 1;
+                return(1);
             }
         }
-            public int getUTMZone()
+        public int getUTMZone()
         {
             _busy = true;
             InitGDAL();
 
             OSGeo.OGR.Driver ShapeDriver = OSGeo.OGR.Ogr.GetDriverByName("ESRI Shapefile");
             OSGeo.OGR.Layer InLayer = GetAsLayer();
-            int zone = 0;
-            OSGeo.OGR.Envelope envelope = new OSGeo.OGR.Envelope();
-            InLayer.GetExtent(envelope, 0);
-            var centerX = (envelope.MaxX + envelope.MinX) / 2;
-            var centerY = (envelope.MaxY + envelope.MinY) / 2;
+            int Zone = 0;
+            OSGeo.OGR.Envelope MyEnvelope = new OSGeo.OGR.Envelope();
+            InLayer.GetExtent(MyEnvelope, 0);
+            double centerX = (MyEnvelope.MaxX + MyEnvelope.MinX) / 2;
+            double centerY = (MyEnvelope.MaxY + MyEnvelope.MinY) / 2;
            
             if (centerY >= 0)
             {
                 int coordPrev = 0;
-                zone = 31;
-                for (int coord =6; coord >= 0 && coord <= 180; coord = coord+6)
+                Zone = 31;
+                for (int coord = 6; coord >= 0 && coord <= 180; coord = coord + 6)
                 {
                     if (coordPrev <= centerY && centerY <= coord)
                     {
                         break;
                     }
-                    zone++;
+                    Zone++;
                 }
             }
             else
             {
                 int coordPrev = -180;
-                zone = 1;
+                Zone = 1;
                 for (int coord = -174;  coord >= -180 && coord < 0; coord = coord + 6)
                 {
                     if (coordPrev <= centerX && centerX <= coord)
                     {
                         break;
                     }
-                    zone++;
+                    Zone++;
                 }
             }
 
-            return (zone);
+            _busy = false;
+            return (Zone);
         }
 
         public void ProjectToETRS89UTM()
         {
-            int epsg = 25800;
-            epsg = epsg + getUTMZone();
-            ProjectTo(epsg);
+            int EPSG = 25800;
+            EPSG = EPSG + getUTMZone();
+            ProjectTo(EPSG);
         }
 
         public void ProjectTo(int epsg)
@@ -915,7 +919,6 @@ namespace Prototyp.Elements
             string RandomFilename = System.IO.Path.GetRandomFileName();
             OSGeo.OGR.DataSource OutDS = ShapeDriver.CreateDataSource("/vsimem/" + RandomFilename, new string[] { });
             OSGeo.OGR.Layer OutLayer = OutDS.CreateLayer(LayerName + "_", ToUTM, InLayer.GetGeomType(), new string[] { });
-
 
             OSGeo.OGR.FeatureDefn InFeatureDefn = InLayer.GetLayerDefn();
 
