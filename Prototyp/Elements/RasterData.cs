@@ -470,7 +470,59 @@
             return (Result);
         }
 
+        public int getUTMZone()
+        {
+            _busy = true;
+            InitGDAL();
+
+            int zone = 0;
+            double[] geoTrans= null;
+            this.GDALDataSet.GetGeoTransform(geoTrans);
+            var centerX = (geoTrans[0]);
+            var centerY = (geoTrans[3]);
+
+            if (centerY >= 0)
+            {
+                int coordPrev = 0;
+                zone = 31;
+                for (int coord = 6; coord >= 0 && coord <= 180; coord = coord + 6)
+                {
+                    if (coordPrev <= centerY && centerY <= coord)
+                    {
+                        break;
+                    }
+                    zone++;
+                }
+            }
+            else
+            {
+                int coordPrev = -180;
+                zone = 1;
+                for (int coord = -174; coord >= -180 && coord < 0; coord = coord + 6)
+                {
+                    if (coordPrev <= centerX && centerX <= coord)
+                    {
+                        break;
+                    }
+                    zone++;
+                }
+            }
+
+            return (zone);
+        }
+
         public void TransformToWGS84() 
+        {
+            ProjectTo(4326);
+        }
+
+        public void ProjectToETRS89UTM()
+        {
+            int epsg = 25800;
+            epsg = epsg + getUTMZone();
+            ProjectTo(epsg);
+        }
+        public void ProjectTo(int epsg)
         {
             OSGeo.OSR.SpatialReference FromSRS = new OSGeo.OSR.SpatialReference(null);
             FromSRS.ImportFromEPSG(System.Int32.Parse(this.SpatialReference.GetAttrValue("AUTHORITY", 1)));
@@ -478,7 +530,7 @@
             FromSRS.ExportToWkt(out FromSRS_wkt, null);
 
             OSGeo.OSR.SpatialReference ToWGS84 = new OSGeo.OSR.SpatialReference(null);
-            ToWGS84.ImportFromEPSG(4326);
+            ToWGS84.ImportFromEPSG(epsg);
             string ToWGS84_wkt;
             ToWGS84.ExportToWkt(out ToWGS84_wkt, null);
 

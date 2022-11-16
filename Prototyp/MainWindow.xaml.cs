@@ -444,10 +444,9 @@ namespace Prototyp
             handlerCRS.EPSG.Content = epsg;
             handlerCRS.ShowDialog();
             if (!handlerCRS.OkayClicked) return tempRasterData;
-            MessageBox.Show(tempRasterData.SpatialReference.GetAttrValue("AUTHORITY", 1));
+            if (Int16.Parse(tempRasterData.SpatialReference.GetAttrValue("AUTHORITY", 1)) == 4326) return tempRasterData;
             tempRasterData.SpatialReference.ImportFromEPSG(Int32.Parse(handlerCRS.EPSG.Content.ToString()));
             tempRasterData.TransformToWGS84();
-            MessageBox.Show(tempRasterData.SpatialReference.GetAttrValue("AUTHORITY", 1));
             return tempRasterData;
         }
 
@@ -501,9 +500,7 @@ namespace Prototyp
                             if (Int16.Parse(tempVectorData.SpatialReference.GetAttrValue("AUTHORITY", 1)) != 4326) {
                                 break;
                             }
-                                vectorData.Add(tempVectorData);
-                            tempVectorData.ToUTM();
-                            MessageBox.Show(tempVectorData.SpatialReference.GetAttrValue("AUTHORITY", 1));
+                            vectorData.Add(tempVectorData);
                             tempVectorData = null;
                             break;
                         case "Line":
