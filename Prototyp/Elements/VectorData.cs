@@ -891,7 +891,7 @@ namespace Prototyp.Elements
             _busy = false;
             return (0);
         }
-        public int TransformToWGS84() // Returns 0 on success and 1 if an error occurred.
+        public int TransformToWGS84()
         {
             _busy = true;
             InitGDAL();
@@ -956,6 +956,93 @@ namespace Prototyp.Elements
             return (0);
         }
 
+        public int getUTMZone()
+        {
+            _busy = true;
+            InitGDAL();
+
+            OSGeo.OGR.Driver ShapeDriver = OSGeo.OGR.Ogr.GetDriverByName("ESRI Shapefile");
+            OSGeo.OGR.Layer InLayer = GetAsLayer();
+            int zone = 0;
+            OSGeo.OGR.Envelope envelope = new OSGeo.OGR.Envelope();
+            InLayer.GetExtent(envelope, 0);
+            var centerX = (envelope.MaxX + envelope.MinX) / 2;
+            var centerY = (envelope.MaxY + envelope.MinY) / 2;
+            int coord;
+            //if (centerX >=0) {
+            //    coord = 0;
+            //    for (coord >= 0 && coord <= 180)
+            //    {
+            //        coord = coord + 6;
+            //    }
+            //}
+            //else
+            //{
+            //    coord = -180;
+            //    for (coord >= -180 && coord < 0)
+            //    {
+
+            //    }
+            //}
+            
+            return (zone);
+        }
+
+        public void ProjectToUTM()
+        {
+            _busy = true;
+            InitGDAL();
+
+            OSGeo.OGR.Driver ShapeDriver = OSGeo.OGR.Ogr.GetDriverByName("ESRI Shapefile");
+            OSGeo.OGR.Layer InLayer = GetAsLayer();
+            string LayerName = InLayer.GetName();
+
+            OSGeo.OSR.SpatialReference FromSRS = new OSGeo.OSR.SpatialReference(null);
+            FromSRS.ImportFromEPSG(System.Int32.Parse(this.SpatialReference.GetAttrValue("AUTHORITY", 1)));
+            FromSRS.SetAxisMappingStrategy(OSGeo.OSR.AxisMappingStrategy.OAMS_TRADITIONAL_GIS_ORDER);
+
+
+
+            OSGeo.OSR.SpatialReference ToUTM = new OSGeo.OSR.SpatialReference(null);
+            ToUTM.ImportFromEPSG(4326);
+            ToUTM.SetAxisMappingStrategy(OSGeo.OSR.AxisMappingStrategy.OAMS_TRADITIONAL_GIS_ORDER);
+
+            OSGeo.OSR.CoordinateTransformation TransformToWGS84 = new OSGeo.OSR.CoordinateTransformation(FromSRS, ToUTM);
+
+            string RandomFilename = System.IO.Path.GetRandomFileName();
+            OSGeo.OGR.DataSource OutDS = ShapeDriver.CreateDataSource("/vsimem/" + RandomFilename, new string[] { });
+            OSGeo.OGR.Layer OutLayer = OutDS.CreateLayer(LayerName + "_", ToUTM, InLayer.GetGeomType(), new string[] { });
+
+
+            OSGeo.OGR.FeatureDefn InFeatureDefn = InLayer.GetLayerDefn();
+
+            PrepareFields(InLayer, ref OutLayer);
+
+            OSGeo.OGR.Geometry OGRGeom;
+            for (long i = 0; i < InLayer.GetFeatureCount(0); i++)
+            {
+                OGRGeom = InLayer.GetFeature(i).GetGeometryRef();
+                if (OGRGeom.Transform(TransformToWGS84) == OSGeo.OGR.Ogr.OGRERR_NONE)
+                {
+                    OSGeo.OGR.Feature OutFeature = new OSGeo.OGR.Feature(InFeatureDefn);
+
+                    OutFeature.SetGeometry(OGRGeom);
+                    CopyFields(InLayer.GetFeature(i), InFeatureDefn.GetFieldCount(), ref OutFeature);
+
+                    OutLayer.CreateFeature(OutFeature);
+                    OutFeature.Dispose();
+                }
+                else
+                {
+                    System.Diagnostics.Debug.WriteLine("Error during tranformation.");
+                    InLayer.Dispose();
+                    OutLayer.Dispose();
+                    OutDS.Dispose();
+                    ShapeDriver.Dispose();
+                    _busy = false;
+                }
+            }
+        }
         public int ProjectTo(int EPSG)
         {
             string Proj4;

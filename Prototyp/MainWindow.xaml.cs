@@ -598,11 +598,11 @@ namespace Prototyp
                         }
                     }
                     RasterData tempRasterData = (new RasterData(importDataUID, openFileDialog.FileName));
-                    //tempRasterData = CheckRasterDataCRS(tempRasterData);
-                    //if (Int16.Parse(tempRasterData.SpatialReference.GetAttrValue("AUTHORITY", 1)) != 4326)
-                    //{
-                    //    return;
-                    //}
+                    tempRasterData = CheckRasterDataCRS(tempRasterData);
+                    if (Int16.Parse(tempRasterData.SpatialReference.GetAttrValue("AUTHORITY", 1)) != 4326)
+                    {
+                        return;
+                    }
                     rasterData.Add(tempRasterData);
 
                     //Add raster data to node editor
