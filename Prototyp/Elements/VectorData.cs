@@ -909,11 +909,11 @@ namespace Prototyp.Elements
             int epsgIn = System.Int32.Parse(this.SpatialReference.GetAttrValue("AUTHORITY", 1));
             OSGeo.OSR.SpatialReference FromSRS = new OSGeo.OSR.SpatialReference(null);
             FromSRS.ImportFromEPSG(epsgIn);
-            //FromSRS.SetAxisMappingStrategy(OSGeo.OSR.AxisMappingStrategy.OAMS_TRADITIONAL_GIS_ORDER);
+            FromSRS.SetAxisMappingStrategy(OSGeo.OSR.AxisMappingStrategy.OAMS_TRADITIONAL_GIS_ORDER);
 
             OSGeo.OSR.SpatialReference ToUTM = new OSGeo.OSR.SpatialReference(null);
             ToUTM.ImportFromEPSG(epsg);
-            //ToUTM.SetAxisMappingStrategy(OSGeo.OSR.AxisMappingStrategy.OAMS_TRADITIONAL_GIS_ORDER);
+            ToUTM.SetAxisMappingStrategy(OSGeo.OSR.AxisMappingStrategy.OAMS_TRADITIONAL_GIS_ORDER);
 
             OSGeo.OSR.CoordinateTransformation TransformToUTM = new OSGeo.OSR.CoordinateTransformation(FromSRS, ToUTM);
             string RandomFilename = System.IO.Path.GetRandomFileName();
