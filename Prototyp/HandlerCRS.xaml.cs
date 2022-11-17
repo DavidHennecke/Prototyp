@@ -36,7 +36,7 @@ namespace Prototyp
 
         private void Search_CRS_GotFocus(object sender, RoutedEventArgs e)
         {
-            if (Search_CRS.Text == "Search...")
+            if (Search_CRS.Text == "Search EPSG code...")
             {
                 Search_CRS.Text = "";
             }
@@ -46,7 +46,7 @@ namespace Prototyp
         {
             if (Search_CRS.Text == "")
             {
-                Search_CRS.Text = "Search...";
+                Search_CRS.Text = "Search EPSG code...";
             }
         }
         private void doubleClickTreeBoxItem(object sender, System.Windows.Input.MouseButtonEventArgs e, string name, string epsg)

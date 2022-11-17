@@ -33,7 +33,7 @@
                 <ColumnDefinition Width="10px"/>
             </Grid.ColumnDefinitions>
             <Border Grid.Column="1" Background="#FF212225" CornerRadius="2" Margin="2">
-                <Label Grid.Column="0" VerticalAlignment="Center" HorizontalAlignment="Center">Current Settings:</Label>
+                <Label Grid.Column="0" VerticalAlignment="Center" HorizontalAlignment="Center">Current settings:</Label>
             </Border>
             <Border Grid.Column="2" Background="#FF52555C" CornerRadius="2" Margin="2">
                 <Label x:Name="CrsName" Grid.Column="1" VerticalAlignment="Center" HorizontalAlignment="Center" ></Label>
@@ -51,10 +51,10 @@
                 <ColumnDefinition Width="10px"/>
             </Grid.ColumnDefinitions>
             <Border Grid.Column="2" Background="#FF212225" CornerRadius="2" Margin="2">
-                <Label VerticalAlignment="Center" HorizontalAlignment="Center">Coordinatesystem</Label>
+                <Label VerticalAlignment="Center" HorizontalAlignment="Center">Coordinate system:</Label>
             </Border>
             <Border Grid.Column="3" Background="#FF212225" CornerRadius="2" Margin="2">
-                <Label  VerticalAlignment="Center" HorizontalAlignment="Center">EPSG</Label>
+                <Label  VerticalAlignment="Center" HorizontalAlignment="Center">EPSG:</Label>
             </Border>
         </Grid>
         <Grid Grid.Row="4">
@@ -65,7 +65,7 @@
                 <ColumnDefinition Width="10px"/>
             </Grid.ColumnDefinitions>
             <Border Grid.Column="2" Background="#FF52555C" CornerRadius="2" Margin="2" Focusable="False">
-                <TextBox x:Name="Search_CRS" KeyDown="Search_CRS_KeyDown" GotFocus="Search_CRS_GotFocus" LostFocus="Search_CRS_LostFocus" Background="#FF52555C" Text="Search..." Margin="5,0,5,0" FontSize="12" VerticalAlignment="Center" HorizontalAlignment="Stretch" TextAlignment="Left" BorderThickness="0" SelectionBrush="#FF52555C"/>
+                <TextBox x:Name="Search_CRS" KeyDown="Search_CRS_KeyDown" GotFocus="Search_CRS_GotFocus" LostFocus="Search_CRS_LostFocus" Background="#FF52555C" Text="Search EPSG code..." Margin="5,0,5,0" FontSize="12" VerticalAlignment="Center" HorizontalAlignment="Stretch" TextAlignment="Left" BorderThickness="0" SelectionBrush="#FF52555C"/>
             </Border>
         </Grid>
         <Grid Grid.Row="5">
@@ -75,7 +75,7 @@
                 <ColumnDefinition Width="10px"/>
             </Grid.ColumnDefinitions>
             <Border Grid.Column="1" Background="#FF212225" CornerRadius="2" Margin="2">
-                <Label  VerticalAlignment="Center" HorizontalAlignment="Center">Search Results</Label>
+                <Label  VerticalAlignment="Center" HorizontalAlignment="Center">Search results:</Label>
             </Border>
         </Grid>
         <Grid Grid.Row="6">
@@ -94,7 +94,7 @@
         </Grid>
         <StackPanel Grid.Row="7" Orientation="Horizontal" HorizontalAlignment="Right">
             <Button x:Name="BtnCancelHandlerCrs" Content="Cancel" Height="32" Margin="5" VerticalAlignment="Top" Width="78" Background="#FF52555C" Click="BtnCancelHandlerCrs_Click"/>
-            <Button x:Name="BtnOkayHandlerCrs" Content="Okay" Margin="5 5 10 5" VerticalAlignment="Top" Background="#FF52555C" Click="BtnOkayHandlerCrs_Click"/>
+            <Button x:Name="BtnOkayHandlerCrs" Content="Okay" Margin="5 5 10 5" Width="78" VerticalAlignment="Top" Background="#FF52555C" Click="BtnOkayHandlerCrs_Click"/>
         </StackPanel>
     </Grid>
 </Window>

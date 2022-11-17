@@ -142,23 +142,28 @@ namespace Prototyp
                 foreach (string ModuleDir in Dirs)
                 {
                     FileNames = System.IO.Directory.GetFiles(ModuleDir);
-                    System.Windows.Controls.TreeViewItem newItem = new System.Windows.Controls.TreeViewItem();
 
+                    System.Windows.Controls.TreeViewItem newItem = new System.Windows.Controls.TreeViewItem();
                     System.Windows.Controls.DockPanel tempDock = new System.Windows.Controls.DockPanel();
                     System.Windows.Controls.Label tempLabel = new System.Windows.Controls.Label();
                     System.Windows.Controls.Image tempImage = new System.Windows.Controls.Image();
+
                     tempLabel.Content = "  " + new DirectoryInfo(ModuleDir).Name;
                     tempLabel.FontSize = 12;
-                    var bitmapImage = new System.Windows.Media.Imaging.BitmapImage(new Uri(ModuleDir + "/Icon.png"));
+                    System.Windows.Media.Imaging.BitmapImage bitmapImage = new System.Windows.Media.Imaging.BitmapImage(new Uri(ModuleDir + "/Icon.png"));
+
                     tempImage.Source = bitmapImage;
                     tempImage.Width = 12;
                     tempImage.Height = 12;
+
                     tempDock.Children.Add(tempImage);
                     tempDock.Children.Add(tempLabel);
+
                     newItem.Header = tempDock;
                     newItem.Focusable = false;
                     newItem.MouseDoubleClick += (sender, e) => doubleClickTreeViewItem(sender, e, ModuleDir);
                     newNode.Items.Add(newItem);
+
                     foreach (string FileName in FileNames)
                     {
                         if (FileName.ToLower().EndsWith(".xml"))
@@ -415,18 +420,33 @@ namespace Prototyp
 
             string srs = "undefined";
             string epsg = "undefined";
-            if (tempVectorData.SpatialReference != null)
+
+            OSGeo.OSR.SpatialReference OSGeoSRS = tempVectorData.SpatialReference;
+            if (OSGeoSRS == null)
             {
-                srs = tempVectorData.SpatialReference.GetName();
-                epsg = tempVectorData.SpatialReference.GetAttrValue("AUTHORITY", 1);
+                tempVectorData.SpatialReference = new OSGeo.OSR.SpatialReference("");
+                OSGeoSRS = tempVectorData.SpatialReference;
             }
+
+            string oldWKT;
+            tempVectorData.SpatialReference.ExportToWkt(out oldWKT, null);
+            if (oldWKT != "")
+            {
+                srs = OSGeoSRS.GetName();
+                epsg = OSGeoSRS.GetAttrValue("AUTHORITY", 1);
+            }
+
             handlerCRS.CrsName.Content = srs;
             handlerCRS.EPSG.Content = epsg;
             handlerCRS.ShowDialog();
+
             if (!handlerCRS.OkayClicked) return tempVectorData;
-            if (Int16.Parse(tempVectorData.SpatialReference.GetAttrValue("AUTHORITY", 1)) == 4326) return tempVectorData;
+
+            if (OSGeoSRS.GetAttrValue("AUTHORITY", 1) != null) if (Int16.Parse(OSGeoSRS.GetAttrValue("AUTHORITY", 1)) == 4326) return tempVectorData;
+
             tempVectorData.SpatialReference.ImportFromEPSG(Int32.Parse(handlerCRS.EPSG.Content.ToString()));
             tempVectorData.TransformToWGS84();
+
             return tempVectorData;
         }
         public static RasterData CheckRasterDataCRS(RasterData tempRasterData)
@@ -435,18 +455,34 @@ namespace Prototyp
 
             string srs = "undefined";
             string epsg = "undefined";
+
+            OSGeo.OSR.SpatialReference OSGeoSRS = tempRasterData.SpatialReference;
+            if (OSGeoSRS == null)
+            {
+                tempRasterData.SpatialReference = new OSGeo.OSR.SpatialReference("");
+                OSGeoSRS = tempRasterData.SpatialReference;
+            }
+
             if (tempRasterData.SpatialReference_WKT != null)
             {
-                srs = tempRasterData.SpatialReference.GetName();
-                epsg = tempRasterData.SpatialReference.GetAttrValue("AUTHORITY", 1);
+                if (tempRasterData.SpatialReference_WKT != "")
+                {
+                    srs = OSGeoSRS.GetName();
+                    epsg = OSGeoSRS.GetAttrValue("AUTHORITY", 1);
+                }
             }
+
             handlerCRS.CrsName.Content = srs;
             handlerCRS.EPSG.Content = epsg;
             handlerCRS.ShowDialog();
+
             if (!handlerCRS.OkayClicked) return tempRasterData;
-            if (Int16.Parse(tempRasterData.SpatialReference.GetAttrValue("AUTHORITY", 1)) == 4326) return tempRasterData;
+
+            if (OSGeoSRS.GetAttrValue("AUTHORITY", 1) != null) if (Int16.Parse(OSGeoSRS.GetAttrValue("AUTHORITY", 1)) == 4326) return tempRasterData;
+
             tempRasterData.SpatialReference.ImportFromEPSG(Int32.Parse(handlerCRS.EPSG.Content.ToString()));
             tempRasterData.TransformToWGS84();
+
             return tempRasterData;
         }
 
@@ -497,7 +533,8 @@ namespace Prototyp
                         case "Point":
                             tempVectorData = (new VectorPointData(importDataUID, openFileDialog.FileName));
                             tempVectorData = CheckVectorDataCRS(tempVectorData);
-                            if (Int16.Parse(tempVectorData.SpatialReference.GetAttrValue("AUTHORITY", 1)) != 4326) {
+                            if (Int16.Parse(tempVectorData.SpatialReference.GetAttrValue("AUTHORITY", 1)) != 4326)
+                            {
                                 break;
                             }
                             vectorData.Add(tempVectorData);

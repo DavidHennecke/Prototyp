@@ -276,7 +276,7 @@
                                 <RowDefinition Height="*"/>
                             </Grid.RowDefinitions>
                             <TextBox x:Name="Search_Toolbar" Background="#FF52555C" Text="Search..." Margin="5,0,5,0" FontSize="12" VerticalAlignment="Center" TextAlignment="Left" Grid.Row="0" GotFocus="Search_Toolbar_GotFocus" LostFocus="Search_Toolbar_LostFocus" KeyDown="Search_Toolbar_KeyDown"/>
-                            <TreeView x:Name="Toolbox_Treeview" Grid.Row="1" Grid.ColumnSpan="2" Focusable="False">
+                            <TreeView x:Name="Toolbox_Treeview" Grid.Row="1" Grid.ColumnSpan="2" Focusable="False" RenderOptions.BitmapScalingMode="HighQuality">
                                 
                             </TreeView>
                         </Grid>
