@@ -428,6 +428,8 @@ namespace Prototyp
                 OSGeoSRS = tempVectorData.SpatialReference;
             }
 
+            if (OSGeoSRS.GetAttrValue("AUTHORITY", 1) != null) if (Int16.Parse(OSGeoSRS.GetAttrValue("AUTHORITY", 1)) == 4326) return tempVectorData;
+
             string oldWKT;
             tempVectorData.SpatialReference.ExportToWkt(out oldWKT, null);
             if (oldWKT != "")
@@ -462,6 +464,8 @@ namespace Prototyp
                 tempRasterData.SpatialReference = new OSGeo.OSR.SpatialReference("");
                 OSGeoSRS = tempRasterData.SpatialReference;
             }
+
+            if (OSGeoSRS.GetAttrValue("AUTHORITY", 1) != null) if (Int16.Parse(OSGeoSRS.GetAttrValue("AUTHORITY", 1)) == 4326) return tempRasterData;
 
             if (tempRasterData.SpatialReference_WKT != null)
             {
