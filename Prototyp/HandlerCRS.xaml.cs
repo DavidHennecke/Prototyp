@@ -36,7 +36,7 @@ namespace Prototyp
 
         private void Search_CRS_GotFocus(object sender, RoutedEventArgs e)
         {
-            if (Search_CRS.Text == "Search EPSG code...")
+            if (Search_CRS.Text == "Search for EPSG/WKT/Proj4 info...")
             {
                 Search_CRS.Text = "";
             }
@@ -46,7 +46,7 @@ namespace Prototyp
         {
             if (Search_CRS.Text == "")
             {
-                Search_CRS.Text = "Search EPSG code...";
+                Search_CRS.Text = "Search for EPSG/WKT/Proj4 info...";
             }
         }
         private void doubleClickTreeBoxItem(object sender, System.Windows.Input.MouseButtonEventArgs e, string name, string epsg)
@@ -79,9 +79,25 @@ namespace Prototyp
                         lvi.MouseDoubleClick += (sender, e) => doubleClickTreeBoxItem(sender, e, reference.GetName(), reference.GetAttrValue("AUTHORITY", 1));
                         CRS_List.Items.Add(lvi);
                     }
-                    
+                    else if (Search_CRS.Text.Contains("[")) // Probably WKT string.
+                    {
+                        string InputText = Search_CRS.Text;
+                        reference.ImportFromWkt(ref InputText);
+                        ListBoxItem lvi = new ListBoxItem();
+                        lvi.Content = reference.GetName() + "         " + "EPSG: " + reference.GetAttrValue("AUTHORITY", 1);
+                        lvi.MouseDoubleClick += (sender, e) => doubleClickTreeBoxItem(sender, e, reference.GetName(), reference.GetAttrValue("AUTHORITY", 1));
+                        CRS_List.Items.Add(lvi);
+                    }
+                    else  // Fallback, assume that entered string is proj4.
+                    {
+                        reference.ImportFromProj4(Search_CRS.Text);
+                        ListBoxItem lvi = new ListBoxItem();
+                        lvi.Content = reference.GetName() + "         " + "EPSG: " + reference.GetAttrValue("AUTHORITY", 1);
+                        lvi.MouseDoubleClick += (sender, e) => doubleClickTreeBoxItem(sender, e, reference.GetName(), reference.GetAttrValue("AUTHORITY", 1));
+                        CRS_List.Items.Add(lvi);
+                    }
                 }
-                catch (Exception)
+                catch
                 {
                     MessageBox.Show("No coordinate system with this EPSG code available in the database.");
                 }

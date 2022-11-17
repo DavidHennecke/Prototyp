@@ -443,6 +443,7 @@ namespace Prototyp
             handlerCRS.ShowDialog();
 
             if (!handlerCRS.OkayClicked) return tempVectorData;
+            if (handlerCRS.EPSG.Content.ToString() == "undefined") return tempVectorData;
 
             if (OSGeoSRS.GetAttrValue("AUTHORITY", 1) != null) if (Int16.Parse(OSGeoSRS.GetAttrValue("AUTHORITY", 1)) == 4326) return tempVectorData;
 
@@ -481,6 +482,7 @@ namespace Prototyp
             handlerCRS.ShowDialog();
 
             if (!handlerCRS.OkayClicked) return tempRasterData;
+            if (handlerCRS.EPSG.Content.ToString() == "undefined") return tempRasterData;
 
             if (OSGeoSRS.GetAttrValue("AUTHORITY", 1) != null) if (Int16.Parse(OSGeoSRS.GetAttrValue("AUTHORITY", 1)) == 4326) return tempRasterData;
 
@@ -531,49 +533,54 @@ namespace Prototyp
                     VectorData peek = (new VectorData(-1, openFileDialog.FileName));//das muss doch iwie anders gehen? so wird die Datei doch zwei mal geladen... Bei großen Datenmengen kostet das Zeit
                     string geometryType = peek.FeatureCollection[0].Geometry.GeometryType;
                     peek = null;
-                    VectorData tempVectorData = null;
+                    VectorData tempVectorData;
+                    string AuthorityString;
                     switch (geometryType)
                     {
                         case "Point":
                             tempVectorData = new VectorPointData(importDataUID, openFileDialog.FileName);
                             tempVectorData = CheckVectorDataCRS(tempVectorData);
-                            if (Int16.Parse(tempVectorData.SpatialReference.GetAttrValue("AUTHORITY", 1)) != 4326)
-                            {
-                                break;
-                            }
+
+                            AuthorityString = tempVectorData.SpatialReference.GetAttrValue("AUTHORITY", 1);
+                            if (AuthorityString == null) break;
+                            if (Int16.Parse(AuthorityString) != 4326) break;
+
                             vectorData.Add(tempVectorData);
-                            tempVectorData = null;
                             break;
+
                         case "Line":
                             tempVectorData = new VectorLineData(importDataUID, openFileDialog.FileName);
                             tempVectorData = CheckVectorDataCRS(tempVectorData);
-                            if (Int16.Parse(tempVectorData.SpatialReference.GetAttrValue("AUTHORITY", 1)) != 4326)
-                            {
-                                break;
-                            }
+
+                            AuthorityString = tempVectorData.SpatialReference.GetAttrValue("AUTHORITY", 1);
+                            if (AuthorityString == null) break;
+                            if (Int16.Parse(AuthorityString) != 4326) break;
+
                             vectorData.Add(tempVectorData);
-                            tempVectorData = null;
                             break;
+
                         case "Polygon":
                             tempVectorData = new VectorPolygonData(importDataUID, openFileDialog.FileName);
                             tempVectorData = CheckVectorDataCRS(tempVectorData);
-                            if (Int16.Parse(tempVectorData.SpatialReference.GetAttrValue("AUTHORITY", 1)) != 4326)
-                            {
-                                break;
-                            }
+
+                            AuthorityString = tempVectorData.SpatialReference.GetAttrValue("AUTHORITY", 1);
+                            if (AuthorityString == null) break;
+                            if (Int16.Parse(AuthorityString) != 4326) break;
+
                             vectorData.Add(tempVectorData);
-                            tempVectorData = null;
                             break;
+
                         case "MultiPolygon":
                             tempVectorData = new VectorMultiPolygonData(importDataUID, openFileDialog.FileName);
                             tempVectorData = CheckVectorDataCRS(tempVectorData);
-                            if (Int16.Parse(tempVectorData.SpatialReference.GetAttrValue("AUTHORITY", 1)) != 4326)
-                            {
-                                break;
-                            }
+
+                            AuthorityString = tempVectorData.SpatialReference.GetAttrValue("AUTHORITY", 1);
+                            if (AuthorityString == null) break;
+                            if (Int16.Parse(AuthorityString) != 4326) break;
+
                             vectorData.Add(tempVectorData);
-                            tempVectorData = null;
                             break;
+
                         // TODO: More cases, e.g. 'triangle' data... :-/
                         default:
                             // There should be nothing here.
@@ -641,10 +648,11 @@ namespace Prototyp
                     }
                     RasterData tempRasterData = (new RasterData(importDataUID, openFileDialog.FileName));
                     tempRasterData = CheckRasterDataCRS(tempRasterData);
-                    if (Int16.Parse(tempRasterData.SpatialReference.GetAttrValue("AUTHORITY", 1)) != 4326)
-                    {
-                        return;
-                    }
+
+                    string AuthorityString = tempRasterData.SpatialReference.GetAttrValue("AUTHORITY", 1);
+                    if (AuthorityString == null) return;
+                    if (Int16.Parse(AuthorityString) != 4326) return;
+                    
                     rasterData.Add(tempRasterData);
 
                     //Add raster data to node editor
