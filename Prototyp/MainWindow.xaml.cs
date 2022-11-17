@@ -535,7 +535,7 @@ namespace Prototyp
                     switch (geometryType)
                     {
                         case "Point":
-                            tempVectorData = (new VectorPointData(importDataUID, openFileDialog.FileName));
+                            tempVectorData = new VectorPointData(importDataUID, openFileDialog.FileName);
                             tempVectorData = CheckVectorDataCRS(tempVectorData);
                             if (Int16.Parse(tempVectorData.SpatialReference.GetAttrValue("AUTHORITY", 1)) != 4326)
                             {
@@ -545,7 +545,7 @@ namespace Prototyp
                             tempVectorData = null;
                             break;
                         case "Line":
-                            tempVectorData = (new VectorLineData(importDataUID, openFileDialog.FileName));
+                            tempVectorData = new VectorLineData(importDataUID, openFileDialog.FileName);
                             tempVectorData = CheckVectorDataCRS(tempVectorData);
                             if (Int16.Parse(tempVectorData.SpatialReference.GetAttrValue("AUTHORITY", 1)) != 4326)
                             {
@@ -555,7 +555,7 @@ namespace Prototyp
                             tempVectorData = null;
                             break;
                         case "Polygon":
-                            tempVectorData = (new VectorPolygonData(importDataUID, openFileDialog.FileName));
+                            tempVectorData = new VectorPolygonData(importDataUID, openFileDialog.FileName);
                             tempVectorData = CheckVectorDataCRS(tempVectorData);
                             if (Int16.Parse(tempVectorData.SpatialReference.GetAttrValue("AUTHORITY", 1)) != 4326)
                             {
@@ -565,7 +565,7 @@ namespace Prototyp
                             tempVectorData = null;
                             break;
                         case "MultiPolygon":
-                            tempVectorData = (new VectorMultiPolygonData(importDataUID, openFileDialog.FileName));
+                            tempVectorData = new VectorMultiPolygonData(importDataUID, openFileDialog.FileName);
                             tempVectorData = CheckVectorDataCRS(tempVectorData);
                             if (Int16.Parse(tempVectorData.SpatialReference.GetAttrValue("AUTHORITY", 1)) != 4326)
                             {
@@ -590,19 +590,23 @@ namespace Prototyp
                             Type vecType = vectorData[i].GetType();
                             if (vecType.Name == "VectorPointData")
                             {
-                                importNode = new VectorImport_ModulePoint(vectorData[i].Name, vectorData[i].FeatureCollection[0].Geometry.GeometryType, vectorData[i].ID);
+                                //importNode = new VectorImport_ModulePoint(vectorData[i].Name, vectorData[i].FeatureCollection[0].Geometry.GeometryType, vectorData[i].ID);
+                                importNode = new VectorImport_ModulePoint(vectorData[i].Name, "Point", vectorData[i].ID);
                             }
                             else if (vecType.Name == "VectorLineData")
                             {
-                                importNode = new VectorImport_ModuleLine(vectorData[i].Name, vectorData[i].FeatureCollection[0].Geometry.GeometryType, vectorData[i].ID);
+                                //importNode = new VectorImport_ModuleLine(vectorData[i].Name, vectorData[i].FeatureCollection[0].Geometry.GeometryType, vectorData[i].ID);
+                                importNode = new VectorImport_ModuleLine(vectorData[i].Name, "Line", vectorData[i].ID);
                             }
                             else if (vecType.Name == "VectorPolygonData")
                             {
-                                importNode = new VectorImport_ModulePolygon(vectorData[i].Name, vectorData[i].FeatureCollection[0].Geometry.GeometryType, vectorData[i].ID);
+                                //importNode = new VectorImport_ModulePolygon(vectorData[i].Name, vectorData[i].FeatureCollection[0].Geometry.GeometryType, vectorData[i].ID);
+                                importNode = new VectorImport_ModulePolygon(vectorData[i].Name, "Polygon", vectorData[i].ID);
                             }
                             else if (vecType.Name == "VectorMultiPolygonData")
                             {
-                                importNode = new VectorImport_ModuleMultiPolygon(vectorData[i].Name, vectorData[i].FeatureCollection[0].Geometry.GeometryType, vectorData[i].ID);
+                                //importNode = new VectorImport_ModuleMultiPolygon(vectorData[i].Name, vectorData[i].FeatureCollection[0].Geometry.GeometryType, vectorData[i].ID);
+                                importNode = new VectorImport_ModuleMultiPolygon(vectorData[i].Name, "MultiPolygon", vectorData[i].ID);
                             }
                             // TODO: More cases, e.g. 'triangle' data... :-/
                             else
