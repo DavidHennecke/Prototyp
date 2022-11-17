@@ -477,7 +477,7 @@
 
             int Zone = 0;
             double[] geoTrans= null;
-            this.GDALDataSet.GetGeoTransform(geoTrans);
+            GDALDataSet.GetGeoTransform(geoTrans);
             double centerX = (geoTrans[0]);
             double centerY = (geoTrans[3]);
 
@@ -527,7 +527,7 @@
         public void ProjectTo(int EPSG)
         {
             OSGeo.OSR.SpatialReference FromSRS = new OSGeo.OSR.SpatialReference(null);
-            FromSRS.ImportFromEPSG(System.Int32.Parse(this.SpatialReference.GetAttrValue("AUTHORITY", 1)));
+            FromSRS.ImportFromEPSG(System.Int32.Parse(SpatialReference.GetAttrValue("AUTHORITY", 1)));
             string FromSRS_wkt;
             FromSRS.ExportToWkt(out FromSRS_wkt, null);
 
@@ -536,8 +536,15 @@
             string ToWGS84_wkt;
             ToWGS84.ExportToWkt(out ToWGS84_wkt, null);
 
-            this.GDALDataSet = OSGeo.GDAL.Gdal.AutoCreateWarpedVRT(this.GDALDataSet, FromSRS_wkt, ToWGS84_wkt, OSGeo.GDAL.ResampleAlg.GRA_NearestNeighbour, 0);
-
+            try
+            {
+                GDALDataSet = OSGeo.GDAL.Gdal.AutoCreateWarpedVRT(GDALDataSet, FromSRS_wkt, ToWGS84_wkt, OSGeo.GDAL.ResampleAlg.GRA_NearestNeighbour, 0);
+            }
+            catch (System.Exception e)
+            {
+                System.Diagnostics.Debug.WriteLine(e.Message);
+                return;
+            }
         }
         // Imports a GDAL raster dataset.
         public void ImportDataset(OSGeo.GDAL.Dataset DataSet)

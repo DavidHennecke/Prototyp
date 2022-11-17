@@ -99,7 +99,7 @@ namespace Prototyp
                 }
                 catch
                 {
-                    MessageBox.Show("No coordinate system with this EPSG code available in the database.");
+                    MessageBox.Show("No coordinate system with this search info available in the database.");
                 }
             }
         }

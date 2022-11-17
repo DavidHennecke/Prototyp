@@ -898,7 +898,7 @@ namespace Prototyp.Elements
             ProjectTo(EPSG);
         }
 
-        public void ProjectTo(int epsg)
+        public void ProjectTo(int EPSG)
         {
             _busy = true;
             InitGDAL();
@@ -912,7 +912,7 @@ namespace Prototyp.Elements
             FromSRS.SetAxisMappingStrategy(OSGeo.OSR.AxisMappingStrategy.OAMS_TRADITIONAL_GIS_ORDER);
 
             OSGeo.OSR.SpatialReference ToUTM = new OSGeo.OSR.SpatialReference(null);
-            ToUTM.ImportFromEPSG(epsg);
+            ToUTM.ImportFromEPSG(EPSG);
             ToUTM.SetAxisMappingStrategy(OSGeo.OSR.AxisMappingStrategy.OAMS_TRADITIONAL_GIS_ORDER);
 
             OSGeo.OSR.CoordinateTransformation TransformToUTM = new OSGeo.OSR.CoordinateTransformation(FromSRS, ToUTM);
