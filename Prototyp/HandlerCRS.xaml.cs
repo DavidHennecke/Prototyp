@@ -18,8 +18,8 @@ namespace Prototyp
     /// 
     public class EPSGDictionary
     {
-        public string Name;
-        public string EPSG;
+        public string Name { get; set; }
+        public string EPSG { get; set; }
     }
 
     public partial class HandlerCRS : Window
@@ -97,8 +97,8 @@ namespace Prototyp
                     if (IsDigitsOnly(Search_CRS.Text))
                     {
                         reference.ImportFromEPSG(Int32.Parse(Search_CRS.Text));
-                        ListBoxItem lvi = new ListBoxItem();
-                        lvi.Content = reference.GetName() + "         " + "EPSG: " + reference.GetAttrValue("AUTHORITY", 1);
+                        ListViewItem lvi = new ListViewItem();
+                        lvi.Content = new EPSGDictionary { Name = reference.GetName(), EPSG = reference.GetAttrValue("AUTHORITY", 1) };
                         lvi.MouseDoubleClick += (sender, e) => doubleClickTreeBoxItem(sender, e, reference.GetName(), reference.GetAttrValue("AUTHORITY", 1));
                         CRS_List.Items.Add(lvi);
                     }
@@ -108,9 +108,9 @@ namespace Prototyp
                         {
                             if (d.EPSG.ToLower().Contains(Search_CRS.Text.ToLower()) | d.Name.ToLower().Contains(Search_CRS.Text.ToLower()))
                             {
-                                ListBoxItem lvi = new ListBoxItem();
-                                lvi.Content = d.Name + "         " + "EPSG: " + d.EPSG;
-                                lvi.MouseDoubleClick += (sender, e) => doubleClickTreeBoxItem(sender, e, reference.GetName(), reference.GetAttrValue("AUTHORITY", 1));
+                                ListViewItem lvi = new ListViewItem();
+                                lvi.Content = d;
+                                lvi.MouseDoubleClick += (sender, e) => doubleClickTreeBoxItem(sender, e, d.Name, d.EPSG);
                                 CRS_List.Items.Add(lvi);
                             }
                         }

@@ -87,9 +87,19 @@
             </Grid.ColumnDefinitions>
 
             <Border Grid.Column="1" Background="#FF52555C" CornerRadius="2" Margin="2,2,2,2" Grid.ColumnSpan="2">
-                <ListBox x:Name="CRS_List" Background="#FF52555C" Margin="2">
+                <ListView x:Name="CRS_List" Background="#FF52555C" Margin="2">
+                    <ListView.View>
+                        <GridView>
+                            <GridViewColumn Header="Name" Width="500" DisplayMemberBinding="{Binding Name}"/>
+                            <GridViewColumn Header="EPSG" DisplayMemberBinding="{Binding EPSG}"/>
+                        </GridView>
+                    </ListView.View>
+                </ListView>
 
-                </ListBox>
+
+                <!--<ListBox x:Name="CRS_List" Background="#FF52555C" Margin="2">
+
+                </ListBox>-->
             </Border>
         </Grid>
         <StackPanel Grid.Row="7" Orientation="Horizontal" HorizontalAlignment="Right">
