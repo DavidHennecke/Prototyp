@@ -73,6 +73,22 @@ namespace Prototyp
         }
         private void Search_CRS_KeyDown(object sender, KeyEventArgs e)
         {
+            // ---- Build database:
+            //OSGeo.OSR.SpatialReference reference = new OSGeo.OSR.SpatialReference(null);
+            //string Database = "";
+
+            //for (int i = 0; i < 99999; i++)
+            //{
+            //    System.Diagnostics.Debug.WriteLine(i);
+            //    try
+            //    {
+            //        reference.ImportFromEPSG(i);
+            //        Database = Database + reference.GetAttrValue("AUTHORITY", 1) + " && " + reference.GetName() + Environment.NewLine;
+            //    }
+            //    catch { }
+            //}
+            // ---- Build database.
+
             if (e.Key == System.Windows.Input.Key.Enter && Search_CRS.Text != "")
             {
                 string DBString = System.IO.File.ReadAllText(MainWindow.ParentDir.FullName + "\\EPSG database.txt");
@@ -115,6 +131,7 @@ namespace Prototyp
                             }
                         }
                     }
+
                     //else if (Search_CRS.Text.Contains("[")) // Probably WKT string.
                     //{
                     //    string InputText = Search_CRS.Text;
