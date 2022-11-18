@@ -15,6 +15,13 @@ namespace Prototyp
     /// <summary>
     /// Interaction logic for HandlerCRS.xaml
     /// </summary>
+    /// 
+    public class EPSGDictionary
+    {
+        public string Name;
+        public string EPSG;
+    }
+
     public partial class HandlerCRS : Window
     {
         public bool OkayClicked;
@@ -36,7 +43,7 @@ namespace Prototyp
 
         private void Search_CRS_GotFocus(object sender, RoutedEventArgs e)
         {
-            if (Search_CRS.Text == "Search for EPSG/WKT/Proj4 info...")
+            if (Search_CRS.Text == "Search for CRS info...")
             {
                 Search_CRS.Text = "";
             }
@@ -46,7 +53,7 @@ namespace Prototyp
         {
             if (Search_CRS.Text == "")
             {
-                Search_CRS.Text = "Search for EPSG/WKT/Proj4 info...";
+                Search_CRS.Text = "Search for CRS info...";
             }
         }
         private void doubleClickTreeBoxItem(object sender, System.Windows.Input.MouseButtonEventArgs e, string name, string epsg)
@@ -68,9 +75,25 @@ namespace Prototyp
         {
             if (e.Key == System.Windows.Input.Key.Enter && Search_CRS.Text != "")
             {
+                string DBString = System.IO.File.ReadAllText(MainWindow.ParentDir.FullName + "\\EPSG database.txt");
+                string[] DBLines = DBString.Split(Environment.NewLine);
+                List<EPSGDictionary> Database = new List<EPSGDictionary>();
+                foreach (string DBLine in DBLines)
+                {
+                    string[] LineSplit = DBLine.Split(" && ");
+
+                    EPSGDictionary Entry = new EPSGDictionary();
+                    Entry.EPSG = LineSplit[0];
+                    Entry.Name = LineSplit[1];
+
+                    Database.Add(Entry);
+                }
+
                 OSGeo.OSR.SpatialReference reference = new OSGeo.OSR.SpatialReference(null);
                 try
                 {
+                    CRS_List.Items.Clear();
+
                     if (IsDigitsOnly(Search_CRS.Text))
                     {
                         reference.ImportFromEPSG(Int32.Parse(Search_CRS.Text));
@@ -79,23 +102,36 @@ namespace Prototyp
                         lvi.MouseDoubleClick += (sender, e) => doubleClickTreeBoxItem(sender, e, reference.GetName(), reference.GetAttrValue("AUTHORITY", 1));
                         CRS_List.Items.Add(lvi);
                     }
-                    else if (Search_CRS.Text.Contains("[")) // Probably WKT string.
+                    else
                     {
-                        string InputText = Search_CRS.Text;
-                        reference.ImportFromWkt(ref InputText);
-                        ListBoxItem lvi = new ListBoxItem();
-                        lvi.Content = reference.GetName() + "         " + "EPSG: " + reference.GetAttrValue("AUTHORITY", 1);
-                        lvi.MouseDoubleClick += (sender, e) => doubleClickTreeBoxItem(sender, e, reference.GetName(), reference.GetAttrValue("AUTHORITY", 1));
-                        CRS_List.Items.Add(lvi);
+                        foreach(EPSGDictionary d in Database)
+                        {
+                            if (d.EPSG.ToLower().Contains(Search_CRS.Text.ToLower()) | d.Name.ToLower().Contains(Search_CRS.Text.ToLower()))
+                            {
+                                ListBoxItem lvi = new ListBoxItem();
+                                lvi.Content = d.Name + "         " + "EPSG: " + d.EPSG;
+                                lvi.MouseDoubleClick += (sender, e) => doubleClickTreeBoxItem(sender, e, reference.GetName(), reference.GetAttrValue("AUTHORITY", 1));
+                                CRS_List.Items.Add(lvi);
+                            }
+                        }
                     }
-                    else  // Fallback, assume that entered string is proj4.
-                    {
-                        reference.ImportFromProj4(Search_CRS.Text);
-                        ListBoxItem lvi = new ListBoxItem();
-                        lvi.Content = reference.GetName() + "         " + "EPSG: " + reference.GetAttrValue("AUTHORITY", 1);
-                        lvi.MouseDoubleClick += (sender, e) => doubleClickTreeBoxItem(sender, e, reference.GetName(), reference.GetAttrValue("AUTHORITY", 1));
-                        CRS_List.Items.Add(lvi);
-                    }
+                    //else if (Search_CRS.Text.Contains("[")) // Probably WKT string.
+                    //{
+                    //    string InputText = Search_CRS.Text;
+                    //    reference.ImportFromWkt(ref InputText);
+                    //    ListBoxItem lvi = new ListBoxItem();
+                    //    lvi.Content = reference.GetName() + "         " + "EPSG: " + reference.GetAttrValue("AUTHORITY", 1);
+                    //    lvi.MouseDoubleClick += (sender, e) => doubleClickTreeBoxItem(sender, e, reference.GetName(), reference.GetAttrValue("AUTHORITY", 1));
+                    //    CRS_List.Items.Add(lvi);
+                    //}
+                    //else  // Fallback, assume that entered string is proj4.
+                    //{
+                    //    reference.ImportFromProj4(Search_CRS.Text);
+                    //    ListBoxItem lvi = new ListBoxItem();
+                    //    lvi.Content = reference.GetName() + "         " + "EPSG: " + reference.GetAttrValue("AUTHORITY", 1);
+                    //    lvi.MouseDoubleClick += (sender, e) => doubleClickTreeBoxItem(sender, e, reference.GetName(), reference.GetAttrValue("AUTHORITY", 1));
+                    //    CRS_List.Items.Add(lvi);
+                    //}
                 }
                 catch
                 {

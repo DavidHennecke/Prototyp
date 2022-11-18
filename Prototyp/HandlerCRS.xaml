@@ -65,7 +65,7 @@
                 <ColumnDefinition Width="10px"/>
             </Grid.ColumnDefinitions>
             <Border Grid.Column="2" Background="#FF52555C" CornerRadius="2" Margin="2" Focusable="False">
-                <TextBox x:Name="Search_CRS" KeyDown="Search_CRS_KeyDown" GotFocus="Search_CRS_GotFocus" LostFocus="Search_CRS_LostFocus" Background="#FF52555C" Text="Search for EPSG/WKT/Proj4 info..." Margin="5,0,5,0" FontSize="12" VerticalAlignment="Center" HorizontalAlignment="Stretch" TextAlignment="Left" BorderThickness="0" SelectionBrush="#FF52555C"/>
+                <TextBox x:Name="Search_CRS" KeyDown="Search_CRS_KeyDown" GotFocus="Search_CRS_GotFocus" LostFocus="Search_CRS_LostFocus" Background="#FF52555C" Text="Search for CRS info..." Margin="5,0,5,0" FontSize="12" VerticalAlignment="Center" HorizontalAlignment="Stretch" TextAlignment="Left" BorderThickness="0" SelectionBrush="#FF52555C"/>
             </Border>
         </Grid>
         <Grid Grid.Row="5">

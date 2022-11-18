@@ -84,7 +84,7 @@ namespace Prototyp
         private List<ComboItem> ComboSearchItems = new List<ComboItem>();
 
         public string ModulesPath;
-        System.IO.DirectoryInfo ParentDir;
+        public static System.IO.DirectoryInfo ParentDir;
         public NetworkViewModel network = new NetworkViewModel();
 
         public static MainWindow AppWindow;
