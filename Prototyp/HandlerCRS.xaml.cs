@@ -1,5 +1,7 @@
-﻿using System;
+﻿using Prototyp.Elements;
+using System;
 using System.Collections.Generic;
+using System.Data;
 using System.Text;
 using System.Windows;
 using System.Windows.Controls;
@@ -9,6 +11,7 @@ using System.Windows.Input;
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Shapes;
+using System.Xml.Linq;
 
 namespace Prototyp
 {
@@ -32,7 +35,7 @@ namespace Prototyp
 
         private void BtnOkayHandlerCrs_Click(object sender, RoutedEventArgs e)
         {
-            OkayClicked = true;
+            if (this.EPSG.Content.ToString() != "") OkayClicked = true;
             this.Close();
         }
 
@@ -56,10 +59,10 @@ namespace Prototyp
                 Search_CRS.Text = "Search for CRS info...";
             }
         }
-        private void doubleClickTreeBoxItem(object sender, System.Windows.Input.MouseButtonEventArgs e, string name, string epsg)
+        private void doubleClickTreeBoxItem(object sender, System.Windows.Input.MouseButtonEventArgs e, string Name, string EPSG)
         {
-            CrsName.Content = name;
-            EPSG.Content = epsg;
+            CrsName.Content = Name;
+            this.EPSG.Content = EPSG;
         }
         bool IsDigitsOnly(string str)
         {
@@ -73,7 +76,14 @@ namespace Prototyp
         }
         private void Search_CRS_KeyDown(object sender, KeyEventArgs e)
         {
-            // ---- Build database:
+
+        }
+
+        private void Search_CRS_KeyUp(object sender, KeyEventArgs e)
+        {
+            // ---- Build database <begin>
+            // ---- Only here for future reference.
+
             //OSGeo.OSR.SpatialReference reference = new OSGeo.OSR.SpatialReference(null);
             //string Database = "";
 
@@ -87,73 +97,88 @@ namespace Prototyp
             //    }
             //    catch { }
             //}
-            // ---- Build database.
 
-            if (e.Key == System.Windows.Input.Key.Enter && Search_CRS.Text != "")
+            // ---- Build database <end>
+
+            if (e.Key == System.Windows.Input.Key.Enter && CRS_List.Items.Count == 1)
             {
-                string DBString = System.IO.File.ReadAllText(MainWindow.ParentDir.FullName + "\\EPSG database.txt");
-                string[] DBLines = DBString.Split(Environment.NewLine);
-                List<EPSGDictionary> Database = new List<EPSGDictionary>();
-                foreach (string DBLine in DBLines)
+                CRS_List.SelectAll();
+
+                EPSGDictionary TempDict = CRS_List.SelectedValue as EPSGDictionary;
+                CrsName.Content = TempDict.Name;
+                EPSG.Content = TempDict.EPSG;
+
+                return;
+            }
+
+            //if (e.Key == System.Windows.Input.Key.Enter && Search_CRS.Text != "")
+
+            if (!VectorData.FileAccessable(MainWindow.ParentDir.FullName + "\\EPSG database.txt")) return;
+            string DBString = System.IO.File.ReadAllText(MainWindow.ParentDir.FullName + "\\EPSG database.txt");
+            string[] DBLines = DBString.Split(Environment.NewLine);
+            List<EPSGDictionary> Database = new List<EPSGDictionary>();
+            foreach (string DBLine in DBLines)
+            {
+                string[] LineSplit = DBLine.Split(" && ");
+
+                EPSGDictionary Entry = new EPSGDictionary();
+                Entry.EPSG = LineSplit[0];
+                Entry.Name = LineSplit[1];
+
+                Database.Add(Entry);
+            }
+
+            OSGeo.OSR.SpatialReference reference = new OSGeo.OSR.SpatialReference(null);
+            try
+            {
+                CRS_List.Items.Clear();
+
+                if (IsDigitsOnly(Search_CRS.Text))
                 {
-                    string[] LineSplit = DBLine.Split(" && ");
-
-                    EPSGDictionary Entry = new EPSGDictionary();
-                    Entry.EPSG = LineSplit[0];
-                    Entry.Name = LineSplit[1];
-
-                    Database.Add(Entry);
+                    reference.ImportFromEPSG(Int32.Parse(Search_CRS.Text));
+                    ListViewItem lvi = new ListViewItem();
+                    lvi.Content = new EPSGDictionary { Name = reference.GetName(), EPSG = reference.GetAttrValue("AUTHORITY", 1) };
+                    lvi.MouseDoubleClick += (sender, e) => doubleClickTreeBoxItem(sender, e, reference.GetName(), reference.GetAttrValue("AUTHORITY", 1));
+                    CRS_List.Items.Add(lvi);
                 }
-
-                OSGeo.OSR.SpatialReference reference = new OSGeo.OSR.SpatialReference(null);
-                try
+                else
                 {
-                    CRS_List.Items.Clear();
-
-                    if (IsDigitsOnly(Search_CRS.Text))
+                    foreach (EPSGDictionary d in Database)
                     {
-                        reference.ImportFromEPSG(Int32.Parse(Search_CRS.Text));
-                        ListViewItem lvi = new ListViewItem();
-                        lvi.Content = new EPSGDictionary { Name = reference.GetName(), EPSG = reference.GetAttrValue("AUTHORITY", 1) };
-                        lvi.MouseDoubleClick += (sender, e) => doubleClickTreeBoxItem(sender, e, reference.GetName(), reference.GetAttrValue("AUTHORITY", 1));
-                        CRS_List.Items.Add(lvi);
-                    }
-                    else
-                    {
-                        foreach(EPSGDictionary d in Database)
+                        if (d.Name.ToLower().Contains(Search_CRS.Text.ToLower()))
                         {
-                            if (d.EPSG.ToLower().Contains(Search_CRS.Text.ToLower()) | d.Name.ToLower().Contains(Search_CRS.Text.ToLower()))
-                            {
-                                ListViewItem lvi = new ListViewItem();
-                                lvi.Content = d;
-                                lvi.MouseDoubleClick += (sender, e) => doubleClickTreeBoxItem(sender, e, d.Name, d.EPSG);
-                                CRS_List.Items.Add(lvi);
-                            }
+                            ListViewItem lvi = new ListViewItem();
+                            lvi.Content = d;
+                            lvi.MouseDoubleClick += (sender, e) => doubleClickTreeBoxItem(sender, e, d.Name, d.EPSG);
+                            CRS_List.Items.Add(lvi);
                         }
                     }
+                }
 
-                    //else if (Search_CRS.Text.Contains("[")) // Probably WKT string.
-                    //{
-                    //    string InputText = Search_CRS.Text;
-                    //    reference.ImportFromWkt(ref InputText);
-                    //    ListBoxItem lvi = new ListBoxItem();
-                    //    lvi.Content = reference.GetName() + "         " + "EPSG: " + reference.GetAttrValue("AUTHORITY", 1);
-                    //    lvi.MouseDoubleClick += (sender, e) => doubleClickTreeBoxItem(sender, e, reference.GetName(), reference.GetAttrValue("AUTHORITY", 1));
-                    //    CRS_List.Items.Add(lvi);
-                    //}
-                    //else  // Fallback, assume that entered string is proj4.
-                    //{
-                    //    reference.ImportFromProj4(Search_CRS.Text);
-                    //    ListBoxItem lvi = new ListBoxItem();
-                    //    lvi.Content = reference.GetName() + "         " + "EPSG: " + reference.GetAttrValue("AUTHORITY", 1);
-                    //    lvi.MouseDoubleClick += (sender, e) => doubleClickTreeBoxItem(sender, e, reference.GetName(), reference.GetAttrValue("AUTHORITY", 1));
-                    //    CRS_List.Items.Add(lvi);
-                    //}
-                }
-                catch
-                {
-                    MessageBox.Show("No coordinate system with this search info available in the database.");
-                }
+                //else if (Search_CRS.Text.Contains("[")) // Probably WKT string.
+                //{
+                //    string InputText = Search_CRS.Text;
+                //    reference.ImportFromWkt(ref InputText);
+                //    ListBoxItem lvi = new ListBoxItem();
+                //    lvi.Content = reference.GetName() + "         " + "EPSG: " + reference.GetAttrValue("AUTHORITY", 1);
+                //    lvi.MouseDoubleClick += (sender, e) => doubleClickTreeBoxItem(sender, e, reference.GetName(), reference.GetAttrValue("AUTHORITY", 1));
+                //    CRS_List.Items.Add(lvi);
+                //}
+                //else  // Fallback, assume that entered string is proj4.
+                //{
+                //    reference.ImportFromProj4(Search_CRS.Text);
+                //    ListBoxItem lvi = new ListBoxItem();
+                //    lvi.Content = reference.GetName() + "         " + "EPSG: " + reference.GetAttrValue("AUTHORITY", 1);
+                //    lvi.MouseDoubleClick += (sender, e) => doubleClickTreeBoxItem(sender, e, reference.GetName(), reference.GetAttrValue("AUTHORITY", 1));
+                //    CRS_List.Items.Add(lvi);
+                //}
+            }
+            catch
+            {
+                //MessageBox.Show("No coordinate system with this search info available in the database.");
+                ListViewItem lvi = new ListViewItem();
+                lvi.Content = new EPSGDictionary { Name = "No coordinate system with this search info available in the database.", EPSG = "" };
+                CRS_List.Items.Add(lvi);
             }
         }
     }
