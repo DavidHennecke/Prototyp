@@ -96,7 +96,6 @@
                     </ListView.View>
                 </ListView>
 
-
                 <!--<ListBox x:Name="CRS_List" Background="#FF52555C" Margin="2">
 
                 </ListBox>-->

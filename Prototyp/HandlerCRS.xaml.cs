@@ -100,10 +100,30 @@ namespace Prototyp
 
             // ---- Build database <end>
 
-            if (e.Key == System.Windows.Input.Key.Enter && CRS_List.Items.Count == 1)
+            if (e.Key == System.Windows.Input.Key.Down)
             {
-                CRS_List.SelectAll();
+                if (CRS_List.SelectedIndex < CRS_List.Items.Count - 1)
+                {
+                    CRS_List.SelectedIndex++;
+                    CRS_List.ScrollIntoView(CRS_List.SelectedItem);
+                }
 
+                return;
+            }
+
+            if (e.Key == System.Windows.Input.Key.Up)
+            {
+                if (CRS_List.SelectedIndex > 0)
+                {
+                    CRS_List.SelectedIndex--;
+                    CRS_List.ScrollIntoView(CRS_List.SelectedItem);
+                }
+
+                return;
+            }
+
+            if (e.Key == System.Windows.Input.Key.Enter && CRS_List.Items.Count >= 1)
+            {
                 EPSGDictionary TempDict = CRS_List.SelectedValue as EPSGDictionary;
                 CrsName.Content = TempDict.Name;
                 EPSG.Content = TempDict.EPSG;
@@ -154,6 +174,7 @@ namespace Prototyp
                         }
                     }
                 }
+                CRS_List.SelectedIndex = 0;
 
                 //else if (Search_CRS.Text.Contains("[")) // Probably WKT string.
                 //{
