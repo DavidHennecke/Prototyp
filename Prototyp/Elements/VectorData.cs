@@ -833,7 +833,6 @@ namespace Prototyp.Elements
             OSGeo.OGR.Layer InLayer = GetAsLayer();
             OSGeo.OGR.Envelope MyEnvelope = new OSGeo.OGR.Envelope();
             InLayer.GetExtent(MyEnvelope, 0);
-            double centerX = (MyEnvelope.MaxX + MyEnvelope.MinX) / 2;
             double centerY = (MyEnvelope.MaxY + MyEnvelope.MinY) / 2;
 
             _busy = false;
@@ -858,15 +857,14 @@ namespace Prototyp.Elements
             OSGeo.OGR.Envelope MyEnvelope = new OSGeo.OGR.Envelope();
             InLayer.GetExtent(MyEnvelope, 0);
             double centerX = (MyEnvelope.MaxX + MyEnvelope.MinX) / 2;
-            double centerY = (MyEnvelope.MaxY + MyEnvelope.MinY) / 2;
            
-            if (centerY >= 0)
+            if (centerX >= 0)
             {
                 int coordPrev = 0;
                 Zone = 31;
                 for (int coord = 6; coord >= 0 && coord <= 180; coord = coord + 6)
                 {
-                    if (coordPrev <= centerY && centerY <= coord)
+                    if (coordPrev <= centerX && centerX <= coord)
                     {
                         break;
                     }

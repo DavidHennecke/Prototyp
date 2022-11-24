@@ -481,13 +481,13 @@
             double centerX = (geoTrans[0]);
             double centerY = (geoTrans[3]);
 
-            if (centerY >= 0)
+            if (centerX >= 0)
             {
                 int coordPrev = 0;
                 Zone = 31;
                 for (int coord = 6; coord >= 0 && coord <= 180; coord = coord + 6)
                 {
-                    if (coordPrev <= centerY && centerY <= coord)
+                    if (coordPrev <= centerX && centerX <= coord)
                     {
                         break;
                     }
@@ -531,14 +531,15 @@
             string FromSRS_wkt;
             FromSRS.ExportToWkt(out FromSRS_wkt, null);
 
-            OSGeo.OSR.SpatialReference ToWGS84 = new OSGeo.OSR.SpatialReference(null);
-            ToWGS84.ImportFromEPSG(EPSG);
-            string ToWGS84_wkt;
-            ToWGS84.ExportToWkt(out ToWGS84_wkt, null);
+            OSGeo.OSR.SpatialReference ToSRS= new OSGeo.OSR.SpatialReference(null);
+            ToSRS.ImportFromEPSG(EPSG);
+            string ToSRS_wkt;
+            ToSRS.ExportToWkt(out ToSRS_wkt, null);
 
             try
             {
-                GDALDataSet = OSGeo.GDAL.Gdal.AutoCreateWarpedVRT(GDALDataSet, FromSRS_wkt, ToWGS84_wkt, OSGeo.GDAL.ResampleAlg.GRA_NearestNeighbour, 0);
+                GDALDataSet = OSGeo.GDAL.Gdal.AutoCreateWarpedVRT(GDALDataSet, FromSRS_wkt, ToSRS_wkt, OSGeo.GDAL.ResampleAlg.GRA_NearestNeighbour, 0);
+                //OSGeo.GDAL.Gdal.ReprojectImage(GDALDataSet, GDALDataSet, FromSRS_wkt, ToSRS_wkt, OSGeo.GDAL.ResampleAlg.GRA_NearestNeighbour,0.0,0.0,null, null, null);
             }
             catch (System.Exception e)
             {

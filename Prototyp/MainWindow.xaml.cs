@@ -449,6 +449,8 @@ namespace Prototyp
 
             tempVectorData.SpatialReference.ImportFromEPSG(Int32.Parse(handlerCRS.EPSG.Content.ToString()));
             tempVectorData.TransformToWGS84();
+            tempVectorData.ProjectToETRS89UTM();
+            MessageBox.Show(tempVectorData.SpatialReference.GetAttrValue("AUTHORITY", 1));
 
             return tempVectorData;
         }
