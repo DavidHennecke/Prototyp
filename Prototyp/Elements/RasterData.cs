@@ -523,7 +523,17 @@
             EPSG = EPSG + getUTMZone();
             ProjectTo(EPSG);
         }
+        public static int ProgressFunc(double Complete, System.IntPtr Message, System.IntPtr Data)
+        {
+            System.Console.Write("Processing ... " + Complete * 100 + "% Completed.");
+            if (Message != System.IntPtr.Zero)
+                System.Console.Write(" Message:" + System.Runtime.InteropServices.Marshal.PtrToStringAnsi(Message));
+            if (Data != System.IntPtr.Zero)
+                System.Console.Write(" Data:" + System.Runtime.InteropServices.Marshal.PtrToStringAnsi(Data));
 
+            System.Console.WriteLine("");
+            return 1;
+        }
         public void ProjectTo(int EPSG)
         {
             OSGeo.OSR.SpatialReference FromSRS = new OSGeo.OSR.SpatialReference(null);
@@ -538,8 +548,22 @@
 
             try
             {
-                GDALDataSet = OSGeo.GDAL.Gdal.AutoCreateWarpedVRT(GDALDataSet, FromSRS_wkt, ToSRS_wkt, OSGeo.GDAL.ResampleAlg.GRA_NearestNeighbour, 0);
-                //OSGeo.GDAL.Gdal.ReprojectImage(GDALDataSet, GDALDataSet, FromSRS_wkt, ToSRS_wkt, OSGeo.GDAL.ResampleAlg.GRA_NearestNeighbour,0.0,0.0,null, null, null);
+                OSGeo.GDAL.Driver MyDriver = OSGeo.GDAL.Gdal.GetDriverByName(_fileType);
+                string RandomFilename = System.IO.Path.GetRandomFileName();
+                OSGeo.GDAL.Dataset vrtDataset;
+                //string[] options = new string[] {" - s_srs", $"epsg:{System.Int32.Parse(SpatialReference.GetAttrValue("AUTHORITY", 1))}", " - t_srs", $"epsg:{EPSG}" };
+                string[] options = new string[] {"-of", "GTiff"};
+                //OSGeo.GDAL.Dataset[] ds = new OSGeo.GDAL.Dataset[1];
+                //ds[0] = GDALDataSet;
+
+                vrtDataset = MyDriver.Create("/vsimem/" + RandomFilename, _rasterXSize, _rasterYSize, _rasterCount, OSGeo.GDAL.DataType.GDT_Float64, null);
+                vrtDataset = OSGeo.GDAL.Gdal.AutoCreateWarpedVRT(GDALDataSet, FromSRS_wkt, ToSRS_wkt, OSGeo.GDAL.ResampleAlg.GRA_NearestNeighbour, 0);
+                // OSGeo.GDAL.Gdal.ReprojectImage(GDALDataSet, MyDataSet, FromSRS_wkt, ToSRS_wkt, OSGeo.GDAL.ResampleAlg.GRA_NearestNeighbour,0.0,0.0,null, null, null);
+                //OSGeo.GDAL.Gdal.Warp(MyDataSet, ds, new OSGeo.GDAL.GDALWarpAppOptions(options), new OSGeo.GDAL.Gdal.GDALProgressFuncDelegate(ProgressFunc), "Sample Data");
+                RandomFilename = System.IO.Path.GetRandomFileName();
+                GDALDataSet = OSGeo.GDAL.Gdal.wrapper_GDALTranslate("/vsimem/" + RandomFilename, vrtDataset, new OSGeo.GDAL.GDALTranslateOptions(options), new OSGeo.GDAL.Gdal.GDALProgressFuncDelegate(ProgressFunc), "Sample Data");
+                vrtDataset.Dispose();
+                //Was passiert mit dem vorherigen GDALDataset Object?? Memory leak????
             }
             catch (System.Exception e)
             {

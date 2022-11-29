@@ -486,10 +486,12 @@ namespace Prototyp
             if (!handlerCRS.OkayClicked) return tempRasterData;
             if (handlerCRS.EPSG.Content.ToString() == "undefined") return tempRasterData;
 
-            if (OSGeoSRS.GetAttrValue("AUTHORITY", 1) != null) if (Int16.Parse(OSGeoSRS.GetAttrValue("AUTHORITY", 1)) == 4326) return tempRasterData;
+            //if (OSGeoSRS.GetAttrValue("AUTHORITY", 1) != null) if (Int16.Parse(OSGeoSRS.GetAttrValue("AUTHORITY", 1)) == 4326) return tempRasterData;
 
             tempRasterData.SpatialReference.ImportFromEPSG(Int32.Parse(handlerCRS.EPSG.Content.ToString()));
+            MessageBox.Show(tempRasterData.SpatialReference.GetAttrValue("AUTHORITY", 1));
             tempRasterData.TransformToWGS84();
+            MessageBox.Show(tempRasterData.SpatialReference.GetAttrValue("AUTHORITY", 1));
 
             return tempRasterData;
         }
