@@ -523,6 +523,7 @@
             EPSG = EPSG + getUTMZone();
             ProjectTo(EPSG);
         }
+
         public static int ProgressFunc(double Complete, System.IntPtr Message, System.IntPtr Data)
         {
             System.Console.Write("Processing ... " + Complete * 100 + "% Completed.");
@@ -532,8 +533,9 @@
                 System.Console.Write(" Data:" + System.Runtime.InteropServices.Marshal.PtrToStringAnsi(Data));
 
             System.Console.WriteLine("");
-            return 1;
+            return (1);
         }
+
         public void ProjectTo(int EPSG)
         {
             OSGeo.OSR.SpatialReference FromSRS = new OSGeo.OSR.SpatialReference(null);
