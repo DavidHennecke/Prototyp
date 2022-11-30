@@ -826,7 +826,6 @@ namespace Prototyp.Elements
         public int isNorth()
         {
             _busy = true;
-
             InitGDAL();
 
             OSGeo.OGR.Driver ShapeDriver = OSGeo.OGR.Ogr.GetDriverByName("ESRI Shapefile");
@@ -834,17 +833,17 @@ namespace Prototyp.Elements
             OSGeo.OGR.Envelope MyEnvelope = new OSGeo.OGR.Envelope();
             InLayer.GetExtent(MyEnvelope, 0);
             double centerY = (MyEnvelope.MaxY + MyEnvelope.MinY) / 2;
-
-            _busy = false;
-
             if (centerY < 0)
             {
-                return(0);
+                _busy = false;
+                return (0);
             }
             else
             {
-                return(1);
+                _busy = false;
+                return (1);
             }
+            
         }
         public int getUTMZone()
         {
@@ -857,7 +856,8 @@ namespace Prototyp.Elements
             OSGeo.OGR.Envelope MyEnvelope = new OSGeo.OGR.Envelope();
             InLayer.GetExtent(MyEnvelope, 0);
             double centerX = (MyEnvelope.MaxX + MyEnvelope.MinX) / 2;
-           
+            double centerY = (MyEnvelope.MaxY + MyEnvelope.MinY) / 2;
+
             if (centerX >= 0)
             {
                 int coordPrev = 0;
@@ -889,10 +889,21 @@ namespace Prototyp.Elements
             return (Zone);
         }
 
-        public void ProjectToETRS89UTM()
+        public void ProjectToWGS84UTM()
         {
-            int EPSG = 25800;
-            EPSG = EPSG + getUTMZone();
+            int EPSG;
+            int north = isNorth();
+            if (north == 0)
+            {
+                EPSG = 32700;
+                EPSG = EPSG + getUTMZone();
+            }
+            else
+            {
+                EPSG = 32600;
+                EPSG = EPSG + getUTMZone();
+            }
+            
             ProjectTo(EPSG);
         }
 

@@ -449,8 +449,9 @@ namespace Prototyp
 
             tempVectorData.SpatialReference.ImportFromEPSG(Int32.Parse(handlerCRS.EPSG.Content.ToString()));
             tempVectorData.TransformToWGS84();
-            tempVectorData.ProjectToETRS89UTM();
-            MessageBox.Show(tempVectorData.SpatialReference.GetAttrValue("AUTHORITY", 1));
+            //MessageBox.Show(tempVectorData.SpatialReference.GetAttrValue("AUTHORITY", 1));
+            //tempVectorData.ProjectToWGS84UTM();
+            //MessageBox.Show(tempVectorData.SpatialReference.GetAttrValue("AUTHORITY", 1));
 
             return tempVectorData;
         }
@@ -491,6 +492,8 @@ namespace Prototyp
             tempRasterData.SpatialReference.ImportFromEPSG(Int32.Parse(handlerCRS.EPSG.Content.ToString()));
             MessageBox.Show(tempRasterData.SpatialReference.GetAttrValue("AUTHORITY", 1));
             tempRasterData.TransformToWGS84();
+            MessageBox.Show(tempRasterData.SpatialReference.GetAttrValue("AUTHORITY", 1));
+            tempRasterData.ProjectToWGS84UTM();
             MessageBox.Show(tempRasterData.SpatialReference.GetAttrValue("AUTHORITY", 1));
 
             return tempRasterData;

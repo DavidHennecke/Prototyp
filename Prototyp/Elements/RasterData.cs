@@ -470,6 +470,26 @@
             return (Result);
         }
 
+        public int isNorth()
+        {
+            _busy = true;
+            InitGDAL();
+
+            double[] geoTrans = null;
+            GDALDataSet.GetGeoTransform(geoTrans);
+            double centerY = (geoTrans[3]);
+            if (centerY < 0)
+            {
+                _busy = false;
+                return (0);
+            }
+            else
+            {
+                _busy = false;
+                return (1);
+            }
+
+        }
         public int getUTMZone()
         {
             _busy = true;
@@ -517,10 +537,21 @@
             ProjectTo(4326);
         }
 
-        public void ProjectToETRS89UTM()
+        public void ProjectToWGS84UTM()
         {
-            int EPSG = 25800;
-            EPSG = EPSG + getUTMZone();
+            int EPSG;
+            int north = isNorth();
+            if (north == 0)
+            {
+                EPSG = 32700;
+                EPSG = EPSG + getUTMZone();
+            }
+            else
+            {
+                EPSG = 32600;
+                EPSG = EPSG + getUTMZone();
+            }
+
             ProjectTo(EPSG);
         }
 
