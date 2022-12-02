@@ -238,6 +238,14 @@
             if (CreateCapByFileType()) MyDriver = OSGeo.GDAL.Gdal.GetDriverByName(_fileType); else MyDriver = OSGeo.GDAL.Gdal.GetDriverByName("GTiff");
 
             OSGeo.GDAL.Dataset MyDataSet;
+            //string path = System.IO.Directory.GetCurrentDirectory();
+            //System.IO.DirectoryInfo ParentDir = System.IO.Directory.GetParent(path);
+            //ParentDir = System.IO.Directory.GetParent(ParentDir.FullName);
+            //ParentDir = System.IO.Directory.GetParent(ParentDir.FullName);
+            //if (ParentDir.ToString().EndsWith("bin")) ParentDir = System.IO.Directory.GetParent(ParentDir.FullName);
+            //path = ParentDir.FullName + "\\temp";
+            //string RandomFilename = System.IO.Path.GetRandomFileName();
+            //MyDataSet = MyDriver.Create(ParentDir+RandomFilename, _rasterXSize, _rasterYSize, _rasterCount, OSGeo.GDAL.DataType.GDT_Float64, null);
             MyDataSet = MyDriver.Create("/vsimem/Temporary", _rasterXSize, _rasterYSize, _rasterCount, OSGeo.GDAL.DataType.GDT_Float64, null);
             MyDataSet = PutData(MyDataSet);
 

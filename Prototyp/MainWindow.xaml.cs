@@ -1385,8 +1385,8 @@ namespace Prototyp
                 foreach(Prototyp.ComboItem Item in chooseModuleWindow.selectedModuleList)
                 {
                     System.IO.FileInfo DirInfo = new System.IO.FileInfo(Item.IconPath);
-                    string parentDir = DirInfo.Directory.Name;
-                    CreateButton(Item.ToolName, dockPanel.Name, parentDir);
+                    string parentDir = DirInfo.Directory.Parent.Name;
+                    CreateButton(Item.ToolName, dockPanel.Name, parentDir+ "\\");
                 }
                 
                 SaveSettings();
