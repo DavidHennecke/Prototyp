@@ -383,7 +383,8 @@ namespace Prototyp.Elements
             OSGeo.OGR.Driver MyDriver = OSGeo.OGR.Ogr.GetDriverByName("ESRI Shapefile");
             string RandomFilename = System.IO.Path.GetRandomFileName();
             OSGeo.OGR.DataSource MyDS = MyDriver.CreateDataSource("/vsimem/" + RandomFilename, new string[] { });
-            OSGeo.OGR.Layer MyLayer = MyDS.CreateLayer(_name + MyDS.GetLayerCount().ToString(), _SRS, OSGeo.OGR.wkbGeometryType.wkbUnknown, new string[] { });
+            //OSGeo.OGR.Layer MyLayer = MyDS.CreateLayer(_name + MyDS.GetLayerCount().ToString(), _SRS, OSGeo.OGR.wkbGeometryType.wkbUnknown, new string[] { });
+            OSGeo.OGR.Layer MyLayer = MyDS.CreateLayer(_name, _SRS, OSGeo.OGR.wkbGeometryType.wkbUnknown, new string[] { });
             OSGeo.OGR.FeatureDefn MyFeatureDefn = MyLayer.GetLayerDefn();
             OSGeo.OGR.Feature MyFeature;
             OSGeo.OGR.FieldDefn MyFieldDefn = null;
@@ -823,7 +824,7 @@ namespace Prototyp.Elements
             ProjectTo(4326);
         }
 
-        public int isNorth()
+        public bool isNorth()
         {
             _busy = true;
             InitGDAL();
@@ -833,15 +834,15 @@ namespace Prototyp.Elements
             OSGeo.OGR.Envelope MyEnvelope = new OSGeo.OGR.Envelope();
             InLayer.GetExtent(MyEnvelope, 0);
             double centerY = (MyEnvelope.MaxY + MyEnvelope.MinY) / 2;
+
+            _busy = false;
             if (centerY < 0)
             {
-                _busy = false;
-                return (0);
+                return (false);
             }
             else
             {
-                _busy = false;
-                return (1);
+                return (true);
             }
             
         }
@@ -856,7 +857,6 @@ namespace Prototyp.Elements
             OSGeo.OGR.Envelope MyEnvelope = new OSGeo.OGR.Envelope();
             InLayer.GetExtent(MyEnvelope, 0);
             double centerX = (MyEnvelope.MaxX + MyEnvelope.MinX) / 2;
-            double centerY = (MyEnvelope.MaxY + MyEnvelope.MinY) / 2;
 
             if (centerX >= 0)
             {
@@ -892,15 +892,14 @@ namespace Prototyp.Elements
         public void ProjectToWGS84UTM()
         {
             int EPSG;
-            int north = isNorth();
-            if (north == 0)
+            if (isNorth())
             {
-                EPSG = 32700;
+                EPSG = 32600;
                 EPSG = EPSG + getUTMZone();
             }
             else
             {
-                EPSG = 32600;
+                EPSG = 32700;
                 EPSG = EPSG + getUTMZone();
             }
             
@@ -927,7 +926,7 @@ namespace Prototyp.Elements
             OSGeo.OSR.CoordinateTransformation TransformToUTM = new OSGeo.OSR.CoordinateTransformation(FromSRS, ToUTM);
             string RandomFilename = System.IO.Path.GetRandomFileName();
             OSGeo.OGR.DataSource OutDS = ShapeDriver.CreateDataSource("/vsimem/" + RandomFilename, new string[] { });
-            OSGeo.OGR.Layer OutLayer = OutDS.CreateLayer(LayerName + "_", ToUTM, InLayer.GetGeomType(), new string[] { });
+            OSGeo.OGR.Layer OutLayer = OutDS.CreateLayer(LayerName, ToUTM, InLayer.GetGeomType(), new string[] { });
 
             OSGeo.OGR.FeatureDefn InFeatureDefn = InLayer.GetLayerDefn();
 

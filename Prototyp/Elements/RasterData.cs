@@ -234,19 +234,14 @@
         {
             _busy = true;
 
+            string RandomFilename = System.IO.Path.GetRandomFileName();
+
             OSGeo.GDAL.Driver MyDriver;
             if (CreateCapByFileType()) MyDriver = OSGeo.GDAL.Gdal.GetDriverByName(_fileType); else MyDriver = OSGeo.GDAL.Gdal.GetDriverByName("GTiff");
 
             OSGeo.GDAL.Dataset MyDataSet;
-            //string path = System.IO.Directory.GetCurrentDirectory();
-            //System.IO.DirectoryInfo ParentDir = System.IO.Directory.GetParent(path);
-            //ParentDir = System.IO.Directory.GetParent(ParentDir.FullName);
-            //ParentDir = System.IO.Directory.GetParent(ParentDir.FullName);
-            //if (ParentDir.ToString().EndsWith("bin")) ParentDir = System.IO.Directory.GetParent(ParentDir.FullName);
-            //path = ParentDir.FullName + "\\temp";
-            //string RandomFilename = System.IO.Path.GetRandomFileName();
-            //MyDataSet = MyDriver.Create(ParentDir+RandomFilename, _rasterXSize, _rasterYSize, _rasterCount, OSGeo.GDAL.DataType.GDT_Float64, null);
-            MyDataSet = MyDriver.Create("/vsimem/Temporary", _rasterXSize, _rasterYSize, _rasterCount, OSGeo.GDAL.DataType.GDT_Float64, null);
+            RandomFilename = System.IO.Path.GetRandomFileName();
+            MyDataSet = MyDriver.Create("/vsimem/" + RandomFilename, _rasterXSize, _rasterYSize, _rasterCount, OSGeo.GDAL.DataType.GDT_Float64, null);
             MyDataSet = PutData(MyDataSet);
 
             _busy = false;
@@ -478,36 +473,31 @@
             return (Result);
         }
 
-        public int isNorth()
+        public bool isNorth()
         {
             _busy = true;
             InitGDAL();
 
-            double[] geoTrans = null;
-            GDALDataSet.GetGeoTransform(geoTrans);
-            double centerY = (geoTrans[3]);
+            double centerY = (_geoTransform[3]);
+            _busy = false;
             if (centerY < 0)
             {
-                _busy = false;
-                return (0);
+                return (false);
             }
             else
             {
-                _busy = false;
-                return (1);
+                return (true);
             }
-
         }
+
         public int getUTMZone()
         {
             _busy = true;
             InitGDAL();
 
             int Zone = 0;
-            double[] geoTrans= null;
-            GDALDataSet.GetGeoTransform(geoTrans);
-            double centerX = (geoTrans[0]);
-            double centerY = (geoTrans[3]);
+
+            double centerX = (_geoTransform[0]);
 
             if (centerX >= 0)
             {
@@ -548,15 +538,15 @@
         public void ProjectToWGS84UTM()
         {
             int EPSG;
-            int north = isNorth();
-            if (north == 0)
+
+            if (isNorth())
             {
-                EPSG = 32700;
+                EPSG = 32600;
                 EPSG = EPSG + getUTMZone();
             }
             else
             {
-                EPSG = 32600;
+                EPSG = 32700;
                 EPSG = EPSG + getUTMZone();
             }
 
@@ -592,19 +582,13 @@
                 OSGeo.GDAL.Driver MyDriver = OSGeo.GDAL.Gdal.GetDriverByName(_fileType);
                 string RandomFilename = System.IO.Path.GetRandomFileName();
                 OSGeo.GDAL.Dataset vrtDataset;
-                //string[] options = new string[] {" - s_srs", $"epsg:{System.Int32.Parse(SpatialReference.GetAttrValue("AUTHORITY", 1))}", " - t_srs", $"epsg:{EPSG}" };
                 string[] options = new string[] {"-of", "GTiff"};
-                //OSGeo.GDAL.Dataset[] ds = new OSGeo.GDAL.Dataset[1];
-                //ds[0] = GDALDataSet;
 
                 vrtDataset = MyDriver.Create("/vsimem/" + RandomFilename, _rasterXSize, _rasterYSize, _rasterCount, OSGeo.GDAL.DataType.GDT_Float64, null);
                 vrtDataset = OSGeo.GDAL.Gdal.AutoCreateWarpedVRT(GDALDataSet, FromSRS_wkt, ToSRS_wkt, OSGeo.GDAL.ResampleAlg.GRA_NearestNeighbour, 0);
-                // OSGeo.GDAL.Gdal.ReprojectImage(GDALDataSet, MyDataSet, FromSRS_wkt, ToSRS_wkt, OSGeo.GDAL.ResampleAlg.GRA_NearestNeighbour,0.0,0.0,null, null, null);
-                //OSGeo.GDAL.Gdal.Warp(MyDataSet, ds, new OSGeo.GDAL.GDALWarpAppOptions(options), new OSGeo.GDAL.Gdal.GDALProgressFuncDelegate(ProgressFunc), "Sample Data");
                 RandomFilename = System.IO.Path.GetRandomFileName();
                 GDALDataSet = OSGeo.GDAL.Gdal.wrapper_GDALTranslate("/vsimem/" + RandomFilename, vrtDataset, new OSGeo.GDAL.GDALTranslateOptions(options), new OSGeo.GDAL.Gdal.GDALProgressFuncDelegate(ProgressFunc), "Sample Data");
                 vrtDataset.Dispose();
-                //Was passiert mit dem vorherigen GDALDataset Object?? Memory leak????
             }
             catch (System.Exception e)
             {
