@@ -11,6 +11,7 @@ namespace Prototyp.Elements
         public static Node_Module Launch(string XMLPath, string Url, string ModuleName = "", VorteXML constructXML = null, bool DoLaunch = true, string ModulePath = "")
         {
             XMLPath = XMLPath.Replace("\\", "/");
+            ModulePath = ModulePath.Replace("\\", "/");
 
             GrpcClient.ControlConnector.ControlConnectorClient grpcConnection;
 
@@ -19,7 +20,7 @@ namespace Prototyp.Elements
             System.Diagnostics.Process moduleProcess = new System.Diagnostics.Process();
 
             //Assume XML path is the same as binary path - will be checked later, after XML has been read.
-            System.Diagnostics.ProcessStartInfo moduleProcessInfo = new System.Diagnostics.ProcessStartInfo(XMLPath + ".exe", Url.Substring(Url.LastIndexOf(":") + 1 ));
+            System.Diagnostics.ProcessStartInfo moduleProcessInfo = new System.Diagnostics.ProcessStartInfo(ModulePath, Url.Substring(Url.LastIndexOf(":") + 1 ));
             moduleProcessInfo.UseShellExecute = false; // 'UseShellExecute = true' would be available only on the Windows platform.
             moduleProcessInfo.LoadUserProfile = true;
             moduleProcessInfo.WorkingDirectory = XMLPath.Substring(0, XMLPath.LastIndexOf("/"));
@@ -59,9 +60,12 @@ namespace Prototyp.Elements
                 if (nodeModule.StdLib)
                 {
                     //Find module folder
-                    moduleProcessInfo.FileName = ModulePath.Replace("\\","/") + "/stdLib.exe";
+                    moduleProcessInfo.FileName =  ModulePath + "/stdLib.exe";
                     moduleProcessInfo.Arguments = moduleProcessInfo.Arguments + " name=" + nodeModule.Name;
                     System.Diagnostics.Trace.WriteLine("Standard library module found. Launching \"" + nodeModule.Name + "\" from " + moduleProcessInfo.FileName);
+                } else
+                {
+                    moduleProcessInfo.FileName = XMLPath + ".exe";
                 }
 
                 moduleProcessInfo.CreateNoWindow = !nodeModule.ShowGUI;
