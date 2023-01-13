@@ -79,6 +79,7 @@ namespace Prototyp.Modules
         private System.Diagnostics.Process _Process;
         private string _Url;
         private bool _showGUI = false;
+        private bool _stdLib = false;
 
         public NodeProgress Status;
 
@@ -140,6 +141,12 @@ namespace Prototyp.Modules
             set { _showGUI = value; }
         }
 
+        public bool StdLib
+        {
+            get { return (_stdLib); }
+            set { _stdLib = value; }
+        }
+
         // Constructors --------------------------------------------------------------------
 
         // Parameterless constructor.
@@ -161,6 +168,7 @@ namespace Prototyp.Modules
             _Process = process;            
             _GrpcConnection = grpcConnection;
             _showGUI = newModule.ShowGUI;
+            _stdLib = newModule.StdLib;
             Status = NodeProgress.Waiting; // Korrekt?
 
             ParseXML(newModule, true, ShowGUI);
@@ -174,6 +182,7 @@ namespace Prototyp.Modules
             _Url = url;
             _Process = process;
             _GrpcConnection = grpcConnection;
+            _stdLib = XML.StdLib;
             Status = NodeProgress.Waiting; // Korrekt?
 
             ParseXML(XML, true, ShowGUI);

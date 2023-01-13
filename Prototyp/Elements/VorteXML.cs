@@ -21,6 +21,7 @@
         private string _EditorVersion;
         private string _NodeTitle;
         private bool _showGUI;
+        private bool _stdLib;
 
         public ToolRow[] ToolRows;
 
@@ -153,6 +154,12 @@
             set { _showGUI = value; }
         }
 
+        public bool StdLib
+        {
+            get { return (_stdLib); }
+            set { _stdLib = value; }
+        }
+
         //-----------------------------------------------------------------------------------------------------
         // Constructors
 
@@ -210,6 +217,10 @@
                         if (attribs.Name == "showGUI")
                         {
                             if (attribs.Value == "true") _showGUI = true; else _showGUI = false;
+                        }
+                        if (attribs.Name == "stdLib")
+                        {
+                            if (attribs.Value == "true") _stdLib = true; else _stdLib = false;
                         }
                     }
                 }

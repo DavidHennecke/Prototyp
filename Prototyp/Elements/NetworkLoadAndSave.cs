@@ -469,7 +469,7 @@ namespace Prototyp.Elements
                 string Url = "https://localhost:" + PrepPorts[i].ToString();
                 string CurrentPath = ModulesPath + "/" + m.Name + "/" + m.Name;
 
-                Node_Module nodeModule = Prototyp.Elements.BinaryLauncher.Launch(CurrentPath, Url, m.Name, constructXML);
+                Node_Module nodeModule = Prototyp.Elements.BinaryLauncher.Launch(CurrentPath, Url, m.Name, constructXML, ModulePath:ModulesPath);
 
                 nodeModule.Position = m.Position;
                 nodeModule.PathXML = CurrentPath + ".xml";

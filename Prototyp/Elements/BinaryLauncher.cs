@@ -2,14 +2,15 @@
 using System;
 using System.Collections.Generic;
 using System.Text;
+using System.Windows;
 
 namespace Prototyp.Elements
 {
     public class BinaryLauncher
     {
-        public static Node_Module Launch(string BinaryPath, string Url, string ModuleName = "", VorteXML constructXML = null, bool DoLaunch = true)
+        public static Node_Module Launch(string XMLPath, string Url, string ModuleName = "", VorteXML constructXML = null, bool DoLaunch = true, string ModulePath = "")
         {
-            BinaryPath = BinaryPath.Replace("\\", "/");
+            XMLPath = XMLPath.Replace("\\", "/");
 
             GrpcClient.ControlConnector.ControlConnectorClient grpcConnection;
 
@@ -17,10 +18,11 @@ namespace Prototyp.Elements
 
             System.Diagnostics.Process moduleProcess = new System.Diagnostics.Process();
 
-            System.Diagnostics.ProcessStartInfo moduleProcessInfo = new System.Diagnostics.ProcessStartInfo(BinaryPath + ".exe", Url.Substring(Url.LastIndexOf(":") + 1));
+            //Assume XML path is the same as binary path - will be checked later, after XML has been read.
+            System.Diagnostics.ProcessStartInfo moduleProcessInfo = new System.Diagnostics.ProcessStartInfo(XMLPath + ".exe", Url.Substring(Url.LastIndexOf(":") + 1 ));
             moduleProcessInfo.UseShellExecute = false; // 'UseShellExecute = true' would be available only on the Windows platform.
             moduleProcessInfo.LoadUserProfile = true;
-            moduleProcessInfo.WorkingDirectory = BinaryPath.Substring(0, BinaryPath.LastIndexOf("/"));
+            moduleProcessInfo.WorkingDirectory = XMLPath.Substring(0, XMLPath.LastIndexOf("/"));
             moduleProcess.StartInfo = moduleProcessInfo;
             try
             {
@@ -47,11 +49,19 @@ namespace Prototyp.Elements
 
                 if (ModuleName == "")
                 {
-                    nodeModule = new Node_Module(BinaryPath + ".xml", grpcConnection, Url, moduleProcess);
+                    nodeModule = new Node_Module(XMLPath + ".xml", grpcConnection, Url, moduleProcess);
                 }
                 else
                 {
                     nodeModule = new Node_Module(constructXML, ModuleName, grpcConnection, Url, moduleProcess);
+                }
+
+                if (nodeModule.StdLib)
+                {
+                    //Find module folder
+                    moduleProcessInfo.FileName = ModulePath.Replace("\\","/") + "/stdLib.exe";
+                    moduleProcessInfo.Arguments = moduleProcessInfo.Arguments + " name=" + nodeModule.Name;
+                    System.Diagnostics.Trace.WriteLine("Standard library module found. Launching \"" + nodeModule.Name + "\" from " + moduleProcessInfo.FileName);
                 }
 
                 moduleProcessInfo.CreateNoWindow = !nodeModule.ShowGUI;

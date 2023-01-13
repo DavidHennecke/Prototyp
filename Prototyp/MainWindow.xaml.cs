@@ -369,7 +369,7 @@ namespace Prototyp
             }
         }
 
-        private void importModule(string BinaryPath)
+        private void importModule(string XMLPath)
         {
             //Find lowest available port
             int port = Node_Module.GetNextPort(BASEPORT);
@@ -386,7 +386,7 @@ namespace Prototyp
 
             string Url = "https://localhost:" + port.ToString();
 
-            Node_Module nodeModule = Prototyp.Elements.BinaryLauncher.Launch(BinaryPath, Url, DoLaunch: DoLaunch);
+            Node_Module nodeModule = Prototyp.Elements.BinaryLauncher.Launch(XMLPath, Url, DoLaunch: DoLaunch, ModulePath:ModulesPath);
             ElapsedStarts++;
 
             //Node Position
