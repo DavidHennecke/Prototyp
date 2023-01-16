@@ -1,0 +1,53 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<root xmlns:Element="Element" xmlns:Raster="Raster" xmlns:Vector="Vector" xmlns:Table="Table" xmlns:Float="Float" xmlns:Control="Control" xmlns:Value="Value">
+<Node style="default" editorVersion="0.1" showGUI="false" stdLib = "true">
+	<NodeTitle>Within(Polygon)</NodeTitle>
+	<NodeElements>
+		<Element:Input rowNr="1" name="Input(Point)">
+			<InputTypes>
+				<Vector:Point />
+			</InputTypes>
+		</Element:Input>
+		<Element:Input rowNr="2" name="Input(Line)">
+			<InputTypes>
+				<Vector:Line />
+			</InputTypes>
+		</Element:Input>
+		<Element:Input rowNr="3" name="Input(Polygon)">
+			<InputTypes>
+				<Vector:Polygon />
+			</InputTypes>
+		</Element:Input>
+		<Element:Input rowNr="4" name="Input(MultiPolygon)">
+			<InputTypes>
+				<Vector:MultiPolygon />
+			</InputTypes>
+		</Element:Input>
+		<Element:Input rowNr="5" name="Mask(Polygon)">
+			<InputTypes>
+				<Vector:Polygon />
+			</InputTypes>
+		</Element:Input>
+		<Element:Output rowNr="6" name="Output(Point)">
+			<OutputTypes>
+				<Vector:Point />
+			</OutputTypes>
+		</Element:Output>
+		<Element:Output rowNr="7" name="Output(Line)">
+			<OutputTypes>
+				<Vector:Line />
+			</OutputTypes>
+		</Element:Output>
+		<Element:Output rowNr="8" name="Output(Polygon)">
+			<OutputTypes>
+				<Vector:Polygon />
+			</OutputTypes>
+		</Element:Output>
+		<Element:Output rowNr="9" name="Output(MultiPolygon)">
+			<OutputTypes>
+				<Vector:MultiPolygon />
+			</OutputTypes>
+		</Element:Output>
+	</NodeElements>
+</Node>
+</root>
