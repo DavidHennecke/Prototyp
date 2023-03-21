@@ -55,12 +55,13 @@ namespace Prototyp.Elements
                 else
                 {
                     nodeModule = new Node_Module(constructXML, ModuleName, grpcConnection, Url, moduleProcess);
+                    nodeModule.PathXML = XMLPath;
                 }
 
                 if (nodeModule.StdLib)
                 {
                     //Find module folder
-                    moduleProcessInfo.FileName =  ModulePath + "/stdLib.exe";
+                    moduleProcessInfo.FileName =  MainWindow.ModulesPath() + "/stdLib.exe";
                     moduleProcessInfo.Arguments = moduleProcessInfo.Arguments + " name=" + nodeModule.Name;
                     System.Diagnostics.Trace.WriteLine("Standard library module found. Launching \"" + nodeModule.Name + "\" from " + moduleProcessInfo.FileName);
                 } else

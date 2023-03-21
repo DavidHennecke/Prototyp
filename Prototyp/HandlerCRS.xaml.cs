@@ -133,8 +133,8 @@ namespace Prototyp
 
             //if (e.Key == System.Windows.Input.Key.Enter && Search_CRS.Text != "")
 
-            if (!VectorData.FileAccessable(MainWindow.ParentDir.FullName + "\\EPSG database.txt")) return;
-            string DBString = System.IO.File.ReadAllText(MainWindow.ParentDir.FullName + "\\EPSG database.txt");
+            if (!VectorData.FileAccessable(MainWindow.ParentPath().FullName + "\\EPSG database.txt")) return;
+            string DBString = System.IO.File.ReadAllText(MainWindow.ParentPath().FullName + "\\EPSG database.txt");
             string[] DBLines = DBString.Split(Environment.NewLine);
             List<EPSGDictionary> Database = new List<EPSGDictionary>();
             foreach (string DBLine in DBLines)

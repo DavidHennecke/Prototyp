@@ -83,8 +83,8 @@ namespace Prototyp
         private List<ComboItem> ComboItems = new List<ComboItem>();
         private List<ComboItem> ComboSearchItems = new List<ComboItem>();
 
-        public string ModulesPath;
-        public static System.IO.DirectoryInfo ParentDir;
+        //public string ModulesPath;
+        //public static System.IO.DirectoryInfo ParentDir;
         public NetworkViewModel network = new NetworkViewModel();
 
         public static MainWindow AppWindow;
@@ -104,21 +104,12 @@ namespace Prototyp
             // Init WPF
             InitializeComponent();
 
-            // Init modules path and start parsing.
-            //TODO: Besseren Weg finden, um das parent directory zu bestimmen.
-            ModulesPath = System.IO.Directory.GetCurrentDirectory();
-            ParentDir = System.IO.Directory.GetParent(ModulesPath);
-            ParentDir = System.IO.Directory.GetParent(ParentDir.FullName);
-            ParentDir = System.IO.Directory.GetParent(ParentDir.FullName);
-            if (ParentDir.ToString().EndsWith("bin")) ParentDir = System.IO.Directory.GetParent(ParentDir.FullName);
-            ModulesPath = ParentDir.FullName + "\\Custom modules";
-
             // Startup NetworkView.
             AppWindow = this;
             networkView.ViewModel = network;
 
-            ParseModules(ModulesPath);
-            LoadSettings(ParentDir);
+            ParseModules(ModulesPath());
+            LoadSettings(ParentPath());
         }
 
         // Private methods --------------------------------------------------------------------
@@ -211,6 +202,7 @@ namespace Prototyp
             string moduleName = new DirectoryInfo(ModuleDir).Name;
             importModule(ModuleDir + "/" + moduleName);
         }
+
         private void LoadSettings(System.IO.DirectoryInfo LocalDir)
         {
             ProgSettings progSettings = new ProgSettings(LocalDir.FullName + "/appsettings.json");
@@ -243,7 +235,7 @@ namespace Prototyp
             ProgSettings ps = new ProgSettings();
             ps.PrepareSaveButtons();
             ps.AddDevSettings(DevBASEPORT, IgnoreStarts);
-            ps.SaveProgSettings(ParentDir.FullName + "/appsettings.json");
+            ps.SaveProgSettings(ParentPath().FullName + "/appsettings.json");
         }
 
         //Overload that creates tool buttons.
@@ -252,12 +244,12 @@ namespace Prototyp
             System.Windows.Controls.Button ModuleBtn = new System.Windows.Controls.Button();
             ModuleBtn.Content = new System.Windows.Controls.Image
             {
-                Source = new System.Windows.Media.Imaging.BitmapImage(new Uri(ModulesPath + "/" + Folder  + "/" + ToolName + "/" + "Icon.png")),
+                Source = new System.Windows.Media.Imaging.BitmapImage(new Uri(ModulesPath() + "/" + Folder  + "/" + ToolName + "/" + "Icon.png")),
                 ToolTip = ToolName,
                 VerticalAlignment = VerticalAlignment.Center
             };
             ModuleBtn.Background = (System.Windows.Media.SolidColorBrush)new System.Windows.Media.BrushConverter().ConvertFromString("#FF212225");
-            ModuleBtn.Click += new RoutedEventHandler((sender, e) => importModule(ModulesPath + "/" + Folder  + "/" + ToolName+"/"+ToolName));
+            ModuleBtn.Click += new RoutedEventHandler((sender, e) => importModule(ModulesPath() + "/" + Folder  + "/" + ToolName + "/" + ToolName));
 
             System.Windows.Controls.ContextMenu buttonContextmenu = new System.Windows.Controls.ContextMenu();
 
@@ -278,7 +270,7 @@ namespace Prototyp
             System.Windows.Controls.Button ModuleBtn = new System.Windows.Controls.Button();
 
             string FileName;
-            if (System.IO.File.Exists(IconPath)) FileName = IconPath; else FileName = ParentDir.FullName + "/Images/VortexIcon.png";
+            if (System.IO.File.Exists(IconPath)) FileName = IconPath; else FileName = ParentPath().FullName + "/Images/VortexIcon.png";
             ModuleBtn.Content = new System.Windows.Controls.Image
             {
                 Source = new System.Windows.Media.Imaging.BitmapImage(new Uri(FileName)),
@@ -323,7 +315,7 @@ namespace Prototyp
 
             Prototyp.Elements.NetworkLoadAndSave open = new Prototyp.Elements.NetworkLoadAndSave(FileName);
 
-            network = open.ImportWorkflow(vectorData, rasterData, tableData, network, ModulesPath);
+            network = open.ImportWorkflow(vectorData, rasterData, tableData, network, ModulesPath());
         }
 
         private void TerminateServer(Node_Module module)
@@ -386,7 +378,7 @@ namespace Prototyp
 
             string Url = "https://localhost:" + port.ToString();
 
-            Node_Module nodeModule = Prototyp.Elements.BinaryLauncher.Launch(XMLPath, Url, DoLaunch: DoLaunch, ModulePath:ModulesPath);
+            Node_Module nodeModule = Prototyp.Elements.BinaryLauncher.Launch(XMLPath, Url, DoLaunch: DoLaunch, ModulePath:ModulesPath());
             ElapsedStarts++;
 
             //Node Position
@@ -411,7 +403,25 @@ namespace Prototyp
 
         // Public methods ---------------------------------------------------------------------------
 
-        // Nothing here so far...
+        public static System.IO.DirectoryInfo ParentPath()
+        {
+            //TODO: Besseren Weg finden, um das parent directory zu bestimmen.
+            string ModulesPath = System.IO.Directory.GetCurrentDirectory();
+            System.IO.DirectoryInfo ParentDir = System.IO.Directory.GetParent(ModulesPath);
+            ParentDir = System.IO.Directory.GetParent(ParentDir.FullName);
+            ParentDir = System.IO.Directory.GetParent(ParentDir.FullName);
+            if (ParentDir.ToString().EndsWith("bin")) ParentDir = System.IO.Directory.GetParent(ParentDir.FullName);
+
+            return (ParentDir);
+        }
+
+        public static string ModulesPath()
+        {
+            System.IO.DirectoryInfo ParentDir = ParentPath();
+            string ModulePath = ParentDir.FullName + "\\Custom modules";
+
+            return (ModulePath);
+        }
 
         // User control handlers --------------------------------------------------------------------
         public static VectorData CheckVectorDataCRS(VectorData tempVectorData)
@@ -730,10 +740,10 @@ namespace Prototyp
         {
             int Index = ToolsComboBox.SelectedIndex;
             if (Index <= 0) return;
-            if (Typing==true) return;
+            if (Typing) return;
 
             Prototyp.ComboItem SelectedItem = (Prototyp.ComboItem)ToolsComboBox.SelectedItem;
-           importModule(SelectedItem.BinaryPath);
+            importModule(SelectedItem.BinaryPath);
 
             ToolsComboBox.SelectedIndex = 0;
         }
@@ -1249,10 +1259,10 @@ namespace Prototyp
             VorteXML vorteXML = moduleDesigner.MakeXML();
 
             string XMLStr = vorteXML.ExportXML();
-            DirectoryInfo di = Directory.CreateDirectory(ModulesPath + "\\" + vorteXML.NodeTitle);
+            DirectoryInfo di = Directory.CreateDirectory(ModulesPath() + "\\" + vorteXML.NodeTitle);
             File.WriteAllText(di.FullName + "\\" + vorteXML.NodeTitle + ".xml", XMLStr);
             ComboItems.Clear();
-            ParseModules(ModulesPath);
+            ParseModules(ModulesPath());
         }
 
         private void DeveloperMode_Click(object sender, RoutedEventArgs e)
@@ -1377,7 +1387,7 @@ namespace Prototyp
                 {
                     System.IO.FileInfo DirInfo = new System.IO.FileInfo(Item.IconPath);
                     string parentDir = DirInfo.Directory.Parent.Name;
-                    CreateButton(Item.ToolName, dockPanel.Name, parentDir+ "\\");
+                    CreateButton(Item.ToolName, dockPanel.Name, parentDir + "\\");
                 }
                 
                 SaveSettings();
@@ -1423,7 +1433,7 @@ namespace Prototyp
                 }
                 else
                 {
-                    IconPath = ParentDir.FullName + "/Images/VortexIcon.png";
+                    IconPath = ParentPath().FullName + "/Images/VortexIcon.png";
                 }
 
                 CreateButton(WFFile, IconPath, dockPanel.Name);

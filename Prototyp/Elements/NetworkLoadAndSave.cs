@@ -1,6 +1,7 @@
 ﻿using DynamicData;
 using Prototyp.Modules;
 using System;
+using System.IO;
 using System.Linq;
 
 namespace Prototyp.Elements
@@ -191,6 +192,28 @@ namespace Prototyp.Elements
         }
 
         // Private methods --------------------------------------------------------------------
+
+        private string GetModulePath(string ModuleName)
+        {
+            string[] SubDirs = Directory.GetDirectories(MainWindow.ModulesPath());
+
+            foreach (string Dir in SubDirs)
+            {
+                string[] Dirs = Directory.GetDirectories(Dir);
+
+                foreach (string ModuleDir in Dirs)
+                {
+                    string[] FileNames = System.IO.Directory.GetFiles(ModuleDir);
+
+                    foreach (string FileName in FileNames)
+                    {
+                        if (FileName.Contains(ModuleName)) { return ModuleDir; }
+                    }
+                }
+            }
+
+            return ("");
+        }
 
         private void MakeInternalLists(NodeNetwork.ViewModels.NetworkViewModel network,
                                        System.Collections.Generic.List<VectorData> vec,
@@ -467,9 +490,9 @@ namespace Prototyp.Elements
             {
                 VorteXML constructXML = new VorteXML(m.XML);
                 string Url = "https://localhost:" + PrepPorts[i].ToString();
-                string CurrentPath = ModulesPath + "/" + m.Name + "/" + m.Name;
+                string CurrentPath = GetModulePath(m.Name);
 
-                Node_Module nodeModule = Prototyp.Elements.BinaryLauncher.Launch(CurrentPath, Url, m.Name, constructXML, ModulePath:ModulesPath);
+                Node_Module nodeModule = Prototyp.Elements.BinaryLauncher.Launch(CurrentPath + "/" + m.Name, Url, m.Name, constructXML, ModulePath: CurrentPath);
 
                 nodeModule.Position = m.Position;
                 nodeModule.PathXML = CurrentPath + ".xml";
