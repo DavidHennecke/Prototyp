@@ -466,6 +466,9 @@ namespace Prototyp.Elements
             //rasterData.Clear();                                           // we
             //MainWindow.AppWindow.TableOfContentsVector.Items.Clear();     // really
             //MainWindow.AppWindow.TableOfContentsRaster.Items.Clear();     // want this?
+            MainWindow.AppWindow.rasterData.Clear();
+            MainWindow.AppWindow.vectorData.Clear();
+            MainWindow.AppWindow.tableData.Clear();
             network = null;
             network = new NodeNetwork.ViewModels.NetworkViewModel();
             MainWindow.AppWindow.networkView.ViewModel = network;

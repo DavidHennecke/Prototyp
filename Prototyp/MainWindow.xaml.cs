@@ -538,16 +538,18 @@ namespace Prototyp
                         return;
                     }
 
-                    VectorData peek = (new VectorData(-1, openFileDialog.FileName));//das muss doch iwie anders gehen? so wird die Datei doch zwei mal geladen... Bei großen Datenmengen kostet das Zeit
+                    VectorData peek = new VectorData(importDataUID, openFileDialog.FileName); // Das muss doch irgendwie anders gehen? So wird die Datei doch zwei mal geladen... Bei großen Datenmengen kostet das Zeit. 21.03.2023, CC: Done, siehe unten.
                     string geometryType = peek.FeatureCollection[0].Geometry.GeometryType;
-                    peek = null;
-                    VectorData tempVectorData;
+                    //peek = null;
+                    //VectorData tempVectorData;
                     string AuthorityString;
                     switch (geometryType)
                     {
                         case "Point":
-                            tempVectorData = new VectorPointData(importDataUID, openFileDialog.FileName);
-                            tempVectorData = CheckVectorDataCRS(tempVectorData);
+                            //tempVectorData = new VectorPointData(importDataUID, openFileDialog.FileName);
+                            VectorData tempVectorData = new VectorPointData(importDataUID);
+                            tempVectorData.VecData = peek.VecData;
+                            tempVectorData = (VectorPointData)CheckVectorDataCRS(tempVectorData);
 
                             AuthorityString = tempVectorData.SpatialReference.GetAttrValue("AUTHORITY", 1);
                             if (AuthorityString == null) break;
@@ -557,8 +559,10 @@ namespace Prototyp
                             break;
 
                         case "Line":
-                            tempVectorData = new VectorLineData(importDataUID, openFileDialog.FileName);
-                            tempVectorData = CheckVectorDataCRS(tempVectorData);
+                            //tempVectorData = new VectorLineData(importDataUID, openFileDialog.FileName);
+                            tempVectorData = new VectorLineData(importDataUID);
+                            tempVectorData.VecData = peek.VecData;
+                            tempVectorData = (VectorLineData)CheckVectorDataCRS(tempVectorData);
 
                             AuthorityString = tempVectorData.SpatialReference.GetAttrValue("AUTHORITY", 1);
                             if (AuthorityString == null) break;
@@ -568,8 +572,10 @@ namespace Prototyp
                             break;
 
                         case "Polygon":
-                            tempVectorData = new VectorPolygonData(importDataUID, openFileDialog.FileName);
-                            tempVectorData = CheckVectorDataCRS(tempVectorData);
+                            //tempVectorData = new VectorPolygonData(importDataUID, openFileDialog.FileName);
+                            tempVectorData = new VectorPolygonData(importDataUID);
+                            tempVectorData.VecData = peek.VecData;
+                            tempVectorData = (VectorPolygonData) CheckVectorDataCRS(tempVectorData);
 
                             AuthorityString = tempVectorData.SpatialReference.GetAttrValue("AUTHORITY", 1);
                             if (AuthorityString == null) break;
@@ -579,8 +585,10 @@ namespace Prototyp
                             break;
 
                         case "MultiPolygon":
-                            tempVectorData = new VectorMultiPolygonData(importDataUID, openFileDialog.FileName);
-                            tempVectorData = CheckVectorDataCRS(tempVectorData);
+                            //tempVectorData = new VectorMultiPolygonData(importDataUID, openFileDialog.FileName);
+                            tempVectorData = new VectorMultiPolygonData(importDataUID);
+                            tempVectorData.VecData = peek.VecData;
+                            tempVectorData = (VectorMultiPolygonData)CheckVectorDataCRS(tempVectorData);
 
                             AuthorityString = tempVectorData.SpatialReference.GetAttrValue("AUTHORITY", 1);
                             if (AuthorityString == null) break;
