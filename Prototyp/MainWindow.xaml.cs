@@ -141,9 +141,18 @@ namespace Prototyp
 
                     tempLabel.Content = "  " + new DirectoryInfo(ModuleDir).Name;
                     tempLabel.FontSize = 12;
-                    System.Windows.Media.Imaging.BitmapImage bitmapImage = new System.Windows.Media.Imaging.BitmapImage(new Uri(ModuleDir + "/Icon.png"));
+                    System.Windows.Media.Imaging.BitmapImage bitmapImage;
 
+                    try
+                    {
+                        bitmapImage = new System.Windows.Media.Imaging.BitmapImage(new Uri(ModuleDir + "/Icon.png"));
+                    }
+                    catch
+                    {
+                        bitmapImage = new System.Windows.Media.Imaging.BitmapImage(new Uri(ModulesPath() + "/Generic icon.png"));
+                    }
                     tempImage.Source = bitmapImage;
+
                     tempImage.Width = 12;
                     tempImage.Height = 12;
 
@@ -1267,7 +1276,7 @@ namespace Prototyp
             VorteXML vorteXML = moduleDesigner.MakeXML();
 
             string XMLStr = vorteXML.ExportXML();
-            DirectoryInfo di = Directory.CreateDirectory(ModulesPath() + "\\" + vorteXML.NodeTitle);
+            DirectoryInfo di = Directory.CreateDirectory(ModulesPath() + "\\Miscellaneous\\" + vorteXML.NodeTitle);
             File.WriteAllText(di.FullName + "\\" + vorteXML.NodeTitle + ".xml", XMLStr);
             ComboItems.Clear();
             ParseModules(ModulesPath());
