@@ -169,7 +169,7 @@ namespace Prototyp.Modules
             _GrpcConnection = grpcConnection;
             _showGUI = newModule.ShowGUI;
             _stdLib = newModule.StdLib;
-            Status = NodeProgress.Waiting; // Korrekt?
+            Status = NodeProgress.Waiting;
 
             ParseXML(newModule, true, ShowGUI);
         }
@@ -183,7 +183,7 @@ namespace Prototyp.Modules
             _Process = process;
             _GrpcConnection = grpcConnection;
             _stdLib = XML.StdLib;
-            Status = NodeProgress.Waiting; // Korrekt?
+            Status = NodeProgress.Waiting;
 
             ParseXML(XML, true, ShowGUI);
         }
@@ -198,7 +198,6 @@ namespace Prototyp.Modules
 
         // Private methods -----------------------------------------------------------------
 
-        // Verändert, damit die Verlinkungen im Knoteneditor wieder funktionieren, muss nochmal geprüft/überarbeitet werden
         private void ParseXML(VorteXML newModule, bool inMain, bool GUI) //Use inMain = true for MainWindow node editor, inMain = false for ModuleDesigner preview.
         {
             _showGUI = GUI;
@@ -342,8 +341,8 @@ namespace Prototyp.Modules
                                 //outNameEditor.ValueChanged.Subscribe (v => { result.Name = v; });
                                 //vectorOutput.Value = this.WhenAnyObservable(vm => vm.outNameEditor.ValueChanged).Select(value => result);
 
-                                // Alternativ: ...outputTypes.Last().ToString();
-                                // Grundsätzlich: Was tun bei mehreren validen Outputtypen?
+                                // Alternative: ...outputTypes.Last().ToString();
+                                // General: What to do if there are several valid output types?
                                 placeholder.Name = toolRow.outputRow.outputTypes[i].ToString();
                                 vectorOutputPoint.Name = toolRow.outputRow.outputTypes[i].ToString();
                                 vectorOutputPoint.Value = System.Reactive.Linq.Observable.Return(placeholder);
@@ -369,8 +368,8 @@ namespace Prototyp.Modules
                                 //outNameEditor.ValueChanged.Subscribe (v => { result.Name = v; });
                                 //vectorOutput.Value = this.WhenAnyObservable(vm => vm.outNameEditor.ValueChanged).Select(value => result);
 
-                                // Alternativ: ...outputTypes.Last().ToString();
-                                // Grundsätzlich: Was tun bei mehreren validen Outputtypen?
+                                // Alternative: ...outputTypes.Last().ToString();
+                                // General: What to do if there are several valid output types?
                                 placeholder.Name = toolRow.outputRow.outputTypes[i].ToString();
                                 vectorOutputLine.Name = toolRow.outputRow.outputTypes[i].ToString();
                                 vectorOutputLine.Value = System.Reactive.Linq.Observable.Return(placeholder);
@@ -396,8 +395,8 @@ namespace Prototyp.Modules
                                 //outNameEditor.ValueChanged.Subscribe (v => { result.Name = v; });
                                 //vectorOutput.Value = this.WhenAnyObservable(vm => vm.outNameEditor.ValueChanged).Select(value => result);
 
-                                // Alternativ: ...outputTypes.Last().ToString();
-                                // Grundsätzlich: Was tun bei mehreren validen Outputtypen?
+                                // Alternative: ...outputTypes.Last().ToString();
+                                // General: What to do if there are several valid output types?
                                 placeholder.Name = toolRow.outputRow.outputTypes[i].ToString();
                                 vectorOutputPolygon.Name = toolRow.outputRow.outputTypes[i].ToString();
                                 vectorOutputPolygon.Value = System.Reactive.Linq.Observable.Return(placeholder);
@@ -423,8 +422,8 @@ namespace Prototyp.Modules
                                 //outNameEditor.ValueChanged.Subscribe (v => { result.Name = v; });
                                 //vectorOutput.Value = this.WhenAnyObservable(vm => vm.outNameEditor.ValueChanged).Select(value => result);
 
-                                // Alternativ: ...outputTypes.Last().ToString();
-                                // Grundsätzlich: Was tun bei mehreren validen Outputtypen?
+                                // Alternative: ...outputTypes.Last().ToString();
+                                // General: What to do if there are several valid output types?
                                 placeholder.Name = toolRow.outputRow.outputTypes[i].ToString();
                                 vectorOutputMultiPolygon.Name = toolRow.outputRow.outputTypes[i].ToString();
                                 vectorOutputMultiPolygon.Value = System.Reactive.Linq.Observable.Return(placeholder);
@@ -450,8 +449,8 @@ namespace Prototyp.Modules
                                 //outNameEditor.ValueChanged.Subscribe(v => { result.Name = v; });
                                 //rasterOutput.Value = this.WhenAnyObservable(vm => vm.outNameEditor.ValueChanged).Select(value => result);
 
-                                // Alternativ: ...outputTypes.Last().ToString();
-                                // Grundsätzlich: Was tun bei mehreren validen Outputtypen?
+                                // Alternative: ...outputTypes.Last().ToString();
+                                // General: What to do if there are several valid output types?
                                 placeholder.Name = toolRow.outputRow.outputTypes[i].ToString();
                                 rasterOutput.Name = toolRow.outputRow.outputTypes[i].ToString();
                                 rasterOutput.Value = System.Reactive.Linq.Observable.Return(placeholder);
@@ -588,7 +587,7 @@ namespace Prototyp.Modules
             return Params;
         }
 
-        public string ParamsToJson() /////////// Work in progress
+        public string ParamsToJson()
         {
             int SliderCount = 0;
             int DropDownCount = 0;

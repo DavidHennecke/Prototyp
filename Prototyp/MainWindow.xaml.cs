@@ -15,7 +15,6 @@ using System.Threading.Tasks;
 Infos:
 
 https://github.com/Wouterdek/NodeNetwork/blob/master/NodeNetworkTests/NetworkViewModelTests.cs
-^ Nützliche Beispielimplementierungen zum Node-Network.
 
 ------------------------------- */
 
@@ -23,9 +22,6 @@ https://github.com/Wouterdek/NodeNetwork/blob/master/NodeNetworkTests/NetworkVie
 
 TODO:
 
-o Low priority: Add multi-select in toolbar modules selection. (CHECK)
-o Ein Modul erzeugen, das keinen Input, sondern nur einen Output hat, Typ Float (gesteuert über einen Slider). Erforderlich für MinDist bei WFLO.
-o dynamic path specification for button creation
 ------------------------------- */
 
 namespace Prototyp
@@ -414,7 +410,7 @@ namespace Prototyp
 
         public static System.IO.DirectoryInfo ParentPath()
         {
-            //TODO: Besseren Weg finden, um das parent directory zu bestimmen.
+            //TODO: Find a better way to determine the parent directory.
             string ModulesPath = System.IO.Directory.GetCurrentDirectory();
             System.IO.DirectoryInfo ParentDir = System.IO.Directory.GetParent(ModulesPath);
             ParentDir = System.IO.Directory.GetParent(ParentDir.FullName);
@@ -547,7 +543,7 @@ namespace Prototyp
                         return;
                     }
 
-                    VectorData peek = new VectorData(importDataUID, openFileDialog.FileName); // Das muss doch irgendwie anders gehen? So wird die Datei doch zwei mal geladen... Bei großen Datenmengen kostet das Zeit. 21.03.2023, CC: Done, siehe unten.
+                    VectorData peek = new VectorData(importDataUID, openFileDialog.FileName);
                     string geometryType = peek.FeatureCollection[0].Geometry.GeometryType;
                     //peek = null;
                     //VectorData tempVectorData;
@@ -738,7 +734,7 @@ namespace Prototyp
                         }
                     }
                 }
-                //else if (...) //TODO: Ggf. andere Datentypen...
+                //else if (...) //TODO: Other data types?
                 //{
 
                 //}
@@ -1300,7 +1296,6 @@ namespace Prototyp
 
         private void FormatLayout_Click(object sender, RoutedEventArgs e)
         {
-            // Startet ein automatisches Network-Arragement, mehr oder weniger gut. Vielleicht irgendwann mal nützlich.
             NodeNetwork.Toolkit.Layout.ForceDirected.ForceDirectedLayouter layout = new NodeNetwork.Toolkit.Layout.ForceDirected.ForceDirectedLayouter();
             layout.Layout(new NodeNetwork.Toolkit.Layout.ForceDirected.Configuration { Network = network }, 10000);
         }
@@ -1476,7 +1471,7 @@ namespace Prototyp
 
         private void Search_Toolbar_KeyDown(object sender, System.Windows.Input.KeyEventArgs e)
         {
-            if (e.Key == System.Windows.Input.Key.Enter && Search_Toolbar.Text!="")
+            if (e.Key == System.Windows.Input.Key.Enter && Search_Toolbar.Text != "")
             {
                 ToolsTabControl.SelectedIndex= 1;
             }

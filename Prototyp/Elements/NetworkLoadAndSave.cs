@@ -245,7 +245,7 @@ namespace Prototyp.Elements
                     modProp.ShowGUI = module.ShowGUI;
                     modProp.XML = System.IO.File.ReadAllText(module.PathXML);
 
-                    // Eigentlich müssten auch noch die Settings aller Controls in dem Modul gespeichert werden... :-(
+                    // TODO: Save control settings of the module.
 
                     _ModuleNodeProperties.Add(modProp);
                 }
@@ -461,11 +461,6 @@ namespace Prototyp.Elements
                                                                       NodeNetwork.ViewModels.NetworkViewModel network,
                                                                       string ModulesPath)
         {
-            // Tidy up all lists.
-            //vectorData.Clear();                                           // Do
-            //rasterData.Clear();                                           // we
-            //MainWindow.AppWindow.TableOfContentsVector.Items.Clear();     // really
-            //MainWindow.AppWindow.TableOfContentsRaster.Items.Clear();     // want this?
             MainWindow.AppWindow.rasterData.Clear();
             MainWindow.AppWindow.vectorData.Clear();
             MainWindow.AppWindow.tableData.Clear();
@@ -650,7 +645,7 @@ namespace Prototyp.Elements
                         }
                     }
                 }
-                // ... Can't be anything other that Module right now. Maybe in the future?
+                // ... Can't be anything other than Module right now. Maybe in the future?
 
                 // Then, find the output node.
                 i = 0;
